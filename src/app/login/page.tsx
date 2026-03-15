@@ -18,11 +18,15 @@ export default function LoginPage() {
   const router = useRouter();
   const { success, error: showError } = useToast();
   const login = useUserStore((state) => state.login);
+  const isAuthLoading = useUserStore((state) => state.isLoading);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const profile = useUserStore((state) => state.profile);
 
   // 이미 로그인된 경우 리다이렉트 (store 기반)
   useEffect(() => {
+    // 인증 상태 로딩 중이면 대기
+    if (isAuthLoading) return;
+
     if (isAuthenticated && profile) {
       if (["admin", "mentor"].includes(profile.role)) {
         router.replace(ROUTES.ADMIN);
@@ -30,7 +34,7 @@ export default function LoginPage() {
         router.replace(ROUTES.HOME);
       }
     }
-  }, [isAuthenticated, profile, router]);
+  }, [isAuthLoading, isAuthenticated, profile, router]);
 
   const {
     register,
