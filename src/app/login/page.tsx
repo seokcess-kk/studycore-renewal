@@ -79,10 +79,13 @@ function LoginContent() {
       const result = await staffLogin(supabase, data);
 
       if (result.success && result.user && result.profile) {
+        // Zustand store 업데이트
         login(result.user, result.profile);
         success("로그인되었습니다.");
-        // redirect 파라미터 사용
-        router.push(redirectTo);
+
+        // 전체 페이지 리로드로 세션 확실히 적용
+        // router.push()는 클라이언트 사이드 네비게이션이라 세션이 제대로 로드되지 않을 수 있음
+        window.location.href = redirectTo;
       } else {
         console.error("Staff login failed:", result.error);
         showError(result.error || "로그인에 실패했습니다.");
