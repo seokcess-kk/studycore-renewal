@@ -17,7 +17,7 @@ function LoginContent() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || ROUTES.ADMIN;
+  const redirectTo = searchParams.get("redirect") || ROUTES.HOME;
   const { success, error: showError } = useToast();
   const login = useUserStore((state) => state.login);
   const isAuthLoading = useUserStore((state) => state.isLoading);

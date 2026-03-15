@@ -30,7 +30,7 @@ function AuthCallbackContent() {
 
     const handleCallback = async () => {
       const code = searchParams.get("code");
-      const next = searchParams.get("next") ?? ROUTES.NOTICES;
+      const next = searchParams.get("next") ?? ROUTES.HOME;
 
       if (!code) {
         setError("인증 코드가 없습니다.");
