@@ -37,8 +37,13 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
     const initialize = async () => {
       try {
-        // 현재 세션 직접 확인 (싱글톤이므로 lock 문제 없음)
-        const { data: { session } } = await supabase.auth.getSession();
+        // 타임아웃과 함께 세션 확인 (2초 제한)
+        const timeoutPromise = new Promise<{ data: { session: null } }>((resolve) => {
+          setTimeout(() => resolve({ data: { session: null } }), 2000);
+        });
+
+        const sessionPromise = supabase.auth.getSession();
+        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
 
         if (!mounted) return;
 
