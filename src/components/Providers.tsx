@@ -35,6 +35,15 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
     const supabase = createClient();
     let mounted = true;
 
+    // 타임아웃: 5초 후 강제로 ready 상태로 전환
+    const timeout = setTimeout(() => {
+      if (mounted && !isReady) {
+        console.warn("Auth init timeout - forcing ready state");
+        setLoading(false);
+        setIsReady(true);
+      }
+    }, 5000);
+
     // 초기 세션 확인
     const initAuth = async () => {
       try {
@@ -60,6 +69,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
         }
       } finally {
         if (mounted) {
+          clearTimeout(timeout);
           setLoading(false);
           setIsReady(true);
         }
@@ -94,13 +104,22 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
     return () => {
       mounted = false;
+      clearTimeout(timeout);
       subscription.unsubscribe();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setUser, setProfile, setLoading, fetchProfile]);
 
-  // 초기 로딩 중에는 children을 렌더링하지 않음 (hydration 불일치 방지)
+  // 초기 로딩 중에는 로딩 UI 표시
   if (!isReady) {
-    return null;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin border-4 border-solid border-teal border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+          <p className="mt-4 text-muted">로딩 중...</p>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;
