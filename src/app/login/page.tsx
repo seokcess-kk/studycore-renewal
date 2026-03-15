@@ -15,46 +15,22 @@ import { ROUTES, CONTACT } from "@/lib/constants";
 export default function LoginPage() {
   const [loginType, setLoginType] = useState<"kakao" | "staff">("kakao");
   const [isLoading, setIsLoading] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const router = useRouter();
   const { success, error: showError } = useToast();
   const login = useUserStore((state) => state.login);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  const profile = useUserStore((state) => state.profile);
 
-  // 이미 로그인된 경우 리다이렉트
+  // 이미 로그인된 경우 리다이렉트 (store 기반)
   useEffect(() => {
-    const supabase = createClient();
-
-    const checkAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (session?.user) {
-          // 프로필 확인
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("role")
-            .eq("id", session.user.id)
-            .single();
-
-          if (profile) {
-            // 역할에 따라 리다이렉트
-            if (["admin", "mentor"].includes(profile.role)) {
-              router.replace(ROUTES.ADMIN);
-            } else {
-              router.replace(ROUTES.HOME);
-            }
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Auth check error:", error);
-      } finally {
-        setIsCheckingAuth(false);
+    if (isAuthenticated && profile) {
+      if (["admin", "mentor"].includes(profile.role)) {
+        router.replace(ROUTES.ADMIN);
+      } else {
+        router.replace(ROUTES.HOME);
       }
-    };
-
-    checkAuth();
-  }, [router]);
+    }
+  }, [isAuthenticated, profile, router]);
 
   const {
     register,
@@ -106,15 +82,6 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
-
-  // 인증 확인 중
-  if (isCheckingAuth) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-stone">
-        <p className="text-muted">로딩 중...</p>
-      </div>
-    );
-  }
 
   return (
     <>

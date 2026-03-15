@@ -17,25 +17,33 @@ declare global {
   var __supabase_browser_client__: SupabaseClient | undefined;
 }
 
+// 환경 변수 확인
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
 export function createClient(): SupabaseClient {
+  // 환경 변수 체크
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw new Error(
+      "Supabase 환경 변수가 설정되지 않았습니다. NEXT_PUBLIC_SUPABASE_URL과 NEXT_PUBLIC_SUPABASE_ANON_KEY를 확인하세요."
+    );
+  }
+
   // 이미 생성된 클라이언트가 있으면 재사용
   if (globalThis[GLOBAL_KEY]) {
     return globalThis[GLOBAL_KEY];
   }
 
-  // 새 클라이언트 생성 (단일 storageKey로 lock 충돌 방지)
-  const client = createSupabaseBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      auth: {
-        storageKey: "studycore-auth",
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-      },
-    }
-  );
+  // 새 클라이언트 생성
+  const client = createSupabaseBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      storageKey: "studycore-auth",
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: "pkce",
+    },
+  });
 
   // globalThis에 저장하여 싱글톤 보장
   globalThis[GLOBAL_KEY] = client;

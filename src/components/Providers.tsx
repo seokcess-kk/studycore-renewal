@@ -1,118 +1,110 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { ToastProvider } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/stores/useUserStore";
 import type { User } from "@supabase/supabase-js";
 
+/**
+ * AuthInitializer - 비블로킹 인증 초기화
+ *
+ * 앱을 블로킹하지 않고 백그라운드에서 인증 상태를 확인합니다.
+ * children은 즉시 렌더링되고, 인증 상태는 비동기로 업데이트됩니다.
+ */
 function AuthInitializer({ children }: { children: React.ReactNode }) {
   const setUser = useUserStore((state) => state.setUser);
   const setProfile = useUserStore((state) => state.setProfile);
   const setLoading = useUserStore((state) => state.setLoading);
-  const [isReady, setIsReady] = useState(false);
+  const initialized = useRef(false);
 
-  const fetchProfile = useCallback(async (supabase: ReturnType<typeof createClient>, authUser: User) => {
-    try {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", authUser.id)
-        .single();
+  const fetchProfile = useCallback(
+    async (authUser: User) => {
+      try {
+        const supabase = createClient();
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", authUser.id)
+          .single();
 
-      if (profile) {
-        setProfile(profile);
-      } else {
+        setProfile(profile || null);
+      } catch (error) {
+        console.error("Profile fetch error:", error);
         setProfile(null);
       }
-    } catch (error) {
-      console.error("Profile fetch error:", error);
-      setProfile(null);
-    }
-  }, [setProfile]);
+    },
+    [setProfile]
+  );
 
   useEffect(() => {
-    const supabase = createClient();
+    // 이미 초기화되었으면 스킵
+    if (initialized.current) return;
+    initialized.current = true;
+
+    let supabase: ReturnType<typeof createClient>;
+
+    try {
+      supabase = createClient();
+    } catch (error) {
+      console.error("Supabase client error:", error);
+      setLoading(false);
+      return;
+    }
+
     let mounted = true;
 
-    const initialize = async () => {
-      try {
-        // 타임아웃과 함께 세션 확인 (2초 제한)
-        const timeoutPromise = new Promise<{ data: { session: null } }>((resolve) => {
-          setTimeout(() => resolve({ data: { session: null } }), 2000);
+    // 인증 상태 변경 리스너 먼저 설정
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || "",
         });
-
-        const sessionPromise = supabase.auth.getSession();
-        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
-
-        if (!mounted) return;
-
-        if (session?.user) {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || "",
-          });
-          await fetchProfile(supabase, session.user);
-        } else {
-          setUser(null);
-          setProfile(null);
-        }
-      } catch (error) {
-        console.error("Auth init error:", error);
-        if (mounted) {
-          setUser(null);
-          setProfile(null);
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-          setIsReady(true);
-        }
+        await fetchProfile(session.user);
+      } else {
+        setUser(null);
+        setProfile(null);
       }
-    };
+      setLoading(false);
+    });
 
-    // 초기화 실행
-    initialize();
+    // 초기 세션 확인 (백그라운드)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
 
-    // 인증 상태 변경 리스너 (로그인/로그아웃 감지)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (!mounted) return;
-
-        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-          if (session?.user) {
-            setUser({
-              id: session.user.id,
-              email: session.user.email || "",
-            });
-            await fetchProfile(supabase, session.user);
-          }
-        } else if (event === "SIGNED_OUT") {
-          setUser(null);
-          setProfile(null);
-        }
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || "",
+        });
+        fetchProfile(session.user);
+      } else {
+        setUser(null);
+        setProfile(null);
       }
-    );
+      setLoading(false);
+    }).catch((error) => {
+      console.error("Auth init error:", error);
+      if (mounted) {
+        setUser(null);
+        setProfile(null);
+        setLoading(false);
+      }
+    });
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setUser, setProfile, setLoading, fetchProfile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // 초기 로딩 중에는 로딩 UI 표시
-  if (!isReady) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin border-4 border-solid border-teal border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-          <p className="mt-4 text-muted">로딩 중...</p>
-        </div>
-      </div>
-    );
-  }
-
+  // 비블로킹: children 즉시 렌더링
   return <>{children}</>;
 }
 
