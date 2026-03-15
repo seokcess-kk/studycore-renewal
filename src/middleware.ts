@@ -1,0 +1,98 @@
+import { type NextRequest, NextResponse } from "next/server";
+import { updateSession } from "@/lib/supabase/middleware";
+import {
+  PROTECTED_ROUTES,
+  ADMIN_ROUTES,
+  ASSISTANT_ROUTES,
+  ROUTES,
+  ROLES,
+  USER_STATUS,
+} from "@/lib/constants";
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // 세션 업데이트 및 유저 정보 가져오기
+  const { supabaseResponse, user, supabase } = await updateSession(request);
+
+  // 공개 라우트는 통과
+  const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
+    pathname.startsWith(route)
+  );
+  const isAdminRoute = ADMIN_ROUTES.some((route) => pathname.startsWith(route));
+  const isAssistantRoute = ASSISTANT_ROUTES.some((route) =>
+    pathname.startsWith(route)
+  );
+
+  // 보호된 라우트 접근 시 로그인 확인
+  if (isProtectedRoute || isAdminRoute) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = ROUTES.LOGIN;
+      url.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(url);
+    }
+
+    // 유저 프로필 조회 (역할, 상태)
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, status")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile) {
+      // 프로필이 없으면 회원가입 페이지로 (신규 카카오 가입)
+      const url = request.nextUrl.clone();
+      url.pathname = "/register";
+      return NextResponse.redirect(url);
+    }
+
+    // 어드민 라우트 접근 시 admin 또는 mentor 역할 확인
+    if (isAdminRoute && !isAssistantRoute) {
+      const adminRoles: string[] = [ROLES.ADMIN, ROLES.MENTOR];
+      if (!adminRoles.includes(profile.role)) {
+        const url = request.nextUrl.clone();
+        url.pathname = ROUTES.HOME;
+        return NextResponse.redirect(url);
+      }
+    }
+
+    // 조교 온보딩 라우트 접근 시 assistant, mentor 또는 admin 역할 확인
+    if (isAssistantRoute) {
+      const staffRoles: string[] = [ROLES.ASSISTANT, ROLES.MENTOR, ROLES.ADMIN];
+      if (!staffRoles.includes(profile.role)) {
+        const url = request.nextUrl.clone();
+        url.pathname = ROUTES.HOME;
+        return NextResponse.redirect(url);
+      }
+    }
+
+    // 재원생 기능 페이지 접근 시 상태 확인
+    if (
+      isProtectedRoute &&
+      profile.role === ROLES.STUDENT &&
+      profile.status !== USER_STATUS.ACTIVE
+    ) {
+      // pending 또는 inactive 상태면 안내 페이지로
+      // TODO: 상태별 안내 페이지 구현 필요
+      const url = request.nextUrl.clone();
+      url.pathname = ROUTES.HOME;
+      return NextResponse.redirect(url);
+    }
+  }
+
+  return supabaseResponse;
+}
+
+export const config = {
+  matcher: [
+    /*
+     * 아래 경로를 제외한 모든 요청에 middleware 적용:
+     * - _next/static (정적 파일)
+     * - _next/image (이미지 최적화)
+     * - favicon.ico (파비콘)
+     * - public 폴더 파일
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
+};

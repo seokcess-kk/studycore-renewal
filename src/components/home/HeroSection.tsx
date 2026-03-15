@@ -1,0 +1,128 @@
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ROUTES, CONTACT } from "@/lib/constants";
+
+export function HeroSection() {
+  return (
+    <section className="min-h-screen bg-navy-dark relative overflow-hidden">
+      {/* 격자 배경 */}
+      <div
+        className="absolute inset-0 pointer-events-none z-[1]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(87,173,177,0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(87,173,177,0.04) 1px, transparent 1px)
+          `,
+          backgroundSize: "72px 72px",
+        }}
+      />
+
+      {/* 워터마크 */}
+      <div className="absolute right-[-40px] bottom-[-60px] font-mono text-[40vw] font-bold text-teal/[0.03] leading-none z-[1] pointer-events-none select-none">
+        10
+      </div>
+
+      {/* 컨텐츠 그리드 */}
+      <div className="relative z-[2] grid grid-cols-1 lg:grid-cols-2 min-h-screen">
+        {/* 좌측: 헤드라인 */}
+        <div className="flex flex-col justify-end p-8 md:p-14 lg:border-r lg:border-white/[0.06]">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase mb-10"
+          >
+            Managed Study Hall · 광주 광산구
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="font-serif text-[clamp(60px,10vw,140px)] font-black leading-[0.88] tracking-[-0.04em] text-white/90"
+          >
+            <span>집중이</span>
+            <br />
+            <span className="text-teal">성적을</span>
+            <br />
+            <span
+              className="text-transparent"
+              style={{ WebkitTextStroke: "1.5px rgba(255,255,255,0.2)" }}
+            >
+              바꾼다
+            </span>
+          </motion.h1>
+        </div>
+
+        {/* 우측: 설명 + 메타 */}
+        <div className="hidden lg:flex flex-col justify-between p-14">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="pt-10"
+          >
+            <p className="text-[15px] leading-[2] text-white/40 font-light mb-12">
+              공부는 의지만으로 되지 않습니다. 좋은 환경이 있어야 합니다.
+              <br />
+              <br />
+              스터디코어 1.0은{" "}
+              <strong className="text-white/75 font-medium">
+                원장님이 직접 설계하고 운영하는
+              </strong>{" "}
+              관리형 독서실로, 교시제와 수학 멘토 질문방으로 학습의 모든 과정을
+              구조로 뒷받침합니다.
+            </p>
+
+            <Link
+              href={ROUTES.CONSULT}
+              className="inline-block px-13 py-4 bg-teal text-navy-dark text-[13.5px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:bg-transparent hover:text-teal transition-all duration-200"
+            >
+              입소 상담 신청하기
+            </Link>
+          </motion.div>
+
+          {/* 메타 정보 */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.45 }}
+            className="flex flex-col gap-4 pt-12 border-t border-white/[0.07]"
+          >
+            <MetaItem label="Location" value={CONTACT.address} />
+            <MetaItem label="Contact" value={CONTACT.phone} />
+            <MetaItem label="Type" value="관리형 독서실" />
+          </motion.div>
+        </div>
+      </div>
+
+      {/* 모바일: 하단 CTA */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="lg:hidden absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-navy-dark to-transparent"
+      >
+        <Link
+          href={ROUTES.CONSULT}
+          className="block w-full text-center px-6 py-4 bg-teal text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal"
+        >
+          입소 상담 신청하기
+        </Link>
+      </motion.div>
+    </section>
+  );
+}
+
+function MetaItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between items-baseline">
+      <span className="font-mono text-[9px] font-bold text-teal tracking-[0.2em] uppercase">
+        {label}
+      </span>
+      <span className="text-[13px] text-white/45 font-light">{value}</span>
+    </div>
+  );
+}

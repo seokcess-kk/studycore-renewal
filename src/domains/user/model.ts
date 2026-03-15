@@ -1,0 +1,109 @@
+/**
+ * User 도메인 - 모델 정의
+ *
+ * 이 파일에는 타입과 Zod 스키마만 포함합니다.
+ * ⚠️ 비즈니스 로직 금지 → service.ts
+ * ⚠️ DB 쿼리 금지 → repository.ts
+ */
+
+import { z } from "zod";
+
+// ─────────────────────────────────────────────
+// 상수
+// ─────────────────────────────────────────────
+
+export const UserRole = {
+  STUDENT: "student",
+  ASSISTANT: "assistant",
+  MENTOR: "mentor",
+  ADMIN: "admin",
+} as const;
+
+export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
+
+export const UserStatus = {
+  PENDING: "pending",
+  ACTIVE: "active",
+  INACTIVE: "inactive",
+} as const;
+
+export type UserStatusType = (typeof UserStatus)[keyof typeof UserStatus];
+
+// ─────────────────────────────────────────────
+// Zod 스키마
+// ─────────────────────────────────────────────
+
+// 사용자 프로필 스키마
+export const profileSchema = z.object({
+  id: z.string().uuid(),
+  username: z.string().nullable(),
+  name: z.string(),
+  phone: z.string().nullable(),
+  role: z.enum(["student", "assistant", "mentor", "admin"]),
+  status: z.enum(["pending", "active", "inactive"]).nullable(),
+  school: z.string().nullable(),
+  grade: z.number().min(1).max(3).nullable(),
+  parent_phone: z.string().nullable(),
+  avatar_url: z.string().nullable(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export type Profile = z.infer<typeof profileSchema>;
+
+// 프로필 생성 스키마 (카카오 가입용)
+export const createProfileSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(2, "이름은 2자 이상 입력해주세요"),
+  phone: z
+    .string()
+    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호를 입력해주세요"),
+  school: z.string().optional(),
+  grade: z.number().min(1).max(3).optional(),
+  parent_phone: z
+    .string()
+    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호를 입력해주세요")
+    .optional(),
+});
+
+export type CreateProfileInput = z.infer<typeof createProfileSchema>;
+
+// 프로필 수정 스키마
+export const updateProfileSchema = z.object({
+  name: z.string().min(2).optional(),
+  phone: z.string().optional(),
+  school: z.string().optional(),
+  grade: z.number().min(1).max(3).optional(),
+  parent_phone: z.string().optional(),
+  avatar_url: z.string().url().optional(),
+});
+
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+
+// Staff 로그인 스키마
+export const staffLoginSchema = z.object({
+  username: z.string().min(3, "아이디는 3자 이상 입력해주세요"),
+  password: z.string().min(6, "비밀번호는 6자 이상 입력해주세요"),
+});
+
+export type StaffLoginInput = z.infer<typeof staffLoginSchema>;
+
+// ─────────────────────────────────────────────
+// 서비스 결과 타입
+// ─────────────────────────────────────────────
+
+export interface UserServiceResult {
+  success: boolean;
+  profile?: Profile;
+  error?: string;
+}
+
+export interface AuthResult {
+  success: boolean;
+  user?: {
+    id: string;
+    email: string;
+  };
+  profile?: Profile;
+  error?: string;
+}
