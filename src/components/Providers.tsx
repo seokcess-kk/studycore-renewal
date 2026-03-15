@@ -34,23 +34,22 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const supabase = createClient();
     let mounted = true;
+    let initialized = false;
 
-    // 타임아웃: 5초 후 강제로 ready 상태로 전환
+    // 타임아웃: 3초 후 강제로 ready 상태로 전환
     const timeout = setTimeout(() => {
-      if (mounted && !isReady) {
+      if (mounted && !initialized) {
         console.warn("Auth init timeout - forcing ready state");
         setLoading(false);
         setIsReady(true);
+        initialized = true;
       }
-    }, 5000);
+    }, 3000);
 
-    // 초기 세션 확인
-    const initAuth = async () => {
+    const handleSession = async (session: { user: User } | null) => {
+      if (!mounted || initialized) return;
+
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (!mounted) return;
-
         if (session?.user) {
           setUser({
             id: session.user.id,
@@ -62,28 +61,28 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
           setProfile(null);
         }
       } catch (error) {
-        console.error("Auth init error:", error);
-        if (mounted) {
-          setUser(null);
-          setProfile(null);
-        }
+        console.error("Session handling error:", error);
+        setUser(null);
+        setProfile(null);
       } finally {
-        if (mounted) {
+        if (mounted && !initialized) {
           clearTimeout(timeout);
           setLoading(false);
           setIsReady(true);
+          initialized = true;
         }
       }
     };
 
-    initAuth();
-
-    // 인증 상태 변경 리스너
+    // 인증 상태 변경 리스너 (INITIAL_SESSION 포함)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return;
 
-        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        if (event === "INITIAL_SESSION") {
+          // 초기 세션 처리 - getSession() 대신 이 이벤트 사용
+          await handleSession(session);
+        } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
           if (session?.user) {
             setUser({
               id: session.user.id,
@@ -91,13 +90,9 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
             });
             await fetchProfile(supabase, session.user);
           }
-          setLoading(false);
         } else if (event === "SIGNED_OUT") {
           setUser(null);
           setProfile(null);
-          setLoading(false);
-        } else if (event === "INITIAL_SESSION") {
-          // 초기 세션은 initAuth에서 처리됨
         }
       }
     );
