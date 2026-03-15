@@ -5,8 +5,10 @@ import {
   ADMIN_ROUTES,
   ASSISTANT_ROUTES,
   ROUTES,
-  ROLES,
   USER_STATUS,
+  hasAdminAccess,
+  isStaffRole,
+  isStudent,
 } from "@/lib/constants";
 
 export async function middleware(request: NextRequest) {
@@ -49,8 +51,7 @@ export async function middleware(request: NextRequest) {
 
     // 어드민 라우트 접근 시 admin 또는 mentor 역할 확인
     if (isAdminRoute && !isAssistantRoute) {
-      const adminRoles: string[] = [ROLES.ADMIN, ROLES.MENTOR];
-      if (!adminRoles.includes(profile.role)) {
+      if (!hasAdminAccess(profile.role)) {
         const url = request.nextUrl.clone();
         url.pathname = ROUTES.HOME;
         return NextResponse.redirect(url);
@@ -59,8 +60,7 @@ export async function middleware(request: NextRequest) {
 
     // 조교 온보딩 라우트 접근 시 assistant, mentor 또는 admin 역할 확인
     if (isAssistantRoute) {
-      const staffRoles: string[] = [ROLES.ASSISTANT, ROLES.MENTOR, ROLES.ADMIN];
-      if (!staffRoles.includes(profile.role)) {
+      if (!isStaffRole(profile.role)) {
         const url = request.nextUrl.clone();
         url.pathname = ROUTES.HOME;
         return NextResponse.redirect(url);
@@ -68,16 +68,19 @@ export async function middleware(request: NextRequest) {
     }
 
     // 재원생 기능 페이지 접근 시 상태 확인
-    if (
-      isProtectedRoute &&
-      profile.role === ROLES.STUDENT &&
-      profile.status !== USER_STATUS.ACTIVE
-    ) {
-      // pending 또는 inactive 상태면 안내 페이지로
-      // TODO: 상태별 안내 페이지 구현 필요
-      const url = request.nextUrl.clone();
-      url.pathname = ROUTES.HOME;
-      return NextResponse.redirect(url);
+    if (isProtectedRoute && isStudent(profile.role)) {
+      if (profile.status === USER_STATUS.PENDING) {
+        // 승인 대기 상태면 안내 페이지로
+        const url = request.nextUrl.clone();
+        url.pathname = "/pending-approval";
+        return NextResponse.redirect(url);
+      }
+      if (profile.status === USER_STATUS.INACTIVE) {
+        // 비활성 상태면 안내 페이지로
+        const url = request.nextUrl.clone();
+        url.pathname = "/account-inactive";
+        return NextResponse.redirect(url);
+      }
     }
   }
 

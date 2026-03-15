@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import { staffLogin } from "@/domains/user/service";
 import { staffLoginSchema, type StaffLoginInput } from "@/domains/user/model";
 import { useUserStore } from "@/stores/useUserStore";
-import { ROUTES, CONTACT } from "@/lib/constants";
+import { ROUTES, CONTACT, hasAdminAccess } from "@/lib/constants";
 
 function LoginContent() {
   const [loginType, setLoginType] = useState<"kakao" | "staff">("kakao");
@@ -30,9 +30,7 @@ function LoginContent() {
     if (isAuthLoading) return;
 
     if (isAuthenticated && profile) {
-      const destination = ["admin", "mentor"].includes(profile.role)
-        ? redirectTo
-        : ROUTES.HOME;
+      const destination = hasAdminAccess(profile.role) ? redirectTo : ROUTES.HOME;
       router.replace(destination);
     }
   }, [isAuthLoading, isAuthenticated, profile, router, redirectTo]);

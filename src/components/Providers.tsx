@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ToastProvider } from "@/components/common";
+import { ToastProvider, SessionWarning } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/stores/useUserStore";
+import { logger } from "@/lib/logger";
 import type { Session } from "@supabase/supabase-js";
 
 /**
@@ -11,6 +12,10 @@ import type { Session } from "@supabase/supabase-js";
  *
  * 앱을 블로킹하지 않고 백그라운드에서 인증 상태를 확인합니다.
  * children은 즉시 렌더링되고, 인증 상태는 비동기로 업데이트됩니다.
+ *
+ * Race Condition 방지:
+ * - AbortController로 진행 중인 비동기 작업 취소
+ * - mounted 플래그로 unmount 후 상태 업데이트 방지
  */
 function AuthInitializer({ children }: { children: React.ReactNode }) {
   const setUser = useUserStore((state) => state.setUser);
@@ -23,12 +28,15 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
     if (initialized.current) return;
     initialized.current = true;
 
+    // AbortController로 비동기 작업 취소 관리
+    const abortController = new AbortController();
+
     let supabase: ReturnType<typeof createClient>;
 
     try {
       supabase = createClient();
     } catch (error) {
-      console.error("Supabase client error:", error);
+      logger.exception(error, "AuthInitializer");
       setLoading(false);
       return;
     }
@@ -38,13 +46,17 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
     // 세션 처리 함수 (중복 호출 방지)
     const handleSession = async (session: Session | null, isInitial = false) => {
-      if (!mounted) return;
+      // unmount 또는 abort 시 중단
+      if (!mounted || abortController.signal.aborted) return;
 
       // 초기 세션은 한 번만 처리
       if (isInitial && initialSessionHandled) return;
       if (isInitial) initialSessionHandled = true;
 
       if (session?.user) {
+        // 상태 업데이트 전 다시 확인
+        if (!mounted || abortController.signal.aborted) return;
+
         setUser({
           id: session.user.id,
           email: session.user.email || "",
@@ -58,21 +70,24 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
             .eq("id", session.user.id)
             .single();
 
-          if (mounted) {
+          // 비동기 작업 후 다시 확인
+          if (mounted && !abortController.signal.aborted) {
             setProfile(profile || null);
           }
         } catch (error) {
-          console.error("Profile fetch error:", error);
-          if (mounted) {
+          logger.exception(error, "ProfileFetch");
+          if (mounted && !abortController.signal.aborted) {
             setProfile(null);
           }
         }
       } else {
-        setUser(null);
-        setProfile(null);
+        if (mounted && !abortController.signal.aborted) {
+          setUser(null);
+          setProfile(null);
+        }
       }
 
-      if (mounted) {
+      if (mounted && !abortController.signal.aborted) {
         setLoading(false);
       }
     };
@@ -81,7 +96,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!mounted) return;
+      if (!mounted || abortController.signal.aborted) return;
 
       // INITIAL_SESSION 이벤트로 초기 세션 처리
       if (event === "INITIAL_SESSION") {
@@ -95,7 +110,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
     // fallback: INITIAL_SESSION이 오지 않는 경우를 대비
     const fallbackTimeout = setTimeout(() => {
-      if (!initialSessionHandled && mounted) {
+      if (!initialSessionHandled && mounted && !abortController.signal.aborted) {
         supabase.auth.getSession().then(({ data: { session } }) => {
           handleSession(session, true);
         });
@@ -104,6 +119,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
     return () => {
       mounted = false;
+      abortController.abort(); // 진행 중인 비동기 작업 취소 신호
       clearTimeout(fallbackTimeout);
       subscription.unsubscribe();
     };
@@ -117,7 +133,10 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ToastProvider>
-      <AuthInitializer>{children}</AuthInitializer>
+      <AuthInitializer>
+        {children}
+        <SessionWarning />
+      </AuthInitializer>
     </ToastProvider>
   );
 }

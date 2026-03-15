@@ -29,6 +29,42 @@ export const ROLES = {
 
 export type Role = (typeof ROLES)[keyof typeof ROLES];
 
+// 역할 그룹
+export const STAFF_ROLES = [
+  ROLES.ADMIN,
+  ROLES.MENTOR,
+  ROLES.ASSISTANT,
+] as const;
+
+export const ADMIN_ACCESS_ROLES = [ROLES.ADMIN, ROLES.MENTOR] as const;
+
+// 역할 체크 헬퍼 함수
+export function isStaffRole(role: string | null | undefined): boolean {
+  if (!role) return false;
+  return (STAFF_ROLES as readonly string[]).includes(role);
+}
+
+export function hasAdminAccess(role: string | null | undefined): boolean {
+  if (!role) return false;
+  return (ADMIN_ACCESS_ROLES as readonly string[]).includes(role);
+}
+
+export function isAdmin(role: string | null | undefined): boolean {
+  return role === ROLES.ADMIN;
+}
+
+export function isMentor(role: string | null | undefined): boolean {
+  return role === ROLES.MENTOR;
+}
+
+export function isAssistant(role: string | null | undefined): boolean {
+  return role === ROLES.ASSISTANT;
+}
+
+export function isStudent(role: string | null | undefined): boolean {
+  return role === ROLES.STUDENT;
+}
+
 // 계정 상태 (재원생만)
 export const USER_STATUS = {
   PENDING: "pending", // 승인 대기
@@ -127,4 +163,10 @@ export const LOCATION = {
   lng: 126.8526021,
   name: "스터디코어 1.0",
   address: "광주광역시 광산구 임방울대로 330 애플타워 10층",
+} as const;
+
+// 세션 설정
+export const SESSION = {
+  WARNING_BEFORE_EXPIRY: 10 * 60 * 1000, // 만료 10분 전 경고
+  CHECK_INTERVAL: 60 * 1000, // 1분마다 체크
 } as const;

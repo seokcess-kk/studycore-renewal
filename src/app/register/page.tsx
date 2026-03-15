@@ -5,26 +5,15 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/common/Button";
-import { createBrowserClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
 import { useUserStore } from "@/stores/useUserStore";
+import { studentRegisterSchema, type StudentRegisterInput } from "@/domains/user/model";
+import { createUserProfile, getCurrentProfile } from "@/domains/user/service";
+import { logger } from "@/lib/logger";
+import { ROUTES, USER_STATUS } from "@/lib/constants";
 import { Clock } from "lucide-react";
-
-const RegisterSchema = z.object({
-  name: z.string().min(2, "이름은 2자 이상이어야 합니다"),
-  phone: z
-    .string()
-    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다"),
-  school: z.string().min(2, "학교 이름을 입력해주세요"),
-  grade: z.enum(["1", "2", "3"], { message: "학년을 선택해주세요" }),
-  parent_phone: z
-    .string()
-    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다"),
-});
-
-type RegisterInput = z.infer<typeof RegisterSchema>;
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -33,17 +22,18 @@ export default function RegisterPage() {
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterInput>({
-    resolver: zodResolver(RegisterSchema),
+  } = useForm<StudentRegisterInput>({
+    resolver: zodResolver(studentRegisterSchema),
   });
 
   useEffect(() => {
-    const supabase = createBrowserClient();
+    const supabase = createClient();
 
     const checkAuth = async () => {
       try {
@@ -51,28 +41,26 @@ export default function RegisterPage() {
         const { data: { session } } = await supabase.auth.getSession();
 
         if (!session?.user) {
-          router.replace("/login");
+          router.replace(ROUTES.LOGIN);
           return;
         }
 
-        // 프로필 확인
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
+        setUserId(session.user.id);
 
-        if (profile) {
-          setProfile(profile);
-          if (profile.status === "pending") {
+        // 프로필 확인 (service 함수 사용)
+        const result = await getCurrentProfile(supabase);
+
+        if (result.success && result.profile) {
+          setProfile(result.profile);
+          if (result.profile.status === USER_STATUS.PENDING) {
             setIsSubmitted(true);
           } else {
-            router.replace("/");
+            router.replace(ROUTES.HOME);
             return;
           }
         }
       } catch (error) {
-        console.error("Auth check error:", error);
+        logger.exception(error, "RegisterPage.checkAuth");
       } finally {
         setIsChecking(false);
       }
@@ -81,47 +69,38 @@ export default function RegisterPage() {
     checkAuth();
   }, [router, setProfile]);
 
-  const onSubmit = useCallback(async (data: RegisterInput) => {
-    const supabase = createBrowserClient();
+  const onSubmit = useCallback(async (data: StudentRegisterInput) => {
+    if (!userId) {
+      toast({
+        variant: "error",
+        title: "오류",
+        description: "로그인 정보를 찾을 수 없습니다. 다시 로그인해주세요.",
+      });
+      router.replace(ROUTES.LOGIN);
+      return;
+    }
+
+    const supabase = createClient();
 
     try {
-      // Supabase 세션에서 직접 user 확인
-      const { data: { user: authUser } } = await supabase.auth.getUser();
+      // service 함수를 통해 프로필 생성
+      const result = await createUserProfile(supabase, {
+        id: userId,
+        name: data.name,
+        phone: data.phone,
+        school: data.school,
+        grade: parseInt(data.grade),
+        parent_phone: data.parent_phone,
+      });
 
-      if (!authUser) {
-        toast({
-          variant: "error",
-          title: "오류",
-          description: "로그인 정보를 찾을 수 없습니다. 다시 로그인해주세요.",
-        });
-        router.replace("/login");
-        return;
+      if (!result.success) {
+        throw new Error(result.error || "프로필 생성 실패");
       }
 
-      // 전화번호 포맷 정리
-      const cleanPhone = data.phone.replace(/-/g, "");
-      const cleanParentPhone = data.parent_phone.replace(/-/g, "");
-
-      // 프로필 생성
-      const { data: newProfile, error } = await supabase
-        .from("profiles")
-        .insert({
-          id: authUser.id,
-          name: data.name,
-          phone: cleanPhone,
-          school: data.school,
-          grade: parseInt(data.grade),
-          parent_phone: cleanParentPhone,
-          role: "student",
-          status: "pending",
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
       // 스토어 업데이트
-      setProfile(newProfile);
+      if (result.profile) {
+        setProfile(result.profile);
+      }
       setIsSubmitted(true);
 
       toast({
@@ -130,14 +109,14 @@ export default function RegisterPage() {
         description: "관리자 승인 후 서비스를 이용하실 수 있습니다.",
       });
     } catch (error) {
-      console.error("가입 신청 실패:", error);
+      logger.exception(error, "RegisterPage.onSubmit");
       toast({
         variant: "error",
         title: "오류",
-        description: "가입 신청에 실패했습니다. 다시 시도해주세요.",
+        description: error instanceof Error ? error.message : "가입 신청에 실패했습니다. 다시 시도해주세요.",
       });
     }
-  }, [toast, router, setProfile]);
+  }, [userId, toast, router, setProfile]);
 
   // 로딩 중
   if (isChecking) {
@@ -175,7 +154,7 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <Link href="/" className="text-teal hover:underline">
+          <Link href={ROUTES.HOME} className="text-teal hover:underline">
             홈으로 돌아가기
           </Link>
         </div>
@@ -296,11 +275,11 @@ export default function RegisterPage() {
 
         <p className="mt-4 text-center text-xs text-muted">
           가입 신청 시{" "}
-          <Link href="/terms" className="text-teal hover:underline">
+          <Link href={ROUTES.TERMS} className="text-teal hover:underline">
             이용약관
           </Link>{" "}
           및{" "}
-          <Link href="/privacy" className="text-teal hover:underline">
+          <Link href={ROUTES.PRIVACY} className="text-teal hover:underline">
             개인정보처리방침
           </Link>
           에 동의하는 것으로 간주합니다.

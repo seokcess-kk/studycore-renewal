@@ -12,3 +12,4 @@ export {
 } from "./Skeleton";
 export { ImageUploader } from "./ImageUploader";
 export { AvatarUploader } from "./AvatarUploader";
+export { SessionWarning } from "./SessionWarning";

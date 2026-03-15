@@ -68,6 +68,21 @@ export const createProfileSchema = z.object({
 
 export type CreateProfileInput = z.infer<typeof createProfileSchema>;
 
+// 재원생 등록 스키마 (필수 필드 강화)
+export const studentRegisterSchema = z.object({
+  name: z.string().min(2, "이름은 2자 이상이어야 합니다"),
+  phone: z
+    .string()
+    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다"),
+  school: z.string().min(2, "학교 이름을 입력해주세요"),
+  grade: z.enum(["1", "2", "3"], { message: "학년을 선택해주세요" }),
+  parent_phone: z
+    .string()
+    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다"),
+});
+
+export type StudentRegisterInput = z.infer<typeof studentRegisterSchema>;
+
 // 프로필 수정 스키마
 export const updateProfileSchema = z.object({
   name: z.string().min(2).optional(),

@@ -7,6 +7,7 @@
 
 import { create } from "zustand";
 import type { Profile, UserRoleType, UserStatusType } from "@/domains/user/model";
+import { isStaffRole, hasAdminAccess, isAdmin, isMentor, USER_STATUS } from "@/lib/constants";
 
 interface UserState {
   // 상태
@@ -64,15 +65,11 @@ export const useUserStore = create<UserState>()((set, get) => ({
       profile,
       role: profile?.role ?? null,
       status: profile?.status ?? null,
-      isStaff: profile
-        ? ["admin", "mentor", "assistant"].includes(profile.role)
-        : false,
-      isAdmin: profile?.role === "admin",
-      isMentor: profile?.role === "mentor",
-      canAccessAdmin: profile
-        ? ["admin", "mentor"].includes(profile.role)
-        : false,
-      isActive: profile?.status === "active",
+      isStaff: isStaffRole(profile?.role),
+      isAdmin: isAdmin(profile?.role),
+      isMentor: isMentor(profile?.role),
+      canAccessAdmin: hasAdminAccess(profile?.role),
+      isActive: profile?.status === USER_STATUS.ACTIVE,
     }),
 
   login: (user, profile) =>
@@ -83,11 +80,11 @@ export const useUserStore = create<UserState>()((set, get) => ({
       profile,
       role: profile.role,
       status: profile.status,
-      isStaff: ["admin", "mentor", "assistant"].includes(profile.role),
-      isAdmin: profile.role === "admin",
-      isMentor: profile.role === "mentor",
-      canAccessAdmin: ["admin", "mentor"].includes(profile.role),
-      isActive: profile.status === "active",
+      isStaff: isStaffRole(profile.role),
+      isAdmin: isAdmin(profile.role),
+      isMentor: isMentor(profile.role),
+      canAccessAdmin: hasAdminAccess(profile.role),
+      isActive: profile.status === USER_STATUS.ACTIVE,
     }),
 
   logout: () =>
@@ -114,11 +111,11 @@ export const useUserStore = create<UserState>()((set, get) => ({
       profile: newProfile,
       role: newProfile.role,
       status: newProfile.status,
-      isStaff: ["admin", "mentor", "assistant"].includes(newProfile.role),
-      isAdmin: newProfile.role === "admin",
-      isMentor: newProfile.role === "mentor",
-      canAccessAdmin: ["admin", "mentor"].includes(newProfile.role),
-      isActive: newProfile.status === "active",
+      isStaff: isStaffRole(newProfile.role),
+      isAdmin: isAdmin(newProfile.role),
+      isMentor: isMentor(newProfile.role),
+      canAccessAdmin: hasAdminAccess(newProfile.role),
+      isActive: newProfile.status === USER_STATUS.ACTIVE,
     });
   },
 }));

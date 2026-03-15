@@ -3,16 +3,43 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ROUTES } from "@/lib/constants";
+import { useUserStore } from "@/stores/useUserStore";
+import { createClient } from "@/lib/supabase/client";
+import { signOut } from "@/domains/user/service";
 
 export function Nav() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const isHome = pathname === "/";
+
+  // 인증 상태
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  const isLoading = useUserStore((state) => state.isLoading);
+  const logout = useUserStore((state) => state.logout);
 
   // 홈이 아닌 페이지에서는 앵커 링크 앞에 / 추가
   const getAnchorHref = (anchor: string) => (isHome ? anchor : `/${anchor}`);
+
+  // 로그아웃 핸들러
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+
+    try {
+      const supabase = createClient();
+      await signOut(supabase);
+      logout();
+      router.push(ROUTES.HOME);
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,14 +105,30 @@ export function Nav() {
         >
           FAQ
         </Link>
-        <Link
-          href={ROUTES.LOGIN}
-          className={`hidden md:block text-[12px] transition-colors duration-150 ${
-            isScrolled ? "text-ink/30" : "text-white/30"
-          }`}
-        >
-          로그인
-        </Link>
+        {/* 로그인/로그아웃 버튼 */}
+        {!isLoading && (
+          isAuthenticated ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className={`hidden md:block text-[12px] transition-colors duration-150 ${
+                isScrolled ? "text-ink/30 hover:text-ink/60" : "text-white/30 hover:text-white/60"
+              } disabled:opacity-50`}
+            >
+              {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
+            </button>
+          ) : (
+            <Link
+              href={ROUTES.LOGIN}
+              className={`hidden md:block text-[12px] transition-colors duration-150 ${
+                isScrolled ? "text-ink/30" : "text-white/30"
+              }`}
+            >
+              로그인
+            </Link>
+          )
+        )}
         <Link
           href={ROUTES.CONSULT}
           className={`text-[12.5px] font-bold tracking-[0.04em] px-5 py-2.5 border-[1.5px] transition-all duration-200 ${
