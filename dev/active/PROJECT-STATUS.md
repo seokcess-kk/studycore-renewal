@@ -109,6 +109,12 @@ src/domains/
   - 감사 로그 기본 구조 (`src/lib/audit.ts`)
   - register 페이지 DDD 패턴 적용
 
+- **세션 및 네비게이션 개선**
+  - 클라이언트-서버 세션 쿠키 동기화 문제 수정 (storageKey 제거)
+  - 로그인 상태에 따른 Nav 메뉴 분기 (재원생 메뉴 / 홈페이지 메뉴)
+  - 로그인 후 리다이렉트 기본값 홈 화면으로 변경
+  - 코드 리뷰 개선: console → logger, computeRoleState 헬퍼 추출
+
 ### 2026-03-15
 - **질문방 공개/비공개 기능 (Phase 8 Stage 5)**
   - DB: `questions.is_public` 컬럼 추가
@@ -135,7 +141,7 @@ src/domains/
 ## 다음 단계
 
 ### 즉시 가능
-1. 기존 Staff 계정 비밀번호 마이그레이션 (`SELECT set_staff_password(...)`)
+1. ~~기존 Staff 계정 비밀번호 마이그레이션~~ ✅ 완료 (admin, mentor, assistant)
 2. 기능 테스트 (인증, 관리자 답변, 온보딩 CRUD, 질문방 공개/비공개)
 3. Vercel 배포
 
