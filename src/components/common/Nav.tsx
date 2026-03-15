@@ -8,6 +8,7 @@ import { ROUTES } from "@/lib/constants";
 import { useUserStore } from "@/stores/useUserStore";
 import { createClient } from "@/lib/supabase/client";
 import { signOut } from "@/domains/user/service";
+import { logger } from "@/lib/logger";
 
 export function Nav() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -47,7 +48,7 @@ export function Nav() {
       logout();
       router.push(ROUTES.HOME);
     } catch (error) {
-      console.error("Logout error:", error);
+      logger.exception(error, "Nav.handleLogout");
     } finally {
       setIsLoggingOut(false);
     }

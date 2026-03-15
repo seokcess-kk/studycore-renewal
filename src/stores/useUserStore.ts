@@ -9,6 +9,19 @@ import { create } from "zustand";
 import type { Profile, UserRoleType, UserStatusType } from "@/domains/user/model";
 import { isStaffRole, hasAdminAccess, isAdmin, isMentor, USER_STATUS } from "@/lib/constants";
 
+// 프로필에서 역할 관련 상태 계산
+function computeRoleState(profile: Profile | null) {
+  return {
+    role: profile?.role ?? null,
+    status: profile?.status ?? null,
+    isStaff: isStaffRole(profile?.role),
+    isAdmin: isAdmin(profile?.role),
+    isMentor: isMentor(profile?.role),
+    canAccessAdmin: hasAdminAccess(profile?.role),
+    isActive: profile?.status === USER_STATUS.ACTIVE,
+  };
+}
+
 interface UserState {
   // 상태
   isLoading: boolean;
@@ -63,13 +76,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
   setProfile: (profile) =>
     set({
       profile,
-      role: profile?.role ?? null,
-      status: profile?.status ?? null,
-      isStaff: isStaffRole(profile?.role),
-      isAdmin: isAdmin(profile?.role),
-      isMentor: isMentor(profile?.role),
-      canAccessAdmin: hasAdminAccess(profile?.role),
-      isActive: profile?.status === USER_STATUS.ACTIVE,
+      ...computeRoleState(profile),
     }),
 
   login: (user, profile) =>
@@ -78,13 +85,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
       isAuthenticated: true,
       user,
       profile,
-      role: profile.role,
-      status: profile.status,
-      isStaff: isStaffRole(profile.role),
-      isAdmin: isAdmin(profile.role),
-      isMentor: isMentor(profile.role),
-      canAccessAdmin: hasAdminAccess(profile.role),
-      isActive: profile.status === USER_STATUS.ACTIVE,
+      ...computeRoleState(profile),
     }),
 
   logout: () =>
@@ -109,13 +110,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
     const newProfile = { ...currentProfile, ...updates };
     set({
       profile: newProfile,
-      role: newProfile.role,
-      status: newProfile.status,
-      isStaff: isStaffRole(newProfile.role),
-      isAdmin: isAdmin(newProfile.role),
-      isMentor: isMentor(newProfile.role),
-      canAccessAdmin: hasAdminAccess(newProfile.role),
-      isActive: newProfile.status === USER_STATUS.ACTIVE,
+      ...computeRoleState(newProfile),
     });
   },
 }));
