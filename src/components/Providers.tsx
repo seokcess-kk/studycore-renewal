@@ -34,22 +34,14 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const supabase = createClient();
     let mounted = true;
-    let initialized = false;
 
-    // 타임아웃: 3초 후 강제로 ready 상태로 전환
-    const timeout = setTimeout(() => {
-      if (mounted && !initialized) {
-        console.warn("Auth init timeout - forcing ready state");
-        setLoading(false);
-        setIsReady(true);
-        initialized = true;
-      }
-    }, 3000);
-
-    const handleSession = async (session: { user: User } | null) => {
-      if (!mounted || initialized) return;
-
+    const initialize = async () => {
       try {
+        // 현재 세션 직접 확인 (싱글톤이므로 lock 문제 없음)
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!mounted) return;
+
         if (session?.user) {
           setUser({
             id: session.user.id,
@@ -61,28 +53,28 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
           setProfile(null);
         }
       } catch (error) {
-        console.error("Session handling error:", error);
-        setUser(null);
-        setProfile(null);
+        console.error("Auth init error:", error);
+        if (mounted) {
+          setUser(null);
+          setProfile(null);
+        }
       } finally {
-        if (mounted && !initialized) {
-          clearTimeout(timeout);
+        if (mounted) {
           setLoading(false);
           setIsReady(true);
-          initialized = true;
         }
       }
     };
 
-    // 인증 상태 변경 리스너 (INITIAL_SESSION 포함)
+    // 초기화 실행
+    initialize();
+
+    // 인증 상태 변경 리스너 (로그인/로그아웃 감지)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return;
 
-        if (event === "INITIAL_SESSION") {
-          // 초기 세션 처리 - getSession() 대신 이 이벤트 사용
-          await handleSession(session);
-        } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
           if (session?.user) {
             setUser({
               id: session.user.id,
@@ -99,7 +91,6 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
     return () => {
       mounted = false;
-      clearTimeout(timeout);
       subscription.unsubscribe();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
