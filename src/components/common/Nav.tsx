@@ -18,7 +18,6 @@ export function Nav() {
 
   // 인증 상태
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
-  const isLoading = useUserStore((state) => state.isLoading);
   const logout = useUserStore((state) => state.logout);
 
   // 홈이 아닌 페이지에서는 앵커 링크 앞에 / 추가
@@ -106,28 +105,26 @@ export function Nav() {
           FAQ
         </Link>
         {/* 로그인/로그아웃 버튼 */}
-        {!isLoading && (
-          isAuthenticated ? (
-            <button
-              type="button"
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className={`hidden md:block text-[12px] transition-colors duration-150 ${
-                isScrolled ? "text-ink/30 hover:text-ink/60" : "text-white/30 hover:text-white/60"
-              } disabled:opacity-50`}
-            >
-              {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
-            </button>
-          ) : (
-            <Link
-              href={ROUTES.LOGIN}
-              className={`hidden md:block text-[12px] transition-colors duration-150 ${
-                isScrolled ? "text-ink/30" : "text-white/30"
-              }`}
-            >
-              로그인
-            </Link>
-          )
+        {isAuthenticated ? (
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className={`hidden md:block text-[12px] transition-colors duration-150 ${
+              isScrolled ? "text-ink/30 hover:text-ink/60" : "text-white/30 hover:text-white/60"
+            } disabled:opacity-50`}
+          >
+            {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
+          </button>
+        ) : (
+          <Link
+            href={ROUTES.LOGIN}
+            className={`hidden md:block text-[12px] transition-colors duration-150 ${
+              isScrolled ? "text-ink/30" : "text-white/30"
+            }`}
+          >
+            로그인
+          </Link>
         )}
         <Link
           href={ROUTES.CONSULT}
