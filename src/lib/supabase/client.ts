@@ -35,15 +35,8 @@ export function createClient(): SupabaseClient {
   }
 
   // 새 클라이언트 생성
-  const client = createSupabaseBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: {
-      storageKey: "studycore-auth",
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      flowType: "pkce",
-    },
-  });
+  // ⚠️ storageKey를 설정하지 않아야 서버/미들웨어와 쿠키가 동기화됨
+  const client = createSupabaseBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // globalThis에 저장하여 싱글톤 보장
   globalThis[GLOBAL_KEY] = client;
