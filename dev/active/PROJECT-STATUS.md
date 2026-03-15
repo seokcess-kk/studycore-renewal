@@ -1,6 +1,6 @@
 # STUDYCORE 프로젝트 상태 요약
 
-**최종 업데이트: 2026-03-15**
+**최종 업데이트: 2026-03-16**
 
 ---
 
@@ -17,6 +17,7 @@
 | 7 | External | ✅ 코드 완료 | 카카오맵 (API 키 대기) |
 | 8 | Features | ✅ 완료 | 도시락 재원생 페이지 (출석 취소) |
 | 9 | Completion | ✅ 완료 | 관리자 답변, 온보딩 CRUD |
+| - | Auth-Fix | ✅ 완료 | 인증 시스템 보안 강화 |
 
 ---
 
@@ -25,6 +26,9 @@
 ### SQL 마이그레이션 (Supabase)
 - [x] `015_add_guide_sections.sql` 실행 ✅
 - [x] `017_add_question_visibility.sql` 실행 ✅
+- [x] `018_add_staff_credentials.sql` 실행 ✅ (Staff bcrypt 인증)
+- [x] `019_add_login_attempts.sql` 실행 ✅ (계정 잠금)
+- [x] `020_add_audit_logs.sql` 실행 ✅ (감사 로그)
 
 ### 환경변수 설정
 - [ ] `NEXT_PUBLIC_KAKAO_MAP_API_KEY` (카카오맵)
@@ -92,6 +96,19 @@ src/domains/
 
 ## 최근 변경사항
 
+### 2026-03-16
+- **인증 시스템 보안 강화 (Phase Auth-Fix)**
+  - Staff 로그인 bcrypt RPC 기반 보안 강화
+  - Race condition 방지 (AbortController)
+  - 로그아웃 기능 구현 (Nav.tsx)
+  - 상태별 안내 페이지 (`/pending-approval`, `/account-inactive`)
+  - 역할 상수 통합 및 헬퍼 함수 (`isStaffRole`, `hasAdminAccess` 등)
+  - 구조화된 로깅 시스템 (`src/lib/logger.ts`)
+  - 계정 잠금 (5회 실패 시 15분)
+  - 세션 만료 경고 (10분 전 알림, `SessionWarning.tsx`)
+  - 감사 로그 기본 구조 (`src/lib/audit.ts`)
+  - register 페이지 DDD 패턴 적용
+
 ### 2026-03-15
 - **질문방 공개/비공개 기능 (Phase 8 Stage 5)**
   - DB: `questions.is_public` 컬럼 추가
@@ -118,8 +135,8 @@ src/domains/
 ## 다음 단계
 
 ### 즉시 가능
-1. SQL 마이그레이션 실행 (015, 017)
-2. 기능 테스트 (관리자 답변, 온보딩 CRUD, 질문방 공개/비공개)
+1. 기존 Staff 계정 비밀번호 마이그레이션 (`SELECT set_staff_password(...)`)
+2. 기능 테스트 (인증, 관리자 답변, 온보딩 CRUD, 질문방 공개/비공개)
 3. Vercel 배포
 
 ### 외부 의존성 대기
