@@ -34,24 +34,51 @@ export async function getProfileById(
 
 /**
  * 사용자 프로필 조회 (username)
- * SECURITY DEFINER 함수를 사용하여 RLS 우회 (로그인 전 조회용)
+ * RPC 함수가 없으면 직접 쿼리로 fallback
  */
 export async function getProfileByUsername(
   supabase: SupabaseClient,
   username: string
 ): Promise<Profile | null> {
-  const { data, error } = await supabase
+  // 먼저 RPC 함수 시도
+  const { data: rpcData, error: rpcError } = await supabase
     .rpc("get_profile_by_username", { p_username: username })
     .single();
 
-  if (error) {
-    if (error.code === "PGRST116") {
-      return null;
-    }
-    throw new Error(`프로필 조회 실패: ${error.message}`);
+  // RPC 함수가 존재하고 성공한 경우
+  if (!rpcError) {
+    return rpcData as Profile;
   }
 
-  return data as Profile;
+  // RPC 함수가 없거나 에러인 경우 직접 쿼리 (fallback)
+  // 42883: function does not exist
+  if (rpcError.code === "42883" || rpcError.message.includes("does not exist")) {
+    console.warn("RPC 함수 없음, 직접 쿼리 사용:", rpcError.message);
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("username", username)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      console.error("프로필 조회 실패:", error);
+      return null;
+    }
+
+    return data as Profile;
+  }
+
+  // 결과 없음
+  if (rpcError.code === "PGRST116") {
+    return null;
+  }
+
+  console.error("프로필 조회 실패:", rpcError);
+  return null;
 }
 
 /**

@@ -78,9 +78,11 @@ export default function LoginPage() {
         success("로그인되었습니다.");
         router.push(ROUTES.ADMIN);
       } else {
+        console.error("Staff login failed:", result.error);
         showError(result.error || "로그인에 실패했습니다.");
       }
-    } catch {
+    } catch (err) {
+      console.error("Staff login error:", err);
       showError("로그인 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
