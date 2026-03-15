@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,10 +12,12 @@ import { staffLoginSchema, type StaffLoginInput } from "@/domains/user/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES, CONTACT } from "@/lib/constants";
 
-export default function LoginPage() {
+function LoginContent() {
   const [loginType, setLoginType] = useState<"kakao" | "staff">("kakao");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || ROUTES.ADMIN;
   const { success, error: showError } = useToast();
   const login = useUserStore((state) => state.login);
   const isAuthLoading = useUserStore((state) => state.isLoading);
@@ -28,13 +30,12 @@ export default function LoginPage() {
     if (isAuthLoading) return;
 
     if (isAuthenticated && profile) {
-      if (["admin", "mentor"].includes(profile.role)) {
-        router.replace(ROUTES.ADMIN);
-      } else {
-        router.replace(ROUTES.HOME);
-      }
+      const destination = ["admin", "mentor"].includes(profile.role)
+        ? redirectTo
+        : ROUTES.HOME;
+      router.replace(destination);
     }
-  }, [isAuthLoading, isAuthenticated, profile, router]);
+  }, [isAuthLoading, isAuthenticated, profile, router, redirectTo]);
 
   const {
     register,
@@ -49,10 +50,14 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const supabase = createClient();
+      // redirect 파라미터를 callback에 전달
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
+      callbackUrl.searchParams.set("next", redirectTo);
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "kakao",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: callbackUrl.toString(),
         },
       });
 
@@ -76,7 +81,8 @@ export default function LoginPage() {
       if (result.success && result.user && result.profile) {
         login(result.user, result.profile);
         success("로그인되었습니다.");
-        router.push(ROUTES.ADMIN);
+        // redirect 파라미터 사용
+        router.push(redirectTo);
       } else {
         console.error("Staff login failed:", result.error);
         showError(result.error || "로그인에 실패했습니다.");
@@ -245,5 +251,24 @@ export default function LoginPage() {
       </main>
       <Footer />
     </>
+  );
+}
+
+function LoginLoading() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-stone">
+      <div className="text-center">
+        <div className="inline-block h-8 w-8 animate-spin border-4 border-solid border-teal border-r-transparent" />
+        <p className="mt-4 text-muted">로딩 중...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginLoading />}>
+      <LoginContent />
+    </Suspense>
   );
 }
