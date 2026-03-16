@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/common/Button";
-import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
 
 const CreateStaffSchema = z.object({
@@ -22,18 +21,8 @@ const CreateStaffSchema = z.object({
 
 type CreateStaffInput = z.infer<typeof CreateStaffSchema>;
 
-function generatePassword(): string {
-  const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let password = "";
-  for (let i = 0; i < 12; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return password;
-}
-
 export default function AdminMemberNewPage() {
   const router = useRouter();
-  const supabase = createBrowserClient();
   const { toast } = useToast();
 
   const [createdAccount, setCreatedAccount] = useState<{
@@ -58,42 +47,31 @@ export default function AdminMemberNewPage() {
 
   const onSubmit = async (data: CreateStaffInput) => {
     try {
-      const password = generatePassword();
-      // email은 실제 API 구현 시 사용 예정
-      const _email = `${data.username}@studycore.internal`;
-      void _email;
+      const res = await fetch("/api/admin/create-staff", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-      // Supabase Auth 사용자 생성 (admin API 필요)
-      // 클라이언트에서는 직접 생성 불가능하므로 API 라우트 필요
-      // 여기서는 profiles만 생성하고 실제 Auth 생성은 별도 처리
+      const result = await res.json();
 
-      // 먼저 username 중복 체크
-      const { data: existing } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("username", data.username)
-        .single();
-
-      if (existing) {
+      if (!res.ok) {
         toast({
           variant: "error",
           title: "오류",
-          description: "이미 사용 중인 아이디입니다.",
+          description: result.error || "계정 생성에 실패했습니다.",
         });
         return;
       }
 
-      // TODO: 실제 구현시 /api/admin/create-staff 엔드포인트 호출 필요
-      // 여기서는 데모용으로 생성된 계정 정보만 표시
-
       setCreatedAccount({
-        username: data.username,
-        password: password,
+        username: result.username,
+        password: result.password,
       });
 
       toast({
         variant: "success",
-        title: "계정 생성 준비 완료",
+        title: "계정 생성 완료",
         description: "아래 정보를 해당 직원에게 전달해주세요.",
       });
     } catch (error) {
