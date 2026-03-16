@@ -1,4 +1,6 @@
-# CLAUDE.md — STUDYCORE 1.0
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 서비스 목적
 관리형 독서실 홈페이지 (studycore-web).
@@ -6,8 +8,16 @@
 재원생 전용 서비스 (공지, 질문방, 도시락 신청) +
 어드민 패널.
 
+## 빌드 명령어
+```bash
+npm run dev            # 개발 서버 (localhost:3000, webpack 모드)
+npm run build          # 프로덕션 빌드
+npm run lint           # ESLint
+npx tsc --noEmit       # TypeScript 타입 체크
+```
+
 ## 기술 스택
-- Next.js 14.x (App Router, TypeScript strict mode)
+- Next.js (App Router, TypeScript strict mode)
 - Tailwind CSS + shadcn/ui (border-radius:0 전체 적용 — shadcn 기본값 override)
 - Supabase (PostgreSQL + Auth + Storage + Edge Functions)
 - Zustand — 전역 상태 (유저 세션, 역할, 메뉴 노출 여부)
@@ -16,70 +26,69 @@
 - Framer Motion — 애니메이션
 - 배포: Vercel
 
-## 디렉토리 구조
+## 아키텍처 개요
+
+### 라우트 그룹 (3계층)
+- `src/app/(public)/` — 공개 페이지 (홈, 블로그, 상담 신청, 소개, 후기 등)
+- `src/app/(member)/` + `src/app/my/` — 로그인 필요 (공지, 질문방, 도시락, 마이페이지)
+- `src/app/admin/` — 어드민 (admin/mentor 권한 필요)
+
+### DDD 3파일 패턴
+모든 도메인은 `src/domains/[도메인]/` 하위에 3개 파일로 구성:
 ```
-src/
-├── app/
-│   ├── (public)/             ← 공개 페이지 (SSG/ISR)
-│   │   ├── page.tsx          ← / 홈
-│   │   ├── system/page.tsx
-│   │   ├── blog/page.tsx
-│   │   ├── blog/[slug]/page.tsx
-│   │   ├── consult/page.tsx
-│   │   ├── about/page.tsx
-│   │   ├── reviews/page.tsx
-│   │   ├── terms/page.tsx
-│   │   └── privacy/page.tsx
-│   ├── (member)/             ← 로그인 필요 (CSR)
-│   │   ├── login/page.tsx
-│   │   ├── guide/page.tsx
-│   │   ├── notices/page.tsx
-│   │   ├── notices/[id]/page.tsx
-│   │   ├── questions/page.tsx
-│   │   └── my/page.tsx
-│   └── admin/                ← 어드민 (CSR, role=admin 전용)
-│       ├── page.tsx
-│       ├── members/page.tsx
-│       ├── members/[id]/page.tsx
-│       ├── members/[id]/consult/page.tsx
-│       ├── notices/page.tsx
-│       ├── questions/page.tsx
-│       ├── blog/page.tsx
-│       ├── lunch/page.tsx
-│       ├── kakao/page.tsx
-│       ├── guide/page.tsx
-│       └── settings/page.tsx
-├── components/
-│   ├── ui/                   ← shadcn/ui 기본 컴포넌트 (직접 수정 금지)
-│   ├── common/               ← 공통 컴포넌트 (Nav, Footer, Button 등)
-│   ├── home/                 ← 홈 섹션 컴포넌트
-│   ├── notices/
-│   ├── questions/
-│   ├── my/
-│   └── admin/
-├── domains/                  ← DDD 도메인 레이어
-│   ├── user/
-│   │   ├── model.ts          ← 타입, Zod 스키마
-│   │   ├── repository.ts     ← Supabase DB 접근
-│   │   └── service.ts        ← 비즈니스 로직
-│   ├── notice/
-│   ├── question/
-│   ├── consultation/
-│   ├── counseling/
-│   ├── blog/
-│   └── lunch/
-├── lib/
-│   ├── supabase/
-│   │   ├── client.ts         ← 브라우저: createBrowserClient()
-│   │   ├── server.ts         ← 서버: createServerClient()
-│   │   └── middleware.ts     ← Auth 미들웨어 헬퍼
-│   ├── utils.ts
-│   └── constants.ts
-├── stores/
-│   └── useUserStore.ts       ← Zustand: 유저 세션, 역할, 상태
-├── hooks/
-└── types/
-    └── database.ts           ← Supabase 자동 생성 타입
+model.ts      → 타입, Zod 스키마
+repository.ts → Supabase 쿼리 (DB 접근 유일 경로)
+service.ts    → 비즈니스 로직
+```
+도메인: user, notice, question, consultation, counseling, blog, meal, review, guide, notification, settings
+
+**도메인 간 호출 규칙**: service→service만 허용. repository→repository 직접 호출 금지.
+
+### 인증 모델
+- **재원생**: 카카오 OAuth (Supabase Auth) → `/auth/callback` → `/register`(추가 정보)
+- **스태프(admin/mentor/assistant)**: 아이디 + 비밀번호
+  - Supabase Auth는 이메일 기반 → username 조회 → 더미 이메일(`username@studycore.internal`) → signInWithPassword
+  - 비밀번호 검증: `verify_staff_password` RPC (bcrypt, SECURITY DEFINER)
+  - 계정 잠금: 5회 실패 시 15분 (`login_attempts` 테이블)
+
+### 권한 모델
+| 역할 | 접근 범위 | 코드 체크 |
+|------|----------|----------|
+| student | 공개 + 재원생 페이지 | `isStudent()` |
+| assistant | 공개 + 재원생 + `/admin/guide` | `isStaffRole()` |
+| mentor | 공개 + 재원생 + `/admin/*` | `hasAdminAccess()` |
+| admin | 전체 | `hasAdminAccess()` |
+
+계정 상태 (재원생만): pending → active → inactive
+- middleware.ts에서 PROTECTED_ROUTES 접근 시 상태 체크
+- pending/inactive → 안내 페이지로 리다이렉트
+
+### 로그아웃 패턴 (3곳 통일)
+```ts
+const supabase = createClient();
+await signOut(supabase);   // domains/user/service — Supabase 세션/쿠키 정리
+logout();                  // Zustand store 완전 초기화
+window.location.href = "/"; // 전체 리로드 (router.push 사용 금지 — 캐시 문제)
+```
+
+### Supabase 클라이언트 사용 규칙
+- Server Component / Route Handler → `createServerClient()` (`src/lib/supabase/server.ts`)
+- Client Component → `createBrowserClient()` (`src/lib/supabase/client.ts`)
+- `createClient`와 `createBrowserClient`는 같은 함수 (별칭)
+
+### 상태 관리
+- `src/stores/useUserStore.ts` — Zustand (persist 없음, Supabase 세션이 SSoT)
+  - 계산된 상태: `isStaff`, `isAdmin`, `isMentor`, `canAccessAdmin`, `isActive`
+- `src/components/Providers.tsx` — `AuthInitializer`가 앱 시작 시 세션 초기화
+  - `onAuthStateChange` 리스너로 SIGNED_IN/SIGNED_OUT/TOKEN_REFRESHED 처리
+
+### 알림 흐름
+알림은 반드시 Supabase Edge Function 경유 (Next.js Route에서 직접 호출 금지):
+```
+상담 신청 → notify-consult → 관리자: 알림톡 / 신청자: SMS
+재원생 질문 → notify-question → 멘토: 알림톡
+멘토 답변 → notify-answer → 재원생: 알림톡 (active만)
+공지 발행 → send-kakao-alimtalk → 재원생/학부모
 ```
 
 ## 브랜드 컬러 토큰
@@ -99,29 +108,8 @@ src/
 - 본문: Noto Sans KR
 - 번호·레이블: IBM Plex Mono
 
-## 인증 모델
-- 재원생: 카카오 OAuth (Supabase Auth)
-- 조교·멘토·관리자: 아이디 + 비밀번호
-  ⚠️ Supabase Auth는 이메일 기반 — 아이디 로그인 우회:
-  users.username(TEXT UNIQUE) 조회 → 더미 이메일(username@studycore.internal) → signInWithPassword
-
-## 계정 상태 (재원생만)
-- pending  → 승인 대기, 모든 기능 잠금
-- active   → 전체 기능, 알림 ON
-- inactive → 기능 잠금, 알림 OFF
-  상태 변경 시 user_registrations에 이력 자동 기록
-
-## 빌드 명령어
-```bash
-npm run dev          # 개발 (localhost:3000)
-npm run build        # 프로덕션 빌드
-npm run lint         # ESLint
-npm run type-check   # tsc --noEmit (package.json에 추가 필요)
-```
-
 ## Phase 진행 규칙
 새로운 Phase 시작 시 반드시 `/dev/active/phase{N}-{name}/` 폴더에 3개 파일 생성:
-
 ```
 dev/active/phase{N}-{name}/
 ├── phase{N}-{name}-context.md   ← 결정 이력, 참고 자료, 제약 사항
@@ -129,20 +117,9 @@ dev/active/phase{N}-{name}/
 └── phase{N}-{name}-tasks.md     ← 작업 목록, 체크리스트, 완료 기록
 ```
 
-### 파일별 역할
-| 파일 | 내용 |
-|------|------|
-| context.md | 왜 이렇게 결정했는지, 대안 검토, 알려진 제약 |
-| plan.md | 무엇을 어떻게 구현할지, 아키텍처, 플로우 |
-| tasks.md | 작업 체크리스트, 진행 상태, 완료 기록 |
-
-### Phase 완료 시
-- tasks.md에 완료 날짜와 빌드 결과 기록
-- `/dev/done/`으로 폴더 이동 (선택)
-
 ## 절대 위반 금지
-1. 모든 요소 border-radius: 0 — globals.css에서 override
-2. box-shadow 절대 금지
+1. 모든 요소 border-radius: 0 — globals.css에서 override. `rounded-*` 클래스 사용 금지.
+2. box-shadow 절대 금지. `shadow-*` 클래스 사용 금지.
 3. 모든 폼 react-hook-form + zod 필수
 4. Server Component/Route Handler → createServerClient()
 5. Client Component → createBrowserClient()
@@ -150,23 +127,7 @@ dev/active/phase{N}-{name}/
 7. 알림 발송 → Supabase Edge Function에서만
 8. 권한 검사 → middleware.ts에서 수행
 9. DB 쿼리 → src/domains/[도메인]/repository.ts 경유
-
-## DDD 3파일 패턴
-```
-model.ts → 타입, Zod 스키마
-repository.ts → Supabase 쿼리
-service.ts → 비즈니스 로직
-```
-도메인 간 호출: service→service만. repository→repository 직접 호출 금지.
-
-## 알림 흐름
-```
-상담 신청 → notify-consult Edge Function
-  └→ 관리자: 알림톡 / 신청자: SMS
-재원생 질문 → notify-question → 멘토: 알림톡
-멘토 답변 → notify-answer → 재원생: 알림톡 (active만)
-공지 발행(선택) → send-kakao-alimtalk → 재원생/학부모
-```
+10. 로그아웃 시 `router.push()` 사용 금지 → `window.location.href` 사용 (전체 리로드 필수)
 
 ## 자주 하는 실수 방지
 | 실수 | 올바른 방법 |
@@ -180,3 +141,5 @@ service.ts → 비즈니스 로직
 | `NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY` 생성 | 절대 금지 — 서버 전용 |
 | username으로 Supabase signIn 직접 호출 | username → 이메일 조회 → signInWithPassword |
 | shadcn 기본 rounded 그대로 사용 | globals.css `* { border-radius: 0 !important }` 필수 |
+| 로그아웃에서 `router.push()` 사용 | `window.location.href = "/"` 사용 (미들웨어 재실행 필요) |
+| SIGNED_OUT에서 setUser(null)+setProfile(null) 개별 호출 | `logout()` 한 번 호출 (파생 상태 완전 초기화) |

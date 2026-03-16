@@ -8,7 +8,6 @@ import { ROUTES } from "@/lib/constants";
 import { useUserStore } from "@/stores/useUserStore";
 import { createClient } from "@/lib/supabase/client";
 import { signOut } from "@/domains/user/service";
-import { logger } from "@/lib/logger";
 
 export function Nav() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -38,19 +37,14 @@ export function Nav() {
     }`;
 
   // 로그아웃 핸들러
-  const handleLogout = async () => {
+  const handleLogout = () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
 
-    try {
-      const supabase = createClient();
-      await signOut(supabase);
-      logout();
-      window.location.href = "/";
-    } catch (error) {
-      logger.exception(error, "Nav.handleLogout");
-      setIsLoggingOut(false);
-    }
+    const supabase = createClient();
+    signOut(supabase);  // fire-and-forget (쿠키 즉시 삭제 + 서버 요청은 비동기)
+    logout();
+    window.location.href = "/";
   };
 
   useEffect(() => {

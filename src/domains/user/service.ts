@@ -306,25 +306,34 @@ export async function getCurrentProfile(
 
 /**
  * 로그아웃
+ *
+ * 쿠키를 먼저 삭제하고 signOut은 fire-and-forget으로 처리.
+ * signOut 네트워크 요청이 실패/지연되어도 로그아웃이 즉시 동작합니다.
  */
-export async function signOut(
-  supabase: SupabaseClient
-): Promise<{ success: boolean; error?: string }> {
-  try {
-    const { error } = await supabase.auth.signOut();
+export function signOut(supabase: SupabaseClient): void {
+  // 1. 쿠키 즉시 삭제 (리로드 시 미들웨어가 세션을 못 찾게)
+  clearSupabaseCookies();
 
-    if (error) {
-      return { success: false, error: error.message };
+  // 2. Supabase 서버에 세션 무효화 요청 (fire-and-forget, 대기하지 않음)
+  supabase.auth.signOut().catch((error) => {
+    logger.warn("signOut 서버 요청 실패 (쿠키는 이미 삭제됨)", {
+      context: "signOut",
+      data: error,
+    });
+  });
+}
+
+/** Supabase 인증 쿠키 수동 삭제 */
+function clearSupabaseCookies() {
+  if (typeof document === "undefined") return;
+
+  document.cookie.split(";").forEach((cookie) => {
+    const name = cookie.split("=")[0].trim();
+    if (name.startsWith("sb-") && name.includes("auth-token")) {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
     }
-
-    return { success: true };
-  } catch (error) {
-    logger.exception(error, "signOut");
-    return {
-      success: false,
-      error: "로그아웃 중 오류가 발생했습니다.",
-    };
-  }
+  });
 }
 
 /**

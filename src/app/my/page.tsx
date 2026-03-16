@@ -56,23 +56,12 @@ export default function MyPage() {
     }
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setIsLoggingOut(true);
-    try {
-      const supabase = createClient();
-      const result = await signOut(supabase);
-
-      if (result.success) {
-        logoutStore();
-        window.location.href = "/";
-      } else {
-        showError(result.error || "로그아웃에 실패했습니다.");
-        setIsLoggingOut(false);
-      }
-    } catch {
-      showError("로그아웃 중 오류가 발생했습니다.");
-      setIsLoggingOut(false);
-    }
+    const supabase = createClient();
+    signOut(supabase);
+    logoutStore();
+    window.location.href = "/";
   };
 
   const statusLabel = {

@@ -17,7 +17,6 @@ import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { signOut } from "@/domains/user/service";
-import { logger } from "@/lib/logger";
 
 const navItems = [
   {
@@ -62,19 +61,14 @@ export function AdminSidebar() {
   const { profile, logout } = useUserStore();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
 
-    try {
-      const supabase = createBrowserClient();
-      await signOut(supabase);
-      logout();
-      window.location.href = "/";
-    } catch (error) {
-      logger.exception(error, "AdminSidebar.handleLogout");
-      setIsLoggingOut(false);
-    }
+    const supabase = createBrowserClient();
+    signOut(supabase);
+    logout();
+    window.location.href = "/";
   };
 
   const isActive = (href: string) => {

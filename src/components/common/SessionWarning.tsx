@@ -38,7 +38,7 @@ export function SessionWarning() {
 
       if (remaining <= 0) {
         // 세션 만료 — 자동 로그아웃
-        await signOut(supabase);
+        signOut(supabase);
         logout();
         window.location.href = "/login";
         return;
