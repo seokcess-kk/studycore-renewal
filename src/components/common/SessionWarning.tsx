@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/stores/useUserStore";
+import { signOut } from "@/domains/user/service";
 import { Button } from "./Button";
 import { SESSION } from "@/lib/constants";
 import { logger } from "@/lib/logger";
@@ -13,6 +14,7 @@ export function SessionWarning() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  const logout = useUserStore((state) => state.logout);
 
   // 세션 만료 시간 확인
   const checkSession = useCallback(async () => {
@@ -34,7 +36,15 @@ export function SessionWarning() {
       const now = Date.now();
       const remaining = expiresAt - now;
 
-      if (remaining <= SESSION.WARNING_BEFORE_EXPIRY && remaining > 0) {
+      if (remaining <= 0) {
+        // 세션 만료 — 자동 로그아웃
+        await signOut(supabase);
+        logout();
+        window.location.href = "/login";
+        return;
+      }
+
+      if (remaining <= SESSION.WARNING_BEFORE_EXPIRY) {
         setShowWarning(true);
         setTimeLeft(Math.floor(remaining / 1000 / 60)); // 분 단위
       } else {
@@ -44,7 +54,7 @@ export function SessionWarning() {
     } catch (error) {
       logger.debug("세션 체크 실패", { context: "SessionWarning.checkSession", data: error });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, logout]);
 
   // 세션 연장
   const handleExtendSession = async () => {

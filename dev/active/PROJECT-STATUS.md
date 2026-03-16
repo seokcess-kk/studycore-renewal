@@ -18,6 +18,8 @@
 | 8 | Features | ✅ 완료 | 도시락 재원생 페이지 (출석 취소) |
 | 9 | Completion | ✅ 완료 | 관리자 답변, 온보딩 CRUD |
 | - | Auth-Fix | ✅ 완료 | 인증 시스템 보안 강화 |
+| - | UX-Fix | ✅ 완료 | 역할별 메뉴 권한, 로그아웃 수정 |
+| - | Enhancements v2 | 📋 계획 수립 | 8개 기능 개선 (Phase 0~7) |
 
 ---
 
@@ -29,6 +31,8 @@
 - [x] `018_add_staff_credentials.sql` 실행 ✅ (Staff bcrypt 인증)
 - [x] `019_add_login_attempts.sql` 실행 ✅ (계정 잠금)
 - [x] `020_add_audit_logs.sql` 실행 ✅ (감사 로그)
+- [ ] `021_add_change_password_rpc.sql` (Enhancements v2 Phase 3)
+- [ ] `022_add_search_indexes.sql` (Enhancements v2 Phase 6)
 
 ### 환경변수 설정
 - [ ] `NEXT_PUBLIC_KAKAO_MAP_API_KEY` (카카오맵)
@@ -96,6 +100,30 @@ src/domains/
 
 ## 최근 변경사항
 
+### 2026-03-16 (2차)
+- **역할별 메뉴 권한 분기 (UX-Fix)**
+  - Nav: 도시락 메뉴를 재원생 전용으로 변경 (staff 숨김)
+  - middleware: staff의 `/meal` 직접 접근 시 리다이렉트
+  - AdminSidebar: 도시락 관리 메뉴 항목 추가
+
+- **로그아웃 동작 수정 (UX-Fix)**
+  - 3곳(Nav, AdminSidebar, MyPage) 로그아웃 패턴 통일
+  - `router.push()` → `window.location.href` (전체 리로드로 캐시 문제 해결)
+  - AdminSidebar: `signOut()` 서비스 경유 + try-catch + 중복 클릭 방지
+  - SessionWarning: 세션 만료 시 자동 로그아웃 추가
+  - Providers: SIGNED_OUT 이벤트에서 `logout()` 호출로 파생 상태 완전 초기화
+
+- **기능 개선 계획 수립 (Enhancements v2)**
+  - `docs/plans/PLAN_feature-enhancements-v2.md` 생성
+  - Phase 0: 로그아웃 수정 ✅ (구현 완료)
+  - Phase 1: 모바일 햄버거 메뉴
+  - Phase 2: 질문 알림 뱃지 (Nav + Admin Sidebar)
+  - Phase 3: 스태프 비밀번호 변경
+  - Phase 4: 공지 리치텍스트 에디터 (Tiptap)
+  - Phase 5: 블로그 OG 이미지 자동 생성
+  - Phase 6: 공개 페이지 통합 검색
+  - Phase 7: E2E 테스트 (Playwright)
+
 ### 2026-03-16
 - **인증 시스템 보안 강화 (Phase Auth-Fix)**
   - Staff 로그인 bcrypt RPC 기반 보안 강화
@@ -140,8 +168,18 @@ src/domains/
 
 ## 다음 단계
 
+### Enhancements v2 구현 (진행 중)
+- [x] Phase 0: 로그아웃 수정 ✅
+- [ ] Phase 1: 모바일 햄버거 메뉴 (2~3h)
+- [ ] Phase 2: 질문 알림 뱃지 (2h)
+- [ ] Phase 3: 스태프 비밀번호 변경 (3h)
+- [ ] Phase 4: 공지 리치텍스트 에디터 (3~4h)
+- [ ] Phase 5: 블로그 OG 이미지 자동 생성 (2~3h)
+- [ ] Phase 6: 공개 페이지 통합 검색 (3~4h)
+- [ ] Phase 7: E2E 테스트 (4~5h)
+
 ### 즉시 가능
-1. ~~기존 Staff 계정 비밀번호 마이그레이션~~ ✅ 완료 (admin, mentor, assistant)
+1. ~~기존 Staff 계정 비밀번호 마이그레이션~~ ✅ 완료
 2. 기능 테스트 (인증, 관리자 답변, 온보딩 CRUD, 질문방 공개/비공개)
 3. Vercel 배포
 
@@ -149,8 +187,3 @@ src/domains/
 1. 카카오 API 키 발급 → 카카오맵 활성화
 2. Solapi 설정 → SMS/알림톡 활성화
 3. 카카오 채널 등록 → 알림톡 템플릿 등록
-
-### 선택적 개선
-1. PWA 매니페스트 설정
-2. 드래그앤드롭 순서 변경 (온보딩)
-3. 성능 최적화 (이미지 lazy loading 등)

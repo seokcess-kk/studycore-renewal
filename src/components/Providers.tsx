@@ -21,6 +21,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
   const setUser = useUserStore((state) => state.setUser);
   const setProfile = useUserStore((state) => state.setProfile);
   const setLoading = useUserStore((state) => state.setLoading);
+  const logout = useUserStore((state) => state.logout);
   const initialized = useRef(false);
 
   useEffect(() => {
@@ -82,8 +83,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
         }
       } else {
         if (mounted && !abortController.signal.aborted) {
-          setUser(null);
-          setProfile(null);
+          logout();
         }
       }
 

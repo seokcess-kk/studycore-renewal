@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -15,6 +16,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
 import { createBrowserClient } from "@/lib/supabase/client";
+import { signOut } from "@/domains/user/service";
+import { logger } from "@/lib/logger";
 
 const navItems = [
   {
@@ -57,12 +60,21 @@ const navItems = [
 export function AdminSidebar() {
   const pathname = usePathname();
   const { profile, logout } = useUserStore();
-  const supabase = createBrowserClient();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    logout();
-    window.location.href = "/";
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+
+    try {
+      const supabase = createBrowserClient();
+      await signOut(supabase);
+      logout();
+      window.location.href = "/";
+    } catch (error) {
+      logger.exception(error, "AdminSidebar.handleLogout");
+      setIsLoggingOut(false);
+    }
   };
 
   const isActive = (href: string) => {
@@ -119,10 +131,11 @@ export function AdminSidebar() {
           </div>
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-stone hover:text-ink"
+            disabled={isLoggingOut}
+            className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-stone hover:text-ink disabled:opacity-50"
           >
             <LogOut className="h-5 w-5" />
-            로그아웃
+            {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
           </button>
         </div>
       </div>

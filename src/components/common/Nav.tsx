@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { ROUTES } from "@/lib/constants";
 import { useUserStore } from "@/stores/useUserStore";
 import { createClient } from "@/lib/supabase/client";
@@ -14,7 +14,6 @@ export function Nav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
   const isHome = pathname === "/";
 
   // 인증 상태
@@ -47,10 +46,9 @@ export function Nav() {
       const supabase = createClient();
       await signOut(supabase);
       logout();
-      router.push(ROUTES.HOME);
+      window.location.href = "/";
     } catch (error) {
       logger.exception(error, "Nav.handleLogout");
-    } finally {
       setIsLoggingOut(false);
     }
   };

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Nav, Footer, Button, useToast, Skeleton, AvatarUploader } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { signOut, updateAvatar } from "@/domains/user/service";
@@ -39,7 +38,6 @@ import { type QuestionWithAuthor } from "@/domains/question/model";
 export default function MyPage() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [activeTab, setActiveTab] = useState<"profile" | "lunch" | "questions">("profile");
-  const router = useRouter();
   const { success, error: showError } = useToast();
   const { profile, isActive, logout: logoutStore, setProfile } = useUserStore();
 
@@ -66,14 +64,13 @@ export default function MyPage() {
 
       if (result.success) {
         logoutStore();
-        success("로그아웃되었습니다.");
-        router.push(ROUTES.HOME);
+        window.location.href = "/";
       } else {
         showError(result.error || "로그아웃에 실패했습니다.");
+        setIsLoggingOut(false);
       }
     } catch {
       showError("로그아웃 중 오류가 발생했습니다.");
-    } finally {
       setIsLoggingOut(false);
     }
   };
