@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { createClient as createServerClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { hasAdminAccess } from "@/lib/constants";
+
+/** RLS를 우회하는 Service Role 클라이언트 (이 라우트 전용) */
+function getAdminClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
+
+const INITIAL_PASSWORD = "1234";
 
 export async function POST(request: NextRequest) {
   try {
     // 1. 요청자 권한 확인
-    const supabase = await createClient();
+    const supabase = await createServerClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -73,20 +84,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. 임시 비밀번호 생성
-    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#";
-    let password = "";
-    for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-
     const email = `${username}@studycore.internal`;
 
-    // 5. Supabase Auth 사용자 생성 (Service Role 필요)
-    const adminClient = await createAdminClient();
-    const { data: authData, error: authError } = await adminClient.auth.admin.createUser({
+    // 4. Supabase Auth 사용자 생성 (Service Role — RLS 우회)
+    const admin = getAdminClient();
+    const { data: authData, error: authError } = await admin.auth.admin.createUser({
       email,
-      password,
+      password: INITIAL_PASSWORD,
       email_confirm: true,
     });
 
@@ -97,8 +101,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 6. profiles 테이블에 프로필 생성
-    const { error: profileError } = await adminClient
+    // 5. profiles 테이블에 프로필 생성 (Service Role — RLS 우회)
+    const { error: profileError } = await admin
       .from("profiles")
       .insert({
         id: authData.user.id,
@@ -109,30 +113,28 @@ export async function POST(request: NextRequest) {
       });
 
     if (profileError) {
-      // 프로필 생성 실패 시 Auth 사용자도 삭제 (롤백)
-      await adminClient.auth.admin.deleteUser(authData.user.id);
+      await admin.auth.admin.deleteUser(authData.user.id);
       return NextResponse.json(
         { error: `프로필 생성 실패: ${profileError.message}` },
         { status: 500 }
       );
     }
 
-    // 7. staff_credentials에 bcrypt 비밀번호 설정
-    const { error: credError } = await adminClient.rpc("set_staff_password", {
+    // 6. staff_credentials에 bcrypt 비밀번호 설정
+    const { error: credError } = await admin.rpc("set_staff_password", {
       p_user_id: authData.user.id,
       p_username: username,
-      p_password: password,
+      p_password: INITIAL_PASSWORD,
     });
 
     if (credError) {
-      // 치명적이지 않음 — 프로필은 생성됨, 비밀번호는 Auth 기본값 사용 가능
       console.error("staff_credentials 설정 실패:", credError);
     }
 
     return NextResponse.json({
       success: true,
       username,
-      password,
+      password: INITIAL_PASSWORD,
     });
   } catch (error) {
     console.error("스태프 계정 생성 오류:", error);
