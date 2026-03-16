@@ -20,7 +20,7 @@
 | - | Auth-Fix | ✅ 완료 | 인증 시스템 보안 강화 |
 | - | UX-Fix | ✅ 완료 | 역할별 메뉴 권한, 로그아웃 수정 |
 | - | Auth-Security | ✅ 완료 | 리다이렉트 검증, OAuth 분기 통합, 서버 보호 |
-| - | Enhancements v2 | 🔄 진행 중 | 12개 기능 개선 (Phase 0~0.3 완료, 1~7 대기) |
+| - | Enhancements v2 | ✅ 완료 | 12개 기능 개선 (Phase 0~7 전체 완료) |
 
 ---
 
@@ -178,18 +178,23 @@ src/domains/
 
 ## 다음 단계
 
-### Enhancements v2 구현 (진행 중)
+### Enhancements v2 (전체 완료 ✅)
 - [x] Phase 0: 로그아웃 수정 ✅
 - [x] Phase 0.1: 리다이렉트 경로 검증 ✅
 - [x] Phase 0.2: OAuth 분기 통합 + 로그아웃 타임아웃 ✅
 - [x] Phase 0.3: 상태 페이지 서버 보호 ✅
-- [ ] Phase 1: 모바일 햄버거 메뉴 (2~3h)
-- [ ] Phase 2: 질문 알림 뱃지 (2h)
-- [ ] Phase 3: 스태프 비밀번호 변경 (3h)
-- [ ] Phase 4: 공지 리치텍스트 에디터 (3~4h)
-- [ ] Phase 5: 블로그 OG 이미지 자동 생성 (2~3h)
-- [ ] Phase 6: 공개 페이지 통합 검색 (3~4h)
-- [ ] Phase 7: E2E 테스트 (4~5h)
+- [x] Phase 1: 모바일 햄버거 메뉴 ✅
+- [x] Phase 2: 질문 알림 뱃지 (Nav + Admin Sidebar) ✅
+- [x] Phase 3: 스태프 비밀번호 변경 ✅
+- [x] Phase 4: 공지 리치텍스트 에디터 (Tiptap) ✅
+- [x] Phase 5: 블로그 OG 이미지 자동 생성 ✅
+- [x] Phase 6: 공개 페이지 통합 검색 (Cmd+K) ✅
+- [x] Phase 7: E2E 테스트 (Playwright) ✅
+
+### 신규 마이그레이션 (실행 필요)
+- [ ] `021_add_change_password_rpc.sql` (비밀번호 변경 RPC)
+- [ ] `022_add_search_indexes.sql` (full-text 검색 인덱스)
+- [ ] `023_cleanup_test_accounts.sql` (테스트 계정 정리)
 
 ### 즉시 가능
 1. ~~기존 Staff 계정 비밀번호 마이그레이션~~ ✅ 완료
