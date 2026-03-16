@@ -6,13 +6,6 @@ import { createClient } from "@/lib/supabase/client";
 import { signOut, updateAvatar } from "@/domains/user/service";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES, CONTACT } from "@/lib/constants";
-import { getStudentMealPlan, submitApplication } from "@/domains/meal/service";
-import {
-  type MealPeriod,
-  type MealApplication,
-  MEAL_TYPE_LABELS,
-  WEEKDAY_LABELS,
-} from "@/domains/meal/model";
 import {
   User,
   Phone,
@@ -22,14 +15,14 @@ import {
   HelpCircle,
   ChevronRight,
   Shield,
-  UtensilsCrossed,
-  Calendar,
-  Check,
   MessageCircle,
   Clock,
   CheckCircle,
   Globe,
   Lock,
+  Pencil,
+  X,
+  Save,
 } from "lucide-react";
 import Link from "next/link";
 import { PasswordChangeForm } from "@/components/my/PasswordChangeForm";
@@ -38,7 +31,7 @@ import { type QuestionWithAuthor } from "@/domains/question/model";
 
 export default function MyPage() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [activeTab, setActiveTab] = useState<"profile" | "lunch" | "questions">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "questions">("profile");
   const { success, error: showError } = useToast();
   const { profile, isActive, isStaff, logout: logoutStore, setProfile } = useUserStore();
 
@@ -149,18 +142,6 @@ export default function MyPage() {
               <MessageCircle size={16} />
               내 질문
             </button>
-            <button
-              onClick={() => setActiveTab("lunch")}
-              disabled={!isActive}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 text-[14px] font-medium border-b-2 transition-colors ${
-                activeTab === "lunch"
-                  ? "border-navy text-navy"
-                  : "border-transparent text-muted hover:text-ink"
-              } ${!isActive ? "opacity-50 cursor-not-allowed" : ""}`}
-            >
-              <UtensilsCrossed size={16} />
-              도시락
-            </button>
           </div>
 
           {/* 탭 컨텐츠 */}
@@ -170,37 +151,7 @@ export default function MyPage() {
               {isStaff && <StaffQuestionSummary />}
 
               {/* 내 정보 */}
-              <div className="bg-white border border-rule mb-6">
-                <div className="p-4 border-b border-rule">
-                  <h2 className="font-bold text-ink">내 정보</h2>
-                </div>
-                <div className="divide-y divide-rule">
-                  <InfoRow
-                    icon={<User size={18} />}
-                    label="이름"
-                    value={profile?.name || "-"}
-                  />
-                  <InfoRow
-                    icon={<Phone size={18} />}
-                    label="연락처"
-                    value={formatPhone(profile?.phone) || "-"}
-                  />
-                  <InfoRow
-                    icon={<School size={18} />}
-                    label="학교"
-                    value={
-                      profile?.school
-                        ? `${profile.school} ${profile.grade || ""}학년`
-                        : "-"
-                    }
-                  />
-                  <InfoRow
-                    icon={<Phone size={18} />}
-                    label="학부모 연락처"
-                    value={formatPhone(profile?.parent_phone) || "-"}
-                  />
-                </div>
-              </div>
+              <ContactInfoSection />
 
               {/* 메뉴 */}
               <div className="bg-white border border-rule mb-6">
@@ -238,10 +189,8 @@ export default function MyPage() {
                 로그아웃
               </Button>
             </>
-          ) : activeTab === "questions" ? (
-            <MyQuestionsTab />
           ) : (
-            <LunchTab userId={profile?.id} />
+            <MyQuestionsTab />
           )}
 
           {/* 버전 정보 */}
@@ -335,244 +284,117 @@ function formatPhone(phone: string | null | undefined): string {
   return phone;
 }
 
-// 도시락 신청 탭 컴포넌트
-function LunchTab({ userId }: { userId?: string }) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [period, setPeriod] = useState<MealPeriod | null>(null);
-  const [application, setApplication] = useState<MealApplication | null>(null);
-  const [selections, setSelections] = useState<Record<string, string[]>>({});
-  const [isSaving, setIsSaving] = useState(false);
+// 연락처 정보 수정 섹션
+function ContactInfoSection() {
+  const { profile, setProfile } = useUserStore();
   const { success: showSuccess, error: showError } = useToast();
-
-  useEffect(() => {
-    async function fetchLunchData() {
-      if (!userId) return;
-
-      setIsLoading(true);
-      const supabase = createClient();
-      const result = await getStudentMealPlan(supabase, userId);
-
-      if (result.success && result.period) {
-        setPeriod(result.period);
-        if (result.application) {
-          setApplication(result.application);
-          setSelections(result.application.selections as Record<string, string[]>);
-        }
-      }
-      setIsLoading(false);
-    }
-
-    fetchLunchData();
-  }, [userId]);
-
-  const handleToggleMeal = (key: string, mealType: string) => {
-    setSelections((prev) => {
-      const current = prev[key] || [];
-      const updated = current.includes(mealType)
-        ? current.filter((m) => m !== mealType)
-        : [...current, mealType];
-
-      // 빈 배열이면 키 삭제
-      if (updated.length === 0) {
-        const { [key]: removed, ...rest } = prev;
-        void removed;
-        return rest;
-      }
-
-      return { ...prev, [key]: updated };
-    });
-  };
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [phone, setPhone] = useState(profile?.phone || "");
+  const [parentPhone, setParentPhone] = useState(profile?.parent_phone || "");
 
   const handleSave = async () => {
-    if (!userId || !period) return;
-
     setIsSaving(true);
     const supabase = createClient();
-    const result = await submitApplication(supabase, period.id, userId, selections);
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({
+        phone: phone.replace(/-/g, "") || null,
+        parent_phone: parentPhone.replace(/-/g, "") || null,
+      })
+      .eq("id", profile?.id)
+      .select()
+      .single();
 
     setIsSaving(false);
 
-    if (result.success) {
-      setApplication(result.application || null);
-      showSuccess("도시락 신청이 저장되었습니다.");
+    if (error) {
+      showError("연락처 수정에 실패했습니다.");
     } else {
-      showError(result.error || "저장에 실패했습니다.");
+      setProfile(data);
+      showSuccess("연락처가 수정되었습니다.");
+      setIsEditing(false);
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-20 w-full" />
-        <Skeleton className="h-40 w-full" />
-      </div>
-    );
-  }
-
-  if (!period) {
-    return (
-      <div className="bg-white border border-rule p-8 text-center">
-        <Calendar size={48} className="mx-auto mb-4 text-muted opacity-50" />
-        <p className="text-[15px] text-muted">
-          현재 도시락 신청 기간이 아닙니다.
-        </p>
-      </div>
-    );
-  }
-
-  const isWeekday = period.selection_type === "weekday";
-
   return (
-    <div className="space-y-4">
-      {/* 기간 정보 */}
-      <div className="bg-white border border-rule p-4">
-        <div className="flex items-center gap-2 text-[14px] font-medium text-ink">
-          <Calendar size={16} className="text-teal" />
-          {period.title}
-        </div>
-        <p className="text-[13px] text-muted mt-1">
-          {period.start_date} ~ {period.end_date}
-        </p>
-        {application && (
-          <div className="mt-2 flex items-center gap-1 text-[12px] text-teal">
-            <Check size={12} />
-            신청 완료 ({new Date(application.updated_at).toLocaleDateString("ko-KR")} 수정)
-          </div>
-        )}
-      </div>
-
-      {/* 선택 UI */}
-      <div className="bg-white border border-rule">
-        <div className="p-4 border-b border-rule">
-          <h3 className="font-bold text-ink">
-            {isWeekday ? "요일별 선택" : "날짜별 선택"}
-          </h3>
-          <p className="text-[12px] text-muted mt-1">
-            원하는 {isWeekday ? "요일" : "날짜"}과 식사를 선택하세요.
-          </p>
-        </div>
-
-        {isWeekday ? (
-          // 요일별 선택
-          <div className="p-4 space-y-3">
-            {[1, 2, 3, 4, 5, 6, 0].map((day) => (
-              <div
-                key={day}
-                className="flex items-center gap-4 py-2 border-b border-rule last:border-b-0"
-              >
-                <span className="w-8 text-[14px] font-medium text-ink">
-                  {WEEKDAY_LABELS[day]}
-                </span>
-                <div className="flex gap-2 flex-1">
-                  {period.meal_types.map((type) => {
-                    const isSelected = selections[day.toString()]?.includes(type);
-                    return (
-                      <button
-                        key={type}
-                        onClick={() => handleToggleMeal(day.toString(), type)}
-                        className={`flex-1 py-2 text-[13px] font-medium border transition-colors ${
-                          isSelected
-                            ? "bg-teal border-teal text-white"
-                            : "border-rule text-muted hover:border-teal hover:text-teal"
-                        }`}
-                      >
-                        {MEAL_TYPE_LABELS[type as keyof typeof MEAL_TYPE_LABELS]}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
+    <div className="bg-white border border-rule mb-6">
+      <div className="flex items-center justify-between p-4 border-b border-rule">
+        <h2 className="font-bold text-ink">내 정보</h2>
+        {isEditing ? (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setPhone(profile?.phone || "");
+                setParentPhone(profile?.parent_phone || "");
+                setIsEditing(false);
+              }}
+              className="flex items-center gap-1 text-xs text-muted hover:text-ink"
+            >
+              <X size={14} />
+              취소
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex items-center gap-1 text-xs text-teal hover:text-teal-d font-medium disabled:opacity-50"
+            >
+              <Save size={14} />
+              {isSaving ? "저장 중..." : "저장"}
+            </button>
           </div>
         ) : (
-          // 날짜별 선택 (간단한 날짜 목록)
-          <div className="p-4">
-            <DateSelector
-              startDate={period.start_date}
-              endDate={period.end_date}
-              mealTypes={period.meal_types}
-              selections={selections}
-              onToggle={handleToggleMeal}
-            />
-          </div>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="flex items-center gap-1 text-xs text-muted hover:text-ink"
+          >
+            <Pencil size={14} />
+            수정
+          </button>
         )}
       </div>
+      <div className="divide-y divide-rule">
+        <InfoRow icon={<User size={18} />} label="이름" value={profile?.name || "-"} />
 
-      {/* 저장 버튼 */}
-      <Button
-        variant="primary"
-        size="lg"
-        className="w-full"
-        onClick={handleSave}
-        isLoading={isSaving}
-      >
-        {application ? "수정하기" : "신청하기"}
-      </Button>
-    </div>
-  );
-}
-
-// 날짜별 선택 컴포넌트
-function DateSelector({
-  startDate,
-  endDate,
-  mealTypes,
-  selections,
-  onToggle,
-}: {
-  startDate: string;
-  endDate: string;
-  mealTypes: string[];
-  selections: Record<string, string[]>;
-  onToggle: (date: string, mealType: string) => void;
-}) {
-  // 날짜 목록 생성
-  const dates: string[] = [];
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    dates.push(d.toISOString().split("T")[0]);
-  }
-
-  return (
-    <div className="space-y-2 max-h-[300px] overflow-y-auto">
-      {dates.map((date) => {
-        const dayOfWeek = new Date(date).getDay();
-        const formattedDate = new Date(date).toLocaleDateString("ko-KR", {
-          month: "short",
-          day: "numeric",
-        });
-
-        return (
-          <div
-            key={date}
-            className="flex items-center gap-4 py-2 border-b border-rule last:border-b-0"
-          >
-            <span className="w-20 text-[13px] text-ink">
-              {formattedDate} ({WEEKDAY_LABELS[dayOfWeek]})
-            </span>
-            <div className="flex gap-2 flex-1">
-              {mealTypes.map((type) => {
-                const isSelected = selections[date]?.includes(type);
-                return (
-                  <button
-                    key={type}
-                    onClick={() => onToggle(date, type)}
-                    className={`flex-1 py-2 text-[12px] font-medium border transition-colors ${
-                      isSelected
-                        ? "bg-teal border-teal text-white"
-                        : "border-rule text-muted hover:border-teal hover:text-teal"
-                    }`}
-                  >
-                    {MEAL_TYPE_LABELS[type as keyof typeof MEAL_TYPE_LABELS]}
-                  </button>
-                );
-              })}
-            </div>
+        {isEditing ? (
+          <div className="flex items-center gap-4 px-4 py-3">
+            <span className="text-muted"><Phone size={18} /></span>
+            <span className="text-[13px] text-muted w-24">연락처</span>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="010-0000-0000"
+              className="flex-1 border border-rule px-3 py-1.5 text-[14px] focus:border-navy focus:outline-none"
+            />
           </div>
-        );
-      })}
+        ) : (
+          <InfoRow icon={<Phone size={18} />} label="연락처" value={formatPhone(profile?.phone) || "-"} />
+        )}
+
+        <InfoRow
+          icon={<School size={18} />}
+          label="학교"
+          value={profile?.school ? `${profile.school} ${profile.grade || ""}학년` : "-"}
+        />
+
+        {isEditing ? (
+          <div className="flex items-center gap-4 px-4 py-3">
+            <span className="text-muted"><Phone size={18} /></span>
+            <span className="text-[13px] text-muted w-24">학부모 연락처</span>
+            <input
+              type="tel"
+              value={parentPhone}
+              onChange={(e) => setParentPhone(e.target.value)}
+              placeholder="010-0000-0000"
+              className="flex-1 border border-rule px-3 py-1.5 text-[14px] focus:border-navy focus:outline-none"
+            />
+          </div>
+        ) : (
+          <InfoRow icon={<Phone size={18} />} label="학부모 연락처" value={formatPhone(profile?.parent_phone) || "-"} />
+        )}
+      </div>
     </div>
   );
 }
