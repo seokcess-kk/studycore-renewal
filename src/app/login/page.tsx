@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -16,7 +16,6 @@ import { sanitizeRedirectPath } from "@/lib/auth-redirect";
 function LoginContent() {
   const [loginType, setLoginType] = useState<"kakao" | "staff">("kakao");
   const [isLoading, setIsLoading] = useState(false);
-  const isSubmittingRef = useRef(false); // 로그인 제출 중 플래그
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = sanitizeRedirectPath(searchParams.get("redirect"), ROUTES.HOME);
@@ -27,10 +26,8 @@ function LoginContent() {
   const profile = useUserStore((state) => state.profile);
 
   // 이미 로그인된 상태로 /login 페이지 접근 시 리다이렉트
-  // (onStaffSubmit에서 login() 호출 직후 발동하지 않도록 ref로 분리)
   useEffect(() => {
-    if (isAuthLoading || isSubmittingRef.current) return;
-
+    if (isAuthLoading) return;
     if (isAuthenticated && profile) {
       router.replace(redirectTo);
     }
@@ -73,18 +70,17 @@ function LoginContent() {
   // Staff 로그인
   const onStaffSubmit = async (data: StaffLoginInput) => {
     setIsLoading(true);
-    isSubmittingRef.current = true;
-
     try {
       const supabase = createClient();
       const result = await staffLogin(supabase, data);
 
       if (result.success && result.user && result.profile) {
+        // store 업데이트 (sessionStorage에 persist됨)
         login(result.user, result.profile);
         success("로그인되었습니다.");
 
-        // 직접 navigate (useEffect에 위임하지 않음 — 충돌 방지)
-        router.push(redirectTo);
+        // 전체 리로드 — persist 덕분에 store 유지, 미들웨어도 실행
+        window.location.href = redirectTo;
         return;
       } else {
         showError(result.error || "로그인에 실패했습니다.");
@@ -92,8 +88,6 @@ function LoginContent() {
     } catch {
       showError("로그인 중 오류가 발생했습니다.");
     }
-
-    isSubmittingRef.current = false;
     setIsLoading(false);
   };
 

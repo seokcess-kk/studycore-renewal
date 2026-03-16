@@ -21,8 +21,7 @@ export function Nav() {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
-  // 인증 상태
-  const isLoading = useUserStore((state) => state.isLoading);
+  // 인증 상태 (sessionStorage persist → 리로드 시 즉시 복원)
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const canAccessAdmin = useUserStore((state) => state.canAccessAdmin);
   const isStaff = useUserStore((state) => state.isStaff);
@@ -104,7 +103,7 @@ export function Nav() {
 
         {/* 데스크톱 네비게이션 링크 */}
         <div className="flex items-center gap-6 md:gap-9">
-          {!isLoading && isAuthenticated ? (
+          {isAuthenticated ? (
             <>
               <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>
                 공지사항
@@ -174,23 +173,20 @@ export function Nav() {
           )}
 
           {/* 검색 버튼 */}
-          {!isLoading && (
-            <button
-              type="button"
-              onClick={() => setIsSearchOpen(true)}
-              className={`hidden md:block p-1.5 transition-colors ${
-                isScrolled ? "text-ink/30 hover:text-ink" : "text-white/30 hover:text-white"
-              }`}
-              aria-label="검색"
-              title="검색 (Ctrl+K)"
-            >
-              <Search size={18} />
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            className={`hidden md:block p-1.5 transition-colors ${
+              isScrolled ? "text-ink/30 hover:text-ink" : "text-white/30 hover:text-white"
+            }`}
+            aria-label="검색"
+            title="검색 (Ctrl+K)"
+          >
+            <Search size={18} />
+          </button>
 
           {/* 모바일 햄버거 버튼 */}
-          {!isLoading && (
-            <button
+          <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
               className={`md:hidden p-1.5 transition-colors ${
@@ -200,7 +196,6 @@ export function Nav() {
             >
               <Menu size={24} />
             </button>
-          )}
         </div>
       </nav>
 

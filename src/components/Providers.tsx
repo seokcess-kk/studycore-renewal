@@ -5,21 +5,21 @@ import { ToastProvider, SessionWarning } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/stores/useUserStore";
 import { logger } from "@/lib/logger";
-import type { Session } from "@supabase/supabase-js";
 
 /**
- * AuthInitializer - 비블로킹 인증 초기화
+ * AuthInitializer - Supabase 세션 검증 및 동기화
  *
- * 앱을 블로킹하지 않고 백그라운드에서 인증 상태를 확인합니다.
- * children은 즉시 렌더링되고, 인증 상태는 비동기로 업데이트됩니다.
+ * Zustand store는 sessionStorage에 persist되므로
+ * 페이지 리로드 시 즉시 복원됩니다.
  *
- * 최적화: login() 액션으로 이미 store에 프로필이 설정된 경우
- * DB 재조회를 스킵하여 메뉴 깜빡임을 방지합니다.
+ * 이 컴포넌트는 "복원"이 아니라 "검증" 역할만 합니다:
+ * - persist된 store 상태와 Supabase 세션이 일치하는지 확인
+ * - 세션 만료/변경 시 store를 갱신
+ * - SIGNED_OUT 이벤트 시 store 초기화
  */
 function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const setUser = useUserStore((state) => state.setUser);
-  const setProfile = useUserStore((state) => state.setProfile);
   const setLoading = useUserStore((state) => state.setLoading);
+  const login = useUserStore((state) => state.login);
   const logout = useUserStore((state) => state.logout);
   const initialized = useRef(false);
 
@@ -27,10 +27,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
     if (initialized.current) return;
     initialized.current = true;
 
-    const abortController = new AbortController();
-
     let supabase: ReturnType<typeof createClient>;
-
     try {
       supabase = createClient();
     } catch (error) {
@@ -40,129 +37,73 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
     }
 
     let mounted = true;
-    let initialSessionHandled = false;
 
-    // 프로필 조회 (재시도 1회)
-    const fetchProfile = async (userId: string, retry = true): Promise<Record<string, unknown> | null> => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userId)
-        .single();
+    // Supabase 세션으로 store 검증/동기화
+    const syncWithSession = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
 
-      if (error) {
-        logger.warn("프로필 조회 실패", {
-          context: "AuthInitializer",
-          data: { userId, error: error.message, willRetry: retry },
-        });
-        // 1회 재시도
-        if (retry && mounted && !abortController.signal.aborted) {
-          await new Promise((r) => setTimeout(r, 500));
-          return fetchProfile(userId, false);
-        }
-        return null;
-      }
+        if (!mounted) return;
 
-      return data;
-    };
-
-    const handleSession = async (session: Session | null, isInitial = false) => {
-      if (!mounted || abortController.signal.aborted) return;
-
-      if (isInitial && initialSessionHandled) return;
-      if (isInitial) initialSessionHandled = true;
-
-      if (session?.user) {
-        if (!mounted || abortController.signal.aborted) return;
-
-        // 이미 store에 동일 유저의 프로필이 있으면 DB 재조회 스킵
-        const currentState = useUserStore.getState();
-        if (
-          currentState.isAuthenticated &&
-          currentState.user?.id === session.user.id &&
-          currentState.profile?.role
-        ) {
+        if (!user) {
+          // 세션 없음 — persist된 store가 있어도 초기화
+          const state = useUserStore.getState();
+          if (state.isAuthenticated) {
+            logout();
+          }
           setLoading(false);
           return;
         }
 
-        setUser({
-          id: session.user.id,
-          email: session.user.email || "",
-        });
-
-        try {
-          const profile = await fetchProfile(session.user.id);
-
-          if (mounted && !abortController.signal.aborted) {
-            if (profile) {
-              logger.debug("프로필 로드 완료", {
-                context: "AuthInitializer",
-                data: { role: (profile as Record<string, unknown>).role },
-              });
-            }
-            setProfile((profile as Parameters<typeof setProfile>[0]) || null);
-          }
-        } catch (error) {
-          logger.exception(error, "ProfileFetch");
-          if (mounted && !abortController.signal.aborted) {
-            setProfile(null);
-          }
+        // 세션 있음 — persist된 store에 동일 유저가 있으면 검증 완료
+        const state = useUserStore.getState();
+        if (state.isAuthenticated && state.user?.id === user.id && state.profile?.role) {
+          setLoading(false);
+          return;
         }
-      } else {
-        if (mounted && !abortController.signal.aborted) {
+
+        // persist된 store가 없거나 유저 불일치 — DB에서 프로필 조회
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (!mounted) return;
+
+        if (profile) {
+          login(
+            { id: user.id, email: user.email || "" },
+            profile
+          );
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        logger.exception(error, "AuthInitializer.syncWithSession");
+        if (mounted) setLoading(false);
+      }
+    };
+
+    // 초기 동기화
+    syncWithSession();
+
+    // 인증 상태 변경 리스너 (로그아웃, 토큰 갱신 등)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event) => {
+        if (!mounted) return;
+
+        if (event === "SIGNED_OUT") {
           logout();
-        }
-      }
-
-      if (mounted && !abortController.signal.aborted) {
-        setLoading(false);
-      }
-    };
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!mounted || abortController.signal.aborted) return;
-
-      if (event === "INITIAL_SESSION") {
-        await handleSession(session, true);
-        return;
-      }
-
-      // SIGNED_IN 이벤트: store에 이미 프로필이 있으면 스킵
-      if (event === "SIGNED_IN") {
-        const currentState = useUserStore.getState();
-        if (currentState.isAuthenticated && currentState.profile?.role) {
+        } else if (event === "TOKEN_REFRESHED") {
+          // 토큰 갱신 시 store 유지 (재조회 불필요)
           setLoading(false);
-          return;
         }
       }
-
-      await handleSession(session);
-    });
-
-    // fallback: INITIAL_SESSION이 오지 않는 경우
-    const fallbackTimeout = setTimeout(() => {
-      if (!initialSessionHandled && mounted && !abortController.signal.aborted) {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          handleSession(session, true);
-        });
-      }
-    }, 1000);
-
-    // 안전 타임아웃: 3초 내 로딩 완료되지 않으면 강제 해제
-    const safetyTimeout = setTimeout(() => {
-      if (mounted && !abortController.signal.aborted) {
-        setLoading(false);
-      }
-    }, 3000);
+    );
 
     return () => {
       mounted = false;
-      abortController.abort();
-      clearTimeout(fallbackTimeout);
-      clearTimeout(safetyTimeout);
       subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
