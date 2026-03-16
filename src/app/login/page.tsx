@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,7 @@ import { sanitizeRedirectPath } from "@/lib/auth-redirect";
 function LoginContent() {
   const [loginType, setLoginType] = useState<"kakao" | "staff">("kakao");
   const [isLoading, setIsLoading] = useState(false);
+  const isSubmittingRef = useRef(false); // 로그인 제출 중 플래그
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = sanitizeRedirectPath(searchParams.get("redirect"), ROUTES.HOME);
@@ -25,10 +26,10 @@ function LoginContent() {
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const profile = useUserStore((state) => state.profile);
 
-  // 이미 로그인된 경우 리다이렉트 (store 기반)
+  // 이미 로그인된 상태로 /login 페이지 접근 시 리다이렉트
+  // (onStaffSubmit에서 login() 호출 직후 발동하지 않도록 ref로 분리)
   useEffect(() => {
-    // 인증 상태 로딩 중이면 대기
-    if (isAuthLoading) return;
+    if (isAuthLoading || isSubmittingRef.current) return;
 
     if (isAuthenticated && profile) {
       router.replace(redirectTo);
@@ -72,15 +73,18 @@ function LoginContent() {
   // Staff 로그인
   const onStaffSubmit = async (data: StaffLoginInput) => {
     setIsLoading(true);
+    isSubmittingRef.current = true;
+
     try {
       const supabase = createClient();
       const result = await staffLogin(supabase, data);
 
       if (result.success && result.user && result.profile) {
-        // Zustand store 업데이트 → useEffect가 자동으로 redirectTo로 이동
         login(result.user, result.profile);
         success("로그인되었습니다.");
-        // setIsLoading(false) 하지 않음 — 페이지 전환 중 로딩 유지
+
+        // 직접 navigate (useEffect에 위임하지 않음 — 충돌 방지)
+        router.push(redirectTo);
         return;
       } else {
         showError(result.error || "로그인에 실패했습니다.");
@@ -88,6 +92,8 @@ function LoginContent() {
     } catch {
       showError("로그인 중 오류가 발생했습니다.");
     }
+
+    isSubmittingRef.current = false;
     setIsLoading(false);
   };
 
