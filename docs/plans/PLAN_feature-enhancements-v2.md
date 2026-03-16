@@ -1,4 +1,4 @@
-# Implementation Plan: 기능 개선 v2 (9개 기능)
+# Implementation Plan: 기능 개선 v2 (12개 기능)
 
 **Status**: ⏳ Pending
 **Started**: 2026-03-16
@@ -24,7 +24,10 @@
 ### Feature List
 | ID | 기능 | 우선순위 | Phase |
 |----|------|---------|-------|
-| BUG | 로그아웃 동작 불량 수정 | **긴급** | Phase 0 |
+| BUG-1 | 로그아웃 동작 불량 수정 | **긴급** | Phase 0 ✅ |
+| SEC-1 | 리다이렉트 경로 검증 (오픈 리다이렉트 취약점) | **긴급** | Phase 0.1 |
+| SEC-2 | OAuth 콜백 상태 분기 통합 + 로그아웃 타임아웃 | **긴급** | Phase 0.2 |
+| SEC-3 | 상태 안내 페이지 서버 보호 강화 | 중간 | Phase 0.3 |
 | A-1 | 모바일 햄버거 메뉴 | 높음 | Phase 1 |
 | A-3 | 질문 알림 뱃지 (Nav) | 높음 | Phase 2 |
 | B-9 | Admin Sidebar 미답변 카운트 뱃지 | 중간 | Phase 2 |
@@ -207,6 +210,171 @@ onAuthStateChange("SIGNED_OUT") → store.logout() 호출
 - [ ] 세션 만료 시 자동 로그아웃 동작 확인
 - [ ] 로그아웃 실패 시 에러 Toast 표시
 - [ ] 3곳 모두 동일한 패턴으로 동작 확인
+
+---
+
+### Phase 0.1: 리다이렉트 경로 검증 (오픈 리다이렉트 취약점 수정)
+**Goal**: redirect/next 파라미터를 내부 경로로 강제 검증하여 오픈 리다이렉트 공격 차단
+**Estimated Time**: 1시간
+**Status**: ⏳ Pending
+**Priority**: 긴급 (보안 취약점)
+
+#### 현재 문제
+- `login/page.tsx:20` — `searchParams.get("redirect")` 무검증 사용
+- `auth/callback/page.tsx:33` — `searchParams.get("next")` 무검증 사용
+- `/login?redirect=https://evil.com` 입력 시 로그인 후 외부 사이트로 이동 가능
+
+#### Tasks
+
+- [ ] **Task 0.1.1**: `src/lib/auth-redirect.ts` 생성 — `sanitizeRedirectPath()` 유틸
+  ```ts
+  export function sanitizeRedirectPath(input: string | null, fallback = "/"): string {
+    if (!input) return fallback;
+    // /로 시작하지 않으면 거부
+    if (!input.startsWith("/")) return fallback;
+    // //, http, javascript: 등 외부/위험 패턴 차단
+    if (/^\/\/|^\/\\|https?:|javascript:|data:/i.test(input)) return fallback;
+    return input;
+  }
+  ```
+
+- [ ] **Task 0.1.2**: `src/app/login/page.tsx` 수정
+  - `searchParams.get("redirect") || ROUTES.HOME` → `sanitizeRedirectPath(searchParams.get("redirect"), ROUTES.HOME)`
+
+- [ ] **Task 0.1.3**: `src/app/auth/callback/page.tsx` 수정
+  - `searchParams.get("next") ?? ROUTES.HOME` → `sanitizeRedirectPath(searchParams.get("next"), ROUTES.HOME)`
+
+- [ ] **Task 0.1.4**: `src/middleware.ts` 수정
+  - `url.searchParams.set("redirect", pathname)` — pathname은 이미 내부 경로이므로 안전, 변경 불필요
+
+#### Quality Gate ✋
+- [ ] 빌드 & 타입 체크 통과
+- [ ] `/login?redirect=/admin` → 로그인 후 `/admin` 이동 (정상)
+- [ ] `/login?redirect=https://evil.com` → 로그인 후 `/` 이동 (차단)
+- [ ] `/login?redirect=//evil.com` → `/` 이동 (차단)
+- [ ] `/login?redirect=javascript:alert(1)` → `/` 이동 (차단)
+- [ ] OAuth 콜백의 `next` 파라미터도 동일하게 검증됨
+
+---
+
+### Phase 0.2: OAuth 콜백 상태 분기 통합 + 로그아웃 타임아웃
+**Goal**: 인증 후 상태별 라우팅을 단일 함수로 통합, 로그아웃에 타임아웃 적용
+**Estimated Time**: 1.5시간
+**Status**: ⏳ Pending
+
+#### 현재 문제
+1. `auth/callback/page.tsx:73` — pending 사용자를 `/register`로 보냄
+2. `middleware.ts:79` — pending 사용자를 `/pending-approval`로 보냄
+3. 프로필이 존재 + pending = 이미 가입 완료, 승인 대기 → `/pending-approval`이 맞음
+4. `signOut()`이 fire-and-forget으로 서버 세션 무효화 보장 없음
+
+#### Tasks
+
+- [ ] **Task 0.2.1**: `src/lib/auth-redirect.ts`에 `getPostAuthDestination()` 추가
+  ```ts
+  export function getPostAuthDestination(
+    profile: { role?: string; status?: string } | null,
+    fallbackNext: string = "/"
+  ): string {
+    // 프로필 없음 → 회원가입
+    if (!profile) return "/register";
+    // 재원생 + pending → 승인 대기
+    if (profile.role === "student" && profile.status === "pending") return "/pending-approval";
+    // 재원생 + inactive → 비활성 안내
+    if (profile.role === "student" && profile.status === "inactive") return "/account-inactive";
+    // 그 외 → 목적지
+    return fallbackNext;
+  }
+  ```
+
+- [ ] **Task 0.2.2**: `src/app/auth/callback/page.tsx` 수정
+  - 직접 문자열 분기 → `getPostAuthDestination(profile, next)` 사용
+  ```ts
+  // Before:
+  if (!profile) router.replace("/register");
+  else if (profile.status === "pending") router.replace("/register");  // ← 잘못됨
+  else router.replace(next);
+
+  // After:
+  const destination = getPostAuthDestination(profile, next);
+  router.replace(destination);
+  ```
+
+- [ ] **Task 0.2.3**: `src/domains/user/service.ts` — signOut에 타임아웃 적용
+  ```ts
+  export async function signOut(supabase: SupabaseClient): Promise<void> {
+    clearSupabaseCookies();
+
+    // 서버 세션 무효화 (최대 2초 대기, 실패해도 진행)
+    try {
+      await Promise.race([
+        supabase.auth.signOut(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 2000)),
+      ]);
+    } catch {
+      logger.warn("signOut 서버 요청 실패/타임아웃 (쿠키는 이미 삭제됨)", { context: "signOut" });
+    }
+  }
+  ```
+
+- [ ] **Task 0.2.4**: 호출부 3곳(Nav, AdminSidebar, MyPage) `await signOut()` + `async` 복원
+  - 최대 2초만 대기하고, 이후 `logout()` + `window.location.href = "/"` 실행
+
+#### Quality Gate ✋
+- [ ] 빌드 & 타입 체크 통과
+- [ ] 카카오 OAuth 신규 가입 → `/register` 이동
+- [ ] 카카오 OAuth 기존 가입 + pending → `/pending-approval` 이동 (기존: `/register`)
+- [ ] 카카오 OAuth 기존 가입 + active → 홈 이동
+- [ ] 로그아웃 클릭 시 2초 내 페이지 이동 보장
+- [ ] 네트워크 끊긴 상태에서도 로그아웃 동작 (쿠키 삭제 + 2초 타임아웃)
+
+---
+
+### Phase 0.3: 상태 안내 페이지 서버 보호 강화
+**Goal**: pending-approval, account-inactive 페이지 접근을 middleware에서 서버 판정
+**Estimated Time**: 1시간
+**Status**: ⏳ Pending
+
+#### 현재 문제
+- 두 페이지가 클라이언트 `useEffect`로 Zustand 상태를 확인 후 리다이렉트
+- hydration 전 잘못된 화면이 잠깐 노출 가능
+
+#### Tasks
+
+- [ ] **Task 0.3.1**: `src/middleware.ts` — 상태 안내 페이지 접근 정책 추가
+  ```ts
+  // /pending-approval, /account-inactive 접근 제어
+  if (pathname === "/pending-approval" || pathname === "/account-inactive") {
+    if (!user) {
+      // 비로그인 → 로그인 페이지
+      url.pathname = ROUTES.LOGIN;
+      return NextResponse.redirect(url);
+    }
+    // 프로필 조회 후 상태 불일치 시 홈으로
+    const { data: profile } = await supabase.from("profiles")...
+    if (pathname === "/pending-approval" && profile?.status !== "pending") {
+      url.pathname = ROUTES.HOME;
+      return NextResponse.redirect(url);
+    }
+    if (pathname === "/account-inactive" && profile?.status !== "inactive") {
+      url.pathname = ROUTES.HOME;
+      return NextResponse.redirect(url);
+    }
+  }
+  ```
+
+- [ ] **Task 0.3.2**: `pending-approval/page.tsx` — 클라이언트 리다이렉트 로직 제거
+  - `useEffect` 리다이렉트 삭제 (middleware가 처리)
+  - 표시 전용 컴포넌트로 단순화
+
+- [ ] **Task 0.3.3**: `account-inactive/page.tsx` — 동일하게 클라이언트 리다이렉트 제거
+
+#### Quality Gate ✋
+- [ ] 빌드 & 타입 체크 통과
+- [ ] 비로그인 사용자 `/pending-approval` 접근 → `/login` 리다이렉트
+- [ ] active 사용자 `/pending-approval` 접근 → `/` 리다이렉트
+- [ ] pending 사용자 `/pending-approval` 접근 → 페이지 정상 표시
+- [ ] 페이지 로드 시 깜빡임 없음
 
 ---
 
@@ -816,7 +984,10 @@ e2e/
 ## 📊 Progress Tracking
 
 ### Completion Status
-- **Phase 0** (로그아웃 수정): ⏳ 0%
+- **Phase 0** (로그아웃 수정): ✅ 100%
+- **Phase 0.1** (리다이렉트 경로 검증): ⏳ 0%
+- **Phase 0.2** (OAuth 분기 통합 + 로그아웃 타임아웃): ⏳ 0%
+- **Phase 0.3** (상태 페이지 서버 보호): ⏳ 0%
 - **Phase 1** (모바일 햄버거 메뉴): ⏳ 0%
 - **Phase 2** (질문 알림 뱃지): ⏳ 0%
 - **Phase 3** (비밀번호 변경): ⏳ 0%
@@ -830,7 +1001,10 @@ e2e/
 ### Time Tracking
 | Phase | Estimated | Actual | Variance |
 |-------|-----------|--------|----------|
-| Phase 0 | 2h | - | - |
+| Phase 0 | 2h | 완료 | - |
+| Phase 0.1 | 1h | - | - |
+| Phase 0.2 | 1.5h | - | - |
+| Phase 0.3 | 1h | - | - |
 | Phase 1 | 2~3h | - | - |
 | Phase 2 | 2h | - | - |
 | Phase 3 | 3h | - | - |
@@ -838,7 +1012,7 @@ e2e/
 | Phase 5 | 2~3h | - | - |
 | Phase 6 | 3~4h | - | - |
 | Phase 7 | 4~5h | - | - |
-| **Total** | **21~26h** | - | - |
+| **Total** | **24.5~29.5h** | - | - |
 
 ---
 
