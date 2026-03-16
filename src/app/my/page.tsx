@@ -33,7 +33,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { PasswordChangeForm } from "@/components/my/PasswordChangeForm";
-import { getMyQuestions } from "@/domains/question/service";
+import { getMyQuestions, fetchUnansweredCount } from "@/domains/question/service";
 import { type QuestionWithAuthor } from "@/domains/question/model";
 
 export default function MyPage() {
@@ -166,6 +166,9 @@ export default function MyPage() {
           {/* 탭 컨텐츠 */}
           {activeTab === "profile" ? (
             <>
+              {/* 스태프 질문 관리 바로가기 */}
+              {isStaff && <StaffQuestionSummary />}
+
               {/* 내 정보 */}
               <div className="bg-white border border-rule mb-6">
                 <div className="p-4 border-b border-rule">
@@ -699,5 +702,47 @@ function MyQuestionsTab() {
         );
       })}
     </div>
+  );
+}
+
+// 스태프 전용: 미답변 질문 요약
+function StaffQuestionSummary() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient();
+      const result = await fetchUnansweredCount(supabase);
+      setCount(result);
+    }
+    load();
+  }, []);
+
+  return (
+    <Link
+      href={ROUTES.QUESTIONS}
+      className="block bg-white border border-rule p-4 mb-6 hover:border-navy transition-colors"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-teal/10 flex items-center justify-center">
+            <MessageCircle size={20} className="text-teal" />
+          </div>
+          <div>
+            <p className="text-[14px] font-medium text-ink">질문방 관리</p>
+            <p className="text-[12px] text-muted">
+              {count > 0
+                ? `미답변 질문 ${count}개`
+                : "모든 질문에 답변 완료"}
+            </p>
+          </div>
+        </div>
+        {count > 0 && (
+          <span className="min-w-[24px] h-[24px] flex items-center justify-center bg-teal text-white text-[12px] font-bold px-2">
+            {count}
+          </span>
+        )}
+      </div>
+    </Link>
   );
 }

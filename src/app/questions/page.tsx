@@ -4,18 +4,18 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Nav, Footer, Button, Skeleton } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
-import { getPublicQuestionList, getMyQuestions } from "@/domains/question/service";
+import { getPublicQuestionList, getMyQuestions, getQuestionList } from "@/domains/question/service";
 import { type QuestionWithAuthor } from "@/domains/question/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES } from "@/lib/constants";
-import { Plus, MessageCircle, Clock, CheckCircle, Globe, Lock, User } from "lucide-react";
+import { Plus, MessageCircle, Clock, CheckCircle, Globe, Lock, User, List } from "lucide-react";
 
 export default function QuestionsPage() {
   const [questions, setQuestions] = useState<QuestionWithAuthor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { user, isActive, isAuthenticated, isStaff } = useUserStore();
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "answered">("all");
-  const [viewMode, setViewMode] = useState<"public" | "mine">("public");
-  const { user, isActive, isAuthenticated } = useUserStore();
+  const [viewMode, setViewMode] = useState<"public" | "mine" | "all">(isStaff ? "all" : "public");
 
   useEffect(() => {
     async function fetchQuestions() {
@@ -25,9 +25,11 @@ export default function QuestionsPage() {
       const supabase = createClient();
 
       // 보기 모드에 따라 다른 API 호출
-      const result = viewMode === "public"
-        ? await getPublicQuestionList(supabase)
-        : await getMyQuestions(supabase);
+      const result = viewMode === "all"
+        ? await getQuestionList(supabase)
+        : viewMode === "mine"
+        ? await getMyQuestions(supabase)
+        : await getPublicQuestionList(supabase);
 
       if (result.success) {
         setQuestions(result.questions);
@@ -86,18 +88,33 @@ export default function QuestionsPage() {
                 모르는 문제를 올리면 멘토가 직접 풀이해 드립니다.
               </p>
             </div>
-            <Link href={`${ROUTES.QUESTIONS}/new`}>
-              <Button variant="secondary" className="flex items-center gap-2">
-                <Plus size={16} />
-                질문하기
-              </Button>
-            </Link>
+            {!isStaff && (
+              <Link href={`${ROUTES.QUESTIONS}/new`}>
+                <Button variant="secondary" className="flex items-center gap-2">
+                  <Plus size={16} />
+                  질문하기
+                </Button>
+              </Link>
+            )}
           </div>
         </section>
 
         {/* 탭 네비게이션 */}
         <section className="border-b border-rule">
           <div className="px-6 md:px-13 flex">
+            {isStaff && (
+              <button
+                onClick={() => setViewMode("all")}
+                className={`flex items-center gap-2 px-4 py-3 text-[14px] font-medium border-b-2 transition-colors ${
+                  viewMode === "all"
+                    ? "border-navy text-navy"
+                    : "border-transparent text-muted hover:text-ink"
+                }`}
+              >
+                <List size={16} />
+                전체 질문
+              </button>
+            )}
             <button
               onClick={() => setViewMode("public")}
               className={`flex items-center gap-2 px-4 py-3 text-[14px] font-medium border-b-2 transition-colors ${
@@ -109,17 +126,19 @@ export default function QuestionsPage() {
               <Globe size={16} />
               전체 공개
             </button>
-            <button
-              onClick={() => setViewMode("mine")}
-              className={`flex items-center gap-2 px-4 py-3 text-[14px] font-medium border-b-2 transition-colors ${
-                viewMode === "mine"
-                  ? "border-navy text-navy"
-                  : "border-transparent text-muted hover:text-ink"
-              }`}
-            >
-              <User size={16} />
-              내 질문
-            </button>
+            {!isStaff && (
+              <button
+                onClick={() => setViewMode("mine")}
+                className={`flex items-center gap-2 px-4 py-3 text-[14px] font-medium border-b-2 transition-colors ${
+                  viewMode === "mine"
+                    ? "border-navy text-navy"
+                    : "border-transparent text-muted hover:text-ink"
+                }`}
+              >
+                <User size={16} />
+                내 질문
+              </button>
+            )}
           </div>
         </section>
 
