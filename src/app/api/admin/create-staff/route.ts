@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { hasAdminAccess } from "@/lib/constants";
+import { STAFF_AUTH_FIXED_PASSWORD } from "@/lib/staff-auth-config";
 
 /** RLS를 우회하는 Service Role 클라이언트 (이 라우트 전용) */
 function getAdminClient() {
@@ -11,6 +12,7 @@ function getAdminClient() {
   );
 }
 
+/** Staff 초기 비밀번호 (staff_credentials에 저장됨) */
 const INITIAL_PASSWORD = "1234";
 
 export async function POST(request: NextRequest) {
@@ -87,10 +89,11 @@ export async function POST(request: NextRequest) {
     const email = `${username}@studycore.internal`;
 
     // 4. Supabase Auth 사용자 생성 (Service Role — RLS 우회)
+    //    Auth 비밀번호는 고정값 (세션 생성 전용). 실제 검증은 staff_credentials.
     const admin = getAdminClient();
     const { data: authData, error: authError } = await admin.auth.admin.createUser({
       email,
-      password: INITIAL_PASSWORD,
+      password: STAFF_AUTH_FIXED_PASSWORD,
       email_confirm: true,
     });
 

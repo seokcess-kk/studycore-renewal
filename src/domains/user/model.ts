@@ -129,12 +129,3 @@ export interface UserServiceResult {
   error?: string;
 }
 
-export interface AuthResult {
-  success: boolean;
-  user?: {
-    id: string;
-    email: string;
-  };
-  profile?: Profile;
-  error?: string;
-}

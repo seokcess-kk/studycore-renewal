@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Nav, Footer, Button, useToast } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
-import { staffLogin } from "@/domains/user/service";
 import { staffLoginSchema, type StaffLoginInput } from "@/domains/user/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES, CONTACT } from "@/lib/constants";
@@ -67,19 +66,21 @@ function LoginContent() {
     }
   };
 
-  // Staff 로그인
+  // Staff 로그인 (서버 사이드 API 경유)
   const onStaffSubmit = async (data: StaffLoginInput) => {
     setIsLoading(true);
     try {
-      const supabase = createClient();
-      const result = await staffLogin(supabase, data);
+      const res = await fetch("/api/auth/staff-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-      if (result.success && result.user && result.profile) {
-        // store 업데이트 (sessionStorage에 persist됨)
+      const result = await res.json();
+
+      if (res.ok && result.success && result.user && result.profile) {
         login(result.user, result.profile);
         success("로그인되었습니다.");
-
-        // 전체 리로드 — persist 덕분에 store 유지, 미들웨어도 실행
         window.location.href = redirectTo;
         return;
       } else {
