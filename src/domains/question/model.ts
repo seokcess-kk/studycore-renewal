@@ -33,6 +33,7 @@ export const questionSchema = z.object({
   status: z.enum(["pending", "answered"]),
   is_public: z.boolean(),
   is_pinned: z.boolean().optional().default(false),
+  view_count: z.number().default(0),
   author_id: z.string().uuid(),
   created_at: z.string(),
   updated_at: z.string(),

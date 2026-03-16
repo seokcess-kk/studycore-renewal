@@ -166,6 +166,34 @@ export async function getPublicAndMyQuestions(
 }
 
 /**
+ * 조회수 증가
+ */
+export async function incrementViewCount(
+  supabase: SupabaseClient,
+  questionId: string
+): Promise<void> {
+  const { error } = await supabase.rpc("increment_question_view_count", {
+    question_id: questionId,
+  });
+
+  if (error?.code === "PGRST202") {
+    // RPC 없으면 직접 업데이트
+    const { data: question } = await supabase
+      .from("questions")
+      .select("view_count")
+      .eq("id", questionId)
+      .single();
+
+    if (question) {
+      await supabase
+        .from("questions")
+        .update({ view_count: (question.view_count || 0) + 1 })
+        .eq("id", questionId);
+    }
+  }
+}
+
+/**
  * 질문 상세 조회 (답변 포함)
  */
 export async function getQuestionById(

@@ -11,7 +11,7 @@ import {
   type NoticeCategoryType,
 } from "@/domains/notice/model";
 import { ROUTES } from "@/lib/constants";
-import { Pin, ChevronRight } from "lucide-react";
+import { Pin, ChevronRight, Eye } from "lucide-react";
 
 export default function NoticesPage() {
   const [notices, setNotices] = useState<NoticeWithAuthor[]>([]);
@@ -197,6 +197,12 @@ function NoticeItem({ notice }: { notice: NoticeWithAuthor }) {
         <p className="text-[13px] text-muted mt-1">
           {new Date(notice.created_at).toLocaleDateString("ko-KR")} ·{" "}
           {notice.author?.name || "관리자"}
+          {(notice.view_count ?? 0) > 0 && (
+            <span className="inline-flex items-center gap-1 ml-2">
+              <Eye size={11} />
+              {notice.view_count}
+            </span>
+          )}
         </p>
       </div>
 

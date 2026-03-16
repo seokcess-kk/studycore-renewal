@@ -23,6 +23,7 @@ import {
   Pin,
   PinOff,
   Send,
+  Eye,
 } from "lucide-react";
 
 export default function QuestionDetailPage() {
@@ -185,6 +186,10 @@ export default function QuestionDetailPage() {
                   </span>
                   <span>
                     {new Date(question.created_at).toLocaleDateString("ko-KR")}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Eye size={12} />
+                    {question.view_count || 0}
                   </span>
                 </div>
               </div>

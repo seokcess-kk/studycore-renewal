@@ -8,7 +8,7 @@ import { getPublicQuestionList, getMyQuestions, getQuestionList } from "@/domain
 import { type QuestionWithAuthor } from "@/domains/question/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES } from "@/lib/constants";
-import { Plus, MessageCircle, Clock, CheckCircle, Globe, Lock, User } from "lucide-react";
+import { Plus, MessageCircle, Clock, CheckCircle, Globe, Lock, User, Eye } from "lucide-react";
 import { StaffQuestionCard } from "@/components/questions/StaffQuestionCard";
 import { ElapsedBadge } from "@/components/questions/ElapsedBadge";
 
@@ -391,6 +391,12 @@ function QuestionItem({
               createdAt={question.created_at}
               isPending={!isAnswered}
             />
+            {(question.view_count ?? 0) > 0 && (
+              <span className="flex items-center gap-1 text-[12px] text-muted/70">
+                <Eye size={11} />
+                {question.view_count}
+              </span>
+            )}
           </div>
         </div>
 

@@ -213,7 +213,8 @@ export async function getPublicQuestionList(
  */
 export async function getQuestionDetail(
   supabase: SupabaseClient,
-  questionId: string
+  questionId: string,
+  incrementView: boolean = true
 ): Promise<QuestionServiceResult> {
   try {
     const question = await questionRepo.getQuestionById(supabase, questionId);
@@ -223,6 +224,11 @@ export async function getQuestionDetail(
         success: false,
         error: "질문을 찾을 수 없습니다.",
       };
+    }
+
+    // 조회수 증가 (비동기, 에러 무시)
+    if (incrementView) {
+      questionRepo.incrementViewCount(supabase, questionId).catch(() => {});
     }
 
     return { success: true, question };
