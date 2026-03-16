@@ -19,7 +19,8 @@
 | 9 | Completion | ✅ 완료 | 관리자 답변, 온보딩 CRUD |
 | - | Auth-Fix | ✅ 완료 | 인증 시스템 보안 강화 |
 | - | UX-Fix | ✅ 완료 | 역할별 메뉴 권한, 로그아웃 수정 |
-| - | Enhancements v2 | 📋 계획 수립 | 8개 기능 개선 (Phase 0~7) |
+| - | Auth-Security | ✅ 완료 | 리다이렉트 검증, OAuth 분기 통합, 서버 보호 |
+| - | Enhancements v2 | 🔄 진행 중 | 12개 기능 개선 (Phase 0~0.3 완료, 1~7 대기) |
 
 ---
 
@@ -31,8 +32,9 @@
 - [x] `018_add_staff_credentials.sql` 실행 ✅ (Staff bcrypt 인증)
 - [x] `019_add_login_attempts.sql` 실행 ✅ (계정 잠금)
 - [x] `020_add_audit_logs.sql` 실행 ✅ (감사 로그)
-- [ ] `021_add_change_password_rpc.sql` (Enhancements v2 Phase 3)
-- [ ] `022_add_search_indexes.sql` (Enhancements v2 Phase 6)
+- [ ] `021_add_change_password_rpc.sql` (Phase 3 — 비밀번호 변경)
+- [ ] `022_add_search_indexes.sql` (Phase 6 — 통합 검색)
+- [x] `023_cleanup_test_accounts.sql` 실행 필요 (테스트 계정 정리)
 
 ### 환경변수 설정
 - [ ] `NEXT_PUBLIC_KAKAO_MAP_API_KEY` (카카오맵)
@@ -100,6 +102,26 @@ src/domains/
 
 ## 최근 변경사항
 
+### 2026-03-16 (3차)
+- **인증 보안 개선 (Auth-Security)**
+  - `src/lib/auth-redirect.ts` 생성: `sanitizeRedirectPath()`, `getPostAuthDestination()`
+  - 오픈 리다이렉트 취약점 차단 (login, OAuth callback)
+  - OAuth 콜백 상태 분기를 middleware와 단일 정책으로 통합
+    - pending → `/register` (잘못됨) → `/pending-approval` (수정)
+  - signOut: Promise.race 2초 타임아웃 (쿠키 먼저 삭제 + 서버 요청 대기)
+  - middleware: `/pending-approval`, `/account-inactive` 서버 판정 추가
+  - 상태 페이지 클라이언트 useEffect 리다이렉트 제거
+
+- **로그인 흐름 수정**
+  - 로그인 후 `window.location.href` → `router.replace` (store 상태 보존)
+  - AuthInitializer: store에 프로필 있으면 DB 재조회 스킵
+  - Nav: isLoading 시 메뉴 미표시 (깜빡임 방지)
+
+- **테스트 계정 정리**
+  - 시드 데이터 username을 auth 이메일과 일치 (admin_test → admin)
+  - mentor/student 테스트 계정 제거, admin 단일 계정으로 전환
+  - `023_cleanup_test_accounts.sql` 마이그레이션 추가
+
 ### 2026-03-16 (2차)
 - **역할별 메뉴 권한 분기 (UX-Fix)**
   - Nav: 도시락 메뉴를 재원생 전용으로 변경 (staff 숨김)
@@ -108,21 +130,9 @@ src/domains/
 
 - **로그아웃 동작 수정 (UX-Fix)**
   - 3곳(Nav, AdminSidebar, MyPage) 로그아웃 패턴 통일
-  - `router.push()` → `window.location.href` (전체 리로드로 캐시 문제 해결)
-  - AdminSidebar: `signOut()` 서비스 경유 + try-catch + 중복 클릭 방지
+  - signOut 서비스 경유 + 중복 클릭 방지
   - SessionWarning: 세션 만료 시 자동 로그아웃 추가
-  - Providers: SIGNED_OUT 이벤트에서 `logout()` 호출로 파생 상태 완전 초기화
-
-- **기능 개선 계획 수립 (Enhancements v2)**
-  - `docs/plans/PLAN_feature-enhancements-v2.md` 생성
-  - Phase 0: 로그아웃 수정 ✅ (구현 완료)
-  - Phase 1: 모바일 햄버거 메뉴
-  - Phase 2: 질문 알림 뱃지 (Nav + Admin Sidebar)
-  - Phase 3: 스태프 비밀번호 변경
-  - Phase 4: 공지 리치텍스트 에디터 (Tiptap)
-  - Phase 5: 블로그 OG 이미지 자동 생성
-  - Phase 6: 공개 페이지 통합 검색
-  - Phase 7: E2E 테스트 (Playwright)
+  - Providers: SIGNED_OUT → `logout()` 호출로 파생 상태 완전 초기화
 
 ### 2026-03-16
 - **인증 시스템 보안 강화 (Phase Auth-Fix)**
@@ -170,6 +180,9 @@ src/domains/
 
 ### Enhancements v2 구현 (진행 중)
 - [x] Phase 0: 로그아웃 수정 ✅
+- [x] Phase 0.1: 리다이렉트 경로 검증 ✅
+- [x] Phase 0.2: OAuth 분기 통합 + 로그아웃 타임아웃 ✅
+- [x] Phase 0.3: 상태 페이지 서버 보호 ✅
 - [ ] Phase 1: 모바일 햄버거 메뉴 (2~3h)
 - [ ] Phase 2: 질문 알림 뱃지 (2h)
 - [ ] Phase 3: 스태프 비밀번호 변경 (3h)
