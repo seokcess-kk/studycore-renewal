@@ -18,10 +18,14 @@ export function Nav() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
 
-  // 인증 상태 (sessionStorage persist → 리로드 시 즉시 복원)
+  // hydration 완료 체크 (SSR/CSR 불일치 방지)
+  useEffect(() => { setIsMounted(true); }, []);
+
+  // 인증 상태 (sessionStorage persist → hydrate 후 즉시 사용 가능)
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const canAccessAdmin = useUserStore((state) => state.canAccessAdmin);
   const isStaff = useUserStore((state) => state.isStaff);
@@ -103,7 +107,7 @@ export function Nav() {
 
         {/* 데스크톱 네비게이션 링크 */}
         <div className="flex items-center gap-6 md:gap-9">
-          {isAuthenticated ? (
+          {isMounted && isAuthenticated ? (
             <>
               <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>
                 공지사항
