@@ -23,7 +23,7 @@ f(x) = x³ + 2x² - 5x + 3
   'pending',
   id,
   NOW() - INTERVAL '2 hours'
-FROM public.profiles WHERE username = 'student_test'
+FROM public.profiles WHERE username = 'student'
 ON CONFLICT (id) DO NOTHING;
 
 -- 미답변 질문 2
@@ -40,7 +40,7 @@ SELECT
   'pending',
   id,
   NOW() - INTERVAL '1 hour'
-FROM public.profiles WHERE username = 'student_test'
+FROM public.profiles WHERE username = 'student'
 ON CONFLICT (id) DO NOTHING;
 
 -- 미답변 질문 3
@@ -56,7 +56,7 @@ SELECT
   'pending',
   id,
   NOW() - INTERVAL '30 minutes'
-FROM public.profiles WHERE username = 'student_test'
+FROM public.profiles WHERE username = 'student'
 ON CONFLICT (id) DO NOTHING;
 
 -- 답변 완료된 질문
@@ -70,7 +70,7 @@ SELECT
   'answered',
   id,
   NOW() - INTERVAL '1 day'
-FROM public.profiles WHERE username = 'student_test'
+FROM public.profiles WHERE username = 'student'
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================
@@ -100,7 +100,7 @@ SELECT
 추가 질문 있으시면 편하게 물어보세요!',
   id,
   NOW() - INTERVAL '20 hours'
-FROM public.profiles WHERE username = 'mentor_test'
+FROM public.profiles WHERE username = 'mentor'
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================
@@ -131,7 +131,7 @@ SELECT
   TRUE,
   id,
   NOW() - INTERVAL '3 days'
-FROM public.profiles WHERE username = 'admin_test'
+FROM public.profiles WHERE username = 'admin'
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.notices (id, title, content, category, is_pinned, author_id, created_at)
@@ -149,7 +149,7 @@ SELECT
   FALSE,
   id,
   NOW() - INTERVAL '1 day'
-FROM public.profiles WHERE username = 'admin_test'
+FROM public.profiles WHERE username = 'admin'
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.notices (id, title, content, category, is_pinned, author_id, created_at)
@@ -167,7 +167,7 @@ SELECT
   FALSE,
   id,
   NOW() - INTERVAL '12 hours'
-FROM public.profiles WHERE username = 'admin_test'
+FROM public.profiles WHERE username = 'admin'
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================
@@ -181,7 +181,7 @@ ON CONFLICT (id) DO NOTHING;
 -- ============================================
 -- 테스트 시나리오
 -- ============================================
--- 1. 관리자 로그인 (admin_test / test1234!)
+-- 1. 관리자 로그인 (admin / test1234!)
 -- 2. /admin/questions 접속 → 미답변 질문 3개 확인
 -- 3. 질문 클릭 → /admin/questions/[id] 상세 페이지
 -- 4. 답변 작성 후 등록 → 상태가 'answered'로 변경 확인

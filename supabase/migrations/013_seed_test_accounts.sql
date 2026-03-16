@@ -19,8 +19,10 @@
 -- ============================================
 
 -- 관리자 프로필
+-- ⚠️ username은 auth 이메일의 로컬 파트와 반드시 일치해야 함
+--    signInWithDummyEmail이 ${username}@studycore.internal로 이메일을 구성하므로
 INSERT INTO public.profiles (id, username, name, phone, role, status)
-SELECT id, 'admin_test', '테스트관리자', '010-0000-0001', 'admin', 'active'
+SELECT id, 'admin', '테스트관리자', '010-0000-0001', 'admin', 'active'
 FROM auth.users WHERE email = 'admin@studycore.internal'
 ON CONFLICT (id) DO UPDATE SET
   username = EXCLUDED.username,
@@ -30,7 +32,7 @@ ON CONFLICT (id) DO UPDATE SET
 
 -- 멘토 프로필
 INSERT INTO public.profiles (id, username, name, phone, role, status)
-SELECT id, 'mentor_test', '테스트멘토', '010-0000-0002', 'mentor', 'active'
+SELECT id, 'mentor', '테스트멘토', '010-0000-0002', 'mentor', 'active'
 FROM auth.users WHERE email = 'mentor@studycore.internal'
 ON CONFLICT (id) DO UPDATE SET
   username = EXCLUDED.username,
@@ -39,8 +41,8 @@ ON CONFLICT (id) DO UPDATE SET
   status = EXCLUDED.status;
 
 -- 재원생 프로필
-INSERT INTO public.profiles (id, username, name, phone, role, status, school, g   rade)
-SELECT id, 'student_test', '테스트학생', '010-0000-0003', 'student', 'active', '광주고등학교', 2
+INSERT INTO public.profiles (id, username, name, phone, role, status, school, grade)
+SELECT id, 'student', '테스트학생', '010-0000-0003', 'student', 'active', '광주고등학교', 2
 FROM auth.users WHERE email = 'student@studycore.internal'
 ON CONFLICT (id) DO UPDATE SET
   username = EXCLUDED.username,
@@ -53,10 +55,10 @@ ON CONFLICT (id) DO UPDATE SET
 -- ============================================
 -- 테스트 계정 정보
 -- ============================================
--- | 역할    | 아이디        | 이메일                        | 비밀번호   |
--- |---------|---------------|-------------------------------|-----------|
--- | 관리자  | admin_test    | admin@studycore.internal      | test1234! |
--- | 멘토    | mentor_test   | mentor@studycore.internal     | test1234! |
--- | 재원생  | student_test  | student@studycore.internal    | test1234! |
--- | 비회원  | (로그인 안함) | -                             | -         |
+-- | 역할    | 아이디    | 이메일                        | 비밀번호   |
+-- |---------|-----------|-------------------------------|-----------|
+-- | 관리자  | admin     | admin@studycore.internal      | test1234! |
+-- | 멘토    | mentor    | mentor@studycore.internal     | test1234! |
+-- | 재원생  | student   | student@studycore.internal    | test1234! |
+-- | 비회원  | (없음)    | -                             | -         |
 -- ============================================
