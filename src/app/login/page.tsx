@@ -77,21 +77,18 @@ function LoginContent() {
       const result = await staffLogin(supabase, data);
 
       if (result.success && result.user && result.profile) {
-        // Zustand store 업데이트 (role 포함 → canAccessAdmin 등 즉시 계산)
+        // Zustand store 업데이트 → useEffect가 자동으로 redirectTo로 이동
         login(result.user, result.profile);
         success("로그인되었습니다.");
-
-        // CSR 네비게이션으로 store 상태 보존
-        // (window.location.href는 store를 파괴하여 메뉴가 깨짐)
-        router.replace(redirectTo);
+        // setIsLoading(false) 하지 않음 — 페이지 전환 중 로딩 유지
+        return;
       } else {
         showError(result.error || "로그인에 실패했습니다.");
       }
     } catch {
       showError("로그인 중 오류가 발생했습니다.");
-    } finally {
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (
