@@ -44,16 +44,14 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
 
     setIsExpanded(true);
 
-    // 상세 데이터 로드 (답변 포함)
-    if (!detail) {
-      setIsLoadingDetail(true);
-      const supabase = createClient();
-      const result = await getQuestionDetail(supabase, question.id);
-      if (result.success && result.question) {
-        setDetail(result.question as QuestionWithAnswers);
-      }
-      setIsLoadingDetail(false);
+    // 상세 데이터 로드 (펼칠 때마다 최신 조회)
+    setIsLoadingDetail(true);
+    const supabase = createClient();
+    const result = await getQuestionDetail(supabase, question.id);
+    if (result.success && result.question) {
+      setDetail(result.question as QuestionWithAnswers);
     }
+    setIsLoadingDetail(false);
   };
 
   const handlePin = async (e: React.MouseEvent) => {
