@@ -21,7 +21,8 @@ export default async function OGImage({
     .eq("status", "published")
     .single();
 
-  const title = post?.title || "STUDYCORE 블로그";
+  const rawTitle = post?.title || "STUDYCORE 블로그";
+  const title = rawTitle.length > 60 ? rawTitle.slice(0, 57) + "..." : rawTitle;
   const tags = (post?.tags as string[]) || [];
 
   return new ImageResponse(
@@ -58,10 +59,6 @@ export default async function OGImage({
             fontWeight: 700,
             lineHeight: 1.3,
             marginBottom: 30,
-            overflow: "hidden",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
           }}
         >
           {title}

@@ -85,9 +85,11 @@ export function RichTextEditor({
     },
   });
 
-  // content prop이 외부에서 변경될 때 에디터 동기화
+  // 수정 페이지: 초기 content가 비동기로 로드될 때 에디터에 반영
+  // onUpdate → onChange → setValue → content 변경 루프 방지를 위해
+  // 에디터가 비어있을 때만 외부 content를 설정
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
+    if (editor && editor.isEmpty && content) {
       editor.commands.setContent(content);
     }
   }, [content, editor]);
