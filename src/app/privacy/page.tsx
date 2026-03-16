@@ -5,6 +5,9 @@ import { CONTACT } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "개인정보처리방침",
   description: "스터디코어 1.0 개인정보처리방침",
+  alternates: {
+    canonical: "https://studycore.kr/privacy",
+  },
 };
 
 export default function PrivacyPage() {

@@ -5,6 +5,9 @@ import { CONTACT } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "이용약관",
   description: "스터디코어 1.0 서비스 이용약관",
+  alternates: {
+    canonical: "https://studycore.kr/terms",
+  },
 };
 
 export default function TermsPage() {
