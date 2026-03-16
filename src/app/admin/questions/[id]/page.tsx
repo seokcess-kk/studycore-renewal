@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createBrowserClient } from "@/lib/supabase/client";
-import { getQuestionDetail, createAnswer } from "@/domains/question/service";
+import { getQuestionDetail, createAnswer, togglePinQuestion } from "@/domains/question/service";
 import {
   type QuestionWithAnswers,
   type AnswerWithAuthor,
@@ -24,6 +24,8 @@ import {
   MessageSquare,
   Image as ImageIcon,
   Send,
+  Pin,
+  PinOff,
 } from "lucide-react";
 
 // 폼 스키마 (question_id 제외 - 페이지에서 주입)
@@ -157,9 +159,41 @@ export default function AdminQuestionDetailPage() {
 
       {/* 질문 정보 */}
       <div className="border border-rule bg-white p-6">
-        <h1 className="font-serif text-xl font-bold text-ink mb-4">
-          {question.title}
-        </h1>
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <h1 className="font-serif text-xl font-bold text-ink">
+            {question.is_pinned && (
+              <span className="text-teal mr-2">[고정]</span>
+            )}
+            {question.title}
+          </h1>
+          <button
+            type="button"
+            onClick={async () => {
+              const supabase = createBrowserClient();
+              const result = await togglePinQuestion(
+                supabase,
+                question.id,
+                !question.is_pinned
+              );
+              if (result.success) {
+                setQuestion({ ...question, is_pinned: !question.is_pinned });
+              }
+            }}
+            className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-[12px] border border-rule hover:bg-stone transition-colors"
+          >
+            {question.is_pinned ? (
+              <>
+                <PinOff size={14} />
+                고정 해제
+              </>
+            ) : (
+              <>
+                <Pin size={14} />
+                고정
+              </>
+            )}
+          </button>
+        </div>
 
         <div className="flex items-center gap-4 text-sm text-muted mb-6">
           <span className="flex items-center gap-1">

@@ -42,6 +42,7 @@ export async function getQuestions(
     `,
       { count: "exact" }
     )
+    .order("is_pinned", { ascending: false })
     .order("created_at", { ascending: false });
 
   if (options?.status) {
@@ -92,6 +93,24 @@ export async function getUnansweredCount(
   }
 
   return count || 0;
+}
+
+/**
+ * 질문 고정/해제 토글
+ */
+export async function toggleQuestionPinned(
+  supabase: SupabaseClient,
+  questionId: string,
+  isPinned: boolean
+): Promise<void> {
+  const { error } = await supabase
+    .from("questions")
+    .update({ is_pinned: isPinned })
+    .eq("id", questionId);
+
+  if (error) {
+    throw new Error(`질문 고정 상태 변경 실패: ${error.message}`);
+  }
 }
 
 /**

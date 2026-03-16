@@ -32,6 +32,25 @@ export async function fetchUnansweredCount(
 }
 
 /**
+ * 질문 고정/해제 (관리자용)
+ */
+export async function togglePinQuestion(
+  supabase: SupabaseClient,
+  questionId: string,
+  isPinned: boolean
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await questionRepo.toggleQuestionPinned(supabase, questionId, isPinned);
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "고정 상태 변경에 실패했습니다.",
+    };
+  }
+}
+
+/**
  * 질문 목록 조회
  */
 export async function getQuestionList(

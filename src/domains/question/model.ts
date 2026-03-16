@@ -32,6 +32,7 @@ export const questionSchema = z.object({
   image_urls: z.array(z.string()).nullable(),
   status: z.enum(["pending", "answered"]),
   is_public: z.boolean(),
+  is_pinned: z.boolean().optional().default(false),
   author_id: z.string().uuid(),
   created_at: z.string(),
   updated_at: z.string(),

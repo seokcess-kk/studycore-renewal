@@ -290,6 +290,9 @@ function QuestionItem({
             )}
           </div>
           <h3 className="text-[15px] font-medium text-ink truncate group-hover:text-navy transition-colors">
+            {question.is_pinned && (
+              <span className="text-teal font-bold mr-1">[고정]</span>
+            )}
             {question.title}
           </h3>
           <p className="text-[13px] text-muted mt-1 line-clamp-2">
