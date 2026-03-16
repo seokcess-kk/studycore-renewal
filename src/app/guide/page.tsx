@@ -5,9 +5,11 @@ import { Nav, Footer, Skeleton } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getVisibleSectionList } from "@/domains/guide/service";
 import type { GuideSection } from "@/domains/guide/model";
+import { useUserStore } from "@/stores/useUserStore";
 import { ChevronDown, BookOpen } from "lucide-react";
 
 export default function GuidePage() {
+  const { isStaff } = useUserStore();
   const [sections, setSections] = useState<GuideSection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
@@ -42,13 +44,15 @@ export default function GuidePage() {
         <section className="bg-navy py-16 px-6 md:px-13">
           <div className="max-w-3xl mx-auto">
             <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-4">
-              Onboarding Guide
+              {isStaff ? "Onboarding Guide" : "Manual"}
             </span>
             <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
-              조교 온보딩 가이드
+              {isStaff ? "조교 온보딩 가이드" : "이용 매뉴얼"}
             </h1>
             <p className="mt-4 text-white/50 text-[15px]">
-              업무에 필요한 정보를 확인하세요.
+              {isStaff
+                ? "업무에 필요한 정보를 확인하세요."
+                : "독서실 이용에 필요한 정보를 안내합니다."}
             </p>
           </div>
         </section>
