@@ -96,9 +96,11 @@ export const updateProfileSchema = z.object({
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 
 // Staff 로그인 스키마
+// 비밀번호 길이 검증은 여기서 하지 않음 (초기 비밀번호 "1234" 허용)
+// 비밀번호 강도 검증은 changePasswordSchema에서 수행
 export const staffLoginSchema = z.object({
   username: z.string().min(3, "아이디는 3자 이상 입력해주세요"),
-  password: z.string().min(6, "비밀번호는 6자 이상 입력해주세요"),
+  password: z.string().min(1, "비밀번호를 입력해주세요"),
 });
 
 export type StaffLoginInput = z.infer<typeof staffLoginSchema>;
