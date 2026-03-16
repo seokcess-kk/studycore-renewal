@@ -87,6 +87,7 @@ export function ImageUploader({
           .upload(fileName, compressedFile, {
             cacheControl: "3600",
             upsert: false,
+            contentType: compressedFile.type || `image/${fileExt === "jpg" ? "jpeg" : fileExt}`,
           });
 
         if (uploadError) {
