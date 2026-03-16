@@ -285,30 +285,42 @@ export default function AdminMemberDetailPage() {
             </div>
 
             {member.role === "student" && (
-              <div className="space-y-2">
-                {member.status !== "active" && (
-                  <button
-                    onClick={() => openStatusModal("active")}
-                    className="w-full border border-green-500 px-3 py-2 text-sm text-green-600 hover:bg-green-50"
-                  >
-                    활성화
-                  </button>
+              <div className="space-y-4">
+                {/* 가입 승인 (pending → active) */}
+                {member.status === "pending" && (
+                  <div className="p-3 bg-yellow-50 border border-yellow-200">
+                    <p className="text-[13px] text-yellow-700 mb-2">
+                      가입 승인 대기 중입니다.
+                    </p>
+                    <button
+                      onClick={() => openStatusModal("active")}
+                      className="w-full bg-teal border border-teal px-3 py-2.5 text-sm font-medium text-white hover:bg-teal-d"
+                    >
+                      가입 승인
+                    </button>
+                  </div>
                 )}
-                {member.status !== "inactive" && (
-                  <button
-                    onClick={() => openStatusModal("inactive")}
-                    className="w-full border border-gray-400 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-                  >
-                    비활성화
-                  </button>
-                )}
+
+                {/* 계정 관리 (active ↔ inactive) */}
                 {member.status !== "pending" && (
-                  <button
-                    onClick={() => openStatusModal("pending")}
-                    className="w-full border border-yellow-500 px-3 py-2 text-sm text-yellow-600 hover:bg-yellow-50"
-                  >
-                    승인 대기로 변경
-                  </button>
+                  <div className="space-y-2">
+                    {member.status === "active" && (
+                      <button
+                        onClick={() => openStatusModal("inactive")}
+                        className="w-full border border-rule px-3 py-2 text-sm text-muted hover:bg-stone"
+                      >
+                        계정 비활성화
+                      </button>
+                    )}
+                    {member.status === "inactive" && (
+                      <button
+                        onClick={() => openStatusModal("active")}
+                        className="w-full border border-teal px-3 py-2 text-sm text-teal hover:bg-teal/5"
+                      >
+                        계정 재활성화
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -347,10 +359,26 @@ export default function AdminMemberDetailPage() {
           setNewStatus(null);
         }}
         onConfirm={handleStatusChange}
-        title="상태 변경"
-        description={`회원 상태를 ${newStatus === "active" ? "활성" : newStatus === "inactive" ? "비활성" : "승인 대기"}으로 변경하시겠습니까?`}
-        confirmText="변경"
-        variant="warning"
+        title={
+          member?.status === "pending" && newStatus === "active"
+            ? "가입 승인"
+            : newStatus === "inactive"
+            ? "계정 비활성화"
+            : "계정 재활성화"
+        }
+        description={
+          member?.status === "pending" && newStatus === "active"
+            ? "이 재원생의 가입을 승인하시겠습니까? 승인 후 모든 기능을 이용할 수 있습니다."
+            : newStatus === "inactive"
+            ? "계정을 비활성화하시겠습니까? 비활성화된 재원생은 서비스 이용이 제한됩니다."
+            : "계정을 재활성화하시겠습니까?"
+        }
+        confirmText={
+          member?.status === "pending" && newStatus === "active"
+            ? "승인"
+            : "변경"
+        }
+        variant={newStatus === "inactive" ? "danger" : "warning"}
         isLoading={isSaving}
       />
     </div>
