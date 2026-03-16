@@ -61,12 +61,12 @@ export function AdminSidebar() {
   const { profile, logout } = useUserStore();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
 
     const supabase = createBrowserClient();
-    signOut(supabase);
+    await signOut(supabase);
     logout();
     window.location.href = "/";
   };

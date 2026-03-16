@@ -26,6 +26,36 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith(route)
   );
 
+  // 상태 안내 페이지 접근 제어 (서버 판정)
+  const isStatusPage =
+    pathname === "/pending-approval" || pathname === "/account-inactive";
+
+  if (isStatusPage) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = ROUTES.LOGIN;
+      return NextResponse.redirect(url);
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("status")
+      .eq("id", user.id)
+      .single();
+
+    // 상태 불일치 시 홈으로 리다이렉트
+    if (pathname === "/pending-approval" && profile?.status !== "pending") {
+      const url = request.nextUrl.clone();
+      url.pathname = ROUTES.HOME;
+      return NextResponse.redirect(url);
+    }
+    if (pathname === "/account-inactive" && profile?.status !== "inactive") {
+      const url = request.nextUrl.clone();
+      url.pathname = ROUTES.HOME;
+      return NextResponse.redirect(url);
+    }
+  }
+
   // 보호된 라우트 접근 시 로그인 확인
   if (isProtectedRoute || isAdminRoute) {
     if (!user) {

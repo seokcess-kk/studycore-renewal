@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/lib/constants";
+import { sanitizeRedirectPath, getPostAuthDestination } from "@/lib/auth-redirect";
 
 function LoadingUI() {
   return (
@@ -30,7 +31,7 @@ function AuthCallbackContent() {
 
     const handleCallback = async () => {
       const code = searchParams.get("code");
-      const next = searchParams.get("next") ?? ROUTES.HOME;
+      const next = sanitizeRedirectPath(searchParams.get("next"), ROUTES.HOME);
 
       if (!code) {
         setError("인증 코드가 없습니다.");
@@ -60,23 +61,15 @@ function AuthCallbackContent() {
           return;
         }
 
-        // 프로필 존재 여부 확인
+        // 프로필 존재 여부 확인 → 상태별 목적지 결정
         const { data: profile } = await supabase
           .from("profiles")
-          .select("id, status")
+          .select("id, role, status")
           .eq("id", user.id)
           .single();
 
-        if (!profile) {
-          // 프로필이 없으면 추가 정보 입력 페이지로
-          router.replace("/register");
-        } else if (profile.status === "pending") {
-          // 승인 대기 중이면 register 페이지로
-          router.replace("/register");
-        } else {
-          // 프로필이 있으면 다음 페이지로
-          router.replace(next);
-        }
+        const destination = getPostAuthDestination(profile, next);
+        router.replace(destination);
       } catch (err) {
         console.error("Auth callback error:", err);
         setError("인증 처리 중 오류가 발생했습니다.");

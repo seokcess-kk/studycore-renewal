@@ -11,13 +11,14 @@ import { staffLogin } from "@/domains/user/service";
 import { staffLoginSchema, type StaffLoginInput } from "@/domains/user/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES, CONTACT } from "@/lib/constants";
+import { sanitizeRedirectPath } from "@/lib/auth-redirect";
 
 function LoginContent() {
   const [loginType, setLoginType] = useState<"kakao" | "staff">("kakao");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || ROUTES.HOME;
+  const redirectTo = sanitizeRedirectPath(searchParams.get("redirect"), ROUTES.HOME);
   const { success, error: showError } = useToast();
   const login = useUserStore((state) => state.login);
   const isAuthLoading = useUserStore((state) => state.isLoading);

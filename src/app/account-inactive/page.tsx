@@ -4,28 +4,10 @@ import Link from "next/link";
 import { Nav, Footer, Button } from "@/components/common";
 import { ROUTES, CONTACT } from "@/lib/constants";
 import { useUserStore } from "@/stores/useUserStore";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 export default function AccountInactivePage() {
-  const router = useRouter();
   const profile = useUserStore((state) => state.profile);
-  const isLoading = useUserStore((state) => state.isLoading);
-  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
-
-  // 이미 활성화된 경우 홈으로 리다이렉트
-  useEffect(() => {
-    if (isLoading) return;
-
-    if (!isAuthenticated) {
-      router.replace(ROUTES.LOGIN);
-      return;
-    }
-
-    if (profile?.status === "active") {
-      router.replace(ROUTES.HOME);
-    }
-  }, [isLoading, isAuthenticated, profile, router]);
+  // 접근 제어는 middleware에서 서버 판정 (클라이언트 리다이렉트 불필요)
 
   return (
     <>

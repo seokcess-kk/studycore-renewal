@@ -38,12 +38,12 @@ export function Nav() {
     }`;
 
   // 로그아웃 핸들러
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
 
     const supabase = createClient();
-    signOut(supabase);  // fire-and-forget (쿠키 즉시 삭제 + 서버 요청은 비동기)
+    await signOut(supabase); // 쿠키 즉시 삭제 + 서버 요청 최대 2초 대기
     logout();
     window.location.href = "/";
   };

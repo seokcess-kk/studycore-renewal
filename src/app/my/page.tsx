@@ -56,10 +56,10 @@ export default function MyPage() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsLoggingOut(true);
     const supabase = createClient();
-    signOut(supabase);
+    await signOut(supabase);
     logoutStore();
     window.location.href = "/";
   };
