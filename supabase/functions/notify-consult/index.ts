@@ -17,9 +17,16 @@ interface ConsultNotifyRequest {
   name: string;
   phone: string;
   school?: string;
-  grade?: number;
+  consultType?: string;
   message?: string;
 }
+
+const CONSULT_TYPE_LABELS: Record<string, string> = {
+  admission: "입소 상담",
+  tour: "시설 견학",
+  program: "프로그램 문의",
+  etc: "기타",
+};
 
 serve(async (req: Request) => {
   // CORS 처리
@@ -47,31 +54,35 @@ serve(async (req: Request) => {
       errors: [] as string[],
     };
 
-    // 1. 관리자에게 알림 발송
+    // 1. 관리자에게 알림 발송 (알림톡 우선 → SMS fallback)
     if (adminPhone) {
-      const adminMessage = `[스터디코어] 상담 신청
+      const consultTypeLabel = CONSULT_TYPE_LABELS[body.consultType || ""] || body.consultType || "-";
+      const adminMessage = `[스터디코어 1.0] 새 상담 신청이 접수되었습니다.
+
 이름: ${body.name}
 연락처: ${body.phone}
-${body.school ? `학교: ${body.school}` : ""}
-${body.grade ? `학년: ${body.grade}학년` : ""}
-${body.message ? `메시지: ${body.message}` : ""}`;
+학교/학년: ${body.school || "-"}
+유형: ${consultTypeLabel}
+문의: ${body.message || "-"}
 
-      // 알림톡 시도
+관리자 페이지에서 확인해 주세요.`;
+
+      // 알림톡 시도 (SMS fallback 포함)
       const alimtalkResult = await sendAlimtalk({
         to: adminPhone,
         templateCode: ALIMTALK_TEMPLATES.CONSULT_ADMIN,
         variables: {
           이름: body.name,
           연락처: body.phone,
-          학교: body.school || "-",
-          학년: body.grade?.toString() || "-",
+          학교학년: body.school || "-",
+          유형: consultTypeLabel,
           메시지: body.message || "-",
         },
+        fallbackMessage: adminMessage,
       });
 
       if (alimtalkResult.success) {
         results.adminNotified = true;
-        // 알림톡 성공 로그
         await logNotification({
           type: "alimtalk",
           recipient_phone: adminPhone,
@@ -82,37 +93,25 @@ ${body.message ? `메시지: ${body.message}` : ""}`;
           metadata: { trigger: "consult", customerName: body.name },
         });
       } else {
-        // SMS fallback
+        // 알림톡+fallback 모두 실패 시 직접 SMS 시도
         const smsResult = await sendSMS({
           to: adminPhone,
           message: adminMessage,
         });
 
-        if (smsResult.success) {
-          results.adminNotified = true;
-          // SMS 성공 로그
-          await logNotification({
-            type: "sms",
-            recipient_phone: adminPhone,
-            recipient_name: "관리자",
-            message: adminMessage,
-            status: "sent",
-            metadata: { trigger: "consult", customerName: body.name, fallback: true },
-          });
-        } else {
-          results.errors.push(
-            `관리자 알림 실패: ${smsResult.error || "알 수 없는 오류"}`
-          );
-          // 실패 로그
-          await logNotification({
-            type: "sms",
-            recipient_phone: adminPhone,
-            recipient_name: "관리자",
-            message: adminMessage,
-            status: "failed",
-            error_message: smsResult.error || "알 수 없는 오류",
-            metadata: { trigger: "consult", customerName: body.name },
-          });
+        results.adminNotified = smsResult.success;
+        await logNotification({
+          type: "sms",
+          recipient_phone: adminPhone,
+          recipient_name: "관리자",
+          message: adminMessage,
+          status: smsResult.success ? "sent" : "failed",
+          error_message: smsResult.success ? undefined : smsResult.error,
+          metadata: { trigger: "consult", customerName: body.name, fallback: true },
+        });
+
+        if (!smsResult.success) {
+          results.errors.push(`관리자 알림 실패: ${smsResult.error || "알 수 없는 오류"}`);
         }
       }
     }

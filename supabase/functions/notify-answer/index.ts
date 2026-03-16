@@ -93,13 +93,15 @@ serve(async (req: Request) => {
       );
     }
 
-    // 메시지 생성
-    const message = `[스터디코어] ${student.name}님, 질문에 답변이 등록되었습니다.
+    // SMS fallback 메시지
+    const smsMessage = `[스터디코어 1.0] 질문에 답변이 등록되었습니다.
+
 제목: ${body.questionTitle || "질문"}
 답변: ${body.mentorName} 멘토
-질문방에서 확인해주세요.`;
 
-    // 알림톡 시도
+질문방에서 답변을 확인하세요.`;
+
+    // 알림톡 우선 시도 (SMS fallback 포함)
     let sent = false;
     let usedType: "alimtalk" | "sms" = "sms";
     let errorMessage: string | undefined;
@@ -108,20 +110,21 @@ serve(async (req: Request) => {
       to: student.phone,
       templateCode: ALIMTALK_TEMPLATES.ANSWER_STUDENT,
       variables: {
-        이름: student.name,
         제목: body.questionTitle || "질문",
-        멘토명: body.mentorName,
+        멘토이름: body.mentorName,
+        질문ID: body.questionId,
       },
+      fallbackMessage: smsMessage,
     });
 
     if (alimtalkResult.success) {
       sent = true;
       usedType = "alimtalk";
     } else {
-      // SMS fallback
+      // 알림톡+fallback 실패 시 직접 SMS
       const smsResult = await sendSMS({
         to: student.phone,
-        message,
+        message: smsMessage,
       });
 
       sent = smsResult.success;
@@ -136,7 +139,7 @@ serve(async (req: Request) => {
       type: usedType,
       recipient_phone: student.phone,
       recipient_name: student.name,
-      message,
+      message: smsMessage,
       template_code: usedType === "alimtalk" ? ALIMTALK_TEMPLATES.ANSWER_STUDENT : undefined,
       status: sent ? "sent" : "failed",
       error_message: errorMessage,
@@ -144,7 +147,7 @@ serve(async (req: Request) => {
         trigger: "answer",
         questionId: body.questionId,
         mentorName: body.mentorName,
-        fallback: usedType === "sms" && !alimtalkResult.success,
+        fallback: usedType === "sms",
       },
     });
 

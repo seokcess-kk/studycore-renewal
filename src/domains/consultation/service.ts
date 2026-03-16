@@ -55,6 +55,9 @@ export async function submitConsultation(
             consultationId: consultation.id,
             name: consultation.name,
             phone: consultation.phone,
+            school: consultation.school,
+            consultType: consultation.consult_type,
+            message: consultation.message,
           },
         }
       );

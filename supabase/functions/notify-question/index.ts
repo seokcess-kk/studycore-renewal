@@ -7,7 +7,8 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { sendBulkSMSSameMessage } from "../_shared/sms.ts";
+import { sendSMS } from "../_shared/sms.ts";
+import { sendAlimtalk, ALIMTALK_TEMPLATES } from "../_shared/alimtalk.ts";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { logNotificationsBatch, NotificationLogEntry } from "../_shared/notification-logger.ts";
 
@@ -66,51 +67,69 @@ serve(async (req: Request) => {
       );
     }
 
-    // 메시지 생성
-    const message = `[스터디코어] 새 질문이 등록되었습니다.
+    // 메시지 생성 (SMS fallback용)
+    const smsMessage = `[스터디코어 1.0] 새 질문이 등록되었습니다.
+
 학생: ${body.studentName}
 제목: ${body.title}
-질문방에서 확인해주세요.`;
 
-    // 전화번호 목록 추출
-    const phones = mentors.map((mentor) => mentor.phone as string);
+질문방에서 확인 후 답변해 주세요.`;
 
-    // 전화번호 → 이름 매핑
-    const phoneToNameMap = new Map<string, string>();
-    mentors.forEach((mentor) => {
-      phoneToNameMap.set(mentor.phone as string, mentor.name);
-    });
+    // 멘토별 알림톡 발송 (SMS fallback 포함)
+    const logEntries: NotificationLogEntry[] = [];
+    let sentCount = 0;
+    let failedCount = 0;
 
-    // 배치 API로 대량 발송
-    const result = await sendBulkSMSSameMessage(phones, message);
-
-    // 발송 로그 생성 (배치)
-    const failedPhones = new Set(
-      result.errors.map((e) => e.phone?.replace(/[^0-9]/g, ""))
-    );
-
-    const logEntries: NotificationLogEntry[] = mentors.map((mentor) => {
+    for (const mentor of mentors) {
       const phone = mentor.phone as string;
-      const normalizedPhone = phone.replace(/[^0-9]/g, "");
-      const isFailed = failedPhones.has(normalizedPhone);
-      const errorInfo = result.errors.find(
-        (e) => e.phone?.replace(/[^0-9]/g, "") === normalizedPhone
-      );
 
-      return {
-        type: "sms" as const,
-        recipient_phone: phone,
-        recipient_name: mentor.name,
-        message,
-        status: isFailed ? ("failed" as const) : ("sent" as const),
-        error_message: isFailed ? errorInfo?.error : undefined,
-        metadata: {
-          trigger: "question",
-          questionId: body.questionId,
-          studentName: body.studentName,
+      // 알림톡 우선 시도 (SMS fallback 포함)
+      const alimtalkResult = await sendAlimtalk({
+        to: phone,
+        templateCode: ALIMTALK_TEMPLATES.QUESTION_MENTOR,
+        variables: {
+          학생이름: body.studentName,
+          제목: body.title,
+          질문ID: body.questionId,
         },
-      };
-    });
+        fallbackMessage: smsMessage,
+      });
+
+      if (alimtalkResult.success) {
+        sentCount++;
+        logEntries.push({
+          type: "alimtalk" as const,
+          recipient_phone: phone,
+          recipient_name: mentor.name,
+          message: smsMessage,
+          template_code: ALIMTALK_TEMPLATES.QUESTION_MENTOR,
+          status: "sent" as const,
+          metadata: { trigger: "question", questionId: body.questionId, studentName: body.studentName },
+        });
+      } else {
+        // 알림톡+fallback 실패 시 직접 SMS
+        const smsResult = await sendSMS({ to: phone, message: smsMessage });
+
+        if (smsResult.success) {
+          sentCount++;
+        } else {
+          failedCount++;
+        }
+
+        logEntries.push({
+          type: "sms" as const,
+          recipient_phone: phone,
+          recipient_name: mentor.name,
+          message: smsMessage,
+          status: smsResult.success ? ("sent" as const) : ("failed" as const),
+          error_message: smsResult.success ? undefined : smsResult.error,
+          metadata: { trigger: "question", questionId: body.questionId, studentName: body.studentName, fallback: true },
+        });
+      }
+
+      // 100ms 딜레이 (rate limit)
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
 
     // 배치 로그 저장
     await logNotificationsBatch(logEntries);
@@ -118,10 +137,9 @@ serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: true,
-        sentCount: result.success,
-        failedCount: result.failed,
+        sentCount,
+        failedCount,
         totalMentors: mentors.length,
-        errors: result.errors.length > 0 ? result.errors : undefined,
       }),
       {
         status: 200,
