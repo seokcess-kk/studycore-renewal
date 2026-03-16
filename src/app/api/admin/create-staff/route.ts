@@ -95,10 +95,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (authError || !authData.user) {
-      return NextResponse.json(
-        { error: `Auth 계정 생성 실패: ${authError?.message || "알 수 없는 오류"}` },
-        { status: 500 }
-      );
+      const msg = authError?.message?.includes("already registered")
+        ? "이미 등록된 이메일입니다. 기존 Auth 계정을 삭제 후 다시 시도해주세요."
+        : `Auth 계정 생성 실패: ${authError?.message || "알 수 없는 오류"}`;
+      return NextResponse.json({ error: msg }, { status: 500 });
     }
 
     // 5. profiles 테이블에 프로필 생성 (Service Role — RLS 우회)
