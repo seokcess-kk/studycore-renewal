@@ -5,14 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Nav, Footer, Button, Skeleton, useToast } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
-import { getQuestionDetail, deleteQuestion, createAnswer, togglePinQuestion } from "@/domains/question/service";
-import { type QuestionWithAnswers, type AnswerWithAuthor, createAnswerSchema } from "@/domains/question/model";
-import { ImageUploader } from "@/components/common/ImageUploader";
-import { useUserStore } from "@/stores/useUserStore";
+import { getQuestionDetail, deleteQuestion, togglePinQuestion } from "@/domains/question/service";
+import { type QuestionWithAnswers, type AnswerWithAuthor } from "@/domains/question/model";
+import { AnswerForm } from "@/components/questions/AnswerForm";
+import { useUserStore } from "@/stores/useUserStore"
 import { ROUTES } from "@/lib/constants";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   ArrowLeft,
   Clock,
@@ -281,18 +278,20 @@ export default function QuestionDetailPage() {
 
               {/* 답변 작성 폼 (멘토/관리자용) */}
               {canAnswer && (
-                <AnswerForm
-                  questionId={question.id}
-                  onAnswerCreated={() => {
-                    // 질문 데이터 새로고침
-                    const supabase = createClient();
-                    getQuestionDetail(supabase, questionId).then((result) => {
-                      if (result.success && result.question) {
-                        setQuestion(result.question as QuestionWithAnswers);
-                      }
-                    });
-                  }}
-                />
+                <div className="bg-white border border-rule p-6">
+                  <h3 className="font-medium text-ink mb-4">답변 작성</h3>
+                  <AnswerForm
+                    questionId={question.id}
+                    onSuccess={() => {
+                      const supabase = createClient();
+                      getQuestionDetail(supabase, questionId).then((result) => {
+                        if (result.success && result.question) {
+                          setQuestion(result.question as QuestionWithAnswers);
+                        }
+                      });
+                    }}
+                  />
+                </div>
               )}
             </div>
           </div>
@@ -401,99 +400,4 @@ function AnswerCard({ answer }: { answer: AnswerWithAuthor }) {
   );
 }
 
-// 답변 폼 스키마 (question_id 제외)
-const answerFormSchema = z.object({
-  content: z.string().min(10, "답변은 10자 이상 입력해주세요"),
-});
-
-type AnswerFormInput = z.infer<typeof answerFormSchema>;
-
-function AnswerForm({
-  questionId,
-  onAnswerCreated,
-}: {
-  questionId: string;
-  onAnswerCreated: () => void;
-}) {
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { success, error: showError } = useToast();
-  const { user } = useUserStore();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<AnswerFormInput>({
-    resolver: zodResolver(answerFormSchema),
-  });
-
-  const onSubmit = async (data: AnswerFormInput) => {
-    if (!user) return;
-    setIsSubmitting(true);
-
-    const supabase = createClient();
-    const result = await createAnswer(supabase, {
-      question_id: questionId,
-      content: data.content,
-      image_urls: imageUrls.length > 0 ? imageUrls : undefined,
-    });
-
-    setIsSubmitting(false);
-
-    if (result.success) {
-      success("답변이 등록되었습니다.");
-      reset();
-      setImageUrls([]);
-      onAnswerCreated();
-    } else {
-      showError(result.error || "답변 등록에 실패했습니다.");
-    }
-  };
-
-  return (
-    <div className="bg-white border border-rule p-6">
-      <h3 className="font-medium text-ink mb-4 flex items-center gap-2">
-        <Send size={16} className="text-teal" />
-        답변 작성
-      </h3>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <textarea
-            {...register("content")}
-            rows={6}
-            placeholder="답변을 입력해주세요 (10자 이상)"
-            className="w-full border border-rule px-4 py-3 text-[14px] text-ink focus:border-navy focus:outline-none"
-          />
-          {errors.content && (
-            <p className="mt-1 text-[12px] text-red-500">
-              {errors.content.message}
-            </p>
-          )}
-        </div>
-
-        <ImageUploader
-          bucket="question-images"
-          folder="answers"
-          maxFiles={5}
-          maxSizeMB={1}
-          value={imageUrls}
-          onChange={setImageUrls}
-        />
-
-        <div className="flex justify-end">
-          <Button
-            type="submit"
-            variant="primary"
-            size="md"
-            isLoading={isSubmitting}
-          >
-            <Send size={14} className="mr-1" />
-            답변 등록
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
-}
+// AnswerForm은 @/components/questions/AnswerForm에서 import
