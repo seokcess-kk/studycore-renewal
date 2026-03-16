@@ -5,14 +5,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Nav, Footer, Skeleton, SkeletonText } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
-import { getNoticeDetail } from "@/domains/notice/service";
+import { getNoticeDetail, getNoticeAttachments } from "@/domains/notice/service";
+import type { NoticeAttachment } from "@/domains/notice/model";
 import {
   NOTICE_CATEGORY_LABELS,
   type NoticeWithAuthor,
   type NoticeCategoryType,
 } from "@/domains/notice/model";
 import { ROUTES } from "@/lib/constants";
-import { ArrowLeft, Calendar, User, Eye } from "lucide-react";
+import { ArrowLeft, Calendar, User, Eye, FileText, Download } from "lucide-react";
 
 export default function NoticeDetailPage({
   params,
@@ -21,6 +22,7 @@ export default function NoticeDetailPage({
 }) {
   const { id } = use(params);
   const [notice, setNotice] = useState<NoticeWithAuthor | null>(null);
+  const [attachments, setAttachments] = useState<NoticeAttachment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -33,6 +35,8 @@ export default function NoticeDetailPage({
 
       if (result.success && result.notice) {
         setNotice(result.notice as NoticeWithAuthor);
+        const atts = await getNoticeAttachments(supabase, id);
+        setAttachments(atts);
       } else {
         setError(result.error || "공지사항을 불러올 수 없습니다.");
       }
@@ -147,6 +151,41 @@ export default function NoticeDetailPage({
             />
           </div>
         </section>
+
+        {/* 첨부파일 */}
+        {attachments.length > 0 && (
+          <section className="px-6 md:px-13">
+            <div className="max-w-3xl border-t border-rule pt-6 pb-2">
+              <h3 className="text-sm font-medium text-muted mb-3">
+                첨부파일 ({attachments.length})
+              </h3>
+              <div className="space-y-2">
+                {attachments.map((att) => (
+                  <a
+                    key={att.id}
+                    href={att.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 border border-rule px-4 py-2.5 hover:border-navy transition-colors group"
+                  >
+                    <FileText className="h-4 w-4 text-muted group-hover:text-navy" />
+                    <span className="flex-1 truncate text-sm text-ink">
+                      {att.file_name}
+                    </span>
+                    {att.file_size && (
+                      <span className="text-xs text-muted">
+                        {att.file_size > 1024 * 1024
+                          ? `${(att.file_size / 1024 / 1024).toFixed(1)}MB`
+                          : `${(att.file_size / 1024).toFixed(0)}KB`}
+                      </span>
+                    )}
+                    <Download className="h-4 w-4 text-muted group-hover:text-teal" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* 하단 네비게이션 */}
         <section className="px-6 md:px-13">

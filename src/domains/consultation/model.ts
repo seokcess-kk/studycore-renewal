@@ -45,6 +45,10 @@ export const consultationFormSchema = z.object({
       /^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/,
       "올바른 전화번호 형식을 입력해주세요"
     ),
+  school: z
+    .string()
+    .max(100, "학교 및 학년은 100자 이하로 입력해주세요")
+    .optional(),
   consultType: z.enum(["admission", "tour", "program", "etc"], {
     message: "상담 유형을 선택해주세요",
   }),
@@ -61,6 +65,8 @@ export const consultationSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   phone: z.string(),
+  school: z.string().nullable(),
+  grade: z.string().nullable(),
   consult_type: z.string(),
   message: z.string().nullable(),
   status: z.enum(["new", "contacted", "done"]),
@@ -74,6 +80,7 @@ export const createConsultationSchema = consultationFormSchema.transform(
   (data) => ({
     name: data.name,
     phone: data.phone.replace(/-/g, ""), // 하이픈 제거
+    school: data.school || null,
     consult_type: data.consultType,
     message: data.message || null,
     status: ConsultationStatus.NEW,

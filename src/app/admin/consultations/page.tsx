@@ -133,6 +133,9 @@ export default function AdminConsultationsPage() {
                   <div>
                     <p className="text-sm font-medium text-ink">{c.name}</p>
                     <p className="text-xs text-muted">{c.phone}</p>
+                    {c.school && (
+                      <p className="text-xs text-muted">{c.school}</p>
+                    )}
                   </div>
                   {c.message && (
                     expandedId === c.id ? (

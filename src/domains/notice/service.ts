@@ -14,6 +14,7 @@ import {
   type UpdateNoticeInput,
   type NoticeServiceResult,
   type NoticeListResult,
+  type NoticeAttachment,
 } from "./model";
 import * as noticeRepo from "./repository";
 
@@ -228,6 +229,63 @@ export async function toggleNoticePin(
         error instanceof Error
           ? error.message
           : "공지사항 고정 토글 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+/**
+ * 공지사항 첨부파일 목록 조회
+ */
+export async function getNoticeAttachments(
+  supabase: SupabaseClient,
+  noticeId: string
+): Promise<NoticeAttachment[]> {
+  try {
+    return await noticeRepo.getNoticeAttachments(supabase, noticeId);
+  } catch (error) {
+    console.error("첨부파일 조회 실패:", error);
+    return [];
+  }
+}
+
+/**
+ * 공지사항 첨부파일 추가
+ */
+export async function addNoticeAttachment(
+  supabase: SupabaseClient,
+  data: {
+    notice_id: string;
+    file_name: string;
+    file_url: string;
+    file_size?: number;
+    file_type?: string;
+  }
+): Promise<{ success: boolean; attachment?: NoticeAttachment; error?: string }> {
+  try {
+    const attachment = await noticeRepo.addNoticeAttachment(supabase, data);
+    return { success: true, attachment };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "첨부파일 추가 실패",
+    };
+  }
+}
+
+/**
+ * 공지사항 첨부파일 삭제
+ */
+export async function deleteNoticeAttachment(
+  supabase: SupabaseClient,
+  attachmentId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await noticeRepo.deleteNoticeAttachment(supabase, attachmentId);
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "첨부파일 삭제 실패",
     };
   }
 }

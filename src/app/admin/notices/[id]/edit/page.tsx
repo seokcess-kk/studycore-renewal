@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save, Send } from "lucide-react";
+import { ArrowLeft, Save, Send, Paperclip, X, FileText } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/common/Button";
@@ -15,7 +15,12 @@ import {
   NOTICE_CATEGORY_LABELS,
 } from "@/domains/notice/model";
 import { z } from "zod";
-import type { Notice } from "@/domains/notice/model";
+import type { Notice, NoticeAttachment } from "@/domains/notice/model";
+import {
+  getNoticeAttachments,
+  addNoticeAttachment,
+  deleteNoticeAttachment,
+} from "@/domains/notice/service";
 
 type UpdateNoticeInput = z.infer<typeof updateNoticeSchema>;
 
@@ -28,6 +33,9 @@ export default function AdminNoticeEditPage() {
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isPinned, setIsPinned] = useState(false);
+  const [existingAttachments, setExistingAttachments] = useState<NoticeAttachment[]>([]);
+  const [newAttachments, setNewAttachments] = useState<{ name: string; url: string; size: number; type: string }[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const noticeId = params.id as string;
 
@@ -62,6 +70,10 @@ export default function AdminNoticeEditPage() {
           content: data.content,
           category: data.category,
         });
+
+        // 첨부파일 로드
+        const atts = await getNoticeAttachments(supabase, noticeId);
+        setExistingAttachments(atts);
       } catch (error) {
         console.error("공지 조회 실패:", error);
         toast({
@@ -95,6 +107,17 @@ export default function AdminNoticeEditPage() {
         .eq("id", noticeId);
 
       if (error) throw error;
+
+      // 새 첨부파일 연결
+      for (const att of newAttachments) {
+        await addNoticeAttachment(supabase, {
+          notice_id: noticeId,
+          file_name: att.name,
+          file_url: att.url,
+          file_size: att.size,
+          file_type: att.type,
+        });
+      }
 
       toast({
         variant: "success",
@@ -247,6 +270,111 @@ export default function AdminNoticeEditPage() {
               )}
             </div>
           </div>
+        </div>
+
+        {/* 첨부파일 */}
+        <div className="border border-rule bg-white p-6">
+          <h3 className="mb-4 font-medium text-ink">첨부파일</h3>
+
+          <label className="inline-flex cursor-pointer items-center gap-2 border border-rule px-4 py-2 text-sm text-muted hover:border-navy hover:text-ink transition-colors">
+            <Paperclip className="h-4 w-4" />
+            {isUploading ? "업로드 중..." : "파일 첨부"}
+            <input
+              type="file"
+              multiple
+              disabled={isUploading}
+              className="hidden"
+              onChange={async (e) => {
+                const files = e.target.files;
+                if (!files || files.length === 0) return;
+                setIsUploading(true);
+                try {
+                  for (const file of Array.from(files)) {
+                    if (file.size > 10 * 1024 * 1024) {
+                      toast({ variant: "error", description: `${file.name}: 10MB 이하만 업로드 가능합니다.` });
+                      continue;
+                    }
+                    const fileId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+                    const ext = file.name.split(".").pop() || "bin";
+                    const path = `attachments/${fileId}.${ext}`;
+                    const { error: uploadError } = await supabase.storage
+                      .from("notice-attachments")
+                      .upload(path, file, { contentType: file.type });
+                    if (uploadError) {
+                      toast({ variant: "error", description: `${file.name} 업로드 실패` });
+                      continue;
+                    }
+                    const { data: urlData } = supabase.storage
+                      .from("notice-attachments")
+                      .getPublicUrl(path);
+                    setNewAttachments((prev) => [
+                      ...prev,
+                      { name: file.name, url: urlData.publicUrl, size: file.size, type: file.type },
+                    ]);
+                  }
+                } finally {
+                  setIsUploading(false);
+                  e.target.value = "";
+                }
+              }}
+            />
+          </label>
+
+          {/* 기존 첨부파일 */}
+          {existingAttachments.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {existingAttachments.map((att) => (
+                <div key={att.id} className="flex items-center justify-between border border-rule px-3 py-2">
+                  <a href={att.file_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 min-w-0 hover:text-teal">
+                    <FileText className="h-4 w-4 flex-shrink-0 text-muted" />
+                    <span className="truncate text-sm text-ink">{att.file_name}</span>
+                    {att.file_size && <span className="flex-shrink-0 text-xs text-muted">({(att.file_size / 1024).toFixed(0)}KB)</span>}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const path = att.file_url.split("notice-attachments/")[1];
+                      if (path) await supabase.storage.from("notice-attachments").remove([path]);
+                      await deleteNoticeAttachment(supabase, att.id);
+                      setExistingAttachments((prev) => prev.filter((a) => a.id !== att.id));
+                    }}
+                    className="flex-shrink-0 p-1 text-muted hover:text-red-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 새로 추가된 파일 */}
+          {newAttachments.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {newAttachments.map((att, idx) => (
+                <div key={idx} className="flex items-center justify-between border border-teal/30 bg-teal/5 px-3 py-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText className="h-4 w-4 flex-shrink-0 text-teal" />
+                    <span className="truncate text-sm text-ink">{att.name}</span>
+                    <span className="flex-shrink-0 text-xs text-muted">({(att.size / 1024).toFixed(0)}KB)</span>
+                    <span className="flex-shrink-0 text-xs text-teal">NEW</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const path = att.url.split("notice-attachments/")[1];
+                      if (path) await supabase.storage.from("notice-attachments").remove([path]);
+                      setNewAttachments((prev) => prev.filter((_, i) => i !== idx));
+                    }}
+                    className="flex-shrink-0 p-1 text-muted hover:text-red-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <p className="mt-3 text-xs text-muted">최대 10MB, 여러 파일 첨부 가능</p>
         </div>
 
         {/* 공지 정보 */}

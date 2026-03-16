@@ -165,6 +165,21 @@ export default function ConsultPage() {
                 />
               </FormField>
 
+              {/* 학교 및 학년 */}
+              <FormField
+                label="학교 및 학년"
+                error={errors.school?.message}
+              >
+                <input
+                  type="text"
+                  placeholder="예: 광주고 2학년"
+                  {...register("school")}
+                  className={`w-full px-4 py-3 border bg-white text-ink text-[15px] placeholder:text-muted/50 focus:outline-none transition-colors ${
+                    errors.school ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
+                  }`}
+                />
+              </FormField>
+
               {/* 상담 유형 */}
               <FormField
                 label="상담 유형"

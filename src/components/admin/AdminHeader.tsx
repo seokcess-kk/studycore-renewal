@@ -100,8 +100,6 @@ export function AdminHeader({ title, breadcrumb }: AdminHeaderProps = {}) {
           </h1>
           <a
             href="/"
-            target="_blank"
-            rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-sm text-muted hover:text-teal transition-colors"
           >
             <Globe className="h-4 w-4" />
