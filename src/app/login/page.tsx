@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import { staffLogin } from "@/domains/user/service";
 import { staffLoginSchema, type StaffLoginInput } from "@/domains/user/model";
 import { useUserStore } from "@/stores/useUserStore";
-import { ROUTES, CONTACT, hasAdminAccess } from "@/lib/constants";
+import { ROUTES, CONTACT } from "@/lib/constants";
 
 function LoginContent() {
   const [loginType, setLoginType] = useState<"kakao" | "staff">("kakao");
@@ -30,8 +30,7 @@ function LoginContent() {
     if (isAuthLoading) return;
 
     if (isAuthenticated && profile) {
-      const destination = hasAdminAccess(profile.role) ? redirectTo : ROUTES.HOME;
-      router.replace(destination);
+      router.replace(redirectTo);
     }
   }, [isAuthLoading, isAuthenticated, profile, router, redirectTo]);
 
@@ -77,19 +76,17 @@ function LoginContent() {
       const result = await staffLogin(supabase, data);
 
       if (result.success && result.user && result.profile) {
-        // Zustand store 업데이트
+        // Zustand store 업데이트 (role 포함 → canAccessAdmin 등 즉시 계산)
         login(result.user, result.profile);
         success("로그인되었습니다.");
 
-        // 전체 페이지 리로드로 세션 확실히 적용
-        // router.push()는 클라이언트 사이드 네비게이션이라 세션이 제대로 로드되지 않을 수 있음
-        window.location.href = redirectTo;
+        // CSR 네비게이션으로 store 상태 보존
+        // (window.location.href는 store를 파괴하여 메뉴가 깨짐)
+        router.replace(redirectTo);
       } else {
-        console.error("Staff login failed:", result.error);
         showError(result.error || "로그인에 실패했습니다.");
       }
-    } catch (err) {
-      console.error("Staff login error:", err);
+    } catch {
       showError("로그인 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);

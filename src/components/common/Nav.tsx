@@ -16,6 +16,7 @@ export function Nav() {
   const isHome = pathname === "/";
 
   // 인증 상태
+  const isLoading = useUserStore((state) => state.isLoading);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const canAccessAdmin = useUserStore((state) => state.canAccessAdmin);
   const isStaff = useUserStore((state) => state.isStaff);
@@ -81,7 +82,7 @@ export function Nav() {
 
       {/* 네비게이션 링크 */}
       <div className="flex items-center gap-6 md:gap-9">
-        {isAuthenticated ? (
+        {isLoading ? null : isAuthenticated ? (
           <>
             {/* 로그인 상태: 공통 메뉴 */}
             <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>

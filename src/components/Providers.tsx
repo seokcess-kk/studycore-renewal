@@ -13,9 +13,8 @@ import type { Session } from "@supabase/supabase-js";
  * 앱을 블로킹하지 않고 백그라운드에서 인증 상태를 확인합니다.
  * children은 즉시 렌더링되고, 인증 상태는 비동기로 업데이트됩니다.
  *
- * Race Condition 방지:
- * - AbortController로 진행 중인 비동기 작업 취소
- * - mounted 플래그로 unmount 후 상태 업데이트 방지
+ * 최적화: login() 액션으로 이미 store에 프로필이 설정된 경우
+ * DB 재조회를 스킵하여 메뉴 깜빡임을 방지합니다.
  */
 function AuthInitializer({ children }: { children: React.ReactNode }) {
   const setUser = useUserStore((state) => state.setUser);
@@ -25,11 +24,9 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
   const initialized = useRef(false);
 
   useEffect(() => {
-    // 이미 초기화되었으면 스킵
     if (initialized.current) return;
     initialized.current = true;
 
-    // AbortController로 비동기 작업 취소 관리
     const abortController = new AbortController();
 
     let supabase: ReturnType<typeof createClient>;
@@ -45,35 +42,66 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
     let mounted = true;
     let initialSessionHandled = false;
 
-    // 세션 처리 함수 (중복 호출 방지)
+    // 프로필 조회 (재시도 1회)
+    const fetchProfile = async (userId: string, retry = true): Promise<Record<string, unknown> | null> => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (error) {
+        logger.warn("프로필 조회 실패", {
+          context: "AuthInitializer",
+          data: { userId, error: error.message, willRetry: retry },
+        });
+        // 1회 재시도
+        if (retry && mounted && !abortController.signal.aborted) {
+          await new Promise((r) => setTimeout(r, 500));
+          return fetchProfile(userId, false);
+        }
+        return null;
+      }
+
+      return data;
+    };
+
     const handleSession = async (session: Session | null, isInitial = false) => {
-      // unmount 또는 abort 시 중단
       if (!mounted || abortController.signal.aborted) return;
 
-      // 초기 세션은 한 번만 처리
       if (isInitial && initialSessionHandled) return;
       if (isInitial) initialSessionHandled = true;
 
       if (session?.user) {
-        // 상태 업데이트 전 다시 확인
         if (!mounted || abortController.signal.aborted) return;
+
+        // 이미 store에 동일 유저의 프로필이 있으면 DB 재조회 스킵
+        const currentState = useUserStore.getState();
+        if (
+          currentState.isAuthenticated &&
+          currentState.user?.id === session.user.id &&
+          currentState.profile?.role
+        ) {
+          setLoading(false);
+          return;
+        }
 
         setUser({
           id: session.user.id,
           email: session.user.email || "",
         });
 
-        // 프로필 조회
         try {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", session.user.id)
-            .single();
+          const profile = await fetchProfile(session.user.id);
 
-          // 비동기 작업 후 다시 확인
           if (mounted && !abortController.signal.aborted) {
-            setProfile(profile || null);
+            if (profile) {
+              logger.debug("프로필 로드 완료", {
+                context: "AuthInitializer",
+                data: { role: (profile as Record<string, unknown>).role },
+              });
+            }
+            setProfile((profile as Parameters<typeof setProfile>[0]) || null);
           }
         } catch (error) {
           logger.exception(error, "ProfileFetch");
@@ -92,23 +120,29 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
       }
     };
 
-    // 인증 상태 변경 리스너
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted || abortController.signal.aborted) return;
 
-      // INITIAL_SESSION 이벤트로 초기 세션 처리
       if (event === "INITIAL_SESSION") {
         await handleSession(session, true);
         return;
       }
 
-      // 그 외 이벤트 (SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED 등)
+      // SIGNED_IN 이벤트: store에 이미 프로필이 있으면 스킵
+      if (event === "SIGNED_IN") {
+        const currentState = useUserStore.getState();
+        if (currentState.isAuthenticated && currentState.profile?.role) {
+          setLoading(false);
+          return;
+        }
+      }
+
       await handleSession(session);
     });
 
-    // fallback: INITIAL_SESSION이 오지 않는 경우를 대비
+    // fallback: INITIAL_SESSION이 오지 않는 경우
     const fallbackTimeout = setTimeout(() => {
       if (!initialSessionHandled && mounted && !abortController.signal.aborted) {
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -119,14 +153,13 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
     return () => {
       mounted = false;
-      abortController.abort(); // 진행 중인 비동기 작업 취소 신호
+      abortController.abort();
       clearTimeout(fallbackTimeout);
       subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 비블로킹: children 즉시 렌더링
   return <>{children}</>;
 }
 
