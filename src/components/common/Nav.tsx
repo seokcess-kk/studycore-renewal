@@ -104,7 +104,7 @@ export function Nav() {
 
         {/* 데스크톱 네비게이션 링크 */}
         <div className="flex items-center gap-6 md:gap-9">
-          {isLoading ? null : isAuthenticated ? (
+          {!isLoading && isAuthenticated ? (
             <>
               <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>
                 공지사항

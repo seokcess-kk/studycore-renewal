@@ -151,10 +151,18 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
       }
     }, 1000);
 
+    // 안전 타임아웃: 3초 내 로딩 완료되지 않으면 강제 해제
+    const safetyTimeout = setTimeout(() => {
+      if (mounted && !abortController.signal.aborted) {
+        setLoading(false);
+      }
+    }, 3000);
+
     return () => {
       mounted = false;
       abortController.abort();
       clearTimeout(fallbackTimeout);
+      clearTimeout(safetyTimeout);
       subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
