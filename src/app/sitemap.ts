@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
+
+const baseUrl = "https://studycore.kr";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://studycore.kr";
-
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
@@ -61,20 +61,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // 블로그 게시글 동적 생성
-  const supabase = await createClient();
-  const { data: posts } = await supabase
-    .from("blog_posts")
-    .select("slug, updated_at")
-    .eq("status", "published")
-    .order("updated_at", { ascending: false });
+  // 블로그 게시글 동적 생성 — 쿠키 불필요한 공개 데이터 조회
+  let blogPages: MetadataRoute.Sitemap = [];
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+    const { data: posts } = await supabase
+      .from("blog_posts")
+      .select("slug, updated_at")
+      .eq("status", "published")
+      .order("updated_at", { ascending: false });
 
-  const blogPages: MetadataRoute.Sitemap = (posts ?? []).map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.updated_at),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
+    blogPages = (posts ?? []).map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: new Date(post.updated_at),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }));
+  } catch {
+    // DB 조회 실패 시 정적 페이지만 반환
+  }
 
   return [...staticPages, ...blogPages];
 }
