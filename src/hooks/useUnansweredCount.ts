@@ -30,6 +30,7 @@ export function useUnansweredCount() {
 
   useEffect(() => {
     if (isLoading || !canAccessAdmin) {
+      pollingStarted = false;
       return;
     }
 
