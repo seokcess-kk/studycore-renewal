@@ -211,12 +211,9 @@ export default function AdminBlogPage() {
                 >
                   {/* 제목 */}
                   <div>
-                    <Link
-                      href={`/admin/blog/${post.id}/edit`}
-                      className="text-[15px] font-medium text-ink hover:text-navy transition-colors line-clamp-1"
-                    >
+                    <p className="text-[15px] font-medium text-ink line-clamp-1">
                       {post.title}
-                    </Link>
+                    </p>
                     {post.tags.length > 0 && (
                       <div className="flex gap-1 mt-1">
                         {post.tags.slice(0, 3).map((tag) => (

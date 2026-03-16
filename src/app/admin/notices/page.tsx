@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, Eye, Edit, Trash2 } from "lucide-react";
+import { Plus, Eye, Trash2 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { createBrowserClient } from "@/lib/supabase/client";
