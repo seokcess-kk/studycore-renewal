@@ -13,27 +13,24 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { isAuthenticated, canAccessAdmin, isLoading } = useUserStore();
+  const { isAuthenticated, isStaff, isLoading } = useUserStore();
 
   useEffect(() => {
-    // 로딩 중이면 대기
     if (isLoading) return;
 
-    // 로그인 안 됨
     if (!isAuthenticated) {
       router.replace("/login");
       return;
     }
 
-    // 관리자/멘토 아님
-    if (!canAccessAdmin) {
+    // 스태프가 아니면 접근 불가 (세부 권한은 middleware에서 처리)
+    if (!isStaff) {
       router.replace("/");
       return;
     }
-  }, [isAuthenticated, canAccessAdmin, isLoading, router]);
+  }, [isAuthenticated, isStaff, isLoading, router]);
 
-  // 로딩 중이거나 권한 없으면 로딩 표시
-  if (isLoading || !isAuthenticated || !canAccessAdmin) {
+  if (isLoading || !isAuthenticated || !isStaff) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
