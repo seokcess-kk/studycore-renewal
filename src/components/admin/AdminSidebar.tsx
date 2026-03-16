@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { signOut } from "@/domains/user/service";
+import { useUnansweredCount } from "@/hooks/useUnansweredCount";
 
 const navItems = [
   {
@@ -60,6 +61,7 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const { profile, logout } = useUserStore();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const unansweredCount = useUnansweredCount();
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
@@ -97,6 +99,9 @@ export function AdminSidebar() {
             const Icon = item.icon;
             const active = isActive(item.href);
 
+            const showBadge =
+              item.href === "/admin/questions" && unansweredCount > 0;
+
             return (
               <Link
                 key={item.href}
@@ -109,7 +114,17 @@ export function AdminSidebar() {
                 )}
               >
                 <Icon className="h-5 w-5" />
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {showBadge && (
+                  <span
+                    className={cn(
+                      "min-w-[20px] h-[20px] flex items-center justify-center text-[11px] font-bold px-1.5",
+                      active ? "bg-white text-navy" : "bg-teal text-white"
+                    )}
+                  >
+                    {unansweredCount > 99 ? "99+" : unansweredCount}
+                  </span>
+                )}
               </Link>
             );
           })}

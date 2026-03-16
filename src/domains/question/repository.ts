@@ -77,6 +77,24 @@ export async function getQuestions(
 }
 
 /**
+ * 미답변 질문 수 조회
+ */
+export async function getUnansweredCount(
+  supabase: SupabaseClient
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("questions")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "pending");
+
+  if (error) {
+    throw new Error(`미답변 질문 수 조회 실패: ${error.message}`);
+  }
+
+  return count || 0;
+}
+
+/**
  * 공개 질문 + 내 질문 목록 조회 (게시판용)
  */
 export async function getPublicAndMyQuestions(

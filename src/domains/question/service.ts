@@ -19,6 +19,19 @@ import {
 import * as questionRepo from "./repository";
 
 /**
+ * 미답변 질문 수 조회 (알림 뱃지용)
+ */
+export async function fetchUnansweredCount(
+  supabase: SupabaseClient
+): Promise<number> {
+  try {
+    return await questionRepo.getUnansweredCount(supabase);
+  } catch {
+    return 0;
+  }
+}
+
+/**
  * 질문 목록 조회
  */
 export async function getQuestionList(
