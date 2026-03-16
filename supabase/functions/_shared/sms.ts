@@ -70,7 +70,7 @@ async function getAuthHeaders(): Promise<Record<string, string> | null> {
     return null;
   }
 
-  const timestamp = Date.now().toString();
+  const timestamp = new Date().toISOString();
   const { salt, signature } = await generateSignature(apiSecret, timestamp);
 
   return {
