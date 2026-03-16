@@ -1,7 +1,7 @@
 {
-  "name": "스터디코어 1.0",
+  "name": "스터디코어 1.0 — 광주 광산구 관리형 독서실",
   "short_name": "스터디코어",
-  "description": "관리형 독서실 - 구조가 성적을 만든다",
+  "description": "구조가 성적을 만든다. 광주 광산구 관리형 독서실 — 교시제 시스템, 수학 멘토 질문방, 원장 직접 관리",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

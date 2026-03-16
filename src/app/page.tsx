@@ -1,4 +1,5 @@
 import { Nav, Footer } from "@/components/common";
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/common/JsonLd";
 import {
   HeroSection,
   FeaturesSection,
@@ -12,6 +13,8 @@ import {
 export default function Home() {
   return (
     <>
+      <OrganizationJsonLd />
+      <WebSiteJsonLd />
       <Nav />
       <main>
         <HeroSection />

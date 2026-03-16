@@ -13,3 +13,4 @@ export {
 export { ImageUploader } from "./ImageUploader";
 export { AvatarUploader } from "./AvatarUploader";
 export { SessionWarning } from "./SessionWarning";
+export { OrganizationJsonLd, WebSiteJsonLd } from "./JsonLd";

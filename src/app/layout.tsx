@@ -31,23 +31,43 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://studycore.kr"),
   title: {
-    default: "스터디코어 1.0 | 관리형 독서실",
+    default: "스터디코어 1.0 | 광주 광산구 관리형 독서실",
     template: "%s | 스터디코어 1.0",
   },
   description:
-    "구조가 성적을 만든다. 광주 광산구 관리형 독서실 스터디코어 1.0 - 교시제 시스템, 수학 멘토 질문방, 원장 직접 관리",
+    "구조가 성적을 만든다. 광주 광산구 관리형 독서실 스터디코어 1.0 — 교시제 시스템으로 체계적 시간 관리, 수학 멘토 질문방, 원장 직접 관리. 중·고등학생 자기주도학습의 새로운 기준.",
   keywords: [
     "광주 독서실",
     "광산구 독서실",
     "관리형 독서실",
+    "광주 관리형 독서실",
     "스터디코어",
-    "교시제",
+    "STUDYCORE",
+    "교시제 독서실",
     "수학 질문방",
+    "자기주도학습",
+    "광주 학원",
+    "광산구 학원",
+    "중등 독서실",
+    "고등 독서실",
+    "독서실 추천",
+    "광주 스터디카페",
   ],
   authors: [{ name: "스터디코어 1.0" }],
   creator: "스터디코어 1.0",
+  publisher: "스터디코어 1.0",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -56,14 +76,31 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "ko_KR",
+    url: "https://studycore.kr",
     siteName: "스터디코어 1.0",
-    title: "스터디코어 1.0 | 관리형 독서실",
+    title: "스터디코어 1.0 | 광주 광산구 관리형 독서실",
     description:
-      "구조가 성적을 만든다. 광주 광산구 관리형 독서실 - 교시제, 수학 멘토 질문방, 원장 직접 관리",
+      "구조가 성적을 만든다. 광주 광산구 관리형 독서실 — 교시제 시스템, 수학 멘토 질문방, 원장 직접 관리",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "스터디코어 1.0 | 광주 광산구 관리형 독서실",
+    description:
+      "구조가 성적을 만든다. 교시제 시스템, 수학 멘토 질문방, 원장 직접 관리",
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "9ik0KxF9cQ1CoU2se5isPlTzkcbWb3KEVaLKHRs7byE",
   },
 };
 

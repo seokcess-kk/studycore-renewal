@@ -10,6 +10,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import { createClient } from "@/lib/supabase/client";
 import { signOut } from "@/domains/user/service";
 import { useUnansweredCount } from "@/hooks/useUnansweredCount";
+import { useActiveMealPeriod } from "@/hooks/useActiveMealPeriod";
 import { MobileMenu } from "./MobileMenu";
 import { SearchModal } from "./SearchModal";
 
@@ -31,6 +32,7 @@ export function Nav() {
   const isStaff = useUserStore((state) => state.isStaff);
   const logout = useUserStore((state) => state.logout);
   const unansweredCount = useUnansweredCount();
+  const hasActiveMealPeriod = useActiveMealPeriod();
 
   // 홈이 아닌 페이지에서는 앵커 링크 앞에 / 추가
   const getAnchorHref = (anchor: string) => (isHome ? anchor : `/${anchor}`);
@@ -123,7 +125,7 @@ export function Nav() {
                   </span>
                 )}
               </Link>
-              {!isStaff && (
+              {!isStaff && hasActiveMealPeriod && (
                 <Link href={ROUTES.MEAL} className={linkStyle(pathname === "/meal")}>
                   도시락
                 </Link>

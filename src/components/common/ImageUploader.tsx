@@ -47,8 +47,22 @@ export function ImageUploader({
         maxSizeMB,
         maxWidthOrHeight: 1920,
         useWebWorker: true,
+        initialQuality: 0.8,
       };
-      return await imageCompression(file, options);
+      const compressed = await imageCompression(file, options);
+
+      // 압축 후에도 제한 초과 시 추가 압축
+      if (compressed.size > maxSizeMB * 1024 * 1024) {
+        const retryOptions = {
+          maxSizeMB: maxSizeMB * 0.8,
+          maxWidthOrHeight: 1280,
+          useWebWorker: true,
+          initialQuality: 0.6,
+        };
+        return await imageCompression(compressed, retryOptions);
+      }
+
+      return compressed;
     },
     [maxSizeMB]
   );
@@ -173,6 +187,15 @@ export function ImageUploader({
 
       if (invalidFiles.length > 0) {
         setError("이미지 파일만 업로드 가능합니다.");
+        return;
+      }
+
+      // 원본 크기 제한 (10MB 초과 시 거부)
+      const oversizedFiles = filesToUpload.filter(
+        (file) => file.size > 10 * 1024 * 1024
+      );
+      if (oversizedFiles.length > 0) {
+        setError("10MB를 초과하는 파일은 업로드할 수 없습니다.");
         return;
       }
 

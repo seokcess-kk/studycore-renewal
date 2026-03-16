@@ -10,6 +10,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import { createClient } from "@/lib/supabase/client";
 import { signOut } from "@/domains/user/service";
 import { useUnansweredCount } from "@/hooks/useUnansweredCount";
+import { useActiveMealPeriod } from "@/hooks/useActiveMealPeriod";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const isStaff = useUserStore((state) => state.isStaff);
   const logout = useUserStore((state) => state.logout);
   const unansweredCount = useUnansweredCount();
+  const hasActiveMealPeriod = useActiveMealPeriod();
 
   // pathname 변경 시 자동 닫힘
   useEffect(() => {
@@ -140,7 +142,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     )}
                   </Link>
                 </motion.div>
-                {!isStaff && (
+                {!isStaff && hasActiveMealPeriod && (
                   <motion.div variants={itemVariants}>
                     <Link
                       href={ROUTES.MEAL}
