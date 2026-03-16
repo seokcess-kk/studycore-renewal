@@ -36,7 +36,7 @@ export const STAFF_ROLES = [
   ROLES.ASSISTANT,
 ] as const;
 
-export const ADMIN_ACCESS_ROLES = [ROLES.ADMIN, ROLES.MENTOR] as const;
+export const ADMIN_ACCESS_ROLES = [ROLES.ADMIN] as const;
 
 // 역할 체크 헬퍼 함수
 export function isStaffRole(role: string | null | undefined): boolean {
