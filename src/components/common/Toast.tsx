@@ -129,11 +129,10 @@ function ToastItem({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 10, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className={`flex items-center gap-3 px-4 py-3 border-l-4 ${backgrounds[toast.type]} bg-white min-w-[280px] max-w-[400px]`}
-      style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
+      className={`flex items-center gap-3 px-4 py-3 border-[1.5px] ${backgrounds[toast.type]} bg-white min-w-[280px] max-w-[400px] shadow-none`}
     >
       {icons[toast.type]}
-      <p className="flex-1 text-[14px] text-ink">{toast.message}</p>
+      <p className="flex-1 text-[13.5px] font-medium text-ink">{toast.message}</p>
       <button
         onClick={() => onRemove(toast.id)}
         className="text-muted hover:text-ink transition-colors"

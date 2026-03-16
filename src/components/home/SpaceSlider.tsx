@@ -54,22 +54,17 @@ export function SpaceSlider() {
     };
   }, [isPaused, next]);
 
-  // 터치 이벤트
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    setIsPaused(true);
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const diff = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(diff) > 40) {
-      if (diff < 0) {
-        next();
-      } else {
-        prev();
-      }
+  // Framer Motion Drag 핸들러
+  const handleDragEnd = (
+    e: MouseEvent | TouchEvent | PointerEvent,
+    info: { offset: { x: number }; velocity: { x: number } }
+  ) => {
+    const swipeThreshold = 50;
+    if (info.offset.x < -swipeThreshold) {
+      next();
+    } else if (info.offset.x > swipeThreshold) {
+      prev();
     }
-    setIsPaused(false);
   };
 
   return (
@@ -95,15 +90,22 @@ export function SpaceSlider() {
 
       {/* 슬라이더 */}
       <div
-        className="overflow-hidden"
+        className="overflow-hidden cursor-grab active:cursor-grabbing touch-pan-y"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
       >
-        <div
-          className="flex transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
-          style={{ transform: `translateX(-${current * 100}%)` }}
+        <motion.div
+          className="flex"
+          animate={{ x: `-${current * 100}%` }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+          onDragStart={() => setIsPaused(true)}
+          onDragEnd={(e, info) => {
+            handleDragEnd(e, info);
+            setIsPaused(false);
+          }}
         >
           {slides.map((slide) => (
             <div
@@ -129,7 +131,7 @@ export function SpaceSlider() {
               <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/[0.88] via-transparent to-transparent z-[2]" />
 
               {/* 컨텐츠 */}
-              <div className="absolute bottom-0 left-0 right-0 z-[3] p-8 md:p-13">
+              <div className="absolute bottom-0 left-0 right-0 z-[3] p-8 md:p-13 pointer-events-none">
                 <span className="font-mono text-[10px] font-bold text-teal tracking-[0.24em] uppercase block mb-2.5">
                   {slide.label}
                 </span>
@@ -142,7 +144,7 @@ export function SpaceSlider() {
               </div>
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* 컨트롤 */}
@@ -170,18 +172,20 @@ export function SpaceSlider() {
 
         {/* 화살표 */}
         <div className="flex gap-2">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={prev}
-            className="w-11 h-11 border-[1.5px] border-rule flex items-center justify-center text-ink hover:bg-navy hover:border-navy hover:text-white transition-all duration-200"
+            className="w-11 h-11 border-[1.5px] border-rule flex items-center justify-center text-ink hover:bg-navy hover:border-navy hover:text-white transition-colors duration-200"
           >
             <ChevronLeft size={16} />
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={next}
-            className="w-11 h-11 border-[1.5px] border-rule flex items-center justify-center text-ink hover:bg-navy hover:border-navy hover:text-white transition-all duration-200"
+            className="w-11 h-11 border-[1.5px] border-rule flex items-center justify-center text-ink hover:bg-navy hover:border-navy hover:text-white transition-colors duration-200"
           >
             <ChevronRight size={16} />
-          </button>
+          </motion.button>
         </div>
       </div>
     </section>

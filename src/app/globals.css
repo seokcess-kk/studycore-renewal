@@ -60,6 +60,12 @@
   --radius-2xl: 0rem;
   --radius-3xl: 0rem;
   --radius-4xl: 0rem;
+
+  /* 유체 타이포그래피 (Fluid Typography) 설정 */
+  --fluid-h1: clamp(3.5rem, 8vw, 8.75rem); /* clamp(56px, 8vw, 140px) */
+  --fluid-h2: clamp(2rem, 4.5vw, 3.75rem); /* clamp(32px, 4.5vw, 60px) */
+  --fluid-h3: clamp(1.125rem, 2vw, 1.5rem); /* clamp(18px, 2vw, 24px) */
+  --fluid-display: clamp(3.25rem, 5vw, 4.5rem); /* clamp(52px, 5vw, 72px) */
 }
 
 :root {
@@ -190,5 +196,38 @@
   }
   .border-navy {
     border-color: #103050;
+  }
+
+  /* 유체 타이포그래피 (Fluid Typography) 클래스 추가 */
+  .text-fluid-h1 {
+    font-size: var(--fluid-h1);
+  }
+  .text-fluid-h2 {
+    font-size: var(--fluid-h2);
+  }
+  .text-fluid-h3 {
+    font-size: var(--fluid-h3);
+  }
+  .text-fluid-display {
+    font-size: var(--fluid-display);
+  }
+}
+
+/* 그리드 레이아웃(Editorial Layout)을 위한 커스텀 유틸리티 */
+@layer utilities {
+  .border-r-guide {
+    border-right: 1px solid var(--border);
+  }
+  .border-l-guide {
+    border-left: 1px solid var(--border);
+  }
+  .border-b-guide {
+    border-bottom: 1px solid var(--border);
+  }
+  .border-t-guide {
+    border-top: 1px solid var(--border);
+  }
+  .section-container {
+    @apply w-full max-w-[1920px] mx-auto px-6 md:px-13;
   }
 }

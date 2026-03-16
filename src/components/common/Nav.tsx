@@ -92,9 +92,9 @@ export function Nav() {
       <nav
         className={`fixed top-0 left-0 right-0 z-[300] h-16 px-6 md:px-13 flex items-center justify-between transition-all duration-300 ${
           isDarkText
-            ? "bg-white/97 backdrop-blur-[12px] border-b border-rule"
+            ? "bg-white/97 backdrop-blur-[12px] border-b border-rule shadow-[0_1px_0_var(--color-rule)]"
             : "bg-transparent"
-        }`}
+        } ${isScrolled ? "h-14" : "h-16"}`}
       >
         {/* 로고 */}
         <Link href={ROUTES.HOME} className="flex items-center">
@@ -104,7 +104,7 @@ export function Nav() {
             width={200}
             height={52}
             priority
-            className="h-10 md:h-11 w-auto transition-opacity duration-300"
+            className={`${isScrolled ? "h-9" : "h-10 md:h-11"} w-auto transition-all duration-300 opacity-100`}
           />
         </Link>
 

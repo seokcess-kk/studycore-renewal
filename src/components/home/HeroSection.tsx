@@ -38,21 +38,26 @@ export function HeroSection() {
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+              },
+            }}
+            initial="hidden"
+            animate="show"
             className="font-serif text-[clamp(60px,10vw,140px)] font-black leading-[0.88] tracking-[-0.04em] text-white/90"
           >
-            <span>집중이</span>
-            <br />
-            <span className="text-teal">성적을</span>
-            <br />
-            <span
+            <motion.span variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} style={{ display: "block" }}>집중이</motion.span>
+            <motion.span variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="text-teal" style={{ display: "block" }}>성적을</motion.span>
+            <motion.span
+              variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
               className="text-transparent"
-              style={{ WebkitTextStroke: "1.5px rgba(255,255,255,0.2)" }}
+              style={{ display: "block", WebkitTextStroke: "1.5px rgba(255,255,255,0.2)" }}
             >
               바꾼다
-            </span>
+            </motion.span>
           </motion.h1>
         </div>
 
@@ -61,7 +66,7 @@ export function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
             className="pt-10"
           >
             <p className="text-[15px] leading-[2] text-white/40 font-light mb-12">
@@ -88,7 +93,7 @@ export function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.45 }}
+            transition={{ duration: 0.6, delay: 0.65 }}
             className="flex flex-col gap-4 pt-12 border-t border-white/[0.07]"
           >
             <MetaItem label="Location" value={CONTACT.address} />

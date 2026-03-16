@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { Nav, Footer, Button } from "@/components/common";
 import { useToast } from "@/components/common";
@@ -142,7 +143,9 @@ export default function ConsultPage() {
                   type="text"
                   placeholder="홍길동"
                   {...register("name")}
-                  className="w-full px-4 py-3 border border-rule bg-white text-ink text-[15px] placeholder:text-muted/50 focus:border-navy focus:outline-none transition-colors"
+                  className={`w-full px-4 py-3 border bg-white text-ink text-[15px] placeholder:text-muted/50 focus:outline-none transition-colors ${
+                    errors.name ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
+                  }`}
                 />
               </FormField>
 
@@ -156,7 +159,9 @@ export default function ConsultPage() {
                   type="tel"
                   placeholder="010-0000-0000"
                   {...register("phone")}
-                  className="w-full px-4 py-3 border border-rule bg-white text-ink text-[15px] placeholder:text-muted/50 focus:border-navy focus:outline-none transition-colors"
+                  className={`w-full px-4 py-3 border bg-white text-ink text-[15px] placeholder:text-muted/50 focus:outline-none transition-colors ${
+                    errors.phone ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
+                  }`}
                 />
               </FormField>
 
@@ -168,7 +173,9 @@ export default function ConsultPage() {
               >
                 <select
                   {...register("consultType")}
-                  className="w-full px-4 py-3 border border-rule bg-white text-ink text-[15px] focus:border-navy focus:outline-none transition-colors appearance-none"
+                  className={`w-full px-4 py-3 border bg-white text-ink text-[15px] focus:outline-none transition-colors appearance-none ${
+                    errors.consultType ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
+                  }`}
                   defaultValue=""
                 >
                   <option value="" disabled>
@@ -188,7 +195,9 @@ export default function ConsultPage() {
                   placeholder="궁금하신 점을 자유롭게 적어주세요."
                   rows={4}
                   {...register("message")}
-                  className="w-full px-4 py-3 border border-rule bg-white text-ink text-[15px] placeholder:text-muted/50 focus:border-navy focus:outline-none transition-colors resize-none"
+                  className={`w-full px-4 py-3 border bg-white text-ink text-[15px] placeholder:text-muted/50 focus:outline-none transition-colors resize-none ${
+                    errors.message ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
+                  }`}
                 />
               </FormField>
 
@@ -260,13 +269,21 @@ function FormField({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <label className="block mb-2">
-        <span className="text-[14px] font-medium text-ink">{label}</span>
-        {required && <span className="text-red-500 ml-1">*</span>}
+    <div className="flex flex-col gap-1.5">
+      <label className="flex">
+        <span className="text-[13px] font-bold text-ink tracking-tight">{label}</span>
+        {required && <span className="text-teal ml-1 text-[13px] font-bold">*</span>}
       </label>
       {children}
-      {error && <p className="mt-1 text-[13px] text-red-500">{error}</p>}
+      {error && (
+        <motion.p
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-0.5 text-[11.5px] font-mono text-red-500 tracking-tight"
+        >
+          * {error}
+        </motion.p>
+      )}
     </div>
   );
 }

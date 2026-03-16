@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
 const features = [
   {
@@ -73,14 +73,29 @@ const features = [
 ];
 
 export function FeaturesSection() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
   return (
-    <section id="features" className="bg-stone py-28">
+    <section id="features" className="bg-stone py-28 section-container">
       {/* 헤더 */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        variants={{
+          hidden: { opacity: 0, y: 20 },
+          show: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+        }}
+        initial="hidden"
+        whileInView="show"
         viewport={{ once: true, margin: "-40px" }}
-        className="px-6 md:px-13 mb-0 flex flex-col md:flex-row md:items-baseline gap-5 border-b-[1.5px] border-ink pb-10"
+        className="mb-0 flex flex-col md:flex-row md:items-baseline gap-5 border-b-[1.5px] border-ink pb-10"
       >
         <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase whitespace-nowrap">
           Why Studycore / 02
@@ -95,30 +110,38 @@ export function FeaturesSection() {
       </motion.div>
 
       {/* 특징 행들 */}
-      {features.map((feature, index) => (
-        <FeatureRow key={feature.number} feature={feature} delay={0.05 * index} />
-      ))}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-100px" }}
+        className="flex flex-col"
+      >
+        {features.map((feature) => (
+          <FeatureRow key={feature.number} feature={feature} />
+        ))}
+      </motion.div>
     </section>
   );
 }
 
 function FeatureRow({
   feature,
-  delay,
 }: {
   feature: (typeof features)[0];
-  delay: number;
 }) {
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 20 } },
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ delay }}
-      className="group grid grid-cols-[100px_1fr] md:grid-cols-[160px_1fr] mx-5 md:mx-13 border-b border-rule relative"
+      variants={itemVariants}
+      className="group grid grid-cols-[100px_1fr] md:grid-cols-[160px_1fr] border-b border-rule relative"
     >
-      {/* 호버 배경 */}
-      <div className="absolute left-[-20px] md:left-[-52px] right-[-20px] md:right-[-52px] top-0 bottom-0 bg-transparent group-hover:bg-teal/[0.04] transition-colors duration-200 pointer-events-none" />
+      {/* 호버 배경 & 좌측 엑센트 보더 */}
+      <div className="absolute left-[-24px] right-[-24px] top-0 bottom-0 bg-transparent group-hover:bg-teal/[0.04] border-l-[3px] border-transparent group-hover:border-teal transition-all duration-300 pointer-events-none" />
 
       {/* 좌측: 번호 + 키워드 */}
       <div className="py-11 flex flex-col gap-2 border-r border-rule relative">
