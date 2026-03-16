@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { submitConsultation } from "@/domains/consultation/service";
 import {
   consultationFormSchema,
@@ -51,8 +51,8 @@ export async function POST(request: NextRequest) {
 
     const formData: ConsultationFormInput = validationResult.data;
 
-    // 3. Supabase 클라이언트 생성
-    const supabase = await createClient();
+    // 3. Supabase Admin 클라이언트 (RLS 우회 — 비로그인 상담 신청 허용)
+    const supabase = await createAdminClient();
 
     // 4. 상담 신청 처리
     const result = await submitConsultation(supabase, formData);
