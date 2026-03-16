@@ -547,13 +547,13 @@ export async function deleteAnswer(
     await questionRepo.deleteAnswer(supabase, answerId);
 
     // 해당 질문에 남은 답변이 있는지 확인
-    const { data: remainingAnswers } = await supabase
+    const { count } = await supabase
       .from("question_answers")
       .select("id", { count: "exact", head: true })
       .eq("question_id", questionId);
 
     // 답변이 없으면 질문 상태를 pending으로 복원
-    if (!remainingAnswers || remainingAnswers.length === 0) {
+    if (!count || count === 0) {
       await supabase
         .from("questions")
         .update({ status: "pending" })
