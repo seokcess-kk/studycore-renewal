@@ -4,18 +4,20 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { ROUTES } from "@/lib/constants";
 import { useUserStore } from "@/stores/useUserStore";
 import { createClient } from "@/lib/supabase/client";
 import { signOut } from "@/domains/user/service";
 import { useUnansweredCount } from "@/hooks/useUnansweredCount";
 import { MobileMenu } from "./MobileMenu";
+import { SearchModal } from "./SearchModal";
 
 export function Nav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -62,10 +64,21 @@ export function Nav() {
       setIsScrolled(window.scrollY > 40);
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("keydown", handleKeyDown);
     handleScroll();
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   return (
@@ -160,6 +173,21 @@ export function Nav() {
             </>
           )}
 
+          {/* 검색 버튼 */}
+          {!isLoading && (
+            <button
+              type="button"
+              onClick={() => setIsSearchOpen(true)}
+              className={`hidden md:block p-1.5 transition-colors ${
+                isScrolled ? "text-ink/30 hover:text-ink" : "text-white/30 hover:text-white"
+              }`}
+              aria-label="검색"
+              title="검색 (Ctrl+K)"
+            >
+              <Search size={18} />
+            </button>
+          )}
+
           {/* 모바일 햄버거 버튼 */}
           {!isLoading && (
             <button
@@ -178,6 +206,9 @@ export function Nav() {
 
       {/* 모바일 메뉴 */}
       <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
+
+      {/* 검색 모달 */}
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 }
