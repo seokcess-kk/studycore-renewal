@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save, Send, Paperclip, X, FileText } from "lucide-react";
+import { ArrowLeft, Save, Send, Paperclip, X, FileText, Layers } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/common/Button";
@@ -16,6 +16,7 @@ import {
   NOTICE_CATEGORY_LABELS,
 } from "@/domains/notice/model";
 import { createNotice, addNoticeAttachment } from "@/domains/notice/service";
+import { createPopup } from "@/domains/popup/service";
 import { z } from "zod";
 
 type CreateNoticeInput = z.infer<typeof createNoticeSchema>;
@@ -27,6 +28,8 @@ export default function AdminNoticeNewPage() {
   const { user } = useUserStore();
 
   const [isPinned, setIsPinned] = useState(false);
+  const [registerAsPopup, setRegisterAsPopup] = useState(false);
+  const [popupDays, setPopupDays] = useState(7);
   const [attachments, setAttachments] = useState<{ name: string; url: string; size: number; type: string }[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -72,13 +75,47 @@ export default function AdminNoticeNewPage() {
         }
       }
 
-      toast({
-        variant: "success",
-        title: publish ? "발행 완료" : "임시저장 완료",
-        description: publish
-          ? "공지사항이 발행되었습니다."
-          : "공지사항이 임시저장되었습니다.",
-      });
+      // 팝업 등록
+      if (registerAsPopup && publish && result.notice) {
+        const imageAtt = attachments.find((a) => a.type.startsWith("image/"));
+        const today = new Date().toISOString().split("T")[0];
+        const endDate = new Date(Date.now() + popupDays * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0];
+
+        const popupResult = await createPopup(supabase, {
+          title: data.title,
+          content: data.content.replace(/<[^>]*>/g, "").trim().slice(0, 200),
+          image_url: imageAtt?.url || null,
+          notice_id: result.notice.id,
+          start_date: today,
+          end_date: endDate,
+          is_active: true,
+          sort_order: 0,
+        });
+
+        if (popupResult.success) {
+          toast({
+            variant: "success",
+            title: "발행 + 팝업 등록 완료",
+            description: "공지사항이 발행되고 팝업이 등록되었습니다.",
+          });
+        } else {
+          toast({
+            variant: "success",
+            title: "발행 완료 (팝업 등록 실패)",
+            description: "공지사항은 발행되었으나 팝업 등록에 실패했습니다.",
+          });
+        }
+      } else {
+        toast({
+          variant: "success",
+          title: publish ? "발행 완료" : "임시저장 완료",
+          description: publish
+            ? "공지사항이 발행되었습니다."
+            : "공지사항이 임시저장되었습니다.",
+        });
+      }
 
       router.push("/admin/notices");
     } catch (error) {
@@ -287,6 +324,45 @@ export default function AdminNoticeNewPage() {
           <p className="mt-3 text-xs text-muted">
             최대 10MB, 여러 파일 첨부 가능
           </p>
+        </div>
+
+        {/* 팝업 등록 */}
+        <div className="border border-rule bg-white p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Layers className="h-5 w-5 text-teal" />
+            <h3 className="font-medium text-ink">팝업 등록</h3>
+          </div>
+          <label className="flex items-center gap-2 mb-3">
+            <input
+              type="checkbox"
+              checked={registerAsPopup}
+              onChange={(e) => setRegisterAsPopup(e.target.checked)}
+              className="h-4 w-4 border-rule"
+            />
+            <span className="text-sm text-ink">
+              발행 시 홈페이지 팝업으로 함께 등록
+            </span>
+          </label>
+          {registerAsPopup && (
+            <div className="ml-6 space-y-2">
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-muted">노출 기간:</label>
+                <select
+                  value={popupDays}
+                  onChange={(e) => setPopupDays(Number(e.target.value))}
+                  className="border border-rule px-2 py-1 text-sm focus:border-navy focus:outline-none"
+                >
+                  <option value={3}>3일</option>
+                  <option value={7}>7일</option>
+                  <option value={14}>14일</option>
+                  <option value={30}>30일</option>
+                </select>
+              </div>
+              <p className="text-xs text-muted">
+                첨부 이미지가 있으면 팝업 이미지로 자동 사용됩니다.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* 알림톡 발송 옵션 */}

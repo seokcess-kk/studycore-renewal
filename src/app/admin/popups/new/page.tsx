@@ -16,6 +16,12 @@ import { createPopup } from "@/domains/popup/service";
 interface NoticeOption {
   id: string;
   title: string;
+  content: string;
+}
+
+interface NoticeAttachment {
+  file_url: string;
+  file_type: string | null;
 }
 
 export default function AdminPopupNewPage() {
@@ -50,7 +56,7 @@ export default function AdminPopupNewPage() {
     async function loadNotices() {
       const { data } = await supabase
         .from("notices")
-        .select("id, title")
+        .select("id, title, content")
         .eq("is_published", true)
         .order("created_at", { ascending: false })
         .limit(50);
@@ -59,15 +65,33 @@ export default function AdminPopupNewPage() {
     loadNotices();
   }, [supabase]);
 
-  const handleNoticeSelect = (selectedNoticeId: string) => {
+  const handleNoticeSelect = async (selectedNoticeId: string) => {
     if (selectedNoticeId) {
       const notice = notices.find((n) => n.id === selectedNoticeId);
       if (notice) {
         setValue("notice_id", selectedNoticeId);
         setValue("title", notice.title);
+        // HTML 태그 제거하여 팝업 내용으로 설정
+        const plainContent = notice.content.replace(/<[^>]*>/g, "").trim();
+        setValue("content", plainContent.slice(0, 200));
+
+        // 공지 첨부파일 중 이미지 가져오기
+        const { data: attachments } = await supabase
+          .from("notice_attachments")
+          .select("file_url, file_type")
+          .eq("notice_id", selectedNoticeId);
+
+        const imageAtt = (attachments || []).find(
+          (a: NoticeAttachment) => a.file_type?.startsWith("image/")
+        );
+        if (imageAtt) {
+          setImageUrls([imageAtt.file_url]);
+        }
       }
     } else {
       setValue("notice_id", null);
+      setValue("content", "");
+      setImageUrls([]);
     }
   };
 
