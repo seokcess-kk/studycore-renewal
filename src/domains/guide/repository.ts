@@ -9,6 +9,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import type {
   GuideSection,
+  GuideSectionType,
   CreateGuideSectionInput,
   UpdateGuideSectionInput,
 } from "./model";
@@ -17,12 +18,19 @@ import type {
  * 모든 섹션 조회 (order_index 순)
  */
 export async function getSections(
-  supabase: SupabaseClient
+  supabase: SupabaseClient,
+  type?: GuideSectionType
 ): Promise<GuideSection[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from("guide_sections")
     .select("*")
     .order("order_index", { ascending: true });
+
+  if (type) {
+    query = query.eq("type", type);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(`섹션 목록 조회 실패: ${error.message}`);
@@ -35,13 +43,20 @@ export async function getSections(
  * 표시 가능한 섹션만 조회
  */
 export async function getVisibleSections(
-  supabase: SupabaseClient
+  supabase: SupabaseClient,
+  type?: GuideSectionType
 ): Promise<GuideSection[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from("guide_sections")
     .select("*")
     .eq("is_visible", true)
     .order("order_index", { ascending: true });
+
+  if (type) {
+    query = query.eq("type", type);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(`섹션 목록 조회 실패: ${error.message}`);
@@ -100,6 +115,7 @@ export async function createSection(
       content: input.content,
       order_index: orderIndex,
       is_visible: input.is_visible ?? true,
+      type: input.type ?? "onboarding",
     })
     .select()
     .single();

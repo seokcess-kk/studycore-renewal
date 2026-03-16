@@ -12,7 +12,7 @@ import {
   updateSection,
   deleteSection,
 } from "@/domains/guide/service";
-import type { GuideSection } from "@/domains/guide/model";
+import type { GuideSection, GuideSectionType } from "@/domains/guide/model";
 
 export default function AdminGuidePage() {
   const supabase = createBrowserClient();
@@ -24,6 +24,7 @@ export default function AdminGuidePage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [activeType, setActiveType] = useState<GuideSectionType>("onboarding");
 
   const [formData, setFormData] = useState({
     title: "",
@@ -33,7 +34,7 @@ export default function AdminGuidePage() {
   // 섹션 목록 조회
   const fetchSections = async () => {
     setIsLoading(true);
-    const result = await getSectionList(supabase);
+    const result = await getSectionList(supabase, activeType);
 
     if (result.success) {
       setSections(result.sections);
@@ -46,7 +47,7 @@ export default function AdminGuidePage() {
   useEffect(() => {
     fetchSections();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [activeType]);
 
   // 섹션 추가
   const handleAdd = async () => {
@@ -59,6 +60,7 @@ export default function AdminGuidePage() {
     const result = await createSection(supabase, {
       title: formData.title,
       content: formData.content,
+      type: activeType,
     });
 
     if (result.success) {
@@ -128,11 +130,36 @@ export default function AdminGuidePage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
+      {/* 타입 탭 */}
+      <div className="flex border-b border-rule">
+        <button
+          onClick={() => { setActiveType("onboarding"); handleCancel(); }}
+          className={`px-4 py-3 text-[14px] font-medium border-b-2 transition-colors ${
+            activeType === "onboarding"
+              ? "border-navy text-navy"
+              : "border-transparent text-muted hover:text-ink"
+          }`}
+        >
+          조교 온보딩
+        </button>
+        <button
+          onClick={() => { setActiveType("manual"); handleCancel(); }}
+          className={`px-4 py-3 text-[14px] font-medium border-b-2 transition-colors ${
+            activeType === "manual"
+              ? "border-navy text-navy"
+              : "border-transparent text-muted hover:text-ink"
+          }`}
+        >
+          재원생 매뉴얼
+        </button>
+      </div>
+
       {/* 상단 */}
       <div className="flex items-center justify-between">
-        <p className="text-muted">
-          조교 온보딩 문서를 관리합니다. 조교 계정으로 로그인 시 이 내용이
-          표시됩니다.
+        <p className="text-muted text-[14px]">
+          {activeType === "onboarding"
+            ? "조교 온보딩 문서를 관리합니다. /guide에 표시됩니다."
+            : "재원생 이용 매뉴얼을 관리합니다. /manual에 표시됩니다."}
         </p>
         <Button
           variant="primary"

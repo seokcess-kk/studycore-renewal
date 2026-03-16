@@ -12,6 +12,7 @@ import {
   updateGuideSectionSchema,
   type CreateGuideSectionInput,
   type UpdateGuideSectionInput,
+  type GuideSectionType,
   type GuideSectionServiceResult,
   type GuideSectionListResult,
 } from "./model";
@@ -21,10 +22,11 @@ import * as guideRepo from "./repository";
  * 섹션 목록 조회 (관리자용 - 모든 섹션)
  */
 export async function getSectionList(
-  supabase: SupabaseClient
+  supabase: SupabaseClient,
+  type?: GuideSectionType
 ): Promise<GuideSectionListResult> {
   try {
-    const sections = await guideRepo.getSections(supabase);
+    const sections = await guideRepo.getSections(supabase, type);
 
     return {
       success: true,
@@ -47,10 +49,11 @@ export async function getSectionList(
  * 표시 가능한 섹션 목록 조회 (조교/멘토용)
  */
 export async function getVisibleSectionList(
-  supabase: SupabaseClient
+  supabase: SupabaseClient,
+  type?: GuideSectionType
 ): Promise<GuideSectionListResult> {
   try {
-    const sections = await guideRepo.getVisibleSections(supabase);
+    const sections = await guideRepo.getVisibleSections(supabase, type);
 
     return {
       success: true,

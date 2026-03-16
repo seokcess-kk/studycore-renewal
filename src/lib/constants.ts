@@ -119,6 +119,7 @@ export const ROUTES = {
   // 로그인 필요
   LOGIN: "/login",
   GUIDE: "/guide",
+  MANUAL: "/manual",
   NOTICES: "/notices",
   QUESTIONS: "/questions",
   MEAL: "/meal",
@@ -139,6 +140,7 @@ export const ROUTES = {
 // 보호된 라우트 (로그인 필요)
 export const PROTECTED_ROUTES = [
   "/guide",
+  "/manual",
   "/notices",
   "/questions",
   "/meal",

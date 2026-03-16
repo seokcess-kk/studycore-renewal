@@ -13,12 +13,16 @@ import { z } from "zod";
 // ─────────────────────────────────────────────
 
 // 가이드 섹션 스키마
+export const guideSectionTypeEnum = z.enum(["onboarding", "manual"]);
+export type GuideSectionType = z.infer<typeof guideSectionTypeEnum>;
+
 export const guideSectionSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
   content: z.string(),
   order_index: z.number(),
   is_visible: z.boolean(),
+  type: guideSectionTypeEnum.default("onboarding"),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -31,6 +35,7 @@ export const createGuideSectionSchema = z.object({
   content: z.string().min(1, "내용을 입력해주세요"),
   order_index: z.number().optional(),
   is_visible: z.boolean().optional(),
+  type: guideSectionTypeEnum.optional(),
 });
 
 export type CreateGuideSectionInput = z.infer<typeof createGuideSectionSchema>;

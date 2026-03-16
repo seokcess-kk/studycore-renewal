@@ -114,12 +114,21 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     도시락
                   </Link>
                 )}
-                <Link
-                  href={ROUTES.GUIDE}
-                  className={linkClass(pathname === "/guide")}
-                >
-                  {isStaff ? "온보딩" : "매뉴얼"}
-                </Link>
+                {isStaff ? (
+                  <Link
+                    href={ROUTES.GUIDE}
+                    className={linkClass(pathname === "/guide")}
+                  >
+                    온보딩
+                  </Link>
+                ) : (
+                  <Link
+                    href={ROUTES.MANUAL}
+                    className={linkClass(pathname === "/manual")}
+                  >
+                    매뉴얼
+                  </Link>
+                )}
                 <Link
                   href={ROUTES.MY}
                   className={linkClass(pathname === "/my")}

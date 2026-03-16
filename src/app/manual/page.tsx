@@ -7,7 +7,7 @@ import { getVisibleSectionList } from "@/domains/guide/service";
 import type { GuideSection } from "@/domains/guide/model";
 import { ChevronDown, BookOpen } from "lucide-react";
 
-export default function GuidePage() {
+export default function ManualPage() {
   const [sections, setSections] = useState<GuideSection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
@@ -15,10 +15,9 @@ export default function GuidePage() {
   useEffect(() => {
     async function fetchSections() {
       const supabase = createClient();
-      const result = await getVisibleSectionList(supabase, "onboarding");
+      const result = await getVisibleSectionList(supabase, "manual");
       if (result.success) {
         setSections(result.sections);
-        // 첫 번째 섹션 자동 펼침
         if (result.sections.length > 0) {
           setExpandedIds([result.sections[0].id]);
         }
@@ -38,22 +37,20 @@ export default function GuidePage() {
     <>
       <Nav />
       <main className="pt-24 pb-20">
-        {/* 헤더 */}
         <section className="bg-navy py-16 px-6 md:px-13">
           <div className="max-w-3xl mx-auto">
             <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-4">
-              Onboarding Guide
+              Manual
             </span>
             <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
-              조교 온보딩 가이드
+              이용 매뉴얼
             </h1>
             <p className="mt-4 text-white/50 text-[15px]">
-              업무에 필요한 정보를 확인하세요.
+              독서실 이용에 필요한 정보를 안내합니다.
             </p>
           </div>
         </section>
 
-        {/* 콘텐츠 */}
         <section className="px-6 md:px-13 py-12">
           <div className="max-w-3xl mx-auto space-y-4">
             {isLoading ? (
@@ -67,17 +64,14 @@ export default function GuidePage() {
               <div className="text-center py-16">
                 <BookOpen size={48} className="mx-auto text-rule mb-4" />
                 <p className="text-muted">
-                  아직 등록된 가이드가 없습니다.
+                  아직 등록된 매뉴얼이 없습니다.
                 </p>
               </div>
             ) : (
               sections.map((section) => {
                 const isExpanded = expandedIds.includes(section.id);
                 return (
-                  <div
-                    key={section.id}
-                    className="border border-rule bg-white"
-                  >
+                  <div key={section.id} className="border border-rule bg-white">
                     <button
                       onClick={() => toggleSection(section.id)}
                       className="w-full flex items-center gap-4 p-5 text-left hover:bg-stone/50 transition-colors"
