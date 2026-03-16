@@ -2,79 +2,36 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Pin } from "lucide-react";
 import { QuestionStatusBadge } from "@/components/admin/StatusBadge";
 import { createBrowserClient } from "@/lib/supabase/client";
+import { getQuestionList } from "@/domains/question/service";
+import type { QuestionWithAuthor } from "@/domains/question/model";
 import { formatDistanceToNow } from "@/lib/utils";
-
-interface QuestionWithAuthor {
-  id: string;
-  title: string;
-  content: string;
-  status: "pending" | "answered";
-  created_at: string;
-  author: {
-    name: string;
-    school: string | null;
-    grade: number | null;
-  } | null;
-}
 
 type FilterStatus = "all" | "pending" | "answered";
 
 export default function AdminQuestionsPage() {
-  const supabase = createBrowserClient();
   const [questions, setQuestions] = useState<QuestionWithAuthor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
 
   useEffect(() => {
     async function fetchQuestions() {
-      try {
-        let query = supabase
-          .from("questions")
-          .select(
-            `
-            id,
-            title,
-            content,
-            status,
-            created_at,
-            author:profiles!author_id (
-              name,
-              school,
-              grade
-            )
-          `
-          )
-          .order("created_at", { ascending: false });
+      setIsLoading(true);
+      const supabase = createBrowserClient();
+      const result = await getQuestionList(supabase, {
+        status: filterStatus === "all" ? undefined : filterStatus,
+      });
 
-        if (filterStatus !== "all") {
-          query = query.eq("status", filterStatus);
-        }
-
-        const { data, error } = await query;
-
-        if (error) throw error;
-
-        // Supabase returns joined relations as arrays, extract first element
-        const mapped = (data || []).map((q) => {
-          const author = q.author as unknown as { name: string; school: string | null; grade: number | null } | null;
-          return {
-            ...q,
-            author,
-          };
-        });
-        setQuestions(mapped);
-      } catch (error) {
-        console.error("질문 목록 조회 실패:", error);
-      } finally {
-        setIsLoading(false);
+      if (result.success) {
+        setQuestions(result.questions);
       }
+      setIsLoading(false);
     }
 
     fetchQuestions();
-  }, [supabase, filterStatus]);
+  }, [filterStatus]);
 
   const pendingCount = questions.filter((q) => q.status === "pending").length;
 
@@ -126,14 +83,14 @@ export default function AdminQuestionsPage() {
                 <div className="flex-1">
                   <div className="mb-2 flex items-center gap-3">
                     <QuestionStatusBadge status={question.status} size="sm" />
+                    {question.is_pinned && (
+                      <span className="flex items-center gap-1 text-[11px] text-teal font-medium">
+                        <Pin size={12} />
+                        고정
+                      </span>
+                    )}
                     <span className="text-sm text-muted">
                       {question.author?.name || "알 수 없음"}
-                      {question.author?.school && (
-                        <> · {question.author.school}</>
-                      )}
-                      {question.author?.grade && (
-                        <> {question.author.grade}학년</>
-                      )}
                     </span>
                   </div>
                   <h3 className="mb-2 font-medium text-ink">{question.title}</h3>

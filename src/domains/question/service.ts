@@ -315,28 +315,40 @@ export async function updateQuestion(
   input: Partial<CreateQuestionInput>
 ): Promise<QuestionServiceResult> {
   try {
-    // 1. 기존 질문 확인
+    // 1. 로그인 확인
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, error: "로그인이 필요합니다." };
+    }
+
+    // 2. 기존 질문 확인
     const existingQuestion = await questionRepo.getQuestionById(
       supabase,
       questionId
     );
 
     if (!existingQuestion) {
-      return {
-        success: false,
-        error: "질문을 찾을 수 없습니다.",
-      };
+      return { success: false, error: "질문을 찾을 수 없습니다." };
     }
 
-    // 2. 답변된 질문은 수정 불가
-    if (existingQuestion.status === "answered") {
-      return {
-        success: false,
-        error: "답변이 달린 질문은 수정할 수 없습니다.",
-      };
+    // 3. 소유자 확인 (스태프가 아닌 경우)
+    if (existingQuestion.author_id !== user.id) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      if (!profile || !["admin", "mentor", "assistant"].includes(profile.role)) {
+        return { success: false, error: "본인의 질문만 수정할 수 있습니다." };
+      }
     }
 
-    // 3. 질문 수정
+    // 4. 답변된 질문은 수정 불가 (스태프 제외 — 고정 등 관리 목적)
+    if (existingQuestion.status === "answered" && existingQuestion.author_id === user.id) {
+      return { success: false, error: "답변이 달린 질문은 수정할 수 없습니다." };
+    }
+
+    // 5. 질문 수정
     const question = await questionRepo.updateQuestion(
       supabase,
       questionId,
@@ -364,28 +376,40 @@ export async function deleteQuestion(
   questionId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // 1. 기존 질문 확인
+    // 1. 로그인 확인
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, error: "로그인이 필요합니다." };
+    }
+
+    // 2. 기존 질문 확인
     const existingQuestion = await questionRepo.getQuestionById(
       supabase,
       questionId
     );
 
     if (!existingQuestion) {
-      return {
-        success: false,
-        error: "질문을 찾을 수 없습니다.",
-      };
+      return { success: false, error: "질문을 찾을 수 없습니다." };
     }
 
-    // 2. 답변된 질문은 삭제 불가
-    if (existingQuestion.status === "answered") {
-      return {
-        success: false,
-        error: "답변이 달린 질문은 삭제할 수 없습니다.",
-      };
+    // 3. 소유자 또는 스태프 확인
+    if (existingQuestion.author_id !== user.id) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      if (!profile || !["admin", "mentor"].includes(profile.role)) {
+        return { success: false, error: "본인의 질문만 삭제할 수 있습니다." };
+      }
     }
 
-    // 3. 질문 삭제
+    // 4. 답변된 질문은 일반 사용자 삭제 불가 (스태프는 가능)
+    if (existingQuestion.status === "answered" && existingQuestion.author_id === user.id) {
+      return { success: false, error: "답변이 달린 질문은 삭제할 수 없습니다." };
+    }
+
+    // 5. 질문 삭제
     await questionRepo.deleteQuestion(supabase, questionId);
 
     return { success: true };
@@ -512,13 +536,30 @@ export async function updateAnswer(
 
 /**
  * 답변 삭제 (멘토/관리자용)
+ * 마지막 답변 삭제 시 질문 상태를 pending으로 롤백
  */
 export async function deleteAnswer(
   supabase: SupabaseClient,
-  answerId: string
+  answerId: string,
+  questionId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await questionRepo.deleteAnswer(supabase, answerId);
+
+    // 해당 질문에 남은 답변이 있는지 확인
+    const { data: remainingAnswers } = await supabase
+      .from("question_answers")
+      .select("id", { count: "exact", head: true })
+      .eq("question_id", questionId);
+
+    // 답변이 없으면 질문 상태를 pending으로 복원
+    if (!remainingAnswers || remainingAnswers.length === 0) {
+      await supabase
+        .from("questions")
+        .update({ status: "pending" })
+        .eq("id", questionId);
+    }
+
     return { success: true };
   } catch (error) {
     console.error("답변 삭제 실패:", error);

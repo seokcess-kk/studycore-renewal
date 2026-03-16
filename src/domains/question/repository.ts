@@ -138,6 +138,7 @@ export async function getPublicAndMyQuestions(
       { count: "exact" }
     )
     .or(`is_public.eq.true,author_id.eq.${userId}`)
+    .order("is_pinned", { ascending: false })
     .order("created_at", { ascending: false });
 
   if (options?.status) {
