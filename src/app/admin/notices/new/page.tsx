@@ -29,7 +29,12 @@ export default function AdminNoticeNewPage() {
 
   const [isPinned, setIsPinned] = useState(false);
   const [registerAsPopup, setRegisterAsPopup] = useState(false);
-  const [popupDays, setPopupDays] = useState(7);
+  const [popupStartDate, setPopupStartDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [popupEndDate, setPopupEndDate] = useState(
+    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
+  );
   const [attachments, setAttachments] = useState<{ name: string; url: string; size: number; type: string }[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -78,18 +83,14 @@ export default function AdminNoticeNewPage() {
       // 팝업 등록
       if (registerAsPopup && publish && result.notice) {
         const imageAtt = attachments.find((a) => a.type.startsWith("image/"));
-        const today = new Date().toISOString().split("T")[0];
-        const endDate = new Date(Date.now() + popupDays * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split("T")[0];
 
         const popupResult = await createPopup(supabase, {
           title: data.title,
           content: data.content.replace(/<[^>]*>/g, "").trim().slice(0, 200),
           image_url: imageAtt?.url || null,
           notice_id: result.notice.id,
-          start_date: today,
-          end_date: endDate,
+          start_date: popupStartDate,
+          end_date: popupEndDate,
           is_active: true,
           sort_order: 0,
         });
@@ -344,19 +345,27 @@ export default function AdminNoticeNewPage() {
             </span>
           </label>
           {registerAsPopup && (
-            <div className="ml-6 space-y-2">
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-muted">노출 기간:</label>
-                <select
-                  value={popupDays}
-                  onChange={(e) => setPopupDays(Number(e.target.value))}
-                  className="border border-rule px-2 py-1 text-sm focus:border-navy focus:outline-none"
-                >
-                  <option value={3}>3일</option>
-                  <option value={7}>7일</option>
-                  <option value={14}>14일</option>
-                  <option value={30}>30일</option>
-                </select>
+            <div className="ml-6 space-y-3">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1 block text-sm text-muted">시작일</label>
+                  <input
+                    type="date"
+                    value={popupStartDate}
+                    onChange={(e) => setPopupStartDate(e.target.value)}
+                    className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm text-muted">종료일</label>
+                  <input
+                    type="date"
+                    value={popupEndDate}
+                    min={popupStartDate}
+                    onChange={(e) => setPopupEndDate(e.target.value)}
+                    className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                  />
+                </div>
               </div>
               <p className="text-xs text-muted">
                 첨부 이미지가 있으면 팝업 이미지로 자동 사용됩니다.
