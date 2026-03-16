@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Plus, Trash2, Pencil } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
@@ -10,6 +11,7 @@ import { getProgramList, deleteProgram } from "@/domains/program/service";
 import type { Program } from "@/domains/program/model";
 
 export default function AdminProgramsPage() {
+  const router = useRouter();
   const supabase = createBrowserClient();
   const { toast } = useToast();
   const [programs, setPrograms] = useState<Program[]>([]);
@@ -61,12 +63,11 @@ export default function AdminProgramsPage() {
       </div>
 
       <div className="border border-rule bg-white">
-        <div className="grid grid-cols-[1fr_80px_140px_140px_80px_80px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted">
+        <div className="grid grid-cols-[1fr_80px_140px_140px_80px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted">
           <span>제목</span>
           <span>상태</span>
           <span>시작일</span>
           <span>종료일</span>
-          <span>수정</span>
           <span>삭제</span>
         </div>
 
@@ -78,7 +79,8 @@ export default function AdminProgramsPage() {
           programs.map((p) => (
             <div
               key={p.id}
-              className="grid grid-cols-[1fr_80px_140px_140px_80px_80px] items-center gap-4 border-b border-rule px-4 py-3 last:border-b-0"
+              className="grid grid-cols-[1fr_80px_140px_140px_80px] items-center gap-4 border-b border-rule px-4 py-3 last:border-b-0 cursor-pointer hover:bg-stone/50 transition-colors"
+              onClick={() => router.push(`/admin/programs/${p.id}/edit`)}
             >
               <p className="truncate text-sm font-medium text-ink">{p.title}</p>
               <span
@@ -100,14 +102,8 @@ export default function AdminProgramsPage() {
                   ? new Date(p.end_date).toLocaleDateString("ko-KR")
                   : "-"}
               </span>
-              <Link
-                href={`/admin/programs/${p.id}/edit`}
-                className="flex items-center text-muted hover:text-ink"
-              >
-                <Pencil className="h-4 w-4" />
-              </Link>
               <button
-                onClick={() => handleDelete(p.id)}
+                onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }}
                 className="flex items-center text-muted hover:text-red-500"
               >
                 <Trash2 className="h-4 w-4" />

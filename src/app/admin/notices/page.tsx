@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus, Eye, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
@@ -12,6 +13,7 @@ import { NOTICE_CATEGORY_LABELS } from "@/domains/notice/model";
 import type { NoticeWithAuthor, NoticeCategory } from "@/domains/notice/model";
 
 export default function AdminNoticesPage() {
+  const router = useRouter();
   const supabase = createBrowserClient();
   const { toast } = useToast();
 
@@ -152,7 +154,11 @@ export default function AdminNoticesPage() {
               </tr>
             ) : (
               notices.map((notice) => (
-                <tr key={notice.id} className="hover:bg-stone/50">
+                <tr
+                  key={notice.id}
+                  className="hover:bg-stone/50 cursor-pointer"
+                  onClick={() => router.push(`/admin/notices/${notice.id}/edit`)}
+                >
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex items-center border px-2 py-0.5 text-xs font-medium ${getCategoryBadgeClass(
@@ -192,7 +198,7 @@ export default function AdminNoticesPage() {
                   <td className="px-4 py-3 text-sm text-muted">
                     {formatDate(notice.created_at)}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/notices/${notice.id}`}
@@ -201,13 +207,6 @@ export default function AdminNoticesPage() {
                         title="미리보기"
                       >
                         <Eye className="h-4 w-4" />
-                      </Link>
-                      <Link
-                        href={`/admin/notices/${notice.id}/edit`}
-                        className="text-muted hover:text-ink"
-                        title="수정"
-                      >
-                        <Edit className="h-4 w-4" />
                       </Link>
                       <button
                         onClick={() => setDeleteId(notice.id)}

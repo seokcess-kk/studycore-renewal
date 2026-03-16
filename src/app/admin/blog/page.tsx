@@ -6,6 +6,7 @@ import { AdminHeader } from "@/components/admin/AdminHeader";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { Skeleton } from "@/components/common";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getBlogList, deleteBlog, publishBlog, unpublishBlog } from "@/domains/blog/service";
 import type { BlogPostWithAuthor } from "@/domains/blog/model";
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 
 export default function AdminBlogPage() {
+  const router = useRouter();
   const [posts, setPosts] = useState<BlogPostWithAuthor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -204,7 +206,8 @@ export default function AdminBlogPage() {
               {posts.map((post) => (
                 <div
                   key={post.id}
-                  className="grid grid-cols-[1fr_100px_120px_120px] gap-4 px-4 py-4 items-center hover:bg-stone/50 transition-colors"
+                  className="grid grid-cols-[1fr_100px_120px_120px] gap-4 px-4 py-4 items-center hover:bg-stone/50 transition-colors cursor-pointer"
+                  onClick={() => router.push(`/admin/blog/${post.id}/edit`)}
                 >
                   {/* 제목 */}
                   <div>
@@ -245,7 +248,7 @@ export default function AdminBlogPage() {
                   </div>
 
                   {/* 액션 */}
-                  <div className="flex items-center justify-center gap-1">
+                  <div className="flex items-center justify-center gap-1" onClick={(e) => e.stopPropagation()}>
                     {post.is_published && (
                       <Link
                         href={`/blog/${post.slug}`}

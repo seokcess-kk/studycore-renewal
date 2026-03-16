@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { ChevronDown, ChevronUp, Phone } from "lucide-react";
+import { ChevronDown, ChevronUp, Phone, Trash2 } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
 import {
@@ -104,12 +104,13 @@ export default function AdminConsultationsPage() {
       {/* 목록 */}
       <div className="border border-rule bg-white">
         {/* 테이블 헤더 */}
-        <div className="grid grid-cols-[1fr_120px_120px_100px_120px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted">
+        <div className="grid grid-cols-[1fr_120px_120px_100px_120px_50px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted">
           <span>이름 / 연락처</span>
           <span>상담 유형</span>
           <span>상태</span>
           <span>신청일</span>
           <span>상태 변경</span>
+          <span>삭제</span>
         </div>
 
         {isLoading ? (
@@ -121,7 +122,7 @@ export default function AdminConsultationsPage() {
         ) : (
           consultations.map((c) => (
             <div key={c.id} className="border-b border-rule last:border-b-0">
-              <div className="grid grid-cols-[1fr_120px_120px_100px_120px] items-center gap-4 px-4 py-3">
+              <div className="grid grid-cols-[1fr_120px_120px_100px_120px_50px] items-center gap-4 px-4 py-3">
                 {/* 이름 + 연락처 + 확장 토글 */}
                 <button
                   onClick={() =>
@@ -178,6 +179,26 @@ export default function AdminConsultationsPage() {
                   <option value="contacted">연락함</option>
                   <option value="done">완료</option>
                 </select>
+
+                {/* 삭제 */}
+                <button
+                  onClick={async () => {
+                    if (!confirm("이 상담 신청을 삭제하시겠습니까?")) return;
+                    const { error } = await supabase
+                      .from("consultations")
+                      .delete()
+                      .eq("id", c.id);
+                    if (error) {
+                      toast({ variant: "error", description: "삭제 실패" });
+                    } else {
+                      toast({ variant: "success", description: "삭제되었습니다." });
+                      fetchData();
+                    }
+                  }}
+                  className="flex items-center justify-center text-muted hover:text-red-500"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
               </div>
 
               {/* 메시지 확장 */}
