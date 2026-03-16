@@ -15,6 +15,7 @@ import {
   createNoticeSchema,
   NOTICE_CATEGORY_LABELS,
 } from "@/domains/notice/model";
+import { createNotice } from "@/domains/notice/service";
 import { z } from "zod";
 
 type CreateNoticeInput = z.infer<typeof createNoticeSchema>;
@@ -48,14 +49,13 @@ export default function AdminNoticeNewPage() {
     if (!user) return;
 
     try {
-      const { error } = await supabase.from("notices").insert({
+      const result = await createNotice(supabase, user.id, {
         ...data,
         is_published: publish,
         is_pinned: isPinned,
-        author_id: user.id,
       });
 
-      if (error) throw error;
+      if (!result.success) throw new Error(result.error);
 
       toast({
         variant: "success",

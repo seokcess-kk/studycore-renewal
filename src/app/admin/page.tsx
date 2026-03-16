@@ -194,7 +194,7 @@ export default function AdminDashboardPage() {
           title="최근 상담 신청"
           icon={Phone}
           items={recentConsultations}
-          linkHref="/admin/members"
+          linkHref="/admin/consultations"
           linkText="전체 보기"
           emptyText="상담 신청이 없습니다"
           renderStatus={(status) => (

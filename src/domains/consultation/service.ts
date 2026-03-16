@@ -46,14 +46,25 @@ export async function submitConsultation(
       createData
     );
 
-    // 4. TODO: Edge Function 호출 (notify-consult)
-    // await supabase.functions.invoke('notify-consult', {
-    //   body: {
-    //     consultationId: consultation.id,
-    //     name: consultation.name,
-    //     phone: consultation.phone,
-    //   },
-    // });
+    // 4. Edge Function 호출 (notify-consult) — SMS 알림
+    try {
+      const { error: fnError } = await supabase.functions.invoke(
+        "notify-consult",
+        {
+          body: {
+            consultationId: consultation.id,
+            name: consultation.name,
+            phone: consultation.phone,
+          },
+        }
+      );
+      if (fnError) {
+        console.error("상담 알림 발송 실패 (Edge Function):", fnError);
+      }
+    } catch (notifyError) {
+      // 네트워크 에러 등 — 상담 신청 자체를 실패 처리하지 않음
+      console.error("상담 알림 발송 실패:", notifyError);
+    }
 
     return { success: true, consultation };
   } catch (error) {

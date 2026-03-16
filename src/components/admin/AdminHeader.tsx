@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight, Home } from "lucide-react";
+import { ChevronRight, Globe, Home } from "lucide-react";
 
 const pageTitles: Record<string, string> = {
   "/admin": "대시보드",
@@ -15,8 +15,13 @@ const pageTitles: Record<string, string> = {
   "/admin/guide": "조교 온보딩",
   "/admin/blog": "블로그 관리",
   "/admin/blog/new": "새 포스트",
-  "/admin/lunch": "도시락 관리",
+  "/admin/meal": "도시락 관리",
   "/admin/kakao": "알림톡 발송",
+  "/admin/consultations": "상담 관리",
+  "/admin/popups": "팝업 관리",
+  "/admin/popups/new": "팝업 생성",
+  "/admin/programs": "프로그램 관리",
+  "/admin/programs/new": "프로그램 등록",
 };
 
 interface BreadcrumbItem {
@@ -88,10 +93,21 @@ export function AdminHeader({ title, breadcrumb }: AdminHeaderProps = {}) {
           ))}
         </div>
 
-        {/* 페이지 타이틀 */}
-        <h1 className="font-serif text-xl font-bold text-navy">
-          {currentTitle}
-        </h1>
+        {/* 페이지 타이틀 + 홈페이지 링크 */}
+        <div className="flex items-center gap-4">
+          <h1 className="font-serif text-xl font-bold text-navy">
+            {currentTitle}
+          </h1>
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-sm text-muted hover:text-teal transition-colors"
+          >
+            <Globe className="h-4 w-4" />
+            홈페이지
+          </a>
+        </div>
       </div>
     </header>
   );

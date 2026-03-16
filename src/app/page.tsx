@@ -5,6 +5,8 @@ import {
   SpaceSlider,
   FAQSection,
   CTASection,
+  PopupModal,
+  ProgramsSection,
 } from "@/components/home";
 
 export default function Home() {
@@ -13,12 +15,14 @@ export default function Home() {
       <Nav />
       <main>
         <HeroSection />
+        <ProgramsSection />
         <FeaturesSection />
         <SpaceSlider />
         <FAQSection />
         <CTASection />
       </main>
       <Footer />
+      <PopupModal />
     </>
   );
 }

@@ -12,6 +12,9 @@ import {
   Settings,
   BookOpen,
   LogOut,
+  Phone,
+  Layers,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
@@ -39,6 +42,21 @@ const navItems = [
     label: "질문 관리",
     href: "/admin/questions",
     icon: MessageSquare,
+  },
+  {
+    label: "상담 관리",
+    href: "/admin/consultations",
+    icon: Phone,
+  },
+  {
+    label: "팝업 관리",
+    href: "/admin/popups",
+    icon: Layers,
+  },
+  {
+    label: "프로그램 관리",
+    href: "/admin/programs",
+    icon: GraduationCap,
   },
   {
     label: "도시락 관리",
