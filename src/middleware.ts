@@ -54,6 +54,9 @@ export async function middleware(request: NextRequest) {
       url.pathname = ROUTES.HOME;
       return NextResponse.redirect(url);
     }
+
+    // 상태 일치 — 페이지 표시 허용
+    return supabaseResponse;
   }
 
   // 보호된 라우트 접근 시 로그인 확인
