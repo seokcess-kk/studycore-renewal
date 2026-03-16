@@ -61,6 +61,31 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       isActive ? "text-teal" : "text-white/80 hover:text-white"
     }`;
 
+  // Framer Motion Variants for Staggered Dropdown
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.1,
+        staggerChildren: 0.05,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring" as const,
+        stiffness: 300,
+        damping: 24,
+      },
+    },
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -85,66 +110,85 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </button>
           </div>
 
-          {/* 메뉴 */}
-          <nav className="flex-1 px-8 pt-4 overflow-y-auto">
+          {/* 메뉴 (Stagger Container) */}
+          <motion.nav 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="flex-1 px-8 pt-4 overflow-y-auto"
+          >
             {isAuthenticated ? (
               <>
-                <Link
-                  href={ROUTES.NOTICES}
-                  className={linkClass(pathname.startsWith("/notices"))}
-                >
-                  공지사항
-                </Link>
-                <Link
-                  href={ROUTES.QUESTIONS}
-                  className={`${linkClass(pathname.startsWith("/questions"))} flex items-center gap-2`}
-                >
-                  질문방
-                  {canAccessAdmin && unansweredCount > 0 && (
-                    <span className="min-w-[20px] h-[20px] flex items-center justify-center bg-teal text-white text-[11px] font-bold px-1.5">
-                      {unansweredCount > 99 ? "99+" : unansweredCount}
-                    </span>
-                  )}
-                </Link>
-                {!isStaff && (
+                <motion.div variants={itemVariants}>
                   <Link
-                    href={ROUTES.MEAL}
-                    className={linkClass(pathname === "/meal")}
+                    href={ROUTES.NOTICES}
+                    className={linkClass(pathname.startsWith("/notices"))}
                   >
-                    도시락
+                    공지사항
                   </Link>
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  <Link
+                    href={ROUTES.QUESTIONS}
+                    className={`${linkClass(pathname.startsWith("/questions"))} flex items-center gap-2`}
+                  >
+                    질문방
+                    {canAccessAdmin && unansweredCount > 0 && (
+                      <span className="min-w-[20px] h-[20px] flex items-center justify-center bg-teal text-white text-[11px] font-bold px-1.5">
+                        {unansweredCount > 99 ? "99+" : unansweredCount}
+                      </span>
+                    )}
+                  </Link>
+                </motion.div>
+                {!isStaff && (
+                  <motion.div variants={itemVariants}>
+                    <Link
+                      href={ROUTES.MEAL}
+                      className={linkClass(pathname === "/meal")}
+                    >
+                      도시락
+                    </Link>
+                  </motion.div>
                 )}
                 {isStaff ? (
-                  <Link
-                    href={ROUTES.GUIDE}
-                    className={linkClass(pathname === "/guide")}
-                  >
-                    온보딩
-                  </Link>
+                  <motion.div variants={itemVariants}>
+                    <Link
+                      href={ROUTES.GUIDE}
+                      className={linkClass(pathname === "/guide")}
+                    >
+                      온보딩
+                    </Link>
+                  </motion.div>
                 ) : (
-                  <Link
-                    href={ROUTES.MANUAL}
-                    className={linkClass(pathname === "/manual")}
-                  >
-                    매뉴얼
-                  </Link>
+                  <motion.div variants={itemVariants}>
+                    <Link
+                      href={ROUTES.MANUAL}
+                      className={linkClass(pathname === "/manual")}
+                    >
+                      매뉴얼
+                    </Link>
+                  </motion.div>
                 )}
-                <Link
-                  href={ROUTES.MY}
-                  className={linkClass(pathname === "/my")}
-                >
-                  마이페이지
-                </Link>
-                {canAccessAdmin && (
+                <motion.div variants={itemVariants}>
                   <Link
-                    href={ROUTES.ADMIN}
-                    className={linkClass(pathname.startsWith("/admin"))}
+                    href={ROUTES.MY}
+                    className={linkClass(pathname === "/my")}
                   >
-                    관리자
+                    마이페이지
                   </Link>
+                </motion.div>
+                {canAccessAdmin && (
+                  <motion.div variants={itemVariants}>
+                    <Link
+                      href={ROUTES.ADMIN}
+                      className={linkClass(pathname.startsWith("/admin"))}
+                    >
+                      관리자
+                    </Link>
+                  </motion.div>
                 )}
 
-                <div className="border-t border-white/10 mt-6 pt-6">
+                <motion.div variants={itemVariants} className="border-t border-white/10 mt-6 pt-6">
                   <button
                     type="button"
                     onClick={handleLogout}
@@ -152,24 +196,30 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   >
                     로그아웃
                   </button>
-                </div>
+                </motion.div>
               </>
             ) : (
               <>
-                <Link
-                  href={getAnchorHref("#features")}
-                  className={linkClass()}
-                >
-                  특징
-                </Link>
-                <Link href={getAnchorHref("#space")} className={linkClass()}>
-                  시설
-                </Link>
-                <Link href={getAnchorHref("#faq")} className={linkClass()}>
-                  FAQ
-                </Link>
+                <motion.div variants={itemVariants}>
+                  <Link
+                    href={getAnchorHref("#features")}
+                    className={linkClass()}
+                  >
+                    특징
+                  </Link>
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  <Link href={getAnchorHref("#space")} className={linkClass()}>
+                    시설
+                  </Link>
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  <Link href={getAnchorHref("#faq")} className={linkClass()}>
+                    FAQ
+                  </Link>
+                </motion.div>
 
-                <div className="border-t border-white/10 mt-6 pt-6 space-y-3">
+                <motion.div variants={itemVariants} className="border-t border-white/10 mt-6 pt-6 space-y-3">
                   <Link
                     href={ROUTES.LOGIN}
                     className="block text-[14px] text-white/50 hover:text-white transition-colors"
@@ -178,14 +228,14 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   </Link>
                   <Link
                     href={ROUTES.CONSULT}
-                    className="block text-center py-3 bg-teal text-navy-dark text-[14px] font-bold"
+                    className="block text-center py-3 bg-teal text-navy-dark border-[1.5px] border-teal text-[14px] font-bold"
                   >
                     무료 상담 신청
                   </Link>
-                </div>
+                </motion.div>
               </>
             )}
-          </nav>
+          </motion.nav>
         </motion.div>
       )}
     </AnimatePresence>
