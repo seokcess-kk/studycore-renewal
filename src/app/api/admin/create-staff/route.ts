@@ -29,11 +29,25 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. 요청 데이터 파싱
-    const { name, username, role } = await request.json();
+    let body: { name?: string; username?: string; role?: string };
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
+    }
+
+    const { name, username, role } = body;
 
     if (!name || !username || !role) {
       return NextResponse.json(
         { error: "이름, 아이디, 역할은 필수입니다." },
+        { status: 400 }
+      );
+    }
+
+    if (!/^[a-z0-9_]{4,}$/.test(username)) {
+      return NextResponse.json(
+        { error: "아이디는 4자 이상, 영문 소문자/숫자/밑줄만 사용 가능합니다." },
         { status: 400 }
       );
     }
