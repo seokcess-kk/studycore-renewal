@@ -62,7 +62,8 @@ export function ImageUploader({
       retryCount: number = 0
     ): Promise<string | null> => {
       const supabase = createClient();
-      const fileName = `${folder}/${fileId}-${file.name}`;
+      const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const fileName = `${folder}/${fileId}.${fileExt}`;
 
       // 진행률 업데이트
       const updateProgress = (progress: number, status: UploadingFile["status"] = "uploading") => {

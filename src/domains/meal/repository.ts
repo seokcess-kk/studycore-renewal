@@ -46,17 +46,13 @@ export async function getActivePeriod(
     .lte("start_date", today)
     .gte("end_date", today)
     .order("created_at", { ascending: false })
-    .limit(1)
-    .single();
+    .limit(1);
 
   if (error) {
-    if (error.code === "PGRST116") {
-      return null;
-    }
     throw new Error(`활성 기간 조회 실패: ${error.message}`);
   }
 
-  return data;
+  return data && data.length > 0 ? data[0] : null;
 }
 
 /**
