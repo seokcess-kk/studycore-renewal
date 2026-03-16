@@ -230,4 +230,13 @@
   .section-container {
     @apply w-full max-w-[1920px] mx-auto px-6 md:px-13;
   }
+
+  /* 스크롤바 숨기기 */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
