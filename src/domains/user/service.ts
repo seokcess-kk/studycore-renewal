@@ -11,9 +11,11 @@ import {
   staffLoginSchema,
   createProfileSchema,
   updateProfileSchema,
+  changePasswordSchema,
   type StaffLoginInput,
   type CreateProfileInput,
   type UpdateProfileInput,
+  type ChangePasswordInput,
   type UserServiceResult,
   type AuthResult,
 } from "./model";
@@ -388,4 +390,37 @@ export async function updateAvatar(
           : "프로필 이미지 업데이트 중 오류가 발생했습니다.",
     };
   }
+}
+
+/**
+ * 스태프 비밀번호 변경
+ */
+export async function changePassword(
+  supabase: SupabaseClient,
+  input: ChangePasswordInput
+): Promise<{ success: boolean; error?: string }> {
+  const validation = changePasswordSchema.safeParse(input);
+  if (!validation.success) {
+    return { success: false, error: validation.error.issues[0].message };
+  }
+
+  const result = await userRepo.changeStaffPassword(
+    supabase,
+    input.currentPassword,
+    input.newPassword
+  );
+
+  if (!result.success) {
+    const errorMap: Record<string, string> = {
+      WRONG_PASSWORD: "현재 비밀번호가 올바르지 않습니다.",
+      NO_CREDENTIALS: "비밀번호 정보를 찾을 수 없습니다.",
+      NOT_AUTHENTICATED: "인증이 필요합니다.",
+    };
+    return {
+      success: false,
+      error: errorMap[result.error || ""] || "비밀번호 변경에 실패했습니다.",
+    };
+  }
+
+  return { success: true };
 }

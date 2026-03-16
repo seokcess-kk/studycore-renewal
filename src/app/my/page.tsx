@@ -32,6 +32,7 @@ import {
   Lock,
 } from "lucide-react";
 import Link from "next/link";
+import { PasswordChangeForm } from "@/components/my/PasswordChangeForm";
 import { getMyQuestions } from "@/domains/question/service";
 import { type QuestionWithAuthor } from "@/domains/question/model";
 
@@ -39,7 +40,7 @@ export default function MyPage() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [activeTab, setActiveTab] = useState<"profile" | "lunch" | "questions">("profile");
   const { success, error: showError } = useToast();
-  const { profile, isActive, logout: logoutStore, setProfile } = useUserStore();
+  const { profile, isActive, isStaff, logout: logoutStore, setProfile } = useUserStore();
 
   // 아바타 업데이트 핸들러
   const handleAvatarUpload = async (url: string | null) => {
@@ -218,6 +219,9 @@ export default function MyPage() {
                   href={ROUTES.PRIVACY}
                 />
               </div>
+
+              {/* 비밀번호 변경 (스태프 전용) */}
+              {isStaff && <PasswordChangeForm />}
 
               {/* 로그아웃 */}
               <Button

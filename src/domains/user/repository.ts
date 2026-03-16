@@ -309,3 +309,25 @@ export async function verifyStaffPassword(
     isValid: data.is_valid,
   };
 }
+
+/**
+ * 스태프 비밀번호 변경 (RPC)
+ */
+export async function changeStaffPassword(
+  supabase: SupabaseClient,
+  currentPassword: string,
+  newPassword: string
+): Promise<{ success: boolean; error?: string }> {
+  const { data, error } = await supabase.rpc("change_staff_password", {
+    p_current_password: currentPassword,
+    p_new_password: newPassword,
+  });
+
+  if (error) {
+    logger.error("비밀번호 변경 RPC 실패", { context: "changeStaffPassword", data: error });
+    return { success: false, error: "비밀번호 변경에 실패했습니다." };
+  }
+
+  const result = data as { success: boolean; error?: string };
+  return result;
+}
