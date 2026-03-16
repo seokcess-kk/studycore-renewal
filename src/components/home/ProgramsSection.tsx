@@ -9,18 +9,6 @@ import { ArrowRight, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 
-function getProgramStatus(program: Program): {
-  label: string;
-  color: string;
-  isActive: boolean;
-} {
-  const now = new Date();
-  if (program.end_date && new Date(program.end_date) < now) {
-    return { label: "종료", color: "bg-white/10 text-white/50", isActive: false };
-  }
-  return { label: "모집중", color: "bg-teal text-white", isActive: true };
-}
-
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return "";
   return new Date(dateStr).toLocaleDateString("ko-KR", {
@@ -79,7 +67,7 @@ export function ProgramsSection() {
     if (!el) return;
     const cardWidth = el.querySelector("[data-card]")?.clientWidth || 400;
     el.scrollBy({
-      left: direction === "left" ? -cardWidth - 24 : cardWidth + 24,
+      left: direction === "left" ? -cardWidth - 16 : cardWidth + 16,
       behavior: "smooth",
     });
   };
