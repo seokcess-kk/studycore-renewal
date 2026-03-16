@@ -20,6 +20,7 @@ export function Nav() {
   // 인증 상태
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const canAccessAdmin = useUserStore((state) => state.canAccessAdmin);
+  const isStaff = useUserStore((state) => state.isStaff);
   const logout = useUserStore((state) => state.logout);
 
   // 홈이 아닌 페이지에서는 앵커 링크 앞에 / 추가
@@ -90,16 +91,19 @@ export function Nav() {
       <div className="flex items-center gap-6 md:gap-9">
         {isAuthenticated ? (
           <>
-            {/* 로그인 상태: 재원생 메뉴 */}
+            {/* 로그인 상태: 공통 메뉴 */}
             <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>
               공지사항
             </Link>
             <Link href={ROUTES.QUESTIONS} className={linkStyle(pathname.startsWith("/questions"))}>
               질문방
             </Link>
-            <Link href={ROUTES.MEAL} className={linkStyle(pathname === "/meal")}>
-              도시락
-            </Link>
+            {/* 도시락: 재원생 전용 (staff는 /admin/meal에서 관리) */}
+            {!isStaff && (
+              <Link href={ROUTES.MEAL} className={linkStyle(pathname === "/meal")}>
+                도시락
+              </Link>
+            )}
             <Link href={ROUTES.MY} className={linkStyle(pathname === "/my")}>
               마이페이지
             </Link>

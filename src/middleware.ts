@@ -67,6 +67,13 @@ export async function middleware(request: NextRequest) {
       }
     }
 
+    // 재원생 전용 라우트: staff가 직접 접근 시 차단
+    if (pathname.startsWith("/meal") && isStaffRole(profile.role)) {
+      const url = request.nextUrl.clone();
+      url.pathname = hasAdminAccess(profile.role) ? ROUTES.ADMIN : ROUTES.HOME;
+      return NextResponse.redirect(url);
+    }
+
     // 재원생 기능 페이지 접근 시 상태 확인
     if (isProtectedRoute && isStudent(profile.role)) {
       if (profile.status === USER_STATUS.PENDING) {

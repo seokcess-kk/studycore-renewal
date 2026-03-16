@@ -7,6 +7,7 @@ import {
   Users,
   Bell,
   MessageSquare,
+  UtensilsCrossed,
   Settings,
   BookOpen,
   LogOut,
@@ -35,6 +36,11 @@ const navItems = [
     label: "질문 관리",
     href: "/admin/questions",
     icon: MessageSquare,
+  },
+  {
+    label: "도시락 관리",
+    href: "/admin/meal",
+    icon: UtensilsCrossed,
   },
   {
     label: "조교 온보딩",
