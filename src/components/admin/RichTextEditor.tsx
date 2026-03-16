@@ -96,16 +96,18 @@ export function RichTextEditor({
 
   if (!editor) return null;
 
+  const isSafeUrl = (url: string) => /^https?:\/\//i.test(url);
+
   const addLink = () => {
-    const url = window.prompt("URL 입력:");
-    if (url) {
+    const url = window.prompt("URL 입력 (https://...):");
+    if (url && isSafeUrl(url)) {
       editor.chain().focus().setLink({ href: url }).run();
     }
   };
 
   const addImage = () => {
-    const url = window.prompt("이미지 URL 입력:");
-    if (url) {
+    const url = window.prompt("이미지 URL 입력 (https://...):");
+    if (url && isSafeUrl(url)) {
       editor.chain().focus().setImage({ src: url }).run();
     }
   };
@@ -199,7 +201,7 @@ export function RichTextEditor({
       </div>
 
       {/* 에디터 */}
-      <div className="border border-t-0 border-rule bg-white">
+      <div className="border border-t-0 border-rule bg-white relative">
         {placeholder && editor.isEmpty && (
           <div className="absolute p-4 text-muted/50 text-[14px] pointer-events-none">
             {placeholder}

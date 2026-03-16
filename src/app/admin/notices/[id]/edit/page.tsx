@@ -75,7 +75,8 @@ export default function AdminNoticeEditPage() {
     }
 
     fetchNotice();
-  }, [supabase, noticeId, reset, toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [noticeId]);
 
   const onSubmit = async (data: UpdateNoticeInput, publish?: boolean) => {
     try {

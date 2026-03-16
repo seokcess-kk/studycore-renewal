@@ -22,7 +22,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const router = useRouter();
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 모달 열릴 때 input 포커스
+  // 모달 열릴 때 input 포커스 + 닫힐 때 debounce 정리
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -30,6 +30,9 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
       setResults([]);
       setFocusIndex(-1);
     }
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, [isOpen]);
 
   // ESC 닫기

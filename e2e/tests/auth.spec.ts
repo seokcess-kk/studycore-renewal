@@ -1,17 +1,19 @@
 import { test, expect } from "@playwright/test";
 
+const TEST_USERNAME = process.env.TEST_ADMIN_USERNAME || "admin";
+const TEST_PASSWORD = process.env.TEST_ADMIN_PASSWORD || "";
+
 test.describe("스태프 로그인", () => {
+  test.skip(!TEST_PASSWORD, "TEST_ADMIN_PASSWORD 환경변수가 설정되지 않음");
+
   test("올바른 계정으로 로그인하면 홈으로 이동한다", async ({ page }) => {
     await page.goto("/login");
 
-    // Staff 탭 선택
     await page.click("text=Staff");
-
-    await page.fill('[name="username"]', "admin");
-    await page.fill('[name="password"]', "studycore12#");
+    await page.fill('[name="username"]', TEST_USERNAME);
+    await page.fill('[name="password"]', TEST_PASSWORD);
     await page.click('button[type="submit"]');
 
-    // 로그인 성공 → 홈 또는 관리자 페이지로 이동
     await expect(page).toHaveURL(/\/(admin)?$/, { timeout: 10000 });
   });
 
@@ -19,8 +21,8 @@ test.describe("스태프 로그인", () => {
     await page.goto("/login");
 
     await page.click("text=Staff");
-    await page.fill('[name="username"]', "admin");
-    await page.fill('[name="password"]', "wrongpassword");
+    await page.fill('[name="username"]', TEST_USERNAME);
+    await page.fill('[name="password"]', "wrongpassword123");
     await page.click('button[type="submit"]');
 
     await expect(
