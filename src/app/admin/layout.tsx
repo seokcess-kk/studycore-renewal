@@ -13,7 +13,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { isAuthenticated, isStaff, isLoading } = useUserStore();
+  const { isAuthenticated, canAccessAdmin, isLoading } = useUserStore();
 
   useEffect(() => {
     if (isLoading) return;
@@ -23,14 +23,13 @@ export default function AdminLayout({
       return;
     }
 
-    // 스태프가 아니면 접근 불가 (세부 권한은 middleware에서 처리)
-    if (!isStaff) {
+    if (!canAccessAdmin) {
       router.replace("/");
       return;
     }
-  }, [isAuthenticated, isStaff, isLoading, router]);
+  }, [isAuthenticated, canAccessAdmin, isLoading, router]);
 
-  if (isLoading || !isAuthenticated || !isStaff) {
+  if (isLoading || !isAuthenticated || !canAccessAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
