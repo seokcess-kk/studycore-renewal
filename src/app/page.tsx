@@ -2,6 +2,7 @@ import { Nav, Footer } from "@/components/common";
 import { OrganizationJsonLd, FAQJsonLd, WebSiteJsonLd } from "@/components/common/JsonLd";
 import {
   HeroSection,
+  TrustStrip,
   FeaturesSection,
   SpaceSlider,
   FAQSection,
@@ -19,6 +20,7 @@ export default function Home() {
       <Nav />
       <main>
         <HeroSection />
+        <TrustStrip />
         <FeaturesSection />
         <ProgramsSection />
         <SpaceSlider />

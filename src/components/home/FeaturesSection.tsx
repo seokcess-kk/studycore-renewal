@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { motion, Variants } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { ROUTES } from "@/lib/constants";
 
 const features = [
   {
@@ -120,6 +123,29 @@ export function FeaturesSection() {
         {features.map((feature) => (
           <FeatureRow key={feature.number} feature={feature} />
         ))}
+      </motion.div>
+
+      {/* 인라인 CTA */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: 0.5 }}
+        className="mt-16 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-t-[1.5px] border-ink pt-10"
+      >
+        <p className="text-[14px] text-[#555] font-light leading-[1.8]">
+          직접 경험해 보세요 — 무료 상담으로 시작할 수 있습니다.
+        </p>
+        <Link
+          href={ROUTES.CONSULT}
+          className="group inline-flex items-center gap-2.5 px-8 py-3.5 bg-navy text-white text-[13px] font-bold tracking-[0.04em] border-[1.5px] border-navy hover:bg-transparent hover:text-navy transition-all duration-200 flex-shrink-0"
+        >
+          상담 신청하기
+          <ArrowRight
+            size={14}
+            className="group-hover:translate-x-1 transition-transform duration-200"
+          />
+        </Link>
       </motion.div>
     </section>
   );

@@ -14,16 +14,21 @@ npm run dev            # 개발 서버 (localhost:3000, webpack 모드)
 npm run build          # 프로덕션 빌드
 npm run lint           # ESLint
 npx tsc --noEmit       # TypeScript 타입 체크
+npm run test:e2e       # Playwright E2E 테스트
+npm run test:e2e:ui    # Playwright UI 모드
+npx playwright test tests/foo.spec.ts  # 단일 E2E 테스트 실행
 ```
 
 ## 기술 스택
-- Next.js (App Router, TypeScript strict mode)
-- Tailwind CSS + shadcn/ui (border-radius:0 전체 적용 — shadcn 기본값 override)
+- Next.js 16 (App Router, TypeScript strict mode) — `@/*` → `./src/*` path alias
+- Tailwind CSS v4 + shadcn/ui (border-radius:0 전체 적용 — shadcn 기본값 override)
 - Supabase (PostgreSQL + Auth + Storage + Edge Functions)
 - Zustand — 전역 상태 (유저 세션, 역할, 메뉴 노출 여부)
 - TanStack Query v5 — 서버 상태
-- react-hook-form + zod — 모든 폼
+- react-hook-form + zod v4 — 모든 폼
+- Tiptap — 리치 텍스트 에디터 (어드민 블로그/공지 작성)
 - Framer Motion — 애니메이션
+- Playwright — E2E 테스트 (`e2e/` 디렉토리)
 - 배포: Vercel
 
 ## 아키텍처 개요
@@ -40,7 +45,7 @@ model.ts      → 타입, Zod 스키마
 repository.ts → Supabase 쿼리 (DB 접근 유일 경로)
 service.ts    → 비즈니스 로직
 ```
-도메인: user, notice, question, consultation, counseling, blog, meal, review, guide, notification, settings
+도메인: user, notice, question, consultation, counseling, blog, meal, review, guide, notification, settings, popup, program, search
 
 **도메인 간 호출 규칙**: service→service만 허용. repository→repository 직접 호출 금지.
 
@@ -71,9 +76,15 @@ logout();                  // Zustand store 완전 초기화
 window.location.href = "/"; // 전체 리로드 (router.push 사용 금지 — 캐시 문제)
 ```
 
+### API Routes
+- `src/app/api/auth/staff-login/` — 스태프 로그인
+- `src/app/api/admin/create-staff/` — 스태프 계정 생성
+- `src/app/api/consult/` — 상담 신청 (Admin 클라이언트 사용)
+
 ### Supabase 클라이언트 사용 규칙
 - Server Component / Route Handler → `createServerClient()` (`src/lib/supabase/server.ts`)
 - Client Component → `createBrowserClient()` (`src/lib/supabase/client.ts`)
+- Admin (Service Role) 클라이언트 → `createAdminClient()` (`src/lib/supabase/server.ts`) — RLS 우회 필요 시
 - `createClient`와 `createBrowserClient`는 같은 함수 (별칭)
 
 ### 상태 관리
