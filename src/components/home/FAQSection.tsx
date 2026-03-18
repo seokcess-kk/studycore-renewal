@@ -52,7 +52,7 @@ export function FAQSection() {
           className="lg:sticky lg:top-24"
         >
           <div className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase mb-5">
-            FAQ / 03
+            FAQ / 04
           </div>
           <h2 className="font-serif text-[clamp(36px,4vw,52px)] font-black tracking-[-0.04em] leading-[1.05] mb-6">
             자주

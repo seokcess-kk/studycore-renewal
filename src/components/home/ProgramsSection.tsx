@@ -106,7 +106,7 @@ export function ProgramsSection() {
           className="mb-0 flex flex-col md:flex-row md:items-baseline gap-5 border-b border-white/[0.08] pb-10"
         >
           <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase whitespace-nowrap">
-            Programs / 01.5
+            Programs / 02
           </span>
           <h2 className="font-serif text-[clamp(32px,5vw,52px)] font-black tracking-[-0.03em] text-white leading-none">
             프로그램 안내
