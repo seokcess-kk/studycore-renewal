@@ -92,11 +92,11 @@ export function Nav() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-[300] h-16 px-6 md:px-13 flex items-center justify-between transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-[300] px-6 md:px-13 flex items-center justify-between transition-all duration-300 ${
           isDarkText
-            ? "bg-white/97 backdrop-blur-[12px] border-b border-rule shadow-[0_1px_0_var(--color-rule)]"
+            ? "bg-white/97 backdrop-blur-[12px] border-b border-rule"
             : "bg-transparent"
-        } ${isScrolled ? "h-14" : "h-16"}`}
+        } ${isScrolled ? "h-14" : isDarkText ? "h-16" : "h-20"}`}
       >
         {/* 로고 */}
         <Link href={ROUTES.HOME} className="flex items-center">
@@ -179,10 +179,10 @@ export function Nav() {
               </Link>
               <Link
                 href={ROUTES.CONSULT}
-                className={`hidden md:block text-[12.5px] font-bold tracking-[0.04em] px-5 py-2.5 border-[1.5px] transition-all duration-200 ${
+                className={`hidden md:block text-[12.5px] font-bold tracking-[0.04em] px-5 py-2.5 border-[1.5px] transition-colors duration-300 cta-fill ${
                   isDarkText
-                    ? "bg-navy border-navy text-white hover:bg-transparent hover:text-navy"
-                    : "bg-teal border-teal text-navy-dark hover:bg-transparent hover:text-teal"
+                    ? "cta-fill-navy border-navy text-white hover:text-navy"
+                    : "cta-fill-teal border-teal text-navy-dark hover:text-teal"
                 }`}
               >
                 무료 상담 신청
