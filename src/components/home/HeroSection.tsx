@@ -4,6 +4,24 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ROUTES, CONTACT } from "@/lib/constants";
 
+const headlineVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.18, delayChildren: 0.25 },
+  },
+};
+
+const lineVariants = {
+  hidden: { opacity: 0, y: 28, skewY: 2 },
+  show: {
+    opacity: 1,
+    y: 0,
+    skewY: 0,
+    transition: { type: "spring", stiffness: 80, damping: 18 },
+  },
+};
+
 export function HeroSection() {
   return (
     <section className="min-h-screen bg-navy-dark relative overflow-hidden">
@@ -28,33 +46,53 @@ export function HeroSection() {
       <div className="relative z-[2] grid grid-cols-1 lg:grid-cols-2 min-h-screen">
         {/* 좌측: 헤드라인 */}
         <div className="flex flex-col justify-end p-8 md:p-14 lg:border-r lg:border-white/[0.06]">
+          {/* 서브 라벨 — teal 라인 장식 추가 */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase mb-10"
+            className="flex items-center gap-4 mb-10 lg:mb-20"
           >
-            Managed Study Hall · 광주 광산구
+            <motion.span
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="block w-10 h-[1.5px] bg-teal origin-left"
+            />
+            <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase">
+              Managed Study Hall · 광주 광산구
+            </span>
           </motion.div>
 
           <motion.h1
-            variants={{
-              hidden: { opacity: 0 },
-              show: {
-                opacity: 1,
-                transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-              },
-            }}
+            variants={headlineVariants}
             initial="hidden"
             animate="show"
             className="font-serif text-[clamp(60px,10vw,140px)] font-black leading-[0.88] tracking-[-0.04em] text-white/90"
           >
-            <motion.span variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} style={{ display: "block" }}>집중이</motion.span>
-            <motion.span variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="text-teal" style={{ display: "block" }}>성적을</motion.span>
             <motion.span
-              variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+              variants={lineVariants}
+              style={{ display: "block" }}
+            >
+              집중이
+            </motion.span>
+            <motion.span
+              variants={lineVariants}
+              className="text-teal"
+              style={{
+                display: "block",
+                textShadow: "0 0 40px rgba(87,173,177,0.15)",
+              }}
+            >
+              성적을
+            </motion.span>
+            <motion.span
+              variants={lineVariants}
               className="text-transparent"
-              style={{ display: "block", WebkitTextStroke: "1.5px rgba(255,255,255,0.2)" }}
+              style={{
+                display: "block",
+                WebkitTextStroke: "2px rgba(255,255,255,0.18)",
+              }}
             >
               바꾼다
             </motion.span>
