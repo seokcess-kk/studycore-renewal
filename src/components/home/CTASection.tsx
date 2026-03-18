@@ -121,7 +121,7 @@ export function CTASection() {
             {/* 구글 맵 */}
             <div className="border border-white/[0.08] overflow-hidden">
               <iframe
-                src={`https://maps.google.com/maps?q=${encodeURIComponent("광주광역시 광산구 임방울대로 330 애플타워")}&t=&z=17&ie=UTF8&iwloc=&output=embed`}
+                src="https://maps.google.com/maps?q=35.1595454,126.8526021&z=17&ie=UTF8&iwloc=&output=embed"
                 className="w-full aspect-[16/9]"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
