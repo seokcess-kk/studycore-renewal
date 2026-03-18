@@ -374,6 +374,79 @@ export async function getActiveStudents(
 }
 
 // ─────────────────────────────────────────────
+// 요일별 → 실제 식수 계산 유틸리티
+// ─────────────────────────────────────────────
+
+/**
+ * 도시락 기간 내 각 요일(0~6)이 몇 번 등장하는지 계산
+ */
+export function getWeekdayOccurrences(
+  startDate: string,
+  endDate: string
+): Record<number, number> {
+  const counts: Record<number, number> = {};
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const day = d.getDay();
+    counts[day] = (counts[day] || 0) + 1;
+  }
+
+  return counts;
+}
+
+/**
+ * 요일별 선택에서 도시락 기간 기준 실제 총 식수 계산
+ */
+export function calcWeekdayMealCount(
+  selections: Record<string, string[]>,
+  startDate: string,
+  endDate: string
+): number {
+  const occurrences = getWeekdayOccurrences(startDate, endDate);
+  let total = 0;
+
+  for (const [weekday, meals] of Object.entries(selections)) {
+    const dayNum = parseInt(weekday);
+    const times = occurrences[dayNum] || 0;
+    total += meals.length * times;
+  }
+
+  return total;
+}
+
+/**
+ * 요일별 선택을 도시락 기간 내 실제 날짜들로 확장
+ */
+export function expandWeekdayToDate(
+  selections: Record<string, string[]>,
+  startDate: string,
+  endDate: string
+): { date: string; weekday: number; meals: string[] }[] {
+  const result: { date: string; weekday: number; meals: string[] }[] = [];
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const day = d.getDay();
+    const key = day.toString();
+    if (selections[key] && selections[key].length > 0) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const date = String(d.getDate()).padStart(2, "0");
+      result.push({
+        date: `${year}-${month}-${date}`,
+        weekday: day,
+        meals: [...selections[key]],
+      });
+    }
+  }
+
+  return result;
+}
+
+// ─────────────────────────────────────────────
 // 엑셀 내보내기
 // ─────────────────────────────────────────────
 
@@ -393,14 +466,20 @@ export function generateExcelData(
     const grade = app.student?.grade ? `${app.student.grade}학년` : "";
 
     if (period.selection_type === "weekday") {
-      // 요일별 선택
-      for (const [weekday, meals] of Object.entries(selections)) {
-        const weekdayLabel = WEEKDAY_LABELS[parseInt(weekday)] || weekday;
+      // 요일별 선택 → 실제 날짜로 확장
+      const expanded = expandWeekdayToDate(
+        selections,
+        period.start_date,
+        period.end_date
+      );
+      for (const { date, weekday, meals } of expanded) {
+        const weekdayLabel = WEEKDAY_LABELS[weekday] || "";
         for (const meal of meals) {
           rows.push({
             이름: studentName,
             학교: school,
             학년: grade,
+            날짜: date,
             요일: weekdayLabel,
             식사: MEAL_TYPE_LABELS[meal as keyof typeof MEAL_TYPE_LABELS] || meal,
           });
@@ -427,11 +506,14 @@ export function generateExcelData(
 
 /**
  * 신청 현황 요약 생성
+ *
+ * 요일별: 요일당 신청 인원수 (예: 월 중식 15명, 월 석식 10명)
+ * 날짜별: 날짜당 신청 인원수
  */
 export function generateSummary(
   period: MealPeriod,
   applications: MealApplicationWithStudent[]
-): { label: string; lunch: number; dinner: number }[] {
+): { label: string; lunch: number; dinner: number; occurrences?: number }[] {
   const summary: Record<string, { lunch: number; dinner: number }> = {};
 
   for (const app of applications) {
@@ -449,6 +531,11 @@ export function generateSummary(
     }
   }
 
+  const weekdayOccurrences =
+    period.selection_type === "weekday"
+      ? getWeekdayOccurrences(period.start_date, period.end_date)
+      : null;
+
   return Object.entries(summary)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, counts]) => ({
@@ -457,5 +544,8 @@ export function generateSummary(
           ? WEEKDAY_LABELS[parseInt(key)] || key
           : key,
       ...counts,
+      ...(weekdayOccurrences
+        ? { occurrences: weekdayOccurrences[parseInt(key)] || 0 }
+        : {}),
     }));
 }

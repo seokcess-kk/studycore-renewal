@@ -9,6 +9,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import {
   getStudentMealPlan,
   submitApplication,
+  calcWeekdayMealCount,
 } from "@/domains/meal/service";
 import {
   type MealPeriod,
@@ -102,10 +103,13 @@ export default function LunchPage() {
   };
 
   // 선택 개수 계산 (메모이제이션)
-  const selectionCount = useMemo(
-    () => Object.values(selections).reduce((acc, meals) => acc + meals.length, 0),
-    [selections]
-  );
+  // 요일별: 도시락 기간 내 실제 식수, 날짜별: 선택한 날짜 수
+  const selectionCount = useMemo(() => {
+    if (period?.selection_type === "weekday" && period.start_date && period.end_date) {
+      return calcWeekdayMealCount(selections, period.start_date, period.end_date);
+    }
+    return Object.values(selections).reduce((acc, meals) => acc + meals.length, 0);
+  }, [selections, period]);
 
   // 비활성 사용자 체크
   if (profile?.status !== "active") {

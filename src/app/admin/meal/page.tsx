@@ -17,6 +17,7 @@ import {
   deletePeriod,
   generateExcelData,
   generateSummary,
+  calcWeekdayMealCount,
 } from "@/domains/meal/service";
 import {
   type MealPeriod,
@@ -398,6 +399,11 @@ export default function AdminLunchPage() {
                                   ? "요일"
                                   : "날짜"}
                               </th>
+                              {selectedPeriod.selection_type === "weekday" && (
+                                <th className="text-center py-2 px-3 font-medium text-muted">
+                                  횟수
+                                </th>
+                              )}
                               {selectedPeriod.meal_types.includes("lunch") && (
                                 <th className="text-center py-2 px-3 font-medium text-muted">
                                   중식
@@ -409,12 +415,20 @@ export default function AdminLunchPage() {
                                 </th>
                               )}
                               <th className="text-center py-2 px-3 font-bold text-ink">
-                                합계
+                                인원 합계
                               </th>
+                              {selectedPeriod.selection_type === "weekday" && (
+                                <th className="text-center py-2 px-3 font-bold text-ink">
+                                  총 식수
+                                </th>
+                              )}
                             </tr>
                           </thead>
                           <tbody>
-                            {summary.map((s) => (
+                            {summary.map((s) => {
+                              const personTotal = s.lunch + s.dinner;
+                              const occ = s.occurrences || 0;
+                              return (
                               <tr
                                 key={s.label}
                                 className="border-b border-rule last:border-b-0"
@@ -422,6 +436,11 @@ export default function AdminLunchPage() {
                                 <td className="py-2 pr-4 font-medium text-ink">
                                   {s.label}
                                 </td>
+                                {selectedPeriod.selection_type === "weekday" && (
+                                  <td className="text-center py-2 px-3 text-muted">
+                                    {occ}회
+                                  </td>
+                                )}
                                 {selectedPeriod.meal_types.includes(
                                   "lunch"
                                 ) && (
@@ -453,10 +472,16 @@ export default function AdminLunchPage() {
                                   </td>
                                 )}
                                 <td className="text-center py-2 px-3 font-bold text-teal">
-                                  {s.lunch + s.dinner}
+                                  {personTotal}
                                 </td>
+                                {selectedPeriod.selection_type === "weekday" && (
+                                  <td className="text-center py-2 px-3 font-bold text-navy">
+                                    {personTotal * occ}
+                                  </td>
+                                )}
                               </tr>
-                            ))}
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
@@ -512,10 +537,17 @@ export default function AdminLunchPage() {
                               string,
                               string[]
                             >;
-                            const totalCount = Object.values(sel).reduce(
-                              (acc, m) => acc + m.length,
-                              0
-                            );
+                            const totalCount =
+                              selectedPeriod.selection_type === "weekday"
+                                ? calcWeekdayMealCount(
+                                    sel,
+                                    selectedPeriod.start_date,
+                                    selectedPeriod.end_date
+                                  )
+                                : Object.values(sel).reduce(
+                                    (acc, m) => acc + m.length,
+                                    0
+                                  );
 
                             return (
                               <tr
