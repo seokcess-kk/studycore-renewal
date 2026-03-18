@@ -221,6 +221,66 @@ export async function changeUserStatus(
 }
 
 /**
+ * ID로 프로필 조회 (어드민용)
+ */
+export async function getProfileById(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<UserServiceResult> {
+  try {
+    const profile = await userRepo.getProfileById(supabase, userId);
+    if (!profile) {
+      return { success: false, error: "프로필이 존재하지 않습니다." };
+    }
+    return { success: true, profile };
+  } catch (error) {
+    logger.exception(error, "getProfileById");
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "프로필 조회 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+/**
+ * 어드민 회원 정보 수정
+ */
+export async function adminUpdateMember(
+  supabase: SupabaseClient,
+  userId: string,
+  data: {
+    name: string;
+    phone: string;
+    school: string;
+    grade: string;
+    parent_phone: string;
+  }
+): Promise<UserServiceResult> {
+  try {
+    const profile = await userRepo.adminUpdateMember(supabase, userId, {
+      name: data.name,
+      phone: data.phone || null,
+      school: data.school || null,
+      grade: data.grade ? parseInt(data.grade) : null,
+      parent_phone: data.parent_phone || null,
+    });
+    return { success: true, profile };
+  } catch (error) {
+    logger.exception(error, "adminUpdateMember");
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "회원 정보 수정 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+/**
  * 프로필 이미지 업데이트
  */
 export async function updateAvatar(

@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Nav, Footer, Button, useToast, ImageUploader } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { createReview } from "@/domains/review/service";
+import { z } from "zod";
 import {
   type ReviewCategoryValue,
   CATEGORY_LABELS,
@@ -12,24 +15,50 @@ import {
 import { useUserStore } from "@/stores/useUserStore";
 import { Star, ArrowLeft } from "lucide-react";
 
+// RHF 호환 스키마 (default 없이 명시적 타입)
+const reviewFormSchema = z.object({
+  category: z.enum(["student", "parent", "alumni"]),
+  rating: z.number().min(1).max(5),
+  content: z.string().min(10, "10자 이상 작성해주세요").max(1000),
+  images: z.array(z.string()),
+});
+
+type ReviewFormValues = z.infer<typeof reviewFormSchema>;
+
 export default function WriteReviewPage() {
   const router = useRouter();
   const { showToast } = useToast();
   const { user, isActive } = useUserStore();
 
-  const [category, setCategory] = useState<ReviewCategoryValue>("student");
-  const [rating, setRating] = useState(5);
-  const [content, setContent] = useState("");
-  const [images, setImages] = useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<ReviewFormValues>({
+    resolver: zodResolver(reviewFormSchema),
+    defaultValues: {
+      category: "student",
+      rating: 5,
+      content: "",
+      images: [],
+    },
+  });
+
+  const category = watch("category");
+  const rating = watch("rating");
+  const content = watch("content");
+  const images = watch("images") || [];
 
   // 활성 재원생이 아니면 리다이렉트
   if (!isActive) {
     return (
       <>
         <Nav />
-        <main className="pt-24 pb-20 bg-stone min-h-screen">
+        <main className="pt-24 pb-20 bg-stone">
           <div className="max-w-lg mx-auto px-6 py-12 text-center">
             <p className="text-muted text-[15px] mb-4">
               활성 상태의 재원생만 후기를 작성할 수 있습니다.
@@ -44,25 +73,9 @@ export default function WriteReviewPage() {
     );
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (content.length < 10) {
-      showToast("10자 이상 작성해주세요.", "error");
-      return;
-    }
-
-    setIsSubmitting(true);
-
+  const onSubmit = async (data: ReviewFormValues) => {
     const supabase = createClient();
-    const result = await createReview(supabase, {
-      category,
-      rating,
-      content,
-      images,
-    });
-
-    setIsSubmitting(false);
+    const result = await createReview(supabase, data);
 
     if (result.success) {
       showToast("후기가 등록되었습니다.", "success");
@@ -75,13 +88,13 @@ export default function WriteReviewPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 bg-stone min-h-screen">
+      <main className="pt-24 pb-20 bg-stone">
         <div className="max-w-lg mx-auto px-6">
           {/* 헤더 */}
           <div className="flex items-center gap-3 mb-6">
             <button
               onClick={() => router.back()}
-              className="p-2 hover:bg-white border border-transparent hover:border-rule transition-colors"
+              className="p-2 hover:bg-white border border-transparent hover:border-rule transition-colors cursor-pointer"
             >
               <ArrowLeft size={18} className="text-muted" />
             </button>
@@ -89,7 +102,7 @@ export default function WriteReviewPage() {
           </div>
 
           {/* 폼 */}
-          <form onSubmit={handleSubmit} className="bg-white border border-rule p-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="bg-white border border-rule p-6">
             {/* 카테고리 */}
             <div className="mb-6">
               <label className="block text-[13px] font-medium text-ink mb-2">
@@ -101,8 +114,8 @@ export default function WriteReviewPage() {
                     <button
                       key={cat}
                       type="button"
-                      onClick={() => setCategory(cat)}
-                      className={`flex-1 py-2 text-[13px] font-medium border transition-colors ${
+                      onClick={() => setValue("category", cat, { shouldValidate: true })}
+                      className={`flex-1 py-2 text-[13px] font-medium border transition-colors cursor-pointer ${
                         category === cat
                           ? "bg-navy text-white border-navy"
                           : "bg-white text-muted border-rule hover:border-navy"
@@ -113,6 +126,9 @@ export default function WriteReviewPage() {
                   )
                 )}
               </div>
+              {errors.category && (
+                <p className="text-[12px] text-red-500 mt-1">{errors.category.message}</p>
+              )}
             </div>
 
             {/* 별점 */}
@@ -125,10 +141,10 @@ export default function WriteReviewPage() {
                   <button
                     key={star}
                     type="button"
-                    onClick={() => setRating(star)}
+                    onClick={() => setValue("rating", star, { shouldValidate: true })}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
-                    className="p-1"
+                    className="p-1 cursor-pointer"
                   >
                     <Star
                       size={32}
@@ -144,6 +160,9 @@ export default function WriteReviewPage() {
                   {rating}점
                 </span>
               </div>
+              {errors.rating && (
+                <p className="text-[12px] text-red-500 mt-1">{errors.rating.message}</p>
+              )}
             </div>
 
             {/* 내용 */}
@@ -152,16 +171,15 @@ export default function WriteReviewPage() {
                 후기 내용
               </label>
               <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                {...register("content")}
                 placeholder="스터디코어에서의 경험을 자유롭게 작성해주세요."
                 rows={8}
                 maxLength={1000}
                 className="w-full px-3 py-2 border border-rule text-[14px] resize-none focus:outline-none focus:border-navy"
               />
               <div className="flex justify-between mt-1">
-                <span className="text-[11px] text-muted">
-                  최소 10자 이상 작성해주세요.
+                <span className={`text-[11px] ${errors.content ? "text-red-500" : "text-muted"}`}>
+                  {errors.content?.message || "최소 10자 이상 작성해주세요."}
                 </span>
                 <span className="text-[11px] text-muted">
                   {content.length} / 1000
@@ -180,7 +198,7 @@ export default function WriteReviewPage() {
                 maxFiles={3}
                 maxSizeMB={1}
                 value={images}
-                onChange={setImages}
+                onChange={(urls) => setValue("images", urls)}
                 disabled={isSubmitting}
               />
             </div>
@@ -191,7 +209,7 @@ export default function WriteReviewPage() {
               variant="primary"
               size="lg"
               className="w-full"
-              disabled={isSubmitting || content.length < 10}
+              disabled={isSubmitting}
               isLoading={isSubmitting}
             >
               후기 등록

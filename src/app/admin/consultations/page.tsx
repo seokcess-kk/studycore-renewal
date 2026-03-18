@@ -7,6 +7,7 @@ import { useToast } from "@/components/common/Toast";
 import {
   getConsultationList,
   changeConsultationStatus,
+  deleteConsultation,
 } from "@/domains/consultation/service";
 import type {
   Consultation,
@@ -184,18 +185,15 @@ export default function AdminConsultationsPage() {
                 <button
                   onClick={async () => {
                     if (!confirm("이 상담 신청을 삭제하시겠습니까?")) return;
-                    const { error } = await supabase
-                      .from("consultations")
-                      .delete()
-                      .eq("id", c.id);
-                    if (error) {
-                      toast({ variant: "error", description: "삭제 실패" });
-                    } else {
+                    const result = await deleteConsultation(supabase, c.id);
+                    if (result.success) {
                       toast({ variant: "success", description: "삭제되었습니다." });
                       fetchData();
+                    } else {
+                      toast({ variant: "error", description: result.error || "삭제 실패" });
                     }
                   }}
-                  className="flex items-center justify-center text-muted hover:text-red-500"
+                  className="flex items-center justify-center text-muted hover:text-red-500 cursor-pointer"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

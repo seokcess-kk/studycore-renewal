@@ -100,6 +100,40 @@ export async function updateProfile(
 }
 
 /**
+ * 어드민 회원 정보 수정 (null 허용)
+ */
+export async function adminUpdateMember(
+  supabase: SupabaseClient,
+  userId: string,
+  data: {
+    name: string;
+    phone: string | null;
+    school: string | null;
+    grade: number | null;
+    parent_phone: string | null;
+  }
+): Promise<Profile> {
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .update({
+      name: data.name,
+      phone: data.phone,
+      school: data.school,
+      grade: data.grade,
+      parent_phone: data.parent_phone,
+    })
+    .eq("id", userId)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(`회원 정보 수정 실패: ${error.message}`);
+  }
+
+  return profile;
+}
+
+/**
  * 사용자 상태 변경 (관리자용)
  */
 export async function updateUserStatus(

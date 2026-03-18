@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import {
   Plus,
   Edit,
@@ -37,7 +38,11 @@ import {
   updateSection,
   deleteSection,
 } from "@/domains/guide/service";
-import type { GuideSection, GuideSectionType } from "@/domains/guide/model";
+import {
+  type CreateGuideSectionInput,
+  type GuideSection,
+  type GuideSectionType,
+} from "@/domains/guide/model";
 
 // 카테고리 프리셋
 const CATEGORY_PRESETS = ["시작하기", "독서실 이용", "서비스", "기타", "일반"];
@@ -67,20 +72,15 @@ function getIconComponent(name: string) {
   return found?.Icon || FileText;
 }
 
-interface FormData {
-  title: string;
-  content: string;
-  content_html: string;
-  category: string;
+// RHF 폼 데이터 (카테고리 직접입력 지원)
+interface GuideSectionFormValues extends CreateGuideSectionInput {
   customCategory: string;
-  icon: string;
-  is_visible: boolean;
 }
 
-const INITIAL_FORM: FormData = {
+const FORM_DEFAULTS: GuideSectionFormValues = {
   title: "",
   content: "",
-  content_html: "",
+  content_html: null,
   category: "일반",
   customCategory: "",
   icon: "FileText",
@@ -93,12 +93,27 @@ export default function AdminGuidePage() {
 
   const [sections, setSections] = useState<GuideSection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [activeType, setActiveType] = useState<GuideSectionType>("onboarding");
-  const [formData, setFormData] = useState<FormData>(INITIAL_FORM);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<GuideSectionFormValues>({
+    defaultValues: FORM_DEFAULTS,
+  });
+
+  const watchCategory = watch("category");
+  const watchIcon = watch("icon");
+  const watchIsVisible = watch("is_visible");
+  const watchContentHtml = watch("content_html");
 
   // 섹션 목록 조회
   const fetchSections = async () => {
@@ -117,48 +132,51 @@ export default function AdminGuidePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeType]);
 
-  // 유효 카테고리 (프리셋 + 직접 입력)
-  const resolvedCategory =
-    formData.category === "__custom__"
-      ? formData.customCategory.trim() || "일반"
-      : formData.category;
+  // 유효 카테고리 resolve
+  const resolveCategory = (data: GuideSectionFormValues) =>
+    data.category === "__custom__"
+      ? data.customCategory?.trim() || "일반"
+      : data.category || "일반";
 
   // 섹션 추가
-  const handleAdd = async () => {
-    if (!formData.title || (!formData.content && !formData.content_html)) {
-      showToast("제목과 내용을 입력해주세요.", "error");
+  const onAdd = async (data: GuideSectionFormValues) => {
+    // 커스텀 검증: 제목 + 내용
+    if (!data.title?.trim()) {
+      showToast("제목을 입력해주세요.", "error");
+      return;
+    }
+    if (!data.content?.trim() && !data.content_html) {
+      showToast("내용을 입력해주세요.", "error");
       return;
     }
 
-    setIsSubmitting(true);
     const result = await createSection(supabase, {
-      title: formData.title,
-      content: formData.content || formData.title,
+      title: data.title,
+      content: data.content || data.title,
       type: activeType,
-      category: resolvedCategory,
-      icon: formData.icon,
-      content_html: formData.content_html || null,
+      category: resolveCategory(data),
+      icon: data.icon,
+      content_html: data.content_html || null,
     });
 
     if (result.success) {
       showToast("섹션이 추가되었습니다.", "success");
-      setFormData(INITIAL_FORM);
+      reset(FORM_DEFAULTS);
       setShowAddForm(false);
       await fetchSections();
     } else {
       showToast(result.error || "섹션 추가에 실패했습니다.", "error");
     }
-    setIsSubmitting(false);
   };
 
   // 수정 모드 진입
   const handleEdit = (section: GuideSection) => {
     const isCustom = !CATEGORY_PRESETS.includes(section.category || "일반");
     setEditingId(section.id);
-    setFormData({
+    reset({
       title: section.title,
       content: section.content,
-      content_html: section.content_html || "",
+      content_html: section.content_html || null,
       category: isCustom ? "__custom__" : (section.category || "일반"),
       customCategory: isCustom ? (section.category || "") : "",
       icon: section.icon || "FileText",
@@ -167,37 +185,32 @@ export default function AdminGuidePage() {
   };
 
   // 섹션 수정
-  const handleSaveEdit = async () => {
-    if (!editingId || !formData.title) {
-      showToast("제목을 입력해주세요.", "error");
-      return;
-    }
+  const onSaveEdit = async (data: GuideSectionFormValues) => {
+    if (!editingId) return;
 
-    setIsSubmitting(true);
     const result = await updateSection(supabase, editingId, {
-      title: formData.title,
-      content: formData.content || formData.title,
-      category: resolvedCategory,
-      icon: formData.icon,
-      content_html: formData.content_html || null,
-      is_visible: formData.is_visible,
+      title: data.title,
+      content: data.content || data.title,
+      category: resolveCategory(data),
+      icon: data.icon,
+      content_html: data.content_html || null,
+      is_visible: data.is_visible,
     });
 
     if (result.success) {
       showToast("섹션이 수정되었습니다.", "success");
       setEditingId(null);
-      setFormData(INITIAL_FORM);
+      reset(FORM_DEFAULTS);
       await fetchSections();
     } else {
       showToast(result.error || "섹션 수정에 실패했습니다.", "error");
     }
-    setIsSubmitting(false);
   };
 
   // 섹션 삭제
   const handleDelete = async () => {
     if (!deleteId) return;
-    setIsSubmitting(true);
+    setIsDeleting(true);
     const result = await deleteSection(supabase, deleteId);
     if (result.success) {
       showToast("섹션이 삭제되었습니다.", "success");
@@ -206,7 +219,7 @@ export default function AdminGuidePage() {
     } else {
       showToast(result.error || "섹션 삭제에 실패했습니다.", "error");
     }
-    setIsSubmitting(false);
+    setIsDeleting(false);
   };
 
   // 표시/숨김 토글
@@ -229,12 +242,15 @@ export default function AdminGuidePage() {
   const handleCancel = () => {
     setShowAddForm(false);
     setEditingId(null);
-    setFormData(INITIAL_FORM);
+    reset(FORM_DEFAULTS);
   };
 
   // 폼 UI (추가/수정 공용)
   const renderForm = (mode: "add" | "edit") => (
-    <div className="border border-rule bg-white p-6 space-y-4">
+    <form
+      onSubmit={handleSubmit(mode === "add" ? onAdd : onSaveEdit)}
+      className="border border-rule bg-white p-6 space-y-4"
+    >
       <h3 className="font-serif text-lg font-bold text-ink">
         {mode === "add" ? "새 섹션 추가" : "섹션 수정"}
       </h3>
@@ -244,9 +260,8 @@ export default function AdminGuidePage() {
         <label className="mb-1 block text-sm font-medium text-muted">제목</label>
         <input
           type="text"
-          value={formData.title}
-          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+          {...register("title")}
+          className="w-full border border-rule px-3 py-2 text-sm focus:outline-none focus:border-navy"
           placeholder="섹션 제목"
           disabled={isSubmitting}
         />
@@ -257,10 +272,7 @@ export default function AdminGuidePage() {
         <div>
           <label className="mb-1 block text-sm font-medium text-muted">카테고리</label>
           <select
-            value={formData.category}
-            onChange={(e) =>
-              setFormData({ ...formData, category: e.target.value })
-            }
+            {...register("category")}
             className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none bg-white"
             disabled={isSubmitting}
           >
@@ -271,13 +283,10 @@ export default function AdminGuidePage() {
             ))}
             <option value="__custom__">직접 입력</option>
           </select>
-          {formData.category === "__custom__" && (
+          {watchCategory === "__custom__" && (
             <input
               type="text"
-              value={formData.customCategory}
-              onChange={(e) =>
-                setFormData({ ...formData, customCategory: e.target.value })
-              }
+              {...register("customCategory")}
               className="mt-2 w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
               placeholder="카테고리명 입력"
               disabled={isSubmitting}
@@ -291,9 +300,9 @@ export default function AdminGuidePage() {
               <button
                 key={name}
                 type="button"
-                onClick={() => setFormData({ ...formData, icon: name })}
-                className={`p-2 border transition-colors ${
-                  formData.icon === name
+                onClick={() => setValue("icon", name)}
+                className={`p-2 border transition-colors cursor-pointer ${
+                  watchIcon === name
                     ? "border-teal bg-teal/10 text-teal"
                     : "border-rule text-muted hover:text-ink hover:border-ink"
                 }`}
@@ -312,17 +321,15 @@ export default function AdminGuidePage() {
         <label className="text-sm font-medium text-muted">표시 상태</label>
         <button
           type="button"
-          onClick={() =>
-            setFormData({ ...formData, is_visible: !formData.is_visible })
-          }
-          className={`flex items-center gap-2 px-3 py-1.5 border text-sm transition-colors ${
-            formData.is_visible
+          onClick={() => setValue("is_visible", !watchIsVisible)}
+          className={`flex items-center gap-2 px-3 py-1.5 border text-sm transition-colors cursor-pointer ${
+            watchIsVisible
               ? "border-teal text-teal bg-teal/5"
               : "border-rule text-muted"
           }`}
           disabled={isSubmitting}
         >
-          {formData.is_visible ? (
+          {watchIsVisible ? (
             <>
               <Eye size={14} /> 표시
             </>
@@ -338,17 +345,13 @@ export default function AdminGuidePage() {
       <div>
         <label className="mb-1 block text-sm font-medium text-muted">내용</label>
         <RichTextEditor
-          content={formData.content_html}
+          content={watchContentHtml || ""}
           onChange={(html) => {
-            // content_html 저장 + 플레인텍스트 fallback용 content도 동기화
             const div = document.createElement("div");
             div.innerHTML = html;
             const plainText = div.textContent || div.innerText || "";
-            setFormData({
-              ...formData,
-              content_html: html,
-              content: plainText.trim() || formData.title,
-            });
+            setValue("content_html", html);
+            setValue("content", plainText.trim() || watch("title"));
           }}
           placeholder="섹션 내용을 입력하세요..."
         />
@@ -356,14 +359,10 @@ export default function AdminGuidePage() {
 
       {/* 액션 버튼 */}
       <div className="flex gap-3">
-        <Button variant="ghost" onClick={handleCancel} disabled={isSubmitting}>
+        <Button type="button" variant="ghost" onClick={handleCancel} disabled={isSubmitting}>
           취소
         </Button>
-        <Button
-          variant="primary"
-          onClick={mode === "add" ? handleAdd : handleSaveEdit}
-          disabled={isSubmitting}
-        >
+        <Button type="submit" variant="primary" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -376,7 +375,7 @@ export default function AdminGuidePage() {
           )}
         </Button>
       </div>
-    </div>
+    </form>
   );
 
   return (
@@ -477,9 +476,9 @@ export default function AdminGuidePage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleToggleVisibility(section)}
-                        className="text-muted hover:text-ink"
+                        className="text-muted hover:text-ink cursor-pointer"
                         title={section.is_visible ? "숨기기" : "표시하기"}
-                        disabled={isSubmitting || showAddForm || !!editingId}
+                        disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
                       >
                         {section.is_visible ? (
                           <Eye className="h-4 w-4" />
@@ -489,15 +488,15 @@ export default function AdminGuidePage() {
                       </button>
                       <button
                         onClick={() => handleEdit(section)}
-                        className="text-muted hover:text-ink"
-                        disabled={isSubmitting || showAddForm || !!editingId}
+                        className="text-muted hover:text-ink cursor-pointer"
+                        disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
                       >
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setDeleteId(section.id)}
-                        className="text-muted hover:text-red-500"
-                        disabled={isSubmitting || showAddForm || !!editingId}
+                        className="text-muted hover:text-red-500 cursor-pointer"
+                        disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

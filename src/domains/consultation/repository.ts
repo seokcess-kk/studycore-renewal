@@ -110,3 +110,20 @@ export async function updateConsultationStatus(
 
   return data;
 }
+
+/**
+ * 상담 삭제
+ */
+export async function deleteConsultation(
+  supabase: SupabaseClient,
+  id: string
+): Promise<void> {
+  const { error } = await supabase
+    .from("consultations")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    throw new Error(`상담 삭제 실패: ${error.message}`);
+  }
+}

@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Save, FileText } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { StatusBadge } from "@/components/admin/StatusBadge";
@@ -11,130 +13,126 @@ import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { formatDate } from "@/lib/utils";
 import { useToast } from "@/components/common/Toast";
-import type { Profile, UserStatusType } from "@/domains/user/model";
+import {
+  adminUpdateMemberSchema,
+  type Profile,
+  type UserStatusType,
+} from "@/domains/user/model";
+import {
+  getProfileById,
+  adminUpdateMember,
+  changeUserStatus,
+} from "@/domains/user/service";
+
+type MemberFormValues = {
+  name: string;
+  phone: string;
+  school: string;
+  grade: string;
+  parent_phone: string;
+};
 
 export default function AdminMemberDetailPage() {
   const params = useParams();
-  useRouter(); // 향후 사용 예정
   const supabase = createBrowserClient();
   const { toast } = useToast();
 
   const [member, setMember] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [newStatus, setNewStatus] = useState<UserStatusType | null>(null);
-
-  // 폼 상태
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    school: "",
-    grade: "",
-    parent_phone: "",
-  });
+  const [isStatusChanging, setIsStatusChanging] = useState(false);
 
   const memberId = params.id as string;
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<MemberFormValues>({
+    resolver: zodResolver(adminUpdateMemberSchema),
+    defaultValues: {
+      name: "",
+      phone: "",
+      school: "",
+      grade: "",
+      parent_phone: "",
+    },
+  });
+
   useEffect(() => {
     async function fetchMember() {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", memberId)
-          .single();
+      const result = await getProfileById(supabase, memberId);
 
-        if (error) throw error;
-
-        setMember(data);
-        setFormData({
-          name: data.name || "",
-          phone: data.phone || "",
-          school: data.school || "",
-          grade: data.grade?.toString() || "",
-          parent_phone: data.parent_phone || "",
+      if (result.success && result.profile) {
+        setMember(result.profile);
+        reset({
+          name: result.profile.name || "",
+          phone: result.profile.phone || "",
+          school: result.profile.school || "",
+          grade: result.profile.grade?.toString() || "",
+          parent_phone: result.profile.parent_phone || "",
         });
-      } catch (error) {
-        console.error("회원 조회 실패:", error);
+      } else {
         toast({
           variant: "error",
           title: "오류",
-          description: "회원 정보를 불러올 수 없습니다.",
+          description: result.error || "회원 정보를 불러올 수 없습니다.",
         });
-      } finally {
-        setIsLoading(false);
       }
+
+      setIsLoading(false);
     }
 
     fetchMember();
-  }, [supabase, memberId, toast]);
+  }, [supabase, memberId, toast, reset]);
 
-  const handleSave = async () => {
+  const onSubmit = async (data: MemberFormValues) => {
     if (!member) return;
 
-    setIsSaving(true);
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          name: formData.name,
-          phone: formData.phone || null,
-          school: formData.school || null,
-          grade: formData.grade ? parseInt(formData.grade) : null,
-          parent_phone: formData.parent_phone || null,
-        })
-        .eq("id", memberId);
+    const result = await adminUpdateMember(supabase, memberId, data);
 
-      if (error) throw error;
-
+    if (result.success) {
+      if (result.profile) setMember(result.profile);
       toast({
         variant: "success",
         title: "저장 완료",
         description: "회원 정보가 수정되었습니다.",
       });
-    } catch (error) {
-      console.error("회원 정보 수정 실패:", error);
+    } else {
       toast({
         variant: "error",
         title: "오류",
-        description: "회원 정보 수정에 실패했습니다.",
+        description: result.error || "회원 정보 수정에 실패했습니다.",
       });
-    } finally {
-      setIsSaving(false);
     }
   };
 
   const handleStatusChange = async () => {
     if (!member || !newStatus) return;
 
-    setIsSaving(true);
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ status: newStatus })
-        .eq("id", memberId);
+    setIsStatusChanging(true);
+    const result = await changeUserStatus(supabase, memberId, newStatus);
 
-      if (error) throw error;
-
-      setMember({ ...member, status: newStatus });
+    if (result.success) {
+      if (result.profile) setMember(result.profile);
       toast({
         variant: "success",
         title: "상태 변경 완료",
         description: `회원 상태가 ${newStatus === "active" ? "활성" : newStatus === "inactive" ? "비활성" : "승인 대기"}으로 변경되었습니다.`,
       });
-    } catch (error) {
-      console.error("상태 변경 실패:", error);
+    } else {
       toast({
         variant: "error",
         title: "오류",
-        description: "상태 변경에 실패했습니다.",
+        description: result.error || "상태 변경에 실패했습니다.",
       });
-    } finally {
-      setIsSaving(false);
-      setShowStatusModal(false);
-      setNewStatus(null);
     }
+
+    setIsStatusChanging(false);
+    setShowStatusModal(false);
+    setNewStatus(null);
   };
 
   const openStatusModal = (status: UserStatusType) => {
@@ -180,9 +178,9 @@ export default function AdminMemberDetailPage() {
               상담 기록
             </Button>
           </Link>
-          <Button variant="primary" onClick={handleSave} disabled={isSaving}>
+          <Button variant="primary" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
             <Save className="mr-2 h-4 w-4" />
-            {isSaving ? "저장 중..." : "저장"}
+            {isSubmitting ? "저장 중..." : "저장"}
           </Button>
         </div>
       </div>
@@ -190,7 +188,7 @@ export default function AdminMemberDetailPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* 기본 정보 */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="border border-rule bg-white p-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="border border-rule bg-white p-6">
             <h2 className="mb-4 font-serif text-lg font-bold text-ink">
               기본 정보
             </h2>
@@ -201,12 +199,14 @@ export default function AdminMemberDetailPage() {
                 </label>
                 <input
                   type="text"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                  {...register("name")}
+                  className={`w-full border px-3 py-2 text-sm focus:outline-none ${
+                    errors.name ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
+                  }`}
                 />
+                {errors.name && (
+                  <p className="text-[11px] text-red-500 mt-1">{errors.name.message}</p>
+                )}
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium text-muted">
@@ -214,10 +214,7 @@ export default function AdminMemberDetailPage() {
                 </label>
                 <input
                   type="tel"
-                  value={formData.phone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, phone: e.target.value })
-                  }
+                  {...register("phone")}
                   className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
                 />
               </div>
@@ -229,10 +226,7 @@ export default function AdminMemberDetailPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.school}
-                      onChange={(e) =>
-                        setFormData({ ...formData, school: e.target.value })
-                      }
+                      {...register("school")}
                       className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
                     />
                   </div>
@@ -241,10 +235,7 @@ export default function AdminMemberDetailPage() {
                       학년
                     </label>
                     <select
-                      value={formData.grade}
-                      onChange={(e) =>
-                        setFormData({ ...formData, grade: e.target.value })
-                      }
+                      {...register("grade")}
                       className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
                     >
                       <option value="">선택</option>
@@ -259,17 +250,14 @@ export default function AdminMemberDetailPage() {
                     </label>
                     <input
                       type="tel"
-                      value={formData.parent_phone}
-                      onChange={(e) =>
-                        setFormData({ ...formData, parent_phone: e.target.value })
-                      }
+                      {...register("parent_phone")}
                       className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
                     />
                   </div>
                 </>
               )}
             </div>
-          </div>
+          </form>
         </div>
 
         {/* 상태 및 정보 */}
@@ -286,7 +274,6 @@ export default function AdminMemberDetailPage() {
 
             {member.role === "student" && (
               <div className="space-y-4">
-                {/* 가입 승인 (pending → active) */}
                 {member.status === "pending" && (
                   <div className="p-3 bg-yellow-50 border border-yellow-200">
                     <p className="text-[13px] text-yellow-700 mb-2">
@@ -294,20 +281,19 @@ export default function AdminMemberDetailPage() {
                     </p>
                     <button
                       onClick={() => openStatusModal("active")}
-                      className="w-full bg-teal border border-teal px-3 py-2.5 text-sm font-medium text-white hover:bg-teal-d"
+                      className="w-full bg-teal border border-teal px-3 py-2.5 text-sm font-medium text-white hover:bg-teal-d cursor-pointer"
                     >
                       가입 승인
                     </button>
                   </div>
                 )}
 
-                {/* 계정 관리 (active ↔ inactive) */}
                 {member.status !== "pending" && (
                   <div className="space-y-2">
                     {member.status === "active" && (
                       <button
                         onClick={() => openStatusModal("inactive")}
-                        className="w-full border border-rule px-3 py-2 text-sm text-muted hover:bg-stone"
+                        className="w-full border border-rule px-3 py-2 text-sm text-muted hover:bg-stone cursor-pointer"
                       >
                         계정 비활성화
                       </button>
@@ -315,7 +301,7 @@ export default function AdminMemberDetailPage() {
                     {member.status === "inactive" && (
                       <button
                         onClick={() => openStatusModal("active")}
-                        className="w-full border border-teal px-3 py-2 text-sm text-teal hover:bg-teal/5"
+                        className="w-full border border-teal px-3 py-2 text-sm text-teal hover:bg-teal/5 cursor-pointer"
                       >
                         계정 재활성화
                       </button>
@@ -379,7 +365,7 @@ export default function AdminMemberDetailPage() {
             : "변경"
         }
         variant={newStatus === "inactive" ? "danger" : "warning"}
-        isLoading={isSaving}
+        isLoading={isStatusChanging}
       />
     </div>
   );

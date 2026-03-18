@@ -1,13 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, useToast } from "@/components/common";
-import { createClient } from "@/lib/supabase/client";
-import {
-  getActiveStudentAndParentContacts,
-  generatePreview,
-} from "@/domains/notification/service";
-import { type NotificationTarget } from "@/domains/notification/model";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Link from "next/link";
 import {
   Send,
   Users,
@@ -18,17 +15,41 @@ import {
   AlertCircle,
   History,
 } from "lucide-react";
-import Link from "next/link";
+import { Button, useToast } from "@/components/common";
+import { createClient } from "@/lib/supabase/client";
+import {
+  getActiveStudentAndParentContacts,
+  generatePreview,
+} from "@/domains/notification/service";
+import { type NotificationTarget } from "@/domains/notification/model";
+
+const kakaoMessageSchema = z.object({
+  message: z.string().min(1, "메시지를 입력해주세요").max(1000, "1000자 이내로 작성해주세요"),
+});
+
+type KakaoMessageForm = z.infer<typeof kakaoMessageSchema>;
 
 type TargetType = "all" | "selected" | "parents";
 
 export default function AdminKakaoPage() {
   const { showToast } = useToast();
 
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset: resetForm,
+    formState: { errors },
+  } = useForm<KakaoMessageForm>({
+    resolver: zodResolver(kakaoMessageSchema),
+    defaultValues: { message: "" },
+  });
+
+  const message = watch("message");
+
   // 상태
   const [targetType, setTargetType] = useState<TargetType>("all");
   const [includeParents, setIncludeParents] = useState(false);
-  const [message, setMessage] = useState("");
   const [preview, setPreview] = useState("");
 
   // 수신자 관련
@@ -106,12 +127,7 @@ export default function AdminKakaoPage() {
   };
 
   // 발송
-  const handleSend = async () => {
-    if (!message.trim()) {
-      showToast("메시지를 입력해주세요.", "error");
-      return;
-    }
-
+  const handleSend = async (data: KakaoMessageForm) => {
     if (filteredTargets.length === 0) {
       showToast("발송 대상이 없습니다.", "error");
       return;
@@ -131,13 +147,13 @@ export default function AdminKakaoPage() {
     try {
       const supabase = createClient();
 
-      const { data, error } = await supabase.functions.invoke(
+      const { data: resData, error } = await supabase.functions.invoke(
         "send-kakao-alimtalk",
         {
           body: {
             type: "custom",
             recipients: filteredTargets,
-            message: message.trim(),
+            message: data.message.trim(),
           },
         }
       );
@@ -147,13 +163,13 @@ export default function AdminKakaoPage() {
       }
 
       setSendResult({
-        success: data.sentCount || 0,
-        failed: data.failedCount || 0,
+        success: resData.sentCount || 0,
+        failed: resData.failedCount || 0,
       });
 
-      if (data.sentCount > 0) {
-        showToast(`${data.sentCount}건 발송 완료`, "success");
-        setMessage("");
+      if (resData.sentCount > 0) {
+        showToast(`${resData.sentCount}건 발송 완료`, "success");
+        resetForm({ message: "" });
       } else {
         showToast("발송에 실패했습니다.", "error");
       }
@@ -169,264 +185,265 @@ export default function AdminKakaoPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-            {/* 안내 + 이력 조회 링크 */}
-            <div className="flex items-center justify-between bg-navy/5 border border-navy/20 p-4 mb-6">
-              <p className="text-[13px] text-navy">
-                재원생 및 학부모에게 알림톡(또는 SMS)을 발송합니다.
-                템플릿 심사 전까지는 SMS로 발송됩니다.
-              </p>
-              <Link
-                href="/admin/kakao/history"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-navy/20 text-[12px] text-navy hover:bg-navy/5 transition-colors"
-              >
-                <History size={14} />
-                발송 이력
-              </Link>
-            </div>
+      {/* 안내 + 이력 조회 링크 */}
+      <div className="flex items-center justify-between bg-navy/5 border border-navy/20 p-4 mb-6">
+        <p className="text-[13px] text-navy">
+          재원생 및 학부모에게 알림톡(또는 SMS)을 발송합니다.
+          템플릿 심사 전까지는 SMS로 발송됩니다.
+        </p>
+        <Link
+          href="/admin/kakao/history"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-navy/20 text-[12px] text-navy hover:bg-navy/5 transition-colors"
+        >
+          <History size={14} />
+          발송 이력
+        </Link>
+      </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* 좌측: 수신자 선택 */}
-              <div className="bg-white border border-rule p-6">
-                <h2 className="font-medium text-ink mb-4 flex items-center gap-2">
-                  <Users size={18} />
-                  수신자 선택
-                </h2>
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* 좌측: 수신자 선택 */}
+        <div className="bg-white border border-rule p-6">
+          <h2 className="font-medium text-ink mb-4 flex items-center gap-2">
+            <Users size={18} />
+            수신자 선택
+          </h2>
 
-                {/* 대상 유형 */}
-                <div className="space-y-2 mb-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="targetType"
-                      value="all"
-                      checked={targetType === "all"}
-                      onChange={() => setTargetType("all")}
-                      className="w-4 h-4 accent-navy"
-                    />
-                    <span className="text-[14px]">전체 재원생</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="targetType"
-                      value="parents"
-                      checked={targetType === "parents"}
-                      onChange={() => setTargetType("parents")}
-                      className="w-4 h-4 accent-navy"
-                    />
-                    <span className="text-[14px]">학부모만</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="targetType"
-                      value="selected"
-                      checked={targetType === "selected"}
-                      onChange={() => setTargetType("selected")}
-                      className="w-4 h-4 accent-navy"
-                    />
-                    <span className="text-[14px]">선택</span>
-                  </label>
-                </div>
+          {/* 대상 유형 */}
+          <div className="space-y-2 mb-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="targetType"
+                value="all"
+                checked={targetType === "all"}
+                onChange={() => setTargetType("all")}
+                className="w-4 h-4 accent-navy"
+              />
+              <span className="text-[14px]">전체 재원생</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="targetType"
+                value="parents"
+                checked={targetType === "parents"}
+                onChange={() => setTargetType("parents")}
+                className="w-4 h-4 accent-navy"
+              />
+              <span className="text-[14px]">학부모만</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="targetType"
+                value="selected"
+                checked={targetType === "selected"}
+                onChange={() => setTargetType("selected")}
+                className="w-4 h-4 accent-navy"
+              />
+              <span className="text-[14px]">선택</span>
+            </label>
+          </div>
 
-                {/* 학부모 포함 (전체 선택 시) */}
-                {targetType === "all" && (
-                  <label className="flex items-center gap-2 cursor-pointer mb-4 pl-6">
-                    <input
-                      type="checkbox"
-                      checked={includeParents}
-                      onChange={(e) => setIncludeParents(e.target.checked)}
-                      className="w-4 h-4 accent-navy"
-                    />
-                    <span className="text-[13px] text-muted">
-                      학부모도 포함
-                    </span>
-                  </label>
-                )}
+          {/* 학부모 포함 (전체 선택 시) */}
+          {targetType === "all" && (
+            <label className="flex items-center gap-2 cursor-pointer mb-4 pl-6">
+              <input
+                type="checkbox"
+                checked={includeParents}
+                onChange={(e) => setIncludeParents(e.target.checked)}
+                className="w-4 h-4 accent-navy"
+              />
+              <span className="text-[13px] text-muted">
+                학부모도 포함
+              </span>
+            </label>
+          )}
 
-                {/* 선택 모드: 학생 목록 */}
-                {targetType === "selected" && (
-                  <div className="border border-rule max-h-64 overflow-y-auto">
-                    {isLoadingTargets ? (
-                      <div className="p-4 text-center">
-                        <Loader2
-                          size={20}
-                          className="animate-spin mx-auto text-muted"
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        {/* 전체 선택 */}
-                        <div className="sticky top-0 bg-stone border-b border-rule px-3 py-2">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={
-                                studentTargets.length > 0 &&
-                                studentTargets.every((t) =>
-                                  selectedIds.includes(t.userId)
-                                )
-                              }
-                              onChange={toggleSelectAll}
-                              className="w-4 h-4 accent-navy"
-                            />
-                            <span className="text-[12px] font-medium">
-                              전체 선택 ({selectedIds.length}/
-                              {studentTargets.length})
-                            </span>
-                          </label>
-                        </div>
-
-                        {/* 학생 목록 */}
-                        {studentTargets.map((target) => (
-                          <label
-                            key={target.userId}
-                            className="flex items-center gap-2 px-3 py-2 hover:bg-stone cursor-pointer border-b border-rule last:border-b-0"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedIds.includes(target.userId)}
-                              onChange={() => toggleSelect(target.userId)}
-                              className="w-4 h-4 accent-navy"
-                            />
-                            <span className="text-[13px]">{target.name}</span>
-                            <span className="text-[11px] text-muted ml-auto">
-                              {target.phone}
-                            </span>
-                          </label>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {/* 수신자 수 */}
-                <div className="mt-4 pt-4 border-t border-rule">
-                  <div className="flex items-center gap-2">
-                    <UserCheck size={16} className="text-teal" />
-                    <span className="text-[14px] font-medium">
-                      발송 대상: {filteredTargets.length}명
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 우측: 메시지 작성 */}
-              <div className="bg-white border border-rule p-6">
-                <h2 className="font-medium text-ink mb-4 flex items-center gap-2">
-                  <Send size={18} />
-                  메시지 작성
-                </h2>
-
-                {/* 메시지 입력 */}
-                <div className="mb-4">
-                  <textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="메시지를 입력하세요..."
-                    rows={6}
-                    maxLength={1000}
-                    className="w-full px-3 py-2 border border-rule text-[14px] resize-none focus:outline-none focus:border-navy"
+          {/* 선택 모드: 학생 목록 */}
+          {targetType === "selected" && (
+            <div className="border border-rule max-h-64 overflow-y-auto">
+              {isLoadingTargets ? (
+                <div className="p-4 text-center">
+                  <Loader2
+                    size={20}
+                    className="animate-spin mx-auto text-muted"
                   />
-                  <div className="flex justify-between mt-1">
-                    <span className="text-[11px] text-muted">
-                      [스터디코어] 태그가 자동으로 추가됩니다.
-                    </span>
-                    <span className="text-[11px] text-muted">
-                      {message.length} / 1000
-                    </span>
-                  </div>
                 </div>
-
-                {/* 미리보기 */}
-                <div className="mb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Eye size={14} className="text-muted" />
-                    <span className="text-[12px] font-medium text-muted">
-                      미리보기
-                    </span>
-                  </div>
-                  <div className="bg-stone p-3 border border-rule text-[13px] whitespace-pre-wrap min-h-[80px]">
-                    {preview ? (
-                      `[스터디코어] ${preview}`
-                    ) : (
-                      <span className="text-muted">메시지를 입력하세요.</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* 발송 결과 */}
-                {sendResult && (
-                  <div
-                    className={`p-3 mb-4 border ${
-                      sendResult.failed > 0
-                        ? "bg-red-50 border-red-200"
-                        : "bg-teal/5 border-teal/20"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      {sendResult.failed > 0 ? (
-                        <AlertCircle size={16} className="text-red-500" />
-                      ) : (
-                        <CheckCircle size={16} className="text-teal" />
-                      )}
-                      <span className="text-[13px]">
-                        성공: {sendResult.success}건
-                        {sendResult.failed > 0 &&
-                          ` / 실패: ${sendResult.failed}건`}
+              ) : (
+                <>
+                  {/* 전체 선택 */}
+                  <div className="sticky top-0 bg-stone border-b border-rule px-3 py-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={
+                          studentTargets.length > 0 &&
+                          studentTargets.every((t) =>
+                            selectedIds.includes(t.userId)
+                          )
+                        }
+                        onChange={toggleSelectAll}
+                        className="w-4 h-4 accent-navy"
+                      />
+                      <span className="text-[12px] font-medium">
+                        전체 선택 ({selectedIds.length}/
+                        {studentTargets.length})
                       </span>
-                    </div>
+                    </label>
                   </div>
-                )}
 
-                {/* 발송 버튼 */}
-                <Button
-                  variant="primary"
-                  onClick={handleSend}
-                  disabled={
-                    isSending ||
-                    !message.trim() ||
-                    filteredTargets.length === 0
-                  }
-                  className="w-full flex items-center justify-center gap-2"
-                >
-                  {isSending ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      발송 중...
-                    </>
-                  ) : (
-                    <>
-                      <Send size={16} />
-                      {filteredTargets.length}명에게 발송
-                    </>
-                  )}
-                </Button>
+                  {/* 학생 목록 */}
+                  {studentTargets.map((target) => (
+                    <label
+                      key={target.userId}
+                      className="flex items-center gap-2 px-3 py-2 hover:bg-stone cursor-pointer border-b border-rule last:border-b-0"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(target.userId)}
+                        onChange={() => toggleSelect(target.userId)}
+                        className="w-4 h-4 accent-navy"
+                      />
+                      <span className="text-[13px]">{target.name}</span>
+                      <span className="text-[11px] text-muted ml-auto">
+                        {target.phone}
+                      </span>
+                    </label>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
+
+          {/* 수신자 수 */}
+          <div className="mt-4 pt-4 border-t border-rule">
+            <div className="flex items-center gap-2">
+              <UserCheck size={16} className="text-teal" />
+              <span className="text-[14px] font-medium">
+                발송 대상: {filteredTargets.length}명
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* 우측: 메시지 작성 */}
+        <div className="bg-white border border-rule p-6">
+          <h2 className="font-medium text-ink mb-4 flex items-center gap-2">
+            <Send size={18} />
+            메시지 작성
+          </h2>
+
+          {/* 메시지 입력 */}
+          <div className="mb-4">
+            <textarea
+              {...register("message")}
+              placeholder="메시지를 입력하세요..."
+              rows={6}
+              maxLength={1000}
+              className={`w-full px-3 py-2 border text-[14px] resize-none focus:outline-none ${
+                errors.message ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
+              }`}
+            />
+            <div className="flex justify-between mt-1">
+              <span className={`text-[11px] ${errors.message ? "text-red-500" : "text-muted"}`}>
+                {errors.message?.message || "[스터디코어] 태그가 자동으로 추가됩니다."}
+              </span>
+              <span className="text-[11px] text-muted">
+                {message.length} / 1000
+              </span>
+            </div>
+          </div>
+
+          {/* 미리보기 */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Eye size={14} className="text-muted" />
+              <span className="text-[12px] font-medium text-muted">
+                미리보기
+              </span>
+            </div>
+            <div className="bg-stone p-3 border border-rule text-[13px] whitespace-pre-wrap min-h-[80px]">
+              {preview ? (
+                `[스터디코어] ${preview}`
+              ) : (
+                <span className="text-muted">메시지를 입력하세요.</span>
+              )}
+            </div>
+          </div>
+
+          {/* 발송 결과 */}
+          {sendResult && (
+            <div
+              className={`p-3 mb-4 border ${
+                sendResult.failed > 0
+                  ? "bg-red-50 border-red-200"
+                  : "bg-teal/5 border-teal/20"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                {sendResult.failed > 0 ? (
+                  <AlertCircle size={16} className="text-red-500" />
+                ) : (
+                  <CheckCircle size={16} className="text-teal" />
+                )}
+                <span className="text-[13px]">
+                  성공: {sendResult.success}건
+                  {sendResult.failed > 0 &&
+                    ` / 실패: ${sendResult.failed}건`}
+                </span>
               </div>
             </div>
+          )}
 
-            {/* 안내 사항 */}
-            <div className="mt-6 p-4 bg-stone border border-rule">
-              <h3 className="text-[13px] font-medium text-ink mb-2">
-                알림 발송 안내
-              </h3>
-              <ul className="text-[12px] text-muted space-y-1">
-                <li>
-                  • 현재 알림톡 템플릿 심사 전으로, SMS로 발송됩니다.
-                </li>
-                <li>• 발송 비용이 발생할 수 있습니다.</li>
-                <li>
-                  • 발송 이력은{" "}
-                  <Link
-                    href="/admin/kakao/history"
-                    className="text-teal underline"
-                  >
-                    발송 이력
-                  </Link>
-                  에서 확인하실 수 있습니다.
-                </li>
-              </ul>
-            </div>
+          {/* 발송 버튼 */}
+          <Button
+            variant="primary"
+            onClick={handleSubmit(handleSend)}
+            disabled={
+              isSending ||
+              !message.trim() ||
+              filteredTargets.length === 0
+            }
+            className="w-full flex items-center justify-center gap-2"
+          >
+            {isSending ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                발송 중...
+              </>
+            ) : (
+              <>
+                <Send size={16} />
+                {filteredTargets.length}명에게 발송
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {/* 안내 사항 */}
+      <div className="mt-6 p-4 bg-stone border border-rule">
+        <h3 className="text-[13px] font-medium text-ink mb-2">
+          알림 발송 안내
+        </h3>
+        <ul className="text-[12px] text-muted space-y-1">
+          <li>
+            • 현재 알림톡 템플릿 심사 전으로, SMS로 발송됩니다.
+          </li>
+          <li>• 발송 비용이 발생할 수 있습니다.</li>
+          <li>
+            • 발송 이력은{" "}
+            <Link
+              href="/admin/kakao/history"
+              className="text-teal underline"
+            >
+              발송 이력
+            </Link>
+            에서 확인하실 수 있습니다.
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }

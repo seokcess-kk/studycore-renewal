@@ -68,7 +68,7 @@ export const createReviewSchema = z.object({
   category: z.enum(["student", "parent", "alumni"]),
   rating: z.number().min(1).max(5),
   content: z.string().min(10, "10자 이상 작성해주세요").max(1000),
-  images: z.array(z.string()).optional().default([]),
+  images: z.array(z.string()).default([]),
 });
 
 export type CreateReviewInput = z.infer<typeof createReviewSchema>;

@@ -1,50 +1,75 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Save, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
-import type { SiteSetting } from "@/domains/settings/model";
+import {
+  getMenuVisibility,
+  getSmsTemplate,
+  updateMenuVisibility,
+  updateSmsTemplate,
+} from "@/domains/settings/service";
+
+const settingsSchema = z.object({
+  about: z.boolean(),
+  blog: z.boolean(),
+  reviews: z.boolean(),
+  system: z.boolean(),
+  smsTemplate: z.string(),
+});
+
+type SettingsFormValues = z.infer<typeof settingsSchema>;
 
 export default function AdminSettingsPage() {
   const supabase = createBrowserClient();
   const { toast } = useToast();
-
-  const [_settings, setSettings] = useState<SiteSetting[]>([]);
-  void _settings; // 향후 사용 예정
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
 
-  // 로컬 상태
-  const [menuVisibility, setMenuVisibility] = useState({
-    about: false,
-    blog: false,
-    reviews: false,
-    system: true,
+  const {
+    watch,
+    setValue,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<SettingsFormValues>({
+    resolver: zodResolver(settingsSchema),
+    defaultValues: {
+      about: false,
+      blog: false,
+      reviews: false,
+      system: true,
+      smsTemplate: "",
+    },
   });
-  const [smsTemplate, setSmsTemplate] = useState("");
+
+  const menuVisibility = {
+    about: watch("about"),
+    blog: watch("blog"),
+    reviews: watch("reviews"),
+    system: watch("system"),
+  };
+  const smsTemplate = watch("smsTemplate");
 
   useEffect(() => {
     async function fetchSettings() {
       try {
-        const { data, error } = await supabase
-          .from("site_settings")
-          .select("*");
+        const [visibility, template] = await Promise.all([
+          getMenuVisibility(supabase),
+          getSmsTemplate(supabase),
+        ]);
 
-        if (error) throw error;
-
-        setSettings(data || []);
-
-        // 로컬 상태 초기화
-        const settingsMap = new Map(data?.map((s) => [s.key, s.value]));
-        setMenuVisibility({
-          about: settingsMap.get("menu_about_visible") === "true",
-          blog: settingsMap.get("menu_blog_visible") === "true",
-          reviews: settingsMap.get("menu_reviews_visible") === "true",
-          system: settingsMap.get("menu_system_visible") !== "false",
+        reset({
+          about: visibility.about,
+          blog: visibility.blog,
+          reviews: visibility.reviews,
+          system: visibility.system,
+          smsTemplate: template,
         });
-        setSmsTemplate(settingsMap.get("sms_consult_template") || "");
       } catch (error) {
         console.error("설정 조회 실패:", error);
       } finally {
@@ -53,27 +78,19 @@ export default function AdminSettingsPage() {
     }
 
     fetchSettings();
-  }, [supabase]);
+  }, [supabase, reset]);
 
-  const handleSave = async () => {
-    setIsSaving(true);
+  const onSubmit = async (data: SettingsFormValues) => {
     try {
-      const updates = [
-        { key: "menu_about_visible", value: menuVisibility.about.toString() },
-        { key: "menu_blog_visible", value: menuVisibility.blog.toString() },
-        { key: "menu_reviews_visible", value: menuVisibility.reviews.toString() },
-        { key: "menu_system_visible", value: menuVisibility.system.toString() },
-        { key: "sms_consult_template", value: smsTemplate },
-      ];
-
-      for (const update of updates) {
-        const { error } = await supabase
-          .from("site_settings")
-          .update({ value: update.value })
-          .eq("key", update.key);
-
-        if (error) throw error;
-      }
+      await Promise.all([
+        updateMenuVisibility(supabase, {
+          about: data.about,
+          blog: data.blog,
+          reviews: data.reviews,
+          system: data.system,
+        }),
+        updateSmsTemplate(supabase, data.smsTemplate),
+      ]);
 
       toast({
         variant: "success",
@@ -87,8 +104,6 @@ export default function AdminSettingsPage() {
         title: "오류",
         description: "설정 저장에 실패했습니다.",
       });
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -100,8 +115,15 @@ export default function AdminSettingsPage() {
     );
   }
 
+  const menuItems = [
+    { key: "about" as const, label: "소개 페이지", path: "/about" },
+    { key: "blog" as const, label: "블로그 페이지", path: "/blog" },
+    { key: "reviews" as const, label: "후기 페이지", path: "/reviews" },
+    { key: "system" as const, label: "운영시스템 페이지", path: "/system" },
+  ];
+
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-2xl space-y-6">
       {/* 메뉴 노출 설정 */}
       <div className="border border-rule bg-white p-6">
         <h2 className="mb-4 font-serif text-lg font-bold text-ink">
@@ -112,116 +134,36 @@ export default function AdminSettingsPage() {
         </p>
 
         <div className="space-y-3">
-          <label className="flex items-center justify-between border border-rule p-4">
-            <div>
-              <span className="font-medium text-ink">소개 페이지</span>
-              <p className="text-sm text-muted">/about</p>
-            </div>
-            <button
-              onClick={() =>
-                setMenuVisibility((prev) => ({ ...prev, about: !prev.about }))
-              }
-              className={`flex h-10 w-20 items-center justify-center border ${
-                menuVisibility.about
-                  ? "border-teal bg-teal text-white"
-                  : "border-rule bg-white text-muted"
-              }`}
+          {menuItems.map((item) => (
+            <label
+              key={item.key}
+              className="flex items-center justify-between border border-rule p-4"
             >
-              {menuVisibility.about ? (
-                <>
-                  <Eye className="mr-1 h-4 w-4" /> 노출
-                </>
-              ) : (
-                <>
-                  <EyeOff className="mr-1 h-4 w-4" /> 숨김
-                </>
-              )}
-            </button>
-          </label>
-
-          <label className="flex items-center justify-between border border-rule p-4">
-            <div>
-              <span className="font-medium text-ink">블로그 페이지</span>
-              <p className="text-sm text-muted">/blog</p>
-            </div>
-            <button
-              onClick={() =>
-                setMenuVisibility((prev) => ({ ...prev, blog: !prev.blog }))
-              }
-              className={`flex h-10 w-20 items-center justify-center border ${
-                menuVisibility.blog
-                  ? "border-teal bg-teal text-white"
-                  : "border-rule bg-white text-muted"
-              }`}
-            >
-              {menuVisibility.blog ? (
-                <>
-                  <Eye className="mr-1 h-4 w-4" /> 노출
-                </>
-              ) : (
-                <>
-                  <EyeOff className="mr-1 h-4 w-4" /> 숨김
-                </>
-              )}
-            </button>
-          </label>
-
-          <label className="flex items-center justify-between border border-rule p-4">
-            <div>
-              <span className="font-medium text-ink">후기 페이지</span>
-              <p className="text-sm text-muted">/reviews</p>
-            </div>
-            <button
-              onClick={() =>
-                setMenuVisibility((prev) => ({
-                  ...prev,
-                  reviews: !prev.reviews,
-                }))
-              }
-              className={`flex h-10 w-20 items-center justify-center border ${
-                menuVisibility.reviews
-                  ? "border-teal bg-teal text-white"
-                  : "border-rule bg-white text-muted"
-              }`}
-            >
-              {menuVisibility.reviews ? (
-                <>
-                  <Eye className="mr-1 h-4 w-4" /> 노출
-                </>
-              ) : (
-                <>
-                  <EyeOff className="mr-1 h-4 w-4" /> 숨김
-                </>
-              )}
-            </button>
-          </label>
-
-          <label className="flex items-center justify-between border border-rule p-4">
-            <div>
-              <span className="font-medium text-ink">운영시스템 페이지</span>
-              <p className="text-sm text-muted">/system</p>
-            </div>
-            <button
-              onClick={() =>
-                setMenuVisibility((prev) => ({ ...prev, system: !prev.system }))
-              }
-              className={`flex h-10 w-20 items-center justify-center border ${
-                menuVisibility.system
-                  ? "border-teal bg-teal text-white"
-                  : "border-rule bg-white text-muted"
-              }`}
-            >
-              {menuVisibility.system ? (
-                <>
-                  <Eye className="mr-1 h-4 w-4" /> 노출
-                </>
-              ) : (
-                <>
-                  <EyeOff className="mr-1 h-4 w-4" /> 숨김
-                </>
-              )}
-            </button>
-          </label>
+              <div>
+                <span className="font-medium text-ink">{item.label}</span>
+                <p className="text-sm text-muted">{item.path}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setValue(item.key, !menuVisibility[item.key])}
+                className={`flex h-10 w-20 items-center justify-center border cursor-pointer ${
+                  menuVisibility[item.key]
+                    ? "border-teal bg-teal text-white"
+                    : "border-rule bg-white text-muted"
+                }`}
+              >
+                {menuVisibility[item.key] ? (
+                  <>
+                    <Eye className="mr-1 h-4 w-4" /> 노출
+                  </>
+                ) : (
+                  <>
+                    <EyeOff className="mr-1 h-4 w-4" /> 숨김
+                  </>
+                )}
+              </button>
+            </label>
+          ))}
         </div>
       </div>
 
@@ -236,7 +178,7 @@ export default function AdminSettingsPage() {
 
         <textarea
           value={smsTemplate}
-          onChange={(e) => setSmsTemplate(e.target.value)}
+          onChange={(e) => setValue("smsTemplate", e.target.value)}
           rows={6}
           className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
           placeholder="SMS 템플릿을 입력하세요"
@@ -246,14 +188,14 @@ export default function AdminSettingsPage() {
       {/* 저장 버튼 */}
       <div className="flex justify-end">
         <Button
+          type="submit"
           variant="primary"
-          onClick={handleSave}
-          disabled={isSaving}
+          disabled={isSubmitting}
         >
           <Save className="mr-2 h-4 w-4" />
-          {isSaving ? "저장 중..." : "설정 저장"}
+          {isSubmitting ? "저장 중..." : "설정 저장"}
         </Button>
       </div>
-    </div>
+    </form>
   );
 }

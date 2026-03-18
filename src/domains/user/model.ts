@@ -93,7 +93,30 @@ export const updateProfileSchema = z.object({
   avatar_url: z.string().url().optional(),
 });
 
+// 어드민 회원 수정 스키마
+export const adminUpdateMemberSchema = z.object({
+  name: z.string().min(1, "이름을 입력해주세요"),
+  phone: z.string(),
+  school: z.string(),
+  grade: z.string(),
+  parent_phone: z.string(),
+});
+
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+
+// 연락처 수정 스키마 (마이페이지용)
+export const updateContactSchema = z.object({
+  phone: z
+    .string()
+    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다")
+    .or(z.literal("")),
+  parent_phone: z
+    .string()
+    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다")
+    .or(z.literal("")),
+});
+
+export type UpdateContactInput = z.infer<typeof updateContactSchema>;
 
 // Staff 로그인 스키마
 // 비밀번호 길이 검증은 여기서 하지 않음 (초기 비밀번호 "1234" 허용)

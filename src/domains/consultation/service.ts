@@ -143,3 +143,25 @@ export async function changeConsultationStatus(
     };
   }
 }
+
+/**
+ * 상담 삭제 (어드민용)
+ */
+export async function deleteConsultation(
+  supabase: SupabaseClient,
+  consultationId: string
+): Promise<ConsultationServiceResult> {
+  try {
+    await consultationRepo.deleteConsultation(supabase, consultationId);
+    return { success: true };
+  } catch (error) {
+    console.error("상담 삭제 실패:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "상담 삭제 중 오류가 발생했습니다",
+    };
+  }
+}

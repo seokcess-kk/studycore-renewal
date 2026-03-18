@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Nav, Footer, Button, useToast, Skeleton, AvatarUploader } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
-import { signOut, updateAvatar } from "@/domains/user/service";
+import { signOut, updateAvatar, updateUserProfile } from "@/domains/user/service";
+import { updateContactSchema, type UpdateContactInput } from "@/domains/user/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES, CONTACT } from "@/lib/constants";
 import {
@@ -283,33 +286,44 @@ function ContactInfoSection() {
   const { profile, setProfile } = useUserStore();
   const { success: showSuccess, error: showError } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [phone, setPhone] = useState(profile?.phone || "");
-  const [parentPhone, setParentPhone] = useState(profile?.parent_phone || "");
 
-  const handleSave = async () => {
-    setIsSaving(true);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<UpdateContactInput>({
+    resolver: zodResolver(updateContactSchema),
+    defaultValues: {
+      phone: profile?.phone || "",
+      parent_phone: profile?.parent_phone || "",
+    },
+  });
+
+  const onSubmit = async (data: UpdateContactInput) => {
+    if (!profile?.id) return;
+
     const supabase = createClient();
+    const result = await updateUserProfile(supabase, profile.id, {
+      phone: data.phone.replace(/-/g, "") || undefined,
+      parent_phone: data.parent_phone.replace(/-/g, "") || undefined,
+    });
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .update({
-        phone: phone.replace(/-/g, "") || null,
-        parent_phone: parentPhone.replace(/-/g, "") || null,
-      })
-      .eq("id", profile?.id)
-      .select()
-      .single();
-
-    setIsSaving(false);
-
-    if (error) {
-      showError("연락처 수정에 실패했습니다.");
-    } else {
-      setProfile(data);
+    if (result.success && result.profile) {
+      setProfile(result.profile);
       showSuccess("연락처가 수정되었습니다.");
       setIsEditing(false);
+    } else {
+      showError(result.error || "연락처 수정에 실패했습니다.");
     }
+  };
+
+  const handleCancel = () => {
+    reset({
+      phone: profile?.phone || "",
+      parent_phone: profile?.parent_phone || "",
+    });
+    setIsEditing(false);
   };
 
   return (
@@ -319,29 +333,27 @@ function ContactInfoSection() {
         {isEditing ? (
           <div className="flex items-center gap-3">
             <button
-              onClick={() => {
-                setPhone(profile?.phone || "");
-                setParentPhone(profile?.parent_phone || "");
-                setIsEditing(false);
-              }}
-              className="flex items-center gap-1.5 text-[13px] text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors"
+              type="button"
+              onClick={handleCancel}
+              className="flex items-center gap-1.5 text-[13px] text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors cursor-pointer"
             >
               <X size={14} />
               취소
             </button>
             <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="flex items-center gap-1.5 text-[13px] text-white bg-teal hover:bg-teal-d font-medium disabled:opacity-50 px-3 py-1.5 border border-teal transition-colors"
+              type="button"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isSubmitting}
+              className="flex items-center gap-1.5 text-[13px] text-white bg-teal hover:bg-teal-d font-medium disabled:opacity-50 px-3 py-1.5 border border-teal transition-colors cursor-pointer"
             >
               <Save size={14} />
-              {isSaving ? "저장 중..." : "저장"}
+              {isSubmitting ? "저장 중..." : "저장"}
             </button>
           </div>
         ) : (
           <button
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-1.5 text-[13px] text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors"
+            className="flex items-center gap-1.5 text-[13px] text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors cursor-pointer"
           >
             <Pencil size={14} />
             수정
@@ -352,16 +364,22 @@ function ContactInfoSection() {
         <InfoRow icon={<User size={18} />} label="이름" value={profile?.name || "-"} />
 
         {isEditing ? (
-          <div className="flex items-center gap-4 px-4 py-3">
-            <span className="text-muted"><Phone size={18} /></span>
-            <span className="text-[13px] text-muted w-24">연락처</span>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="010-0000-0000"
-              className="flex-1 border border-rule px-3 py-1.5 text-[14px] focus:border-navy focus:outline-none"
-            />
+          <div className="px-4 py-3">
+            <div className="flex items-center gap-4">
+              <span className="text-muted"><Phone size={18} /></span>
+              <span className="text-[13px] text-muted w-24">연락처</span>
+              <input
+                type="tel"
+                {...register("phone")}
+                placeholder="010-0000-0000"
+                className={`flex-1 border px-3 py-1.5 text-[14px] focus:outline-none ${
+                  errors.phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
+                }`}
+              />
+            </div>
+            {errors.phone && (
+              <p className="text-[11px] text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.phone.message}</p>
+            )}
           </div>
         ) : (
           <InfoRow icon={<Phone size={18} />} label="연락처" value={formatPhone(profile?.phone) || "-"} />
@@ -374,16 +392,22 @@ function ContactInfoSection() {
         />
 
         {isEditing ? (
-          <div className="flex items-center gap-4 px-4 py-3">
-            <span className="text-muted"><Phone size={18} /></span>
-            <span className="text-[13px] text-muted w-24">학부모 연락처</span>
-            <input
-              type="tel"
-              value={parentPhone}
-              onChange={(e) => setParentPhone(e.target.value)}
-              placeholder="010-0000-0000"
-              className="flex-1 border border-rule px-3 py-1.5 text-[14px] focus:border-navy focus:outline-none"
-            />
+          <div className="px-4 py-3">
+            <div className="flex items-center gap-4">
+              <span className="text-muted"><Phone size={18} /></span>
+              <span className="text-[13px] text-muted w-24">학부모 연락처</span>
+              <input
+                type="tel"
+                {...register("parent_phone")}
+                placeholder="010-0000-0000"
+                className={`flex-1 border px-3 py-1.5 text-[14px] focus:outline-none ${
+                  errors.parent_phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
+                }`}
+              />
+            </div>
+            {errors.parent_phone && (
+              <p className="text-[11px] text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.parent_phone.message}</p>
+            )}
           </div>
         ) : (
           <InfoRow icon={<Phone size={18} />} label="학부모 연락처" value={formatPhone(profile?.parent_phone) || "-"} />
