@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
+import { ProgramDetailModal } from "./ProgramDetailModal";
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return "";
@@ -28,6 +29,7 @@ function parseDescription(description: string): string[] {
 export function ProgramsSection() {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -130,7 +132,8 @@ export function ProgramsSection() {
               return (
                 <div
                   key={program.id}
-                  className="border border-white/[0.08] bg-white/[0.03] p-8 md:p-12 mb-6"
+                  className="border border-white/[0.08] bg-white/[0.03] p-8 md:p-12 mb-6 cursor-pointer hover:bg-white/[0.05] transition-colors duration-200"
+                  onClick={() => setSelectedProgram(program)}
                 >
                   <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
                     {/* 좌측: 정보 */}
@@ -154,7 +157,7 @@ export function ProgramsSection() {
                       {/* 혜택 불릿 */}
                       {bullets.length > 0 && (
                         <div className="space-y-3 mb-8">
-                          {bullets.map((bullet, i) => (
+                          {bullets.slice(0, 4).map((bullet, i) => (
                             <div
                               key={i}
                               className="flex items-start gap-3"
@@ -165,20 +168,37 @@ export function ProgramsSection() {
                               </span>
                             </div>
                           ))}
+                          {bullets.length > 4 && (
+                            <span className="text-[12px] text-teal/60 font-mono ml-4.5">
+                              +{bullets.length - 4}개 더 보기
+                            </span>
+                          )}
                         </div>
                       )}
 
                       {/* CTA */}
-                      <Link
-                        href={ROUTES.CONSULT}
-                        className="cta-fill cta-fill-teal group inline-flex items-center gap-3 px-8 py-4 text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
-                      >
-                        상담 신청하기
-                        <ArrowRight
-                          size={16}
-                          className="group-hover:translate-x-1 transition-transform duration-200"
-                        />
-                      </Link>
+                      <div className="flex items-center gap-4">
+                        <Link
+                          href={ROUTES.CONSULT}
+                          onClick={(e) => e.stopPropagation()}
+                          className="cta-fill cta-fill-teal group inline-flex items-center gap-3 px-8 py-4 text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300 cursor-pointer"
+                        >
+                          상담 신청하기
+                          <ArrowRight
+                            size={16}
+                            className="group-hover:translate-x-1 transition-transform duration-200"
+                          />
+                        </Link>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedProgram(program);
+                          }}
+                          className="text-[13px] text-white/40 hover:text-teal border-b border-white/20 hover:border-teal pb-0.5 transition-colors duration-200 cursor-pointer"
+                        >
+                          상세 보기
+                        </button>
+                      </div>
                     </div>
 
                     {/* 우측: 이미지 또는 장식 */}
@@ -236,14 +256,14 @@ export function ProgramsSection() {
                   <button
                     onClick={() => scroll("left")}
                     disabled={!canScrollLeft}
-                    className="w-9 h-9 border border-white/[0.1] flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-9 h-9 border border-white/[0.1] flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                   >
                     <ChevronLeft size={16} />
                   </button>
                   <button
                     onClick={() => scroll("right")}
                     disabled={!canScrollRight}
-                    className="w-9 h-9 border border-white/[0.1] flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-9 h-9 border border-white/[0.1] flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                   >
                     <ChevronRight size={16} />
                   </button>
@@ -260,8 +280,9 @@ export function ProgramsSection() {
                 <div
                   key={program.id}
                   data-card
-                  className="flex-shrink-0 w-[320px] sm:w-[360px] border border-white/[0.06] bg-white/[0.02] p-5 group hover:bg-white/[0.04] transition-colors"
+                  className="flex-shrink-0 w-[320px] sm:w-[360px] border border-white/[0.06] bg-white/[0.02] p-5 group hover:bg-white/[0.04] transition-colors cursor-pointer"
                   style={{ scrollSnapAlign: "start" }}
+                  onClick={() => setSelectedProgram(program)}
                 >
                   {/* 이미지 */}
                   {program.image_url && (
@@ -293,12 +314,22 @@ export function ProgramsSection() {
                       {program.description}
                     </p>
                   )}
+
+                  <span className="inline-block mt-3 text-[11px] text-teal/50 group-hover:text-teal/80 transition-colors font-mono">
+                    상세 보기 →
+                  </span>
                 </div>
               ))}
             </div>
           </motion.div>
         )}
       </div>
+
+      {/* 프로그램 상세 모달 */}
+      <ProgramDetailModal
+        program={selectedProgram}
+        onClose={() => setSelectedProgram(null)}
+      />
     </section>
   );
 }

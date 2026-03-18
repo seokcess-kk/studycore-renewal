@@ -161,8 +161,8 @@ export const KAKAO = {
 
 // 학원 위치 정보
 export const LOCATION = {
-  lat: 35.1595454,
-  lng: 126.8526021,
+  lat: 35.189430,
+  lng: 126.824053,
   name: "스터디코어 1.0",
   address: "광주광역시 광산구 임방울대로 330 애플타워 10층",
 } as const;

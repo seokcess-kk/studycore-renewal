@@ -93,10 +93,13 @@ export default function AdminProgramNewPage() {
             </label>
             <textarea
               {...register("description")}
-              rows={5}
-              placeholder="프로그램 상세 설명"
+              rows={8}
+              placeholder={"프로그램 상세 설명을 입력하세요.\n\n줄바꿈으로 내용을 구분하면 상세 보기에서 그대로 표시됩니다.\n마침표(.) 또는 쉼표(,)로 구분하면 홈페이지 카드에 불릿 형태로 표시됩니다."}
               className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none resize-none"
             />
+            <p className="mt-1 text-xs text-muted">
+              홈 카드: 마침표/쉼표로 불릿 분리 (최대 4개 표시) · 상세 팝업: 전체 내용 표시
+            </p>
           </div>
 
           <div>
