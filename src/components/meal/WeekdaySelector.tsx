@@ -73,15 +73,21 @@ export function WeekdaySelector({
     onChange(newValue);
   };
 
+  // 전체 선택 여부 확인
+  const isAllSelected = (mealType: string): boolean =>
+    weekdays.every((w) => isSelected(w, mealType));
+
   return (
     <div className="border border-rule bg-white">
       {/* 헤더 */}
       <div className="grid grid-cols-6 border-b border-rule bg-stone">
-        <div className="p-3 text-[13px] font-medium text-muted">요일</div>
+        <div className="p-2 md:p-3 text-[12px] md:text-[13px] font-medium text-muted">
+          식사
+        </div>
         {weekdays.map((weekday) => (
           <div
             key={weekday}
-            className="p-3 text-center text-[14px] font-medium text-ink"
+            className="p-2 md:p-3 text-center text-[13px] md:text-[14px] font-medium text-ink"
           >
             {WEEKDAY_LABELS[weekday]}
           </div>
@@ -94,19 +100,28 @@ export function WeekdaySelector({
           key={mealType}
           className="grid grid-cols-6 border-b border-rule last:border-b-0"
         >
-          <div className="p-3 flex items-center gap-2">
+          <div className="p-2 md:p-3 flex flex-col items-start justify-center gap-1">
+            <span className="text-[13px] font-medium text-ink">
+              {MEAL_TYPE_LABELS[mealType]}
+            </span>
             <button
               type="button"
               onClick={() => handleSelectAll(mealType)}
               disabled={disabled}
-              className="text-[13px] font-medium text-ink hover:text-teal disabled:opacity-50"
+              className={`text-[11px] font-medium px-2 py-0.5 border transition-colors cursor-pointer ${
+                isAllSelected(mealType)
+                  ? "bg-teal/10 border-teal text-teal"
+                  : "bg-stone border-rule text-muted hover:border-teal hover:text-teal"
+              } disabled:opacity-50`}
             >
-              {MEAL_TYPE_LABELS[mealType]}
+              {isAllSelected(mealType) ? "전체 해제" : "전체 선택"}
             </button>
-            <span className="text-[11px] text-teal underline">(전체)</span>
           </div>
           {weekdays.map((weekday) => (
-            <div key={weekday} className="p-3 flex items-center justify-center">
+            <div
+              key={weekday}
+              className="p-2 md:p-3 flex items-center justify-center"
+            >
               <button
                 type="button"
                 role="checkbox"
@@ -114,7 +129,7 @@ export function WeekdaySelector({
                 aria-label={`${WEEKDAY_LABELS[weekday]}요일 ${MEAL_TYPE_LABELS[mealType]}`}
                 onClick={() => handleToggle(weekday, mealType)}
                 disabled={disabled}
-                className={`w-8 h-8 flex items-center justify-center border transition-colors ${
+                className={`w-8 h-8 md:w-9 md:h-9 flex items-center justify-center border transition-colors cursor-pointer ${
                   isSelected(weekday, mealType)
                     ? "bg-teal border-teal text-white"
                     : "bg-white border-rule text-muted hover:border-teal"

@@ -278,6 +278,28 @@ export async function deleteApplication(
 }
 
 /**
+ * 활성 재원생 목록 조회 (미신청자 비교용)
+ */
+export async function getActiveStudents(
+  supabase: SupabaseClient
+): Promise<
+  { id: string; name: string; school: string | null; grade: number | null }[]
+> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, name, school, grade")
+    .eq("role", "student")
+    .eq("status", "active")
+    .order("name");
+
+  if (error) {
+    throw new Error(`활성 학생 조회 실패: ${error.message}`);
+  }
+
+  return data || [];
+}
+
+/**
  * 학생의 모든 신청 조회
  */
 export async function getStudentApplications(

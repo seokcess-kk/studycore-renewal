@@ -139,15 +139,25 @@ export function DateSelector({
           {mealTypes.map((mealType) => (
             <tr key={mealType} className="border-b border-rule last:border-b-0">
               <td className="p-3 sticky left-0 bg-white z-10">
-                <button
-                  type="button"
-                  onClick={() => handleSelectAll(mealType)}
-                  disabled={disabled}
-                  className="text-[13px] font-medium text-ink hover:text-teal disabled:opacity-50"
-                >
-                  {MEAL_TYPE_LABELS[mealType]}
-                  <span className="text-[11px] text-teal ml-1 underline">(전체)</span>
-                </button>
+                <div className="flex flex-col gap-1">
+                  <span className="text-[13px] font-medium text-ink">
+                    {MEAL_TYPE_LABELS[mealType]}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectAll(mealType)}
+                    disabled={disabled}
+                    className={`text-[11px] font-medium px-2 py-0.5 border transition-colors cursor-pointer w-fit ${
+                      dates.every((d) => isSelected(d, mealType))
+                        ? "bg-teal/10 border-teal text-teal"
+                        : "bg-stone border-rule text-muted hover:border-teal hover:text-teal"
+                    } disabled:opacity-50`}
+                  >
+                    {dates.every((d) => isSelected(d, mealType))
+                      ? "전체 해제"
+                      : "전체 선택"}
+                  </button>
+                </div>
               </td>
               {dates.map((date) => (
                 <td key={formatDate(date)} className="p-2 text-center">

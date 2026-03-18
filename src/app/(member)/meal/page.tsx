@@ -183,14 +183,32 @@ export default function LunchPage() {
             </div>
           ) : (
             <>
+              {/* 신청 완료 배너 */}
+              {application && !hasChanges && (
+                <div className="bg-teal/10 border border-teal p-4 mb-6 flex items-center gap-3">
+                  <CheckCircle2 size={20} className="text-teal flex-shrink-0" />
+                  <div>
+                    <p className="text-[14px] font-bold text-ink">
+                      신청 완료 ({selectionCount}끼)
+                    </p>
+                    <p className="text-[12px] text-muted">
+                      {new Date(application.created_at).toLocaleDateString("ko-KR")} 신청
+                      {application.updated_at !== application.created_at &&
+                        ` · ${new Date(application.updated_at).toLocaleDateString("ko-KR")} 수정`}
+                      {" · "}아래에서 변경할 수 있습니다.
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* 기간 정보 */}
-              <div className="bg-white border border-rule p-6 mb-6">
-                <div className="flex items-start justify-between">
+              <div className="bg-white border border-rule p-4 md:p-6 mb-6">
+                <div className="flex items-start justify-between gap-4">
                   <div>
                     <h2 className="text-[16px] font-bold text-ink mb-1">
                       {period.title}
                     </h2>
-                    <div className="flex items-center gap-4 text-[13px] text-muted">
+                    <div className="flex flex-wrap items-center gap-3 text-[13px] text-muted">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} />
                         {period.start_date} ~ {period.end_date}
@@ -201,7 +219,7 @@ export default function LunchPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-shrink-0">
                     {period.meal_types.map((type) => (
                       <span
                         key={type}
@@ -212,16 +230,6 @@ export default function LunchPage() {
                     ))}
                   </div>
                 </div>
-
-                {/* 기존 신청 상태 */}
-                {application && (
-                  <div className="mt-4 pt-4 border-t border-rule flex items-center gap-2 text-[13px] text-teal">
-                    <CheckCircle2 size={16} />
-                    <span>
-                      신청 완료 ({new Date(application.created_at).toLocaleDateString("ko-KR")})
-                    </span>
-                  </div>
-                )}
               </div>
 
               {/* 선택 UI */}
@@ -245,50 +253,29 @@ export default function LunchPage() {
                 )}
               </div>
 
-              {/* 선택 요약 & 제출 */}
-              <div className="bg-white border border-rule p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-[14px] text-muted">선택한 식사:</span>
-                    <span className="ml-2 text-[16px] font-bold text-ink">
-                      {selectionCount}개
-                    </span>
+              {/* 선택 상세 (inline) */}
+              {selectionCount > 0 && (
+                <div className="bg-white border border-rule p-4 mb-6">
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(selections)
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([key, meals]) => (
+                        <span
+                          key={key}
+                          className="text-[12px] px-2 py-1 bg-stone text-ink"
+                        >
+                          {period.selection_type === "weekday"
+                            ? ["일", "월", "화", "수", "목", "금", "토"][parseInt(key)]
+                            : key}
+                          : {meals.map((m) => MEAL_TYPE_LABELS[m as MealTypeValue]).join(", ")}
+                        </span>
+                      ))}
                   </div>
-                  <Button
-                    variant="primary"
-                    size="md"
-                    onClick={handleSubmit}
-                    isLoading={isSubmitting}
-                    disabled={!hasChanges || selectionCount === 0}
-                  >
-                    {application ? "수정하기" : "신청하기"}
-                  </Button>
                 </div>
-
-                {/* 선택 상세 */}
-                {selectionCount > 0 && (
-                  <div className="mt-4 pt-4 border-t border-rule">
-                    <div className="flex flex-wrap gap-2">
-                      {Object.entries(selections)
-                        .sort(([a], [b]) => a.localeCompare(b))
-                        .map(([key, meals]) => (
-                          <span
-                            key={key}
-                            className="text-[12px] px-2 py-1 bg-stone text-ink"
-                          >
-                            {period.selection_type === "weekday"
-                              ? ["일", "월", "화", "수", "목", "금", "토"][parseInt(key)]
-                              : key}
-                            : {meals.map((m) => MEAL_TYPE_LABELS[m as MealTypeValue]).join(", ")}
-                          </span>
-                        ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+              )}
 
               {/* 안내 */}
-              <div className="mt-6 p-4 bg-navy/5 border border-navy/10">
+              <div className="p-4 bg-navy/5 border border-navy/10 mb-24">
                 <h3 className="text-[13px] font-bold text-ink mb-2">안내사항</h3>
                 <ul className="text-[12px] text-muted space-y-1">
                   <li>• 신청 기간 내에는 언제든 수정 가능합니다.</li>
@@ -300,6 +287,43 @@ export default function LunchPage() {
           )}
         </div>
       </main>
+
+      {/* Sticky 하단 제출 바 */}
+      {period && !isLoading && !error && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-rule px-6 py-3">
+          <div className="max-w-3xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-[14px] text-muted">선택</span>
+              <span className="text-[18px] font-bold text-ink">
+                {selectionCount}끼
+              </span>
+              {application && !hasChanges && (
+                <span className="text-[12px] text-teal font-medium flex items-center gap-1">
+                  <CheckCircle2 size={12} />
+                  저장됨
+                </span>
+              )}
+            </div>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={handleSubmit}
+              isLoading={isSubmitting}
+              disabled={!hasChanges || selectionCount === 0}
+              className="min-w-[120px]"
+            >
+              {isSubmitting
+                ? "저장 중..."
+                : application
+                ? hasChanges
+                  ? "수정하기"
+                  : "저장됨"
+                : "신청하기"}
+            </Button>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   );

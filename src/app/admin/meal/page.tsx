@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
@@ -9,6 +11,7 @@ import { createClient } from "@/lib/supabase/client";
 import {
   getPeriodList,
   getApplicationsByPeriod,
+  getActiveStudents,
   createPeriod,
   updatePeriod,
   deletePeriod,
@@ -19,7 +22,10 @@ import {
   type MealPeriod,
   type MealApplicationWithStudent,
   type CreateMealPeriodInput,
+  type MealTypeValue,
+  createMealPeriodSchema,
   MEAL_TYPE_LABELS,
+  WEEKDAY_LABELS,
 } from "@/domains/meal/model";
 import { useToast } from "@/components/common/Toast";
 import {
@@ -29,8 +35,10 @@ import {
   Download,
   Pencil,
   Trash2,
+  Check,
+  X,
+  UserX,
   ChevronDown,
-  ChevronUp,
 } from "lucide-react";
 import * as XLSX from "xlsx";
 
@@ -38,11 +46,17 @@ export default function AdminLunchPage() {
   const [periods, setPeriods] = useState<MealPeriod[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState<MealPeriod | null>(null);
-  const [applications, setApplications] = useState<MealApplicationWithStudent[]>([]);
+  const [applications, setApplications] = useState<
+    MealApplicationWithStudent[]
+  >([]);
+  const [activeStudents, setActiveStudents] = useState<
+    { id: string; name: string; school: string | null; grade: number | null }[]
+  >([]);
   const [isLoadingApps, setIsLoadingApps] = useState(false);
   const [showPeriodModal, setShowPeriodModal] = useState(false);
   const [editingPeriod, setEditingPeriod] = useState<MealPeriod | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<MealPeriod | null>(null);
+  const [showMobilePeriods, setShowMobilePeriods] = useState(false);
   const { showToast } = useToast();
 
   const fetchPeriods = async () => {
@@ -52,7 +66,6 @@ export default function AdminLunchPage() {
 
     if (result.success) {
       setPeriods(result.periods);
-      // 첫 번째 활성 기간 자동 선택
       const activePeriod = result.periods.find((p) => p.is_active);
       if (activePeriod && !selectedPeriod) {
         setSelectedPeriod(activePeriod);
@@ -64,11 +77,15 @@ export default function AdminLunchPage() {
   const fetchApplications = async (periodId: string) => {
     setIsLoadingApps(true);
     const supabase = createClient();
-    const result = await getApplicationsByPeriod(supabase, periodId);
 
-    if (result.success) {
-      setApplications(result.applications);
-    }
+    const [appResult, studentResult] = await Promise.all([
+      getApplicationsByPeriod(supabase, periodId),
+      getActiveStudents(supabase),
+    ]);
+
+    if (appResult.success) setApplications(appResult.applications);
+    if (studentResult.success) setActiveStudents(studentResult.students);
+
     setIsLoadingApps(false);
   };
 
@@ -83,13 +100,35 @@ export default function AdminLunchPage() {
     }
   }, [selectedPeriod]);
 
+  // 미신청 학생 계산
+  const unappliedStudents = useMemo(() => {
+    const appliedIds = new Set(applications.map((a) => a.student_id));
+    return activeStudents.filter((s) => !appliedIds.has(s.id));
+  }, [applications, activeStudents]);
+
   const handleExportExcel = () => {
     if (!selectedPeriod) return;
 
     const data = generateExcelData(selectedPeriod, applications);
-    const ws = XLSX.utils.json_to_sheet(data);
+
+    // 요약 시트 데이터
+    const summary = generateSummary(selectedPeriod, applications);
+    const summaryData = summary.map((s) => ({
+      "요일/날짜": s.label,
+      중식: s.lunch,
+      석식: s.dinner,
+      합계: s.lunch + s.dinner,
+    }));
+
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "도시락 신청");
+
+    // 요약 시트
+    const summaryWs = XLSX.utils.json_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(wb, summaryWs, "식수 합계");
+
+    // 상세 시트
+    const detailWs = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, detailWs, "신청 상세");
 
     const fileName = `도시락신청_${selectedPeriod.title}_${new Date().toISOString().split("T")[0]}.xlsx`;
     XLSX.writeFile(wb, fileName);
@@ -115,7 +154,34 @@ export default function AdminLunchPage() {
     }
   };
 
-  const summary = selectedPeriod ? generateSummary(selectedPeriod, applications) : [];
+  const summary = selectedPeriod
+    ? generateSummary(selectedPeriod, applications)
+    : [];
+
+  // 요일/날짜 키 목록 (매트릭스 열)
+  const selectionKeys = useMemo(() => {
+    if (!selectedPeriod) return [];
+    if (selectedPeriod.selection_type === "weekday") {
+      return [1, 2, 3, 4, 5].map((d) => d.toString());
+    }
+    // 날짜별: 모든 신청에서 사용된 날짜 수집
+    const dateSet = new Set<string>();
+    applications.forEach((app) => {
+      const sel = app.selections as Record<string, string[]>;
+      Object.keys(sel).forEach((k) => dateSet.add(k));
+    });
+    return Array.from(dateSet).sort();
+  }, [selectedPeriod, applications]);
+
+  const getKeyLabel = (key: string): string => {
+    if (!selectedPeriod) return key;
+    if (selectedPeriod.selection_type === "weekday") {
+      return WEEKDAY_LABELS[parseInt(key)] || key;
+    }
+    // 날짜: MM/DD 형식
+    const parts = key.split("-");
+    return `${parseInt(parts[1])}/${parseInt(parts[2])}`;
+  };
 
   return (
     <>
@@ -128,70 +194,129 @@ export default function AdminLunchPage() {
       />
 
       <div className="p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* 좌측: 기간 목록 */}
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* 모바일: 기간 드롭다운 */}
+          <div className="lg:hidden">
+            <button
+              onClick={() => setShowMobilePeriods(!showMobilePeriods)}
+              className="w-full flex items-center justify-between bg-white border border-rule px-4 py-3 text-[14px] font-medium text-ink"
+            >
+              <span>
+                {selectedPeriod ? selectedPeriod.title : "기간을 선택하세요"}
+              </span>
+              <ChevronDown
+                size={16}
+                className={`transition-transform ${showMobilePeriods ? "rotate-180" : ""}`}
+              />
+            </button>
+            {showMobilePeriods && (
+              <div className="bg-white border border-t-0 border-rule divide-y divide-rule">
+                {periods.map((period) => (
+                  <button
+                    key={period.id}
+                    onClick={() => {
+                      setSelectedPeriod(period);
+                      setShowMobilePeriods(false);
+                    }}
+                    className={`w-full text-left px-4 py-3 text-[14px] ${
+                      selectedPeriod?.id === period.id
+                        ? "bg-stone font-medium"
+                        : "hover:bg-stone/50"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>{period.title}</span>
+                      <StatusBadge
+                        status={period.is_active ? "active" : "inactive"}
+                        labels={{ active: "활성", inactive: "비활성" }}
+                      />
+                    </div>
+                    <p className="text-[12px] text-muted mt-0.5">
+                      {period.start_date} ~ {period.end_date}
+                    </p>
+                  </button>
+                ))}
+                <button
+                  onClick={() => {
+                    setEditingPeriod(null);
+                    setShowPeriodModal(true);
+                    setShowMobilePeriods(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-3 text-[13px] text-teal hover:bg-stone/50"
+                >
+                  <Plus size={14} />새 기간 추가
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* 데스크톱: 기간 사이드바 */}
+          <div className="hidden lg:block lg:col-span-1">
             <div className="bg-white border border-rule">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-rule">
-                <h2 className="text-[15px] font-bold text-ink">신청 기간</h2>
+              <div className="flex items-center justify-between px-4 py-3 border-b border-rule bg-stone">
+                <h2 className="text-[14px] font-bold text-ink">신청 기간</h2>
                 <button
                   onClick={() => {
                     setEditingPeriod(null);
                     setShowPeriodModal(true);
                   }}
-                  className="flex items-center gap-1 text-[13px] text-teal hover:text-teal-d"
+                  className="flex items-center gap-1 text-[13px] text-teal hover:text-teal-d cursor-pointer"
                 >
                   <Plus size={14} />
-                  새 기간
+                  추가
                 </button>
               </div>
 
               {isLoading ? (
                 <div className="p-4 space-y-3">
                   {Array.from({ length: 3 }).map((_, i) => (
-                    <Skeleton key={i} className="h-20 w-full" />
+                    <Skeleton key={i} className="h-16 w-full" />
                   ))}
                 </div>
               ) : periods.length === 0 ? (
                 <div className="p-8 text-center text-muted">
                   <Calendar size={32} className="mx-auto mb-2 opacity-50" />
-                  <p className="text-[14px]">등록된 기간이 없습니다.</p>
+                  <p className="text-[13px]">등록된 기간이 없습니다.</p>
                 </div>
               ) : (
-                <div className="divide-y divide-rule">
+                <div className="divide-y divide-rule max-h-[500px] overflow-y-auto">
                   {periods.map((period) => (
                     <button
                       key={period.id}
                       onClick={() => setSelectedPeriod(period)}
-                      className={`w-full text-left p-4 hover:bg-stone/50 transition-colors ${
+                      className={`w-full text-left p-3 hover:bg-stone/50 transition-colors cursor-pointer ${
                         selectedPeriod?.id === period.id ? "bg-stone" : ""
                       }`}
                     >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="text-[14px] font-medium text-ink">
-                            {period.title}
-                          </p>
-                          <p className="text-[12px] text-muted mt-1">
-                            {period.start_date} ~ {period.end_date}
-                          </p>
-                        </div>
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-[13px] font-medium text-ink leading-tight">
+                          {period.title}
+                        </p>
                         <StatusBadge
                           status={period.is_active ? "active" : "inactive"}
                           labels={{ active: "활성", inactive: "비활성" }}
                         />
                       </div>
-                      <div className="flex gap-2 mt-2">
+                      <p className="text-[11px] text-muted mt-1">
+                        {period.start_date} ~ {period.end_date}
+                      </p>
+                      <div className="flex gap-1.5 mt-1.5">
                         {period.meal_types.map((type) => (
                           <span
                             key={type}
-                            className="text-[11px] px-1.5 py-0.5 bg-stone text-muted"
+                            className="text-[10px] px-1.5 py-0.5 bg-stone text-muted"
                           >
-                            {MEAL_TYPE_LABELS[type as keyof typeof MEAL_TYPE_LABELS]}
+                            {
+                              MEAL_TYPE_LABELS[
+                                type as keyof typeof MEAL_TYPE_LABELS
+                              ]
+                            }
                           </span>
                         ))}
-                        <span className="text-[11px] px-1.5 py-0.5 bg-stone text-muted">
-                          {period.selection_type === "weekday" ? "요일별" : "날짜별"}
+                        <span className="text-[10px] px-1.5 py-0.5 bg-stone text-muted">
+                          {period.selection_type === "weekday"
+                            ? "요일별"
+                            : "날짜별"}
                         </span>
                       </div>
                     </button>
@@ -202,102 +327,276 @@ export default function AdminLunchPage() {
           </div>
 
           {/* 우측: 신청 현황 */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             {selectedPeriod ? (
-              <div className="bg-white border border-rule">
-                {/* 기간 정보 헤더 */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-rule">
-                  <div>
-                    <h2 className="text-[15px] font-bold text-ink">
-                      {selectedPeriod.title}
-                    </h2>
-                    <p className="text-[12px] text-muted">
-                      {selectedPeriod.start_date} ~ {selectedPeriod.end_date}
-                    </p>
+              <div className="space-y-6">
+                {/* 기간 헤더 + 액션 */}
+                <div className="bg-white border border-rule">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-rule bg-stone">
+                    <div>
+                      <h2 className="text-[15px] font-bold text-ink">
+                        {selectedPeriod.title}
+                      </h2>
+                      <p className="text-[12px] text-muted">
+                        {selectedPeriod.start_date} ~{" "}
+                        {selectedPeriod.end_date}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setEditingPeriod(selectedPeriod);
+                          setShowPeriodModal(true);
+                        }}
+                        className="p-2 text-muted hover:text-navy transition-colors cursor-pointer"
+                        title="수정"
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget(selectedPeriod)}
+                        className="p-2 text-muted hover:text-red-500 transition-colors cursor-pointer"
+                        title="삭제"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                      <button
+                        onClick={handleExportExcel}
+                        disabled={applications.length === 0}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-teal text-white text-[13px] font-medium hover:bg-teal-d transition-colors disabled:opacity-50 cursor-pointer"
+                      >
+                        <Download size={14} />
+                        엑셀
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setEditingPeriod(selectedPeriod);
-                        setShowPeriodModal(true);
-                      }}
-                      className="p-2 text-muted hover:text-navy transition-colors"
-                      title="수정"
-                    >
-                      <Pencil size={16} />
-                    </button>
-                    <button
-                      onClick={() => setDeleteTarget(selectedPeriod)}
-                      className="p-2 text-muted hover:text-red-500 transition-colors"
-                      title="삭제"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                    <button
-                      onClick={handleExportExcel}
-                      disabled={applications.length === 0}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-teal text-white text-[13px] font-medium hover:bg-teal-d transition-colors disabled:opacity-50"
-                    >
-                      <Download size={14} />
-                      엑셀 다운로드
-                    </button>
+
+                  {/* 식수 합계 카드 — 핵심 정보 */}
+                  <div className="px-4 py-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Users size={14} className="text-muted" />
+                      <span className="text-[13px] font-medium text-ink">
+                        신청 {applications.length}명
+                        {unappliedStudents.length > 0 && (
+                          <span className="text-muted font-normal">
+                            {" "}
+                            / 미신청 {unappliedStudents.length}명
+                          </span>
+                        )}
+                      </span>
+                    </div>
+
+                    {summary.length > 0 && (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-[13px]">
+                          <thead>
+                            <tr className="border-b border-rule">
+                              <th className="text-left py-2 pr-4 font-medium text-muted">
+                                {selectedPeriod.selection_type === "weekday"
+                                  ? "요일"
+                                  : "날짜"}
+                              </th>
+                              {selectedPeriod.meal_types.includes("lunch") && (
+                                <th className="text-center py-2 px-3 font-medium text-muted">
+                                  중식
+                                </th>
+                              )}
+                              {selectedPeriod.meal_types.includes("dinner") && (
+                                <th className="text-center py-2 px-3 font-medium text-muted">
+                                  석식
+                                </th>
+                              )}
+                              <th className="text-center py-2 px-3 font-bold text-ink">
+                                합계
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {summary.map((s) => (
+                              <tr
+                                key={s.label}
+                                className="border-b border-rule last:border-b-0"
+                              >
+                                <td className="py-2 pr-4 font-medium text-ink">
+                                  {s.label}
+                                </td>
+                                {selectedPeriod.meal_types.includes(
+                                  "lunch"
+                                ) && (
+                                  <td className="text-center py-2 px-3">
+                                    <span
+                                      className={
+                                        s.lunch > 0
+                                          ? "font-bold text-ink"
+                                          : "text-muted"
+                                      }
+                                    >
+                                      {s.lunch}
+                                    </span>
+                                  </td>
+                                )}
+                                {selectedPeriod.meal_types.includes(
+                                  "dinner"
+                                ) && (
+                                  <td className="text-center py-2 px-3">
+                                    <span
+                                      className={
+                                        s.dinner > 0
+                                          ? "font-bold text-ink"
+                                          : "text-muted"
+                                      }
+                                    >
+                                      {s.dinner}
+                                    </span>
+                                  </td>
+                                )}
+                                <td className="text-center py-2 px-3 font-bold text-teal">
+                                  {s.lunch + s.dinner}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* 요약 통계 */}
-                <div className="px-4 py-3 border-b border-rule bg-stone/30">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Users size={14} className="text-muted" />
-                    <span className="text-[13px] font-medium">
-                      총 {applications.length}명 신청
-                    </span>
+                {/* 신청자 매트릭스 테이블 */}
+                <div className="bg-white border border-rule">
+                  <div className="px-4 py-3 border-b border-rule bg-stone">
+                    <h3 className="text-[14px] font-bold text-ink">
+                      신청자 현황
+                    </h3>
                   </div>
-                  {summary.length > 0 && (
-                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-[12px]">
-                      {summary.map((s) => (
-                        <div key={s.label} className="bg-white p-2 text-center">
-                          <div className="font-medium text-ink">{s.label}</div>
-                          <div className="text-muted mt-1">
-                            중식 {s.lunch} / 석식 {s.dinner}
-                          </div>
-                        </div>
+
+                  {isLoadingApps ? (
+                    <div className="p-4 space-y-3">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Skeleton key={i} className="h-10 w-full" />
                       ))}
+                    </div>
+                  ) : applications.length === 0 ? (
+                    <div className="p-12 text-center text-muted">
+                      <p className="text-[14px]">아직 신청이 없습니다.</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-[13px]">
+                        <thead className="bg-stone sticky top-0">
+                          <tr>
+                            <th className="px-4 py-2.5 text-left font-medium text-muted whitespace-nowrap sticky left-0 bg-stone z-10">
+                              이름
+                            </th>
+                            <th className="px-3 py-2.5 text-left font-medium text-muted whitespace-nowrap">
+                              학교
+                            </th>
+                            {selectionKeys.map((key) => (
+                              <th
+                                key={key}
+                                className="px-2 py-2.5 text-center font-medium text-muted whitespace-nowrap"
+                              >
+                                {getKeyLabel(key)}
+                              </th>
+                            ))}
+                            <th className="px-3 py-2.5 text-center font-bold text-ink whitespace-nowrap">
+                              합계
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-rule">
+                          {applications.map((app) => {
+                            const sel = app.selections as Record<
+                              string,
+                              string[]
+                            >;
+                            const totalCount = Object.values(sel).reduce(
+                              (acc, m) => acc + m.length,
+                              0
+                            );
+
+                            return (
+                              <tr
+                                key={app.id}
+                                className="hover:bg-stone/30"
+                              >
+                                <td className="px-4 py-2.5 font-medium text-ink whitespace-nowrap sticky left-0 bg-white z-10">
+                                  {app.student?.name || "알 수 없음"}
+                                </td>
+                                <td className="px-3 py-2.5 text-muted whitespace-nowrap">
+                                  {app.student?.school || "-"}
+                                  {app.student?.grade
+                                    ? ` ${app.student.grade}`
+                                    : ""}
+                                </td>
+                                {selectionKeys.map((key) => {
+                                  const meals = sel[key] || [];
+                                  const hasLunch = meals.includes("lunch");
+                                  const hasDinner = meals.includes("dinner");
+
+                                  return (
+                                    <td
+                                      key={key}
+                                      className="px-2 py-2.5 text-center"
+                                    >
+                                      {meals.length > 0 ? (
+                                        <span className="inline-flex items-center gap-0.5 text-[11px] font-medium">
+                                          {hasLunch && (
+                                            <span className="px-1 py-0.5 bg-teal/10 text-teal">
+                                              중
+                                            </span>
+                                          )}
+                                          {hasDinner && (
+                                            <span className="px-1 py-0.5 bg-navy/10 text-navy">
+                                              석
+                                            </span>
+                                          )}
+                                        </span>
+                                      ) : (
+                                        <span className="text-rule">-</span>
+                                      )}
+                                    </td>
+                                  );
+                                })}
+                                <td className="px-3 py-2.5 text-center font-bold text-ink">
+                                  {totalCount}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
                     </div>
                   )}
                 </div>
 
-                {/* 신청 목록 */}
-                {isLoadingApps ? (
-                  <div className="p-4 space-y-3">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Skeleton key={i} className="h-12 w-full" />
-                    ))}
-                  </div>
-                ) : applications.length === 0 ? (
-                  <div className="p-12 text-center text-muted">
-                    <p className="text-[14px]">아직 신청이 없습니다.</p>
-                  </div>
-                ) : (
-                  <div className="max-h-[400px] overflow-y-auto">
-                    <table className="w-full">
-                      <thead className="bg-stone sticky top-0">
-                        <tr className="text-[13px] text-muted">
-                          <th className="px-4 py-2 text-left font-medium">이름</th>
-                          <th className="px-4 py-2 text-left font-medium">학교/학년</th>
-                          <th className="px-4 py-2 text-left font-medium">선택</th>
-                          <th className="px-4 py-2 text-center font-medium">신청일</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-rule">
-                        {applications.map((app) => (
-                          <ApplicationRow
-                            key={app.id}
-                            application={app}
-                            period={selectedPeriod}
-                          />
+                {/* 미신청 학생 */}
+                {unappliedStudents.length > 0 && (
+                  <div className="bg-white border border-rule">
+                    <div className="px-4 py-3 border-b border-rule bg-stone flex items-center gap-2">
+                      <UserX size={14} className="text-muted" />
+                      <h3 className="text-[14px] font-bold text-ink">
+                        미신청 학생 ({unappliedStudents.length}명)
+                      </h3>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex flex-wrap gap-2">
+                        {unappliedStudents.map((student) => (
+                          <span
+                            key={student.id}
+                            className="text-[12px] px-2.5 py-1 bg-stone text-ink"
+                          >
+                            {student.name}
+                            {student.school && (
+                              <span className="text-muted ml-1">
+                                {student.school}
+                                {student.grade ? ` ${student.grade}` : ""}
+                              </span>
+                            )}
+                          </span>
                         ))}
-                      </tbody>
-                    </table>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -311,7 +610,7 @@ export default function AdminLunchPage() {
         </div>
       </div>
 
-      {/* 기간 생성/수정 모달 */}
+      {/* 기간 생성/수정 모달 (RHF + Zod) */}
       {showPeriodModal && (
         <PeriodModal
           period={editingPeriod}
@@ -341,71 +640,9 @@ export default function AdminLunchPage() {
   );
 }
 
-// 신청 행 컴포넌트
-function ApplicationRow({
-  application,
-  period,
-}: {
-  application: MealApplicationWithStudent;
-  period: MealPeriod;
-}) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const selections = application.selections as Record<string, string[]>;
-
-  const selectionCount = Object.values(selections).reduce(
-    (acc, meals) => acc + meals.length,
-    0
-  );
-
-  return (
-    <>
-      <tr className="hover:bg-stone/30">
-        <td className="px-4 py-3 text-[14px]">
-          {application.student?.name || "알 수 없음"}
-        </td>
-        <td className="px-4 py-3 text-[13px] text-muted">
-          {application.student?.school || "-"}{" "}
-          {application.student?.grade ? `${application.student.grade}학년` : ""}
-        </td>
-        <td className="px-4 py-3">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-1 text-[13px] text-teal hover:text-teal-d"
-          >
-            {selectionCount}개 선택
-            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </button>
-        </td>
-        <td className="px-4 py-3 text-center text-[13px] text-muted">
-          {new Date(application.created_at).toLocaleDateString("ko-KR")}
-        </td>
-      </tr>
-      {isExpanded && (
-        <tr>
-          <td colSpan={4} className="px-4 py-3 bg-stone/30">
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(selections).map(([key, meals]) => (
-                <div key={key} className="text-[12px]">
-                  <span className="font-medium">
-                    {period.selection_type === "weekday"
-                      ? ["일", "월", "화", "수", "목", "금", "토"][parseInt(key)]
-                      : key}
-                    :
-                  </span>{" "}
-                  {meals
-                    .map((m) => MEAL_TYPE_LABELS[m as keyof typeof MEAL_TYPE_LABELS])
-                    .join(", ")}
-                </div>
-              ))}
-            </div>
-          </td>
-        </tr>
-      )}
-    </>
-  );
-}
-
-// 기간 생성/수정 모달
+// ─────────────────────────────────────────────
+// 기간 생성/수정 모달 (react-hook-form + zod)
+// ─────────────────────────────────────────────
 function PeriodModal({
   period,
   onClose,
@@ -416,29 +653,50 @@ function PeriodModal({
   onSave: () => void;
 }) {
   const { showToast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<CreateMealPeriodInput>({
-    title: period?.title || "",
-    start_date: period?.start_date || "",
-    end_date: period?.end_date || "",
-    meal_types: period?.meal_types || ["lunch", "dinner"],
-    selection_type: period?.selection_type || "weekday",
-    is_active: period?.is_active ?? true,
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateMealPeriodInput>({
+    resolver: zodResolver(createMealPeriodSchema),
+    defaultValues: {
+      title: period?.title || "",
+      start_date: period?.start_date || "",
+      end_date: period?.end_date || "",
+      meal_types: period?.meal_types || ["lunch", "dinner"],
+      selection_type: period?.selection_type || "weekday",
+      is_active: period?.is_active ?? true,
+    },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const mealTypes = watch("meal_types");
+  const selectionType = watch("selection_type");
+  const isActive = watch("is_active");
 
+  const toggleMealType = (type: "lunch" | "dinner") => {
+    const current = mealTypes || [];
+    const next = current.includes(type)
+      ? current.filter((t) => t !== type)
+      : [...current, type];
+    setValue("meal_types", next as ("lunch" | "dinner")[], {
+      shouldValidate: true,
+    });
+  };
+
+  const onSubmit = async (data: CreateMealPeriodInput) => {
     const supabase = createClient();
     const result = period
-      ? await updatePeriod(supabase, period.id, formData)
-      : await createPeriod(supabase, formData);
-
-    setIsSubmitting(false);
+      ? await updatePeriod(supabase, period.id, data)
+      : await createPeriod(supabase, data);
 
     if (result.success) {
-      showToast(period ? "기간이 수정되었습니다." : "기간이 생성되었습니다.", "success");
+      showToast(
+        period ? "기간이 수정되었습니다." : "기간이 생성되었습니다.",
+        "success"
+      );
       onSave();
     } else {
       showToast(result.error || "오류가 발생했습니다.", "error");
@@ -448,154 +706,185 @@ function PeriodModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white w-full max-w-md mx-4">
-        <div className="px-6 py-4 border-b border-rule">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-rule">
           <h2 className="text-[17px] font-bold text-ink">
             {period ? "기간 수정" : "새 기간 생성"}
           </h2>
+          <button
+            onClick={onClose}
+            className="p-1 text-muted hover:text-ink transition-colors cursor-pointer"
+          >
+            <X size={18} />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+          {/* 기간명 */}
           <div>
             <label className="block text-[13px] font-medium text-ink mb-1">
-              기간명
+              기간명 <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="예: 2024년 1월 도시락"
-              className="w-full px-3 py-2 border border-rule text-[14px] focus:border-navy focus:outline-none"
-              required
+              className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                errors.title ? "border-red-500" : "border-rule"
+              }`}
+              {...register("title")}
             />
+            {errors.title && (
+              <p className="mt-1 text-[12px] text-red-500">
+                {errors.title.message}
+              </p>
+            )}
           </div>
 
+          {/* 날짜 */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-[13px] font-medium text-ink mb-1">
-                시작일
+                시작일 <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
-                value={formData.start_date}
-                onChange={(e) =>
-                  setFormData({ ...formData, start_date: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-rule text-[14px] focus:border-navy focus:outline-none"
-                required
+                className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                  errors.start_date ? "border-red-500" : "border-rule"
+                }`}
+                {...register("start_date")}
               />
+              {errors.start_date && (
+                <p className="mt-1 text-[12px] text-red-500">
+                  {errors.start_date.message}
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-[13px] font-medium text-ink mb-1">
-                종료일
+                종료일 <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
-                value={formData.end_date}
-                onChange={(e) =>
-                  setFormData({ ...formData, end_date: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-rule text-[14px] focus:border-navy focus:outline-none"
-                required
+                className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                  errors.end_date ? "border-red-500" : "border-rule"
+                }`}
+                {...register("end_date")}
               />
+              {errors.end_date && (
+                <p className="mt-1 text-[12px] text-red-500">
+                  {errors.end_date.message}
+                </p>
+              )}
             </div>
           </div>
 
+          {/* 식사 유형 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-1">
-              식사 유형
+            <label className="block text-[13px] font-medium text-ink mb-2">
+              식사 유형 <span className="text-red-500">*</span>
             </label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.meal_types.includes("lunch")}
-                  onChange={(e) => {
-                    const types = e.target.checked
-                      ? [...formData.meal_types, "lunch"]
-                      : formData.meal_types.filter((t) => t !== "lunch");
-                    setFormData({ ...formData, meal_types: types as ("lunch" | "dinner")[] });
-                  }}
-                  className="w-4 h-4"
-                />
-                <span className="text-[14px]">중식</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.meal_types.includes("dinner")}
-                  onChange={(e) => {
-                    const types = e.target.checked
-                      ? [...formData.meal_types, "dinner"]
-                      : formData.meal_types.filter((t) => t !== "dinner");
-                    setFormData({ ...formData, meal_types: types as ("lunch" | "dinner")[] });
-                  }}
-                  className="w-4 h-4"
-                />
-                <span className="text-[14px]">석식</span>
-              </label>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => toggleMealType("lunch")}
+                className={`flex items-center gap-2 px-4 py-2 border text-[14px] transition-colors cursor-pointer ${
+                  mealTypes?.includes("lunch")
+                    ? "bg-teal/10 border-teal text-teal font-medium"
+                    : "border-rule text-muted hover:border-teal"
+                }`}
+              >
+                {mealTypes?.includes("lunch") && <Check size={14} />}
+                중식
+              </button>
+              <button
+                type="button"
+                onClick={() => toggleMealType("dinner")}
+                className={`flex items-center gap-2 px-4 py-2 border text-[14px] transition-colors cursor-pointer ${
+                  mealTypes?.includes("dinner")
+                    ? "bg-navy/10 border-navy text-navy font-medium"
+                    : "border-rule text-muted hover:border-navy"
+                }`}
+              >
+                {mealTypes?.includes("dinner") && <Check size={14} />}
+                석식
+              </button>
             </div>
+            {errors.meal_types && (
+              <p className="mt-1 text-[12px] text-red-500">
+                {errors.meal_types.message}
+              </p>
+            )}
           </div>
 
+          {/* 선택 방식 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-1">
+            <label className="block text-[13px] font-medium text-ink mb-2">
               선택 방식
             </label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name="selection_type"
-                  value="weekday"
-                  checked={formData.selection_type === "weekday"}
-                  onChange={() =>
-                    setFormData({ ...formData, selection_type: "weekday" })
-                  }
-                  className="w-4 h-4"
-                />
-                <span className="text-[14px]">요일별</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name="selection_type"
-                  value="date"
-                  checked={formData.selection_type === "date"}
-                  onChange={() =>
-                    setFormData({ ...formData, selection_type: "date" })
-                  }
-                  className="w-4 h-4"
-                />
-                <span className="text-[14px]">날짜별</span>
-              </label>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setValue("selection_type", "weekday")}
+                className={`flex-1 py-2 border text-[14px] text-center transition-colors cursor-pointer ${
+                  selectionType === "weekday"
+                    ? "bg-navy text-white border-navy font-medium"
+                    : "border-rule text-muted hover:border-navy"
+                }`}
+              >
+                요일별
+              </button>
+              <button
+                type="button"
+                onClick={() => setValue("selection_type", "date")}
+                className={`flex-1 py-2 border text-[14px] text-center transition-colors cursor-pointer ${
+                  selectionType === "date"
+                    ? "bg-navy text-white border-navy font-medium"
+                    : "border-rule text-muted hover:border-navy"
+                }`}
+              >
+                날짜별
+              </button>
             </div>
           </div>
 
+          {/* 활성화 */}
           <div>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={formData.is_active}
-                onChange={(e) =>
-                  setFormData({ ...formData, is_active: e.target.checked })
-                }
-                className="w-4 h-4"
-              />
-              <span className="text-[14px]">활성화 (신청 가능)</span>
-            </label>
+            <button
+              type="button"
+              onClick={() => setValue("is_active", !isActive)}
+              className="flex items-center gap-3 cursor-pointer"
+            >
+              <div
+                className={`w-5 h-5 flex items-center justify-center border transition-colors ${
+                  isActive
+                    ? "bg-teal border-teal text-white"
+                    : "border-rule"
+                }`}
+              >
+                {isActive && <Check size={14} />}
+              </div>
+              <span className="text-[14px] text-ink">
+                활성화 (학생이 신청 가능)
+              </span>
+            </button>
           </div>
 
+          {/* 버튼 */}
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 px-4 py-2 bg-navy text-white text-[14px] font-medium hover:bg-navy-d transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2.5 bg-navy text-white text-[14px] font-medium hover:bg-navy-d transition-colors disabled:opacity-50 cursor-pointer"
             >
-              {period ? "수정" : "생성"}
+              {isSubmitting
+                ? "저장 중..."
+                : period
+                  ? "수정"
+                  : "생성"}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-rule text-ink text-[14px] hover:border-navy transition-colors"
+              className="px-4 py-2.5 border border-rule text-ink text-[14px] hover:border-navy transition-colors cursor-pointer"
             >
               취소
             </button>

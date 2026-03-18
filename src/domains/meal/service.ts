@@ -326,6 +326,33 @@ export async function getApplicationsByPeriod(
   }
 }
 
+/**
+ * 활성 재원생 목록 조회 (미신청자 비교용)
+ */
+export async function getActiveStudents(
+  supabase: SupabaseClient
+): Promise<{
+  success: boolean;
+  students: {
+    id: string;
+    name: string;
+    school: string | null;
+    grade: number | null;
+  }[];
+  error?: string;
+}> {
+  try {
+    const students = await repository.getActiveStudents(supabase);
+    return { success: true, students };
+  } catch (error) {
+    return {
+      success: false,
+      students: [],
+      error: error instanceof Error ? error.message : "알 수 없는 오류",
+    };
+  }
+}
+
 // ─────────────────────────────────────────────
 // 엑셀 내보내기
 // ─────────────────────────────────────────────
