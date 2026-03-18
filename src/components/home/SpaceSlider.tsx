@@ -31,14 +31,17 @@ const slides = [
   },
 ];
 
+const AUTO_PLAY_MS = 4000;
+
 export function SpaceSlider() {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const touchStartX = useRef(0);
+  const [progressKey, setProgressKey] = useState(0);
 
   const goTo = useCallback((index: number) => {
     setCurrent((index + slides.length) % slides.length);
+    setProgressKey((k) => k + 1);
   }, []);
 
   const next = useCallback(() => goTo(current + 1), [current, goTo]);
@@ -47,7 +50,7 @@ export function SpaceSlider() {
   // 자동 재생
   useEffect(() => {
     if (!isPaused) {
-      intervalRef.current = setInterval(next, 4000);
+      intervalRef.current = setInterval(next, AUTO_PLAY_MS);
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -97,7 +100,7 @@ export function SpaceSlider() {
         <motion.div
           className="flex"
           animate={{ x: `-${current * 100}%` }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          transition={{ type: "spring" as const, stiffness: 300, damping: 30 }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.2}
@@ -107,13 +110,19 @@ export function SpaceSlider() {
             setIsPaused(false);
           }}
         >
-          {slides.map((slide) => (
+          {slides.map((slide, index) => (
             <div
               key={slide.label}
-              className="min-w-full h-[540px] flex-shrink-0 relative overflow-hidden"
+              className="min-w-full h-[70vh] min-h-[480px] max-h-[600px] flex-shrink-0 relative overflow-hidden"
             >
-              {/* 배경 (플레이스홀더) */}
-              <div className="absolute inset-0 bg-gradient-to-br from-navy-dark to-[#1a4070]" />
+              {/* 배경 (플레이스홀더) — Ken Burns 줌인 효과 */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-br from-navy-dark to-[#1a4070]"
+                animate={{
+                  scale: index === current ? 1.05 : 1,
+                }}
+                transition={{ duration: 4, ease: "linear" }}
+              />
 
               {/* 격자 */}
               <div
@@ -130,17 +139,23 @@ export function SpaceSlider() {
               {/* 오버레이 */}
               <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/[0.88] via-transparent to-transparent z-[2]" />
 
-              {/* 컨텐츠 */}
+              {/* 컨텐츠 — 현재 슬라이드만 텍스트 모션 */}
               <div className="absolute bottom-0 left-0 right-0 z-[3] p-8 md:p-13 pointer-events-none">
-                <span className="font-mono text-[10px] font-bold text-teal tracking-[0.24em] uppercase block mb-2.5">
-                  {slide.label}
-                </span>
-                <h3 className="font-serif text-[28px] font-bold text-white mb-2 tracking-[-0.02em]">
-                  {slide.title}
-                </h3>
-                <p className="text-[13.5px] text-white/50 font-light leading-[1.7] max-w-[440px]">
-                  {slide.description}
-                </p>
+                <motion.div
+                  initial={false}
+                  animate={{ opacity: index === current ? 1 : 0, y: index === current ? 0 : 8 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <span className="font-mono text-[10px] font-bold text-teal tracking-[0.24em] uppercase block mb-2.5">
+                    {slide.label}
+                  </span>
+                  <h3 className="font-serif text-[28px] font-bold text-white mb-2 tracking-[-0.02em]">
+                    {slide.title}
+                  </h3>
+                  <p className="text-[13.5px] text-white/50 font-light leading-[1.7] max-w-[440px]">
+                    {slide.description}
+                  </p>
+                </motion.div>
               </div>
             </div>
           ))}
@@ -149,18 +164,25 @@ export function SpaceSlider() {
 
       {/* 컨트롤 */}
       <div className="flex items-center justify-between px-6 md:px-13 pt-7">
-        {/* 도트 */}
-        <div className="flex gap-2">
+        {/* 프로그레스 바 — 인라인 style로 animation-play-state 제어 */}
+        <div className="flex gap-1.5 flex-1 max-w-[200px]">
           {slides.map((_, index) => (
-            <button
+            <div
               key={index}
+              className="relative h-[2px] flex-1 bg-rule/60 overflow-hidden cursor-pointer"
               onClick={() => goTo(index)}
-              className={`h-1.5 transition-all duration-200 ${
-                index === current
-                  ? "w-6 bg-navy"
-                  : "w-1.5 bg-rule hover:bg-muted"
-              }`}
-            />
+            >
+              {index === current && (
+                <div
+                  key={progressKey}
+                  className="absolute inset-y-0 left-0 bg-navy"
+                  style={{
+                    animation: `progress-fill ${AUTO_PLAY_MS}ms linear forwards`,
+                    animationPlayState: isPaused ? "paused" : "running",
+                  }}
+                />
+              )}
+            </div>
           ))}
         </div>
 
