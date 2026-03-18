@@ -45,6 +45,8 @@ export function Footer() {
           </div>
           <div className="text-[11px] text-white/20 font-light leading-relaxed">
             {CONTACT.phone} · {CONTACT.email}
+            <br />
+            대표자: 정원석 · 사업자등록번호: 488-29-01855
             <br />© 2026 STUDYCORE 1.0. All rights reserved.
           </div>
         </div>
