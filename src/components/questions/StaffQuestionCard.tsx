@@ -79,7 +79,7 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
       <button
         type="button"
         onClick={handleExpand}
-        className="w-full text-left p-4 hover:bg-stone/30 transition-colors"
+        className="w-full text-left p-4 hover:bg-stone/30 transition-colors cursor-pointer"
       >
         <div className="flex items-start gap-3">
           {/* 상태 아이콘 */}
@@ -152,14 +152,14 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
             <button
               type="button"
               onClick={handlePin}
-              className="flex items-center gap-1 px-2 py-1 text-[12px] text-muted hover:text-ink transition-colors"
+              className="flex items-center gap-1 px-2 py-1 text-[12px] text-muted hover:text-ink transition-colors cursor-pointer"
             >
               {question.is_pinned ? <PinOff size={12} /> : <Pin size={12} />}
               {question.is_pinned ? "고정 해제" : "고정"}
             </button>
             <Link
               href={`${ROUTES.QUESTIONS}/${question.id}`}
-              className="flex items-center gap-1 px-2 py-1 text-[12px] text-muted hover:text-ink transition-colors"
+              className="flex items-center gap-1 px-2 py-1 text-[12px] text-muted hover:text-ink transition-colors cursor-pointer"
             >
               <ExternalLink size={12} />
               상세 페이지

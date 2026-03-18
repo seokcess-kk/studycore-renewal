@@ -2,15 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Nav, Footer, Button, Skeleton } from "@/components/common";
+import { Nav, Footer, Skeleton } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getPublicQuestionList, getMyQuestions, getQuestionList } from "@/domains/question/service";
 import { type QuestionWithAuthor } from "@/domains/question/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES } from "@/lib/constants";
-import { Plus, MessageCircle, Clock, CheckCircle, Globe, Lock, User, Eye, Pencil } from "lucide-react";
+import { MessageCircle, Clock, Globe, Lock, User, Eye, Pencil, Image as ImageIcon } from "lucide-react";
 import { StaffQuestionCard } from "@/components/questions/StaffQuestionCard";
-import { ElapsedBadge } from "@/components/questions/ElapsedBadge";
 
 export default function QuestionsPage() {
   const [questions, setQuestions] = useState<QuestionWithAuthor[]>([]);
@@ -209,7 +208,7 @@ export default function QuestionsPage() {
                 {!isStaff && (
                   <Link
                     href={`${ROUTES.QUESTIONS}/new`}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-teal border-[1.5px] border-teal text-white text-[13px] font-bold tracking-[0.04em] hover:bg-teal-d transition-colors"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-teal border-[1.5px] border-teal text-white text-[13px] font-bold tracking-[0.04em] hover:bg-teal-d transition-colors cursor-pointer"
                   >
                     <Pencil size={14} />
                     첫 질문 작성하기
@@ -228,10 +227,17 @@ export default function QuestionsPage() {
                 ))}
               </div>
             ) : (
-              /* 재원생: 기존 카드 */
-              <div className="space-y-4">
+              /* 재원생: 게시판형 컴팩트 목록 */
+              <div className="border border-rule bg-white divide-y divide-rule">
+                {/* 헤더 행 — 데스크톱만 */}
+                <div className="hidden md:grid grid-cols-[auto_1fr_100px_80px] items-center gap-4 px-5 py-2.5 bg-stone text-[11px] font-medium text-muted tracking-wide uppercase">
+                  <span className="w-[52px]">상태</span>
+                  <span>제목</span>
+                  <span className="text-center">작성자</span>
+                  <span className="text-right">날짜</span>
+                </div>
                 {filteredQuestions.map((question) => (
-                  <QuestionItem
+                  <QuestionRow
                     key={question.id}
                     question={question}
                     isOwner={user?.id === question.author_id}
@@ -271,7 +277,7 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-4 py-3 text-[14px] font-medium border-b-2 transition-colors ${
+      className={`flex items-center gap-2 px-4 py-3 text-[14px] font-medium border-b-2 transition-colors cursor-pointer ${
         active
           ? "border-navy text-navy"
           : "border-transparent text-muted hover:text-ink"
@@ -294,7 +300,7 @@ function FilterButton({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2.5 text-[13px] font-medium border transition-colors ${
+      className={`px-4 py-2.5 text-[13px] font-medium border transition-colors cursor-pointer ${
         active
           ? "bg-navy border-navy text-white"
           : "bg-white border-rule text-ink hover:border-navy"
@@ -319,7 +325,7 @@ function StaffFilterButton({
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-1.5 text-[12px] font-medium transition-colors ${
+      className={`px-3 py-1.5 text-[12px] font-medium transition-colors cursor-pointer ${
         active
           ? "bg-white text-navy"
           : "bg-white/10 text-white/70 hover:bg-white/20"
@@ -335,7 +341,7 @@ function StaffFilterButton({
   );
 }
 
-function QuestionItem({
+function QuestionRow({
   question,
   isOwner,
 }: {
@@ -343,92 +349,104 @@ function QuestionItem({
   isOwner: boolean;
 }) {
   const isAnswered = question.status === "answered";
-  const isPublic = question.is_public;
+  const hasImages = question.image_urls && question.image_urls.length > 0;
+
+  const formatShortDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    if (isToday) {
+      return d.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+    }
+    return d.toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" });
+  };
 
   return (
     <Link
       href={`${ROUTES.QUESTIONS}/${question.id}`}
-      className="group block p-5 border border-rule bg-white hover:border-navy transition-colors"
+      className="group block hover:bg-stone/40 transition-colors cursor-pointer"
     >
-      <div className="flex items-start gap-4">
-        <div
-          className={`flex-shrink-0 w-10 h-10 flex items-center justify-center ${
-            isAnswered ? "bg-teal/10" : "bg-stone"
+      {/* 데스크톱 레이아웃 */}
+      <div className="hidden md:grid grid-cols-[auto_1fr_100px_80px] items-center gap-4 px-5 py-3">
+        {/* 상태 뱃지 */}
+        <span
+          className={`w-[52px] text-center text-[11px] font-medium px-1.5 py-0.5 ${
+            isAnswered ? "bg-teal/10 text-teal" : "bg-stone text-muted"
           }`}
         >
-          {isAnswered ? (
-            <CheckCircle size={18} className="text-teal" />
-          ) : (
-            <Clock size={18} className="text-muted" />
+          {isAnswered ? "완료" : "대기"}
+        </span>
+
+        {/* 제목 + 태그 */}
+        <div className="flex items-center gap-2 min-w-0">
+          {question.is_pinned && (
+            <span className="flex-shrink-0 text-[10px] font-bold text-teal bg-teal/10 px-1.5 py-0.5">고정</span>
+          )}
+          <h3 className="text-[14px] text-ink truncate group-hover:text-navy transition-colors">
+            {question.title}
+          </h3>
+          {!question.is_public && (
+            <Lock size={11} className="flex-shrink-0 text-muted/50" />
+          )}
+          {isOwner && (
+            <span className="flex-shrink-0 text-[10px] font-medium text-teal">내 글</span>
+          )}
+          {hasImages && (
+            <ImageIcon size={12} className="flex-shrink-0 text-muted/40" />
+          )}
+          {(question.view_count ?? 0) > 0 && (
+            <span className="flex-shrink-0 flex items-center gap-0.5 text-[11px] text-muted/50">
+              <Eye size={10} />
+              {question.view_count}
+            </span>
           )}
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span
-              className={`text-[11px] font-medium px-2 py-0.5 ${
-                isAnswered ? "bg-teal/10 text-teal" : "bg-stone text-muted"
-              }`}
-            >
-              {isAnswered ? "답변 완료" : "답변 대기"}
-            </span>
-            <span
-              className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 ${
-                isPublic ? "bg-navy/5 text-navy" : "bg-stone text-muted"
-              }`}
-            >
-              {isPublic ? <Globe size={10} /> : <Lock size={10} />}
-              {isPublic ? "공개" : "비공개"}
-            </span>
-            {isOwner && (
-              <span className="text-[11px] font-medium px-2 py-0.5 bg-teal/10 text-teal">
-                내 질문
-              </span>
-            )}
-          </div>
-          <h3 className="text-[15px] font-medium text-ink truncate group-hover:text-navy transition-colors">
-            {question.is_pinned && (
-              <span className="text-teal font-bold mr-1">[고정]</span>
-            )}
-            {question.title}
-          </h3>
-          <p className="text-[13px] text-muted mt-1 line-clamp-2">
-            {question.content}
-          </p>
-          <div className="flex items-center gap-3 mt-2">
-            {isPublic && !isOwner && question.author?.name && (
-              <span className="flex items-center gap-1 text-[12px] text-muted/70">
-                <User size={11} />
-                {question.author.name}
-              </span>
-            )}
-            <ElapsedBadge
-              createdAt={question.created_at}
-              isPending={!isAnswered}
-            />
-            {(question.view_count ?? 0) > 0 && (
-              <span className="flex items-center gap-1 text-[12px] text-muted/70">
-                <Eye size={11} />
-                {question.view_count}
-              </span>
-            )}
-          </div>
-        </div>
+        {/* 작성자 */}
+        <span className="text-[12px] text-muted text-center truncate">
+          {question.author?.name || "익명"}
+        </span>
 
-        {question.image_urls && question.image_urls.length > 0 && (
-          <div className="flex-shrink-0 w-16 h-16 bg-stone border border-rule overflow-hidden relative">
-            <img
-              src={question.image_urls[0]}
-              alt=""
-              className="w-full h-full object-cover"
-            />
-            {question.image_urls.length > 1 && (
-              <span className="absolute bottom-0 right-0 bg-ink/60 text-white text-[10px] font-bold px-1.5 py-0.5">
-                +{question.image_urls.length - 1}
-              </span>
-            )}
-          </div>
-        )}
+        {/* 날짜 */}
+        <span className="text-[12px] text-muted text-right">
+          {formatShortDate(question.created_at)}
+        </span>
+      </div>
+
+      {/* 모바일 레이아웃 */}
+      <div className="md:hidden px-4 py-3">
+        <div className="flex items-center gap-2 mb-1">
+          <span
+            className={`text-[10px] font-medium px-1.5 py-0.5 ${
+              isAnswered ? "bg-teal/10 text-teal" : "bg-stone text-muted"
+            }`}
+          >
+            {isAnswered ? "완료" : "대기"}
+          </span>
+          {question.is_pinned && (
+            <span className="text-[10px] font-bold text-teal bg-teal/10 px-1.5 py-0.5">고정</span>
+          )}
+          {!question.is_public && (
+            <Lock size={10} className="text-muted/50" />
+          )}
+          {isOwner && (
+            <span className="text-[10px] font-medium text-teal">내 글</span>
+          )}
+        </div>
+        <h3 className="text-[14px] text-ink truncate group-hover:text-navy transition-colors">
+          {question.title}
+        </h3>
+        <div className="flex items-center gap-3 mt-1.5 text-[11px] text-muted">
+          <span>{question.author?.name || "익명"}</span>
+          <span>{formatShortDate(question.created_at)}</span>
+          {hasImages && <ImageIcon size={11} className="text-muted/40" />}
+          {(question.view_count ?? 0) > 0 && (
+            <span className="flex items-center gap-0.5">
+              <Eye size={10} />
+              {question.view_count}
+            </span>
+          )}
+        </div>
       </div>
     </Link>
   );

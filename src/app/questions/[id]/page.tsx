@@ -22,7 +22,6 @@ import {
   Lock,
   Pin,
   PinOff,
-  Send,
   Eye,
   X,
 } from "lucide-react";
@@ -31,7 +30,7 @@ export default function QuestionDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { showToast } = useToast();
-  const { user, isActive, isAuthenticated, isStaff, canAccessAdmin } = useUserStore();
+  const { user, isActive, isAuthenticated, isStaff } = useUserStore();
 
   const [question, setQuestion] = useState<QuestionWithAnswers | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -246,7 +245,7 @@ export default function QuestionDetailPage() {
                       <button
                         key={url}
                         onClick={() => setSelectedImage(url)}
-                        className="aspect-square bg-stone border border-rule overflow-hidden hover:opacity-80 transition-opacity"
+                        className="aspect-square bg-stone border border-rule overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
                       >
                         <img
                           src={url}
@@ -311,7 +310,7 @@ export default function QuestionDetailPage() {
           onClick={() => setSelectedImage(null)}
         >
           <button
-            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors cursor-pointer"
             onClick={() => setSelectedImage(null)}
             aria-label="닫기"
           >
@@ -367,7 +366,7 @@ function AnswerCard({ answer, onImageClick }: { answer: AnswerWithAuthor; onImag
               <button
                 key={url}
                 onClick={() => onImageClick(url)}
-                className="aspect-square bg-white border border-teal/20 overflow-hidden hover:opacity-80 transition-opacity"
+                className="aspect-square bg-white border border-teal/20 overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
               >
                 <img
                   src={url}
