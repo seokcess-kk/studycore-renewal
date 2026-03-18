@@ -21,10 +21,18 @@ export default function Home() {
       <main>
         <HeroSection />
         <TrustStrip />
+        {/* navy → stone 전환 */}
+        <div className="h-[2px] bg-teal" />
         <FeaturesSection />
+        {/* stone → navy-dark 전환 */}
+        <div className="h-[2px] bg-teal" />
         <ProgramsSection />
+        {/* navy-dark → white 전환 */}
+        <div className="h-[2px] bg-teal/50" />
         <SpaceSlider />
         <FAQSection />
+        {/* white → navy 전환 */}
+        <div className="h-[2px] bg-teal" />
         <CTASection />
       </main>
       <Footer />
