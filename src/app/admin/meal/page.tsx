@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AdminHeader } from "@/components/admin/AdminHeader";
+
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { Skeleton } from "@/components/common";
@@ -185,14 +185,6 @@ export default function AdminLunchPage() {
 
   return (
     <>
-      <AdminHeader
-        title="도시락 관리"
-        breadcrumb={[
-          { label: "대시보드", href: "/admin" },
-          { label: "도시락 관리" },
-        ]}
-      />
-
       <div className="p-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* 모바일: 기간 드롭다운 */}

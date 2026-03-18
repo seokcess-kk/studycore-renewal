@@ -26,6 +26,9 @@
 | - | Role Separation | ✅ 완료 | 온보딩/매뉴얼 분리, 스태프 계정 생성 API |
 | - | OAuth Fix | ✅ 완료 | 카카오 PKCE 에러 수정 (route handler) |
 | 12 | UI Polish | ✅ 완료 | UI 세부 폴리싱 — 반응형, 버튼, 터치 영역, 일관성 |
+| - | Homepage UX | ✅ 완료 | 홈페이지 전환율 최적화 — Hero/Features/SpaceSlider 애니메이션, CTA fill, 신뢰 지표 |
+| - | Full UX Audit | ✅ 완료 | 전체 페이지 UX 감사 — 질문방 5건, 전역 footer, 헤더 패턴 10건, 브랜드 컬러 통일 |
+| - | Meal Enhancement | ✅ 완료 | 도시락 기능 전면 개선 — 어드민 매트릭스 뷰, 학생 sticky 바, 미신청 학생 |
 
 ---
 
@@ -92,7 +95,7 @@
 - `/admin/notices` 공지사항 CRUD (리치텍스트 에디터)
 - `/admin/questions` 질문 관리 (뱃지, 고정)
 - `/admin/blog` 블로그 CRUD
-- `/admin/meal` 도시락 관리
+- `/admin/meal` 도시락 관리 (매트릭스 뷰, 식수 합계, 미신청 학생, 엑셀)
 - `/admin/guide` 온보딩/매뉴얼 CRUD (탭 전환)
 - `/admin/kakao` 알림톡 발송/이력
 - `/admin/settings` 사이트 설정
@@ -133,7 +136,54 @@ src/domains/
 
 ## 최근 변경사항
 
-### 2026-03-18
+### 2026-03-18 (4차) — 어드민 도시락 헤더 중복 수정
+- **어드민 도시락 관리 페이지**: AdminHeader 중복 렌더링 제거
+  - layout.tsx에서 이미 렌더링하는 AdminHeader를 meal/page.tsx에서 중복 호출하고 있던 문제 수정
+
+### 2026-03-18 (3차) — 도시락 기능 전면 개선
+- **어드민 도시락 관리 개편**
+  - PeriodModal → react-hook-form + zod 전환 (CLAUDE.md 규칙 준수)
+  - 신청자 매트릭스 테이블 — 학생×요일/날짜 한눈에 확인 (인라인 중/석 뱃지)
+  - 식수 합계 테이블 — 요일별 중식/석식/합계 즉시 파악
+  - 미신청 학생 섹션 추가 (활성 재원생 - 신청자 비교)
+  - 모바일 기간 드롭다운 (데스크톱은 사이드바 유지)
+  - 엑셀 다운로드에 "식수 합계" 시트 추가
+  - repository에 `getActiveStudents()` 추가
+- **학생 도시락 신청 UX 강화**
+  - 신청 완료 배너 강화 (끼수, 날짜, 수정 안내)
+  - Sticky 하단 제출 바 (선택 개수 + 버튼 항상 화면에 고정)
+  - WeekdaySelector/DateSelector "전체 선택" 토글 버튼 개선 (상태 표시 + 시각적 피드백)
+
+### 2026-03-18 (2차) — 전체 페이지 UX 감사
+- **질문방 UX 감사 5건 수정**
+  - 이미지 모달 통합 (AnswerCard → 부모 위임, 중복 제거)
+  - 빈 상태 CTA "첫 질문 작성하기" 추가
+  - 새 질문 폼 bg-stone + 카드 계층 추가
+  - 이미지 썸네일 + 개수 뱃지 추가
+  - "내 질문" 탭 빈 상태 메시지 분기
+- **전역 footer 수정**
+  - body flex + main flex-grow 전역 적용 (콘텐츠 부족 시 footer 올라오는 문제 해결)
+- **전체 페이지 UX 감사 10건 수정**
+  - 공지 상세: bg-stone → bg-navy 헤더 (질문/블로그 패턴 통일)
+  - 마이페이지: Navy 프로필 헤더 추가 + bg-yellow-* → 브랜드 컬러(navy/teal)
+  - 도시락 페이지: Navy 헤더 + mono 레이블 추가
+  - 회원가입: bg-yellow-100 → bg-navy/10
+  - 어드민 테이블 4개: overflow-x-auto + bg-stone 헤더 통일
+  - 카카오 어드민: 중복 사이드바 제거
+
+### 2026-03-18 (1차) — 홈페이지 전환율 최적화
+- **Hero 애니메이션 강화**: spring 모션, teal 라인 장식, 글로우 효과
+- **Features 호버 인터랙션**: 번호 스케일업, 보더 scaleY, 제목 색상 전환
+- **SpaceSlider**: 70vh 확대, Ken Burns 줌인, 프로그레스 바
+- **CTA fill 애니메이션**: 좌→우 scaleX 배경 전환 통일
+- **Nav 높이 모핑**: 스크롤 시 축소, shadow 제거
+- **전환율 요소**: 신뢰 지표 스트립 + Features 인라인 CTA
+- **섹션 전환**: teal 디바이더 4곳 추가
+- **UX 감사 6건**: 모바일 Hero, Footer 연도/중복, Features 브레이크, SpaceSlider 구분
+- **Hero 레이아웃**: 상하 스택 전환 — 메인 카피 상단 풀와이드
+- **프로그램 섹션**: UI 전면 개선 + 차별점 아래 이동
+
+### 2026-03-18 (이전)
 - **가이드/매뉴얼 UI 개선**
   - DB: guide_sections에 category, icon, content_html 컬럼 추가 (038 마이그레이션)
   - 공개 페이지: 사이드바 TOC + 검색 + 카테고리 그룹핑 + 이전/다음 네비게이션 (GuidePageLayout)

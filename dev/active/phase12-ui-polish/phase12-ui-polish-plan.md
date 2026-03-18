@@ -47,3 +47,38 @@ z-10    — DateSelector sticky 열
 5. `src/app/guide/page.tsx` — GuidePageLayout 사용
 6. `src/app/manual/page.tsx` — GuidePageLayout 사용
 7. `src/app/admin/guide/page.tsx` — Tiptap + 카테고리/아이콘/표시 토글
+
+## 2026-03-18 홈페이지 전환율 최적화
+
+### 변경 파일 (2개)
+1. `src/components/home/HeroSection.tsx` — 신뢰 지표 스트립 추가
+2. `src/components/home/FeaturesSection.tsx` — 인라인 CTA 추가
+3. `src/components/home/ProgramsSection.tsx` — 위치 조정, 미사용 함수 제거
+
+## 2026-03-18 전체 UX 감사
+
+### 변경 파일 (10개)
+1. `src/app/globals.css` — main { flex: 1 0 auto; } (전역 footer 하단 고정)
+2. `src/app/layout.tsx` — body에 flex flex-col min-h-dvh 추가
+3. `src/app/notices/[id]/page.tsx` — bg-stone → bg-navy 헤더
+4. `src/app/my/page.tsx` — bg-yellow → bg-navy 헤더, 브랜드 컬러
+5. `src/app/register/page.tsx` — bg-yellow-100 → bg-navy/10
+6. `src/app/admin/blog/page.tsx` — overflow-x-auto + bg-stone 테이블 헤더
+7. `src/app/admin/consultations/page.tsx` — overflow-x-auto + bg-stone 테이블 헤더
+8. `src/app/admin/popups/page.tsx` — overflow-x-auto + bg-stone 테이블 헤더
+9. `src/app/admin/programs/page.tsx` — overflow-x-auto + bg-stone 테이블 헤더
+10. `src/app/admin/kakao/page.tsx` + `kakao/history/page.tsx` — 중복 AdminSidebar 제거
+
+## 2026-03-18 도시락 기능 전면 개선
+
+### 변경/추가 파일 (5개)
+1. `src/app/admin/meal/page.tsx` — 전면 재작성 (매트릭스 뷰, PeriodModal RHF, 미신청 학생, 식수 합계, 모바일 드롭다운)
+2. `src/app/(member)/meal/page.tsx` — 신청 완료 배너, Sticky 하단 바, 선택 상세 배지
+3. `src/components/meal/WeekdaySelector.tsx` — 반응형 패딩, "전체 선택/해제" 토글 버튼
+4. `src/components/meal/DateSelector.tsx` — "전체 선택/해제" 토글 버튼
+5. `src/domains/meal/repository.ts` + `service.ts` — getActiveStudents() 추가
+
+## 미완료 / 향후 작업
+- [ ] 어드민 가이드 RHF 전환 (현재 useState 직접 관리 → react-hook-form + zod)
+- [ ] 어드민 로딩 스피너 패턴 통일
+- [ ] 후기(reviews) 페이지 구현 (현재 미존재)
