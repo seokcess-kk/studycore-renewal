@@ -80,7 +80,7 @@ export default function NewQuestionPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 min-h-screen">
+      <main className="pt-24 pb-20 min-h-screen bg-stone">
         {/* 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
           <div className="max-w-4xl">
@@ -99,7 +99,7 @@ export default function NewQuestionPage() {
 
         {/* 폼 */}
         <section className="px-6 md:px-13 py-8">
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto bg-white border border-rule p-6 md:p-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* 제목 */}
               <div>

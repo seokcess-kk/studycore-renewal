@@ -202,8 +202,19 @@ export default function QuestionsPage() {
                     ? "미답변 질문이 없습니다."
                     : statusFilter === "answered"
                     ? "답변 완료된 질문이 없습니다."
+                    : viewMode === "mine"
+                    ? "아직 작성한 질문이 없습니다."
                     : "질문이 없습니다."}
                 </p>
+                {!isStaff && (
+                  <Link
+                    href={`${ROUTES.QUESTIONS}/new`}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-teal border-[1.5px] border-teal text-white text-[13px] font-bold tracking-[0.04em] hover:bg-teal-d transition-colors"
+                  >
+                    <Pencil size={14} />
+                    첫 질문 작성하기
+                  </Link>
+                )}
               </div>
             ) : isStaff ? (
               /* 스태프: 인라인 아코디언 카드 */
@@ -316,7 +327,7 @@ function StaffFilterButton({
     >
       {children}
       {count !== undefined && count > 0 && (
-        <span className={`ml-1.5 ${active ? "text-teal" : "text-teal"}`}>
+        <span className={`ml-1.5 ${active ? "text-navy" : "text-teal"}`}>
           {count}
         </span>
       )}
@@ -405,8 +416,17 @@ function QuestionItem({
         </div>
 
         {question.image_urls && question.image_urls.length > 0 && (
-          <div className="flex-shrink-0 w-16 h-16 bg-stone flex items-center justify-center text-[11px] text-muted">
-            +{question.image_urls.length}
+          <div className="flex-shrink-0 w-16 h-16 bg-stone border border-rule overflow-hidden relative">
+            <img
+              src={question.image_urls[0]}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+            {question.image_urls.length > 1 && (
+              <span className="absolute bottom-0 right-0 bg-ink/60 text-white text-[10px] font-bold px-1.5 py-0.5">
+                +{question.image_urls.length - 1}
+              </span>
+            )}
           </div>
         )}
       </div>

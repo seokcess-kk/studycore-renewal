@@ -24,6 +24,7 @@ import {
   PinOff,
   Send,
   Eye,
+  X,
 } from "lucide-react";
 
 export default function QuestionDetailPage() {
@@ -270,7 +271,7 @@ export default function QuestionDetailPage() {
 
               {question.answers && question.answers.length > 0 ? (
                 question.answers.map((answer) => (
-                  <AnswerCard key={answer.id} answer={answer} />
+                  <AnswerCard key={answer.id} answer={answer} onImageClick={setSelectedImage} />
                 ))
               ) : (
                 <div className="bg-stone border border-rule p-8 text-center">
@@ -303,17 +304,18 @@ export default function QuestionDetailPage() {
         </section>
       </main>
 
-      {/* 이미지 모달 */}
+      {/* 이미지 모달 (통합) */}
       {selectedImage && (
         <div
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={() => setSelectedImage(null)}
         >
           <button
-            className="absolute top-4 right-4 text-white/60 hover:text-white"
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors"
             onClick={() => setSelectedImage(null)}
+            aria-label="닫기"
           >
-            ✕
+            <X size={20} />
           </button>
           <img
             src={selectedImage}
@@ -328,80 +330,56 @@ export default function QuestionDetailPage() {
   );
 }
 
-function AnswerCard({ answer }: { answer: AnswerWithAuthor }) {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
+function AnswerCard({ answer, onImageClick }: { answer: AnswerWithAuthor; onImageClick: (url: string) => void }) {
   return (
-    <>
-      <div className="bg-teal/5 border border-teal/20 p-6">
-        {/* 답변자 정보 */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-teal/20 flex items-center justify-center">
-            <CheckCircle size={18} className="text-teal" />
-          </div>
-          <div>
-            <p className="text-[14px] font-medium text-ink">
-              {answer.author?.name || "멘토"}
-            </p>
-            <p className="text-[12px] text-muted">
-              {new Date(answer.created_at).toLocaleDateString("ko-KR", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </p>
-          </div>
+    <div className="bg-teal/5 border border-teal/20 p-6">
+      {/* 답변자 정보 */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 bg-teal/20 flex items-center justify-center">
+          <CheckCircle size={18} className="text-teal" />
         </div>
-
-        {/* 답변 내용 */}
-        <p className="text-[15px] text-ink whitespace-pre-wrap leading-relaxed">
-          {answer.content}
-        </p>
-
-        {/* 첨부 이미지 */}
-        {answer.image_urls && answer.image_urls.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-teal/20">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {answer.image_urls.map((url, index) => (
-                <button
-                  key={url}
-                  onClick={() => setSelectedImage(url)}
-                  className="aspect-square bg-white border border-teal/20 overflow-hidden hover:opacity-80 transition-opacity"
-                >
-                  <img
-                    src={url}
-                    alt={`답변 이미지 ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <div>
+          <p className="text-[14px] font-medium text-ink">
+            {answer.author?.name || "멘토"}
+          </p>
+          <p className="text-[12px] text-muted">
+            {new Date(answer.created_at).toLocaleDateString("ko-KR", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
+        </div>
       </div>
 
-      {/* 이미지 모달 */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <button
-            className="absolute top-4 right-4 text-white/60 hover:text-white"
-            onClick={() => setSelectedImage(null)}
-          >
-            ✕
-          </button>
-          <img
-            src={selectedImage}
-            alt="확대 이미지"
-            className="max-w-full max-h-full object-contain"
-          />
+      {/* 답변 내용 */}
+      <p className="text-[15px] text-ink whitespace-pre-wrap leading-relaxed">
+        {answer.content}
+      </p>
+
+      {/* 첨부 이미지 */}
+      {answer.image_urls && answer.image_urls.length > 0 && (
+        <div className="mt-4 pt-4 border-t border-teal/20">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {answer.image_urls.map((url, index) => (
+              <button
+                key={url}
+                onClick={() => onImageClick(url)}
+                className="aspect-square bg-white border border-teal/20 overflow-hidden hover:opacity-80 transition-opacity"
+              >
+                <img
+                  src={url}
+                  alt={`답변 이미지 ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
