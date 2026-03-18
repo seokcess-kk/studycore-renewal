@@ -178,7 +178,7 @@ export default function LunchPage() {
           ) : (
             <>
               {/* 기간 정보 */}
-              <div className="bg-white border border-rule p-5 mb-6">
+              <div className="bg-white border border-rule p-6 mb-6">
                 <div className="flex items-start justify-between">
                   <div>
                     <h2 className="text-[16px] font-bold text-ink mb-1">
@@ -240,7 +240,7 @@ export default function LunchPage() {
               </div>
 
               {/* 선택 요약 & 제출 */}
-              <div className="bg-white border border-rule p-5">
+              <div className="bg-white border border-rule p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-[14px] text-muted">선택한 식사:</span>

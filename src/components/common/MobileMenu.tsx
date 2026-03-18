@@ -202,6 +202,16 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </>
             ) : (
               <>
+                {/* CTA — 상단 배치로 주목도 향상 */}
+                <motion.div variants={itemVariants} className="mb-6">
+                  <Link
+                    href={ROUTES.CONSULT}
+                    className="block text-center py-3.5 bg-teal text-navy-dark border-[1.5px] border-teal text-[15px] font-bold"
+                  >
+                    무료 상담 신청
+                  </Link>
+                </motion.div>
+
                 <motion.div variants={itemVariants}>
                   <Link
                     href={getAnchorHref("#features")}
@@ -221,18 +231,12 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   </Link>
                 </motion.div>
 
-                <motion.div variants={itemVariants} className="border-t border-white/10 mt-6 pt-6 space-y-3">
+                <motion.div variants={itemVariants} className="border-t border-white/10 mt-6 pt-6">
                   <Link
                     href={ROUTES.LOGIN}
                     className="block text-[14px] text-white/50 hover:text-white transition-colors"
                   >
                     로그인
-                  </Link>
-                  <Link
-                    href={ROUTES.CONSULT}
-                    className="block text-center py-3 bg-teal text-navy-dark border-[1.5px] border-teal text-[14px] font-bold"
-                  >
-                    무료 상담 신청
                   </Link>
                 </motion.div>
               </>

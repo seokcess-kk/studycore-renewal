@@ -43,9 +43,9 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-stone">
       <AdminSidebar />
-      <div className="pl-64">
+      <div className="lg:pl-64">
         <AdminHeader />
-        <main className="p-6">
+        <main className="p-4 pt-16 lg:pt-6 lg:p-6">
           <AdminErrorBoundary>{children}</AdminErrorBoundary>
         </main>
       </div>

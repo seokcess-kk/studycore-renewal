@@ -155,7 +155,7 @@ export default function NoticeDetailPage({
         {/* 첨부파일 */}
         {attachments.length > 0 && (
           <section className="px-6 md:px-13">
-            <div className="max-w-3xl border-t border-rule pt-6 pb-2">
+            <div className="max-w-3xl border-t border-rule pt-6 pb-6">
               <h3 className="text-sm font-medium text-muted mb-3">
                 첨부파일 ({attachments.length})
               </h3>

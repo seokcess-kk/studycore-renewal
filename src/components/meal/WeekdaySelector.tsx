@@ -103,7 +103,7 @@ export function WeekdaySelector({
             >
               {MEAL_TYPE_LABELS[mealType]}
             </button>
-            <span className="text-[11px] text-muted">(전체)</span>
+            <span className="text-[11px] text-teal underline">(전체)</span>
           </div>
           {weekdays.map((weekday) => (
             <div key={weekday} className="p-3 flex items-center justify-center">

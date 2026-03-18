@@ -8,7 +8,7 @@ import { getPublicQuestionList, getMyQuestions, getQuestionList } from "@/domain
 import { type QuestionWithAuthor } from "@/domains/question/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES } from "@/lib/constants";
-import { Plus, MessageCircle, Clock, CheckCircle, Globe, Lock, User, Eye } from "lucide-react";
+import { Plus, MessageCircle, Clock, CheckCircle, Globe, Lock, User, Eye, Pencil } from "lucide-react";
 import { StaffQuestionCard } from "@/components/questions/StaffQuestionCard";
 import { ElapsedBadge } from "@/components/questions/ElapsedBadge";
 
@@ -141,7 +141,7 @@ export default function QuestionsPage() {
                     모르는 문제를 올리면 멘토가 직접 풀이해 드립니다.
                   </p>
                 </div>
-                <Link href={`${ROUTES.QUESTIONS}/new`}>
+                <Link href={`${ROUTES.QUESTIONS}/new`} className="hidden md:block">
                   <Button variant="secondary" className="flex items-center gap-2">
                     <Plus size={16} />
                     질문하기
@@ -172,7 +172,7 @@ export default function QuestionsPage() {
 
             {/* 상태 필터 */}
             <section className="bg-stone border-b border-rule">
-              <div className="px-6 md:px-13 py-3 flex gap-2">
+              <div className="px-6 md:px-13 py-3 flex gap-3">
                 <FilterButton active={statusFilter === "all"} onClick={() => setStatusFilter("all")}>
                   전체
                 </FilterButton>
@@ -236,6 +236,16 @@ export default function QuestionsPage() {
             )}
           </div>
         </section>
+        {/* 모바일 floating 질문하기 버튼 (재원생 전용) */}
+        {!isStaff && (
+          <Link
+            href={`${ROUTES.QUESTIONS}/new`}
+            className="fixed bottom-6 right-6 z-50 md:hidden w-14 h-14 bg-teal border-[1.5px] border-teal text-white flex items-center justify-center hover:bg-teal-d transition-colors cursor-pointer"
+            aria-label="질문하기"
+          >
+            <Pencil size={22} />
+          </Link>
+        )}
       </main>
       <Footer />
     </>
@@ -279,7 +289,7 @@ function FilterButton({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 text-[13px] font-medium border transition-colors ${
+      className={`px-4 py-2.5 text-[13px] font-medium border transition-colors ${
         active
           ? "bg-navy border-navy text-white"
           : "bg-white border-rule text-ink hover:border-navy"

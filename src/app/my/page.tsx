@@ -181,7 +181,7 @@ export default function MyPage() {
               <Button
                 variant="ghost"
                 size="lg"
-                className="w-full flex items-center justify-center gap-2"
+                className="w-full flex items-center justify-center gap-2 mt-4"
                 onClick={handleLogout}
                 isLoading={isLoggingOut}
               >
@@ -323,14 +323,14 @@ function ContactInfoSection() {
       <div className="flex items-center justify-between p-4 border-b border-rule">
         <h2 className="font-bold text-ink">내 정보</h2>
         {isEditing ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => {
                 setPhone(profile?.phone || "");
                 setParentPhone(profile?.parent_phone || "");
                 setIsEditing(false);
               }}
-              className="flex items-center gap-1 text-xs text-muted hover:text-ink"
+              className="flex items-center gap-1.5 text-[13px] text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors"
             >
               <X size={14} />
               취소
@@ -338,7 +338,7 @@ function ContactInfoSection() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-1 text-xs text-teal hover:text-teal-d font-medium disabled:opacity-50"
+              className="flex items-center gap-1.5 text-[13px] text-white bg-teal hover:bg-teal-d font-medium disabled:opacity-50 px-3 py-1.5 border border-teal transition-colors"
             >
               <Save size={14} />
               {isSaving ? "저장 중..." : "저장"}
@@ -347,7 +347,7 @@ function ContactInfoSection() {
         ) : (
           <button
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-1 text-xs text-muted hover:text-ink"
+            className="flex items-center gap-1.5 text-[13px] text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors"
           >
             <Pencil size={14} />
             수정

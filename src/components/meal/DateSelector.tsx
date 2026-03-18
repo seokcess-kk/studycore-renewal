@@ -119,7 +119,7 @@ export function DateSelector({
       <table className="w-full min-w-[600px]">
         <thead>
           <tr className="bg-stone border-b border-rule">
-            <th className="p-3 text-left text-[13px] font-medium text-muted w-24">
+            <th className="p-3 text-left text-[13px] font-medium text-muted w-24 sticky left-0 bg-stone z-10">
               식사
             </th>
             {dates.map((date) => (
@@ -138,7 +138,7 @@ export function DateSelector({
         <tbody>
           {mealTypes.map((mealType) => (
             <tr key={mealType} className="border-b border-rule last:border-b-0">
-              <td className="p-3">
+              <td className="p-3 sticky left-0 bg-white z-10">
                 <button
                   type="button"
                   onClick={() => handleSelectAll(mealType)}
@@ -146,7 +146,7 @@ export function DateSelector({
                   className="text-[13px] font-medium text-ink hover:text-teal disabled:opacity-50"
                 >
                   {MEAL_TYPE_LABELS[mealType]}
-                  <span className="text-[11px] text-muted ml-1">(전체)</span>
+                  <span className="text-[11px] text-teal ml-1 underline">(전체)</span>
                 </button>
               </td>
               {dates.map((date) => (
@@ -158,7 +158,7 @@ export function DateSelector({
                     aria-label={`${formatDisplayDate(date)} ${getDayName(date)}요일 ${MEAL_TYPE_LABELS[mealType]}`}
                     onClick={() => handleToggle(date, mealType)}
                     disabled={disabled}
-                    className={`w-7 h-7 flex items-center justify-center border transition-colors mx-auto ${
+                    className={`w-8 h-8 flex items-center justify-center border transition-colors mx-auto ${
                       isSelected(date, mealType)
                         ? "bg-teal border-teal text-white"
                         : "bg-white border-rule text-muted hover:border-teal"

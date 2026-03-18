@@ -192,7 +192,7 @@ export function AvatarUploader({
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
+            className="absolute -top-1 -right-1 w-7 h-7 bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
             style={{ borderRadius: "50%" }}
           >
             <X size={12} />
@@ -204,7 +204,7 @@ export function AvatarUploader({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="absolute -bottom-1 -right-1 w-8 h-8 bg-navy text-white flex items-center justify-center hover:bg-navy-d transition-colors"
+            className="absolute -bottom-1 -right-1 w-7 h-7 bg-navy text-white flex items-center justify-center hover:bg-navy-d transition-colors"
             style={{ borderRadius: "50%" }}
           >
             <Camera size={14} />
