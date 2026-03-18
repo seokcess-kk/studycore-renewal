@@ -43,8 +43,8 @@ export async function getActivePeriod(
     .from("lunch_periods")
     .select("*")
     .eq("is_active", true)
-    .lte("start_date", today)
-    .gte("end_date", today)
+    .lte("apply_start_date", today)
+    .gte("apply_end_date", today)
     .order("created_at", { ascending: false })
     .limit(1);
 

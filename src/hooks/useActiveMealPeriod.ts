@@ -41,8 +41,8 @@ export function useActiveMealPeriod(): boolean {
       .from("lunch_periods")
       .select("id")
       .eq("is_active", true)
-      .lte("start_date", today)
-      .gte("end_date", today)
+      .lte("apply_start_date", today)
+      .gte("apply_end_date", today)
       .limit(1)
       .then(({ data }) => {
         setHasActivePeriod(!!(data && data.length > 0));

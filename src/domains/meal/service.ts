@@ -125,11 +125,19 @@ export async function createPeriod(
   input: CreateMealPeriodInput
 ): Promise<MealPeriodServiceResult> {
   try {
-    // 날짜 유효성 검사
+    // 접수 기간 유효성 검사
+    if (new Date(input.apply_start_date) > new Date(input.apply_end_date)) {
+      return {
+        success: false,
+        error: "접수 시작일은 접수 종료일보다 이전이어야 합니다.",
+      };
+    }
+
+    // 도시락 기간 유효성 검사
     if (new Date(input.start_date) > new Date(input.end_date)) {
       return {
         success: false,
-        error: "시작일은 종료일보다 이전이어야 합니다.",
+        error: "도시락 시작일은 도시락 종료일보다 이전이어야 합니다.",
       };
     }
 
@@ -156,7 +164,19 @@ export async function updatePeriod(
   input: UpdateMealPeriodInput
 ): Promise<MealPeriodServiceResult> {
   try {
-    // 날짜 유효성 검사
+    // 접수 기간 유효성 검사
+    if (
+      input.apply_start_date &&
+      input.apply_end_date &&
+      new Date(input.apply_start_date) > new Date(input.apply_end_date)
+    ) {
+      return {
+        success: false,
+        error: "접수 시작일은 접수 종료일보다 이전이어야 합니다.",
+      };
+    }
+
+    // 도시락 기간 유효성 검사
     if (
       input.start_date &&
       input.end_date &&
@@ -164,7 +184,7 @@ export async function updatePeriod(
     ) {
       return {
         success: false,
-        error: "시작일은 종료일보다 이전이어야 합니다.",
+        error: "도시락 시작일은 도시락 종료일보다 이전이어야 합니다.",
       };
     }
 
@@ -234,10 +254,10 @@ export async function submitApplication(
     }
 
     const today = getLocalToday();
-    if (today < period.start_date || today > period.end_date) {
+    if (today < period.apply_start_date || today > period.apply_end_date) {
       return {
         success: false,
-        error: "신청 기간이 아닙니다.",
+        error: "접수 기간이 아닙니다.",
       };
     }
 

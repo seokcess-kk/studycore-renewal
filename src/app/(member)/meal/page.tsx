@@ -211,10 +211,13 @@ export default function LunchPage() {
                     <div className="flex flex-wrap items-center gap-3 text-[13px] text-muted">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} />
-                        {period.start_date} ~ {period.end_date}
+                        도시락 {period.start_date} ~ {period.end_date}
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock size={14} />
+                        접수 {period.apply_start_date} ~ {period.apply_end_date}
+                      </span>
+                      <span>
                         {period.selection_type === "weekday" ? "요일별 선택" : "날짜별 선택"}
                       </span>
                     </div>

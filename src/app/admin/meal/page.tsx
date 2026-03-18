@@ -224,7 +224,10 @@ export default function AdminLunchPage() {
                       />
                     </div>
                     <p className="text-[12px] text-muted mt-0.5">
-                      {period.start_date} ~ {period.end_date}
+                      접수 {period.apply_start_date} ~ {period.apply_end_date}
+                    </p>
+                    <p className="text-[12px] text-muted">
+                      도시락 {period.start_date} ~ {period.end_date}
                     </p>
                   </button>
                 ))}
@@ -290,7 +293,10 @@ export default function AdminLunchPage() {
                         />
                       </div>
                       <p className="text-[11px] text-muted mt-1">
-                        {period.start_date} ~ {period.end_date}
+                        접수 {period.apply_start_date} ~ {period.apply_end_date}
+                      </p>
+                      <p className="text-[11px] text-muted">
+                        도시락 {period.start_date} ~ {period.end_date}
                       </p>
                       <div className="flex gap-1.5 mt-1.5">
                         {period.meal_types.map((type) => (
@@ -330,7 +336,11 @@ export default function AdminLunchPage() {
                         {selectedPeriod.title}
                       </h2>
                       <p className="text-[12px] text-muted">
-                        {selectedPeriod.start_date} ~{" "}
+                        접수 {selectedPeriod.apply_start_date} ~{" "}
+                        {selectedPeriod.apply_end_date}
+                      </p>
+                      <p className="text-[12px] text-muted">
+                        도시락 {selectedPeriod.start_date} ~{" "}
                         {selectedPeriod.end_date}
                       </p>
                     </div>
@@ -656,6 +666,8 @@ function PeriodModal({
     resolver: zodResolver(createMealPeriodSchema),
     defaultValues: {
       title: period?.title || "",
+      apply_start_date: period?.apply_start_date || "",
+      apply_end_date: period?.apply_end_date || "",
       start_date: period?.start_date || "",
       end_date: period?.end_date || "",
       meal_types: period?.meal_types || ["lunch", "dinner"],
@@ -731,41 +743,81 @@ function PeriodModal({
             )}
           </div>
 
-          {/* 날짜 */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[13px] font-medium text-ink mb-1">
-                시작일 <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
-                  errors.start_date ? "border-red-500" : "border-rule"
-                }`}
-                {...register("start_date")}
-              />
-              {errors.start_date && (
-                <p className="mt-1 text-[12px] text-red-500">
-                  {errors.start_date.message}
-                </p>
-              )}
+          {/* 접수 기간 */}
+          <div>
+            <label className="block text-[13px] font-medium text-ink mb-2">
+              접수 기간 <span className="text-red-500">*</span>
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[11px] text-muted mb-1">시작일</label>
+                <input
+                  type="date"
+                  className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                    errors.apply_start_date ? "border-red-500" : "border-rule"
+                  }`}
+                  {...register("apply_start_date")}
+                />
+                {errors.apply_start_date && (
+                  <p className="mt-1 text-[12px] text-red-500">
+                    {errors.apply_start_date.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-[11px] text-muted mb-1">종료일</label>
+                <input
+                  type="date"
+                  className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                    errors.apply_end_date ? "border-red-500" : "border-rule"
+                  }`}
+                  {...register("apply_end_date")}
+                />
+                {errors.apply_end_date && (
+                  <p className="mt-1 text-[12px] text-red-500">
+                    {errors.apply_end_date.message}
+                  </p>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="block text-[13px] font-medium text-ink mb-1">
-                종료일 <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
-                  errors.end_date ? "border-red-500" : "border-rule"
-                }`}
-                {...register("end_date")}
-              />
-              {errors.end_date && (
-                <p className="mt-1 text-[12px] text-red-500">
-                  {errors.end_date.message}
-                </p>
-              )}
+          </div>
+
+          {/* 도시락 기간 */}
+          <div>
+            <label className="block text-[13px] font-medium text-ink mb-2">
+              도시락 기간 <span className="text-red-500">*</span>
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[11px] text-muted mb-1">시작일</label>
+                <input
+                  type="date"
+                  className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                    errors.start_date ? "border-red-500" : "border-rule"
+                  }`}
+                  {...register("start_date")}
+                />
+                {errors.start_date && (
+                  <p className="mt-1 text-[12px] text-red-500">
+                    {errors.start_date.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-[11px] text-muted mb-1">종료일</label>
+                <input
+                  type="date"
+                  className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                    errors.end_date ? "border-red-500" : "border-rule"
+                  }`}
+                  {...register("end_date")}
+                />
+                {errors.end_date && (
+                  <p className="mt-1 text-[12px] text-red-500">
+                    {errors.end_date.message}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 

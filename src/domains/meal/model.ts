@@ -50,8 +50,10 @@ export const WEEKDAY_LABELS: Record<number, string> = {
 export const mealPeriodSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
-  start_date: z.string(), // DATE 형식
-  end_date: z.string(),
+  apply_start_date: z.string(), // 접수 시작일 (DATE)
+  apply_end_date: z.string(),   // 접수 종료일 (DATE)
+  start_date: z.string(),       // 도시락 시작일 (DATE)
+  end_date: z.string(),         // 도시락 종료일 (DATE)
   meal_types: z.array(z.enum(["lunch", "dinner"])),
   selection_type: z.enum(["weekday", "date"]),
   available_options: z.record(z.string(), z.unknown()), // JSONB
@@ -109,8 +111,10 @@ export type MealSelections = Record<string, string[]>;
 // 기간 생성 스키마
 export const createMealPeriodSchema = z.object({
   title: z.string().min(2, "제목은 2자 이상 입력해주세요").max(100),
-  start_date: z.string().min(1, "시작일을 선택해주세요"),
-  end_date: z.string().min(1, "종료일을 선택해주세요"),
+  apply_start_date: z.string().min(1, "접수 시작일을 선택해주세요"),
+  apply_end_date: z.string().min(1, "접수 종료일을 선택해주세요"),
+  start_date: z.string().min(1, "도시락 시작일을 선택해주세요"),
+  end_date: z.string().min(1, "도시락 종료일을 선택해주세요"),
   meal_types: z.array(z.enum(["lunch", "dinner"])).min(1, "식사 유형을 선택해주세요"),
   selection_type: z.enum(["weekday", "date"]),
   available_options: z.record(z.string(), z.unknown()).optional(),
@@ -122,6 +126,8 @@ export type CreateMealPeriodInput = z.infer<typeof createMealPeriodSchema>;
 // 기간 수정 스키마
 export const updateMealPeriodSchema = z.object({
   title: z.string().min(2).max(100).optional(),
+  apply_start_date: z.string().optional(),
+  apply_end_date: z.string().optional(),
   start_date: z.string().optional(),
   end_date: z.string().optional(),
   meal_types: z.array(z.enum(["lunch", "dinner"])).optional(),
