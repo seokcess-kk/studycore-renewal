@@ -141,12 +141,6 @@ export default function QuestionsPage() {
                     모르는 문제를 올리면 멘토가 직접 풀이해 드립니다.
                   </p>
                 </div>
-                <Link href={`${ROUTES.QUESTIONS}/new`} className="hidden md:block">
-                  <Button variant="secondary" className="flex items-center gap-2">
-                    <Plus size={16} />
-                    질문하기
-                  </Button>
-                </Link>
               </div>
             </section>
 
@@ -240,7 +234,7 @@ export default function QuestionsPage() {
         {!isStaff && (
           <Link
             href={`${ROUTES.QUESTIONS}/new`}
-            className="fixed bottom-6 right-6 z-50 md:hidden w-14 h-14 bg-teal border-[1.5px] border-teal text-white flex items-center justify-center hover:bg-teal-d transition-colors cursor-pointer"
+            className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-teal border-[1.5px] border-teal text-white flex items-center justify-center hover:bg-teal-d transition-colors cursor-pointer"
             aria-label="질문하기"
           >
             <Pencil size={22} />
