@@ -11,7 +11,7 @@ interface Stat {
 }
 
 const stats: Stat[] = [
-  { value: "2025", numericValue: 2025, label: "개원 연도", suffix: "" },
+  { value: "2026", numericValue: 2026, label: "개원 연도", suffix: "" },
   { value: "10", numericValue: 10, label: "애플타워", suffix: "층 전층" },
   { value: "1:1", numericValue: null, label: "원장 직접 관리", suffix: "" },
   { value: "365", numericValue: 365, label: "연중 운영", suffix: "일" },
@@ -46,10 +46,10 @@ function CountUpValue({ stat, inView }: { stat: Stat; inView: boolean }) {
       duration,
       ease: [0.16, 1, 0.3, 1], // ease-out-expo 느낌
       onUpdate(latest) {
-        setDisplayValue(Math.round(latest).toLocaleString());
+        setDisplayValue(String(Math.round(latest)));
       },
       onComplete() {
-        setDisplayValue(target.toLocaleString());
+        setDisplayValue(String(target));
         // suffix fade-in (0.2s 딜레이)
         if (stat.suffix) {
           setTimeout(() => setShowSuffix(true), 200);
