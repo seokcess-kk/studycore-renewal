@@ -136,6 +136,10 @@
     @apply bg-background text-foreground;
   }
 
+  main {
+    flex: 1 0 auto;
+  }
+
   html {
     @apply font-sans;
     scroll-behavior: smooth;

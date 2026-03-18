@@ -115,7 +115,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`${notoSerifKR.variable} ${notoSansKR.variable} ${ibmPlexMono.variable} font-sans antialiased`}
+        className={`${notoSerifKR.variable} ${notoSansKR.variable} ${ibmPlexMono.variable} font-sans antialiased flex flex-col min-h-dvh`}
       >
         <Providers>{children}</Providers>
       </body>
