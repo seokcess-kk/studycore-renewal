@@ -158,30 +158,31 @@ function FeatureRow({
 }) {
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 20 } },
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 100, damping: 20 } },
   };
 
   return (
     <motion.div
       variants={itemVariants}
-      className="group grid grid-cols-[100px_1fr] md:grid-cols-[160px_1fr] border-b border-rule relative"
+      className="group grid grid-cols-[100px_1fr] md:grid-cols-[160px_1fr] border-b border-ink/[0.06] hover:border-ink/[0.15] relative transition-[border-color] duration-300 ease-out"
     >
-      {/* 호버 배경 & 좌측 엑센트 보더 */}
-      <div className="absolute left-[-24px] right-[-24px] top-0 bottom-0 bg-transparent group-hover:bg-teal/[0.04] border-l-[3px] border-transparent group-hover:border-teal transition-all duration-300 pointer-events-none" />
+      {/* 호버 배경 & 좌측 엑센트 보더 — scaleY 애니메이션 */}
+      <div className="absolute left-[-24px] right-[-24px] top-0 bottom-0 bg-transparent group-hover:bg-teal/[0.04] transition-[background-color] duration-300 pointer-events-none" />
+      <div className="absolute left-[-24px] top-0 bottom-0 w-[3px] bg-teal origin-top scale-y-0 group-hover:scale-y-100 transition-transform duration-300 ease-out pointer-events-none" />
 
       {/* 좌측: 번호 + 키워드 */}
       <div className="py-11 flex flex-col gap-2 border-r border-rule relative">
-        <span className="font-mono text-[clamp(48px,6vw,72px)] font-bold text-navy/[0.07] group-hover:text-teal/20 leading-none transition-colors duration-300">
+        <span className="font-mono text-[clamp(48px,6vw,72px)] font-bold text-navy/[0.07] group-hover:text-teal/20 leading-none transition-[color,transform] duration-300 ease-out group-hover:scale-110 origin-left">
           {feature.number}
         </span>
-        <span className="font-mono text-[9px] font-bold text-teal tracking-[0.22em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-250">
+        <span className="font-mono text-[9px] font-bold text-teal tracking-[0.22em] uppercase opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-[opacity,transform] duration-300 ease-out">
           {feature.keyword}
         </span>
       </div>
 
       {/* 우측: 제목 + 설명 + 태그 */}
       <div className="py-11 pl-6 md:pl-12 relative">
-        <h3 className="font-serif text-[clamp(18px,2vw,24px)] font-black tracking-[-0.02em] text-ink mb-3.5 leading-tight">
+        <h3 className="font-serif text-[clamp(18px,2vw,24px)] font-black tracking-[-0.02em] text-ink group-hover:text-teal mb-3.5 leading-tight transition-colors duration-300 ease-out">
           {feature.title}
         </h3>
         <p
