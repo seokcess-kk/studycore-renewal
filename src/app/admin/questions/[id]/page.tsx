@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createBrowserClient } from "@/lib/supabase/client";
-import { getQuestionDetail, createAnswer, togglePinQuestion } from "@/domains/question/service";
+import { getQuestionDetail, createAnswer, togglePinQuestion, deleteQuestion } from "@/domains/question/service";
 import {
   type QuestionWithAnswers,
   type AnswerWithAuthor,
@@ -16,6 +16,7 @@ import { ImageUploader } from "@/components/common/ImageUploader";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/components/common/Toast";
 import { formatDistanceToNow } from "@/lib/utils";
+import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import {
   ArrowLeft,
   Clock,
@@ -26,6 +27,7 @@ import {
   Send,
   Pin,
   PinOff,
+  Trash2,
 } from "lucide-react";
 
 // 폼 스키마 (question_id 제외 - 페이지에서 주입)
@@ -47,6 +49,8 @@ export default function AdminQuestionDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const questionId = Array.isArray(params.id) ? params.id[0] : params.id;
 
@@ -146,15 +150,24 @@ export default function AdminQuestionDetailPage() {
           <ArrowLeft size={16} />
           목록으로
         </Link>
-        <span
-          className={`text-xs font-medium px-2 py-1 ${
-            isAnswered
-              ? "bg-teal/10 text-teal"
-              : "bg-orange-100 text-orange-600"
-          }`}
-        >
-          {isAnswered ? "답변 완료" : "답변 대기"}
-        </span>
+        <div className="flex items-center gap-3">
+          <span
+            className={`text-xs font-medium px-2 py-1 ${
+              isAnswered
+                ? "bg-teal/10 text-teal"
+                : "bg-orange-100 text-orange-600"
+            }`}
+          >
+            {isAnswered ? "답변 완료" : "답변 대기"}
+          </span>
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted hover:text-red-500 border border-rule hover:border-red-300 transition-colors cursor-pointer"
+          >
+            <Trash2 size={14} />
+            삭제
+          </button>
+        </div>
       </div>
 
       {/* 질문 정보 */}
@@ -179,7 +192,7 @@ export default function AdminQuestionDetailPage() {
                 setQuestion({ ...question, is_pinned: !question.is_pinned });
               }
             }}
-            className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-[12px] border border-rule hover:bg-stone transition-colors"
+            className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-[12px] border border-rule hover:bg-stone transition-colors cursor-pointer"
           >
             {question.is_pinned ? (
               <>
@@ -219,7 +232,7 @@ export default function AdminQuestionDetailPage() {
                 <button
                   key={`question-img-${index}`}
                   onClick={() => setSelectedImage(url)}
-                  className="aspect-square bg-stone border border-rule overflow-hidden hover:opacity-80 transition-opacity"
+                  className="aspect-square bg-stone border border-rule overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
                 >
                   <img
                     src={url}
@@ -316,7 +329,7 @@ export default function AdminQuestionDetailPage() {
           onClick={() => setSelectedImage(null)}
         >
           <button
-            className="absolute top-4 right-4 text-white/60 hover:text-white text-2xl"
+            className="absolute top-4 right-4 text-white/60 hover:text-white text-2xl cursor-pointer"
             onClick={() => setSelectedImage(null)}
           >
             &times;
@@ -329,6 +342,29 @@ export default function AdminQuestionDetailPage() {
           />
         </div>
       )}
+
+      {/* 삭제 확인 모달 */}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={async () => {
+          setIsDeleting(true);
+          const result = await deleteQuestion(supabase, question.id);
+          if (result.success) {
+            showToast("질문이 삭제되었습니다.", "success");
+            router.push("/admin/questions");
+          } else {
+            showToast(result.error || "삭제에 실패했습니다.", "error");
+          }
+          setIsDeleting(false);
+          setShowDeleteModal(false);
+        }}
+        title="질문 삭제"
+        description="이 질문과 관련 답변을 모두 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+        confirmText="삭제"
+        variant="danger"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }
@@ -399,7 +435,7 @@ function AnswerCard({
               <button
                 key={`answer-img-${index}`}
                 onClick={() => onImageClick(url)}
-                className="aspect-square bg-white border border-teal/20 overflow-hidden hover:opacity-80 transition-opacity"
+                className="aspect-square bg-white border border-teal/20 overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
               >
                 <img
                   src={url}
