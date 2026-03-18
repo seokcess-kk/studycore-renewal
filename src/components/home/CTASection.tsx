@@ -1,25 +1,26 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ROUTES, CONTACT, LOCATION, KAKAO } from "@/lib/constants";
+import { ROUTES, CONTACT } from "@/lib/constants";
 import { ArrowRight, MapPin, Navigation, Phone } from "lucide-react";
+
+const MAP_QUERY = encodeURIComponent("광주광역시 광산구 임방울대로 330 애플타워");
 
 const MAP_LINKS = [
   {
     label: "카카오맵",
-    href: `https://map.kakao.com/link/map/${encodeURIComponent(LOCATION.name)},${LOCATION.lat},${LOCATION.lng}`,
+    href: `https://map.kakao.com/?q=${MAP_QUERY}`,
     color: "bg-[#FEE500] text-[#191919]",
   },
   {
     label: "네이버지도",
-    href: `https://map.naver.com/v5/search/${encodeURIComponent(LOCATION.address)}`,
+    href: `https://map.naver.com/p/search/${MAP_QUERY}`,
     color: "bg-[#03C75A] text-white",
   },
   {
     label: "구글맵",
-    href: `https://www.google.com/maps/search/?api=1&query=${LOCATION.lat},${LOCATION.lng}`,
+    href: `https://maps.google.com/maps?q=${MAP_QUERY}`,
     color: "bg-[#4285F4] text-white",
   },
 ];
@@ -117,9 +118,15 @@ export function CTASection() {
               </span>
             </div>
 
-            {/* 카카오 맵 */}
+            {/* 구글 맵 */}
             <div className="border border-white/[0.08] overflow-hidden">
-              <KakaoMap />
+              <iframe
+                src={`https://maps.google.com/maps?q=${encodeURIComponent("광주광역시 광산구 임방울대로 330 애플타워")}&t=&z=17&ie=UTF8&iwloc=&output=embed`}
+                className="w-full aspect-[16/9]"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="스터디코어 1.0 위치"
+              />
             </div>
 
             {/* 지도 앱 바로가기 */}
@@ -173,58 +180,6 @@ export function CTASection() {
       </div>
     </section>
   );
-}
-
-function KakaoMap() {
-  const mapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!mapRef.current || !KAKAO.MAP_API_KEY) return;
-
-    const win = window as unknown as { kakao?: { maps: { load: (cb: () => void) => void; LatLng: new (lat: number, lng: number) => unknown; Map: new (el: HTMLElement, opts: object) => unknown; Marker: new (opts: object) => void } } };
-
-    const initMap = () => {
-      if (!win.kakao || !mapRef.current) return;
-      win.kakao.maps.load(() => {
-        if (!mapRef.current) return;
-        const position = new win.kakao!.maps.LatLng(LOCATION.lat, LOCATION.lng);
-        const map = new win.kakao!.maps.Map(mapRef.current, {
-          center: position,
-          level: 3,
-        });
-        new win.kakao!.maps.Marker({ map, position });
-      });
-    };
-
-    // 이미 로드된 경우
-    if (win.kakao) {
-      initMap();
-      return;
-    }
-
-    // 이미 스크립트 태그가 있는 경우
-    const existing = document.querySelector('script[src*="dapi.kakao.com/v2/maps"]');
-    if (existing) {
-      existing.addEventListener("load", initMap);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO.MAP_API_KEY}&autoload=false`;
-    script.async = true;
-    script.onload = initMap;
-    document.head.appendChild(script);
-  }, []);
-
-  if (!KAKAO.MAP_API_KEY) {
-    return (
-      <div className="w-full aspect-[16/9] bg-white/[0.03] flex items-center justify-center">
-        <span className="text-[13px] text-white/30">지도를 불러올 수 없습니다</span>
-      </div>
-    );
-  }
-
-  return <div ref={mapRef} className="w-full aspect-[16/9]" />;
 }
 
 function ContactRow({
