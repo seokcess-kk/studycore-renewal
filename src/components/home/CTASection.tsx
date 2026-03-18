@@ -76,7 +76,7 @@ export function CTASection() {
 
           <Link
             href={ROUTES.CONSULT}
-            className="group inline-flex items-center gap-3 mt-10 px-15 py-[18px] bg-teal text-navy text-[14px] font-bold tracking-[0.05em] border-[1.5px] border-teal hover:bg-transparent hover:text-teal transition-all duration-200"
+            className="cta-fill cta-fill-teal group inline-flex items-center gap-3 mt-10 px-15 py-[18px] text-navy text-[14px] font-bold tracking-[0.05em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
           >
             신청하기
             <ArrowRight

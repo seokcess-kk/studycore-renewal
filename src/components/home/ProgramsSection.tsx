@@ -171,7 +171,7 @@ export function ProgramsSection() {
                       {/* CTA */}
                       <Link
                         href={ROUTES.CONSULT}
-                        className="group inline-flex items-center gap-3 px-8 py-4 bg-teal text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:bg-transparent hover:text-teal transition-all duration-200"
+                        className="cta-fill cta-fill-teal group inline-flex items-center gap-3 px-8 py-4 text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
                       >
                         상담 신청하기
                         <ArrowRight

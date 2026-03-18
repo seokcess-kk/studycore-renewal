@@ -246,3 +246,33 @@
   from { width: 0%; }
   to { width: 100%; }
 }
+
+/* CTA 버튼 — 좌→우 fill 애니메이션 */
+.cta-fill {
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+.cta-fill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: scaleX(1);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cta-fill:hover::before {
+  transform: scaleX(0);
+  transform-origin: right;
+}
+
+/* teal 배경 CTA (다크 섹션용) */
+.cta-fill-teal::before {
+  background-color: var(--color-teal);
+}
+
+/* navy 배경 CTA (라이트 섹션용) */
+.cta-fill-navy::before {
+  background-color: var(--color-navy);
+}

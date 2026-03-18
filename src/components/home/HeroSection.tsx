@@ -121,7 +121,7 @@ export function HeroSection() {
 
             <Link
               href={ROUTES.CONSULT}
-              className="inline-block px-13 py-4 bg-teal text-navy-dark text-[13.5px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:bg-transparent hover:text-teal transition-all duration-200"
+              className="cta-fill cta-fill-teal inline-block px-13 py-4 text-navy-dark text-[13.5px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
             >
               입소 상담 신청하기
             </Link>
@@ -150,7 +150,7 @@ export function HeroSection() {
       >
         <Link
           href={ROUTES.CONSULT}
-          className="block w-full text-center px-6 py-4 bg-teal text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal"
+          className="cta-fill cta-fill-teal block w-full text-center px-6 py-4 text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
         >
           입소 상담 신청하기
         </Link>
