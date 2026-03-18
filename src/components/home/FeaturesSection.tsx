@@ -102,14 +102,14 @@ export function FeaturesSection() {
         className="mb-0 flex flex-col md:flex-row md:items-baseline gap-5 border-b-[1.5px] border-ink pb-10"
       >
         <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase whitespace-nowrap">
-          Why Studycore / 02
+          Why Studycore / 01
         </span>
         <h2 className="font-serif text-[clamp(32px,5vw,60px)] font-black tracking-[-0.03em] text-ink leading-none">
           6가지 차별점
         </h2>
         <div className="flex-1" />
         <p className="text-[13px] text-muted font-light max-w-[240px] md:text-right leading-[1.8]">
-          스터디코어에서만 경험할 수 있는 것들입니다.
+          스터디코어에서 경험할 수 있는 것들입니다.
         </p>
       </motion.div>
 
@@ -212,11 +212,10 @@ function FeatureRow({
           {feature.tags.map((tag) => (
             <span
               key={tag.label}
-              className={`text-[10.5px] font-medium px-2.5 py-0.5 border ${
-                tag.primary
-                  ? "border-teal text-teal bg-teal/[0.06]"
-                  : "border-rule text-muted"
-              }`}
+              className={`text-[10.5px] font-medium px-2.5 py-0.5 border ${tag.primary
+                ? "border-teal text-teal bg-teal/[0.06]"
+                : "border-rule text-muted"
+                }`}
             >
               {tag.label}
             </span>

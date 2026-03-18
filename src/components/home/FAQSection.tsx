@@ -19,7 +19,7 @@ const faqs = [
   {
     question: "수학 질문방은 어떻게 이용하나요?",
     answer:
-      '입소 후 별도 안내를 통해 이용할 수 있습니다. 모르는 문제를 사진으로 찍거나 직접 적어 올리면 <strong>국희재 수학학원 멘토가 풀이와 개념을 직접 설명</strong>해 드립니다.',
+      '등록 후 별도 안내를 통해 이용할 수 있습니다. 모르는 문제를 사진으로 찍거나 직접 적어 올리면 <strong>국희재 수학학원 멘토가 풀이와 개념을 직접 설명</strong>해 드립니다.',
   },
   {
     question: "교시제는 어떻게 운영되나요?",
@@ -29,12 +29,12 @@ const faqs = [
   {
     question: "학부모님도 학습 현황을 알 수 있나요?",
     answer:
-      '공지사항과 주요 안내는 학부모님께 카카오톡으로 전달됩니다. 원장님이 직접 내용을 확인하고 발송하기 때문에 <strong>오발송 없이 정확한 정보</strong>만 전달됩니다.',
+      '공지사항과 주요 안내는 학부모님께 카카오톡으로 전달됩니다. 원장님이 직접 내용을 확인하고 발송하기 때문에 <strong>정확한 정보</strong>를 전달드립니다.',
   },
   {
-    question: "입소 후 적응 기간이 있나요?",
+    question: "적응 기간이 있나요?",
     answer:
-      '입소 첫날 생활 규정, 교시 시간표, 벌점 제도 전반을 안내드립니다. 규칙이 명확할수록 오히려 편하다는 이야기를 많이 듣습니다. <strong>첫 주 안에 충분히 적응</strong>합니다.',
+      '생활 규정, 교시 시간표, 벌점 제도 전반을 안내드립니다. 규칙이 명확할수록 오히려 편하다는 이야기를 많이 듣습니다. <strong>첫 주 안에 충분히 적응</strong>합니다.',
   },
 ];
 
@@ -52,7 +52,7 @@ export function FAQSection() {
           className="lg:sticky lg:top-24"
         >
           <div className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase mb-5">
-            FAQ / 04
+            FAQ / 03
           </div>
           <h2 className="font-serif text-[clamp(36px,4vw,52px)] font-black tracking-[-0.04em] leading-[1.05] mb-6">
             자주
@@ -62,8 +62,8 @@ export function FAQSection() {
             질문
           </h2>
           <p className="text-[14px] leading-[1.9] text-muted font-light mb-9">
-            더 궁금한 점은 카카오 채널로 바로 문의해 주세요. 원장님이 직접
-            답변드립니다.
+            더 궁금한 점은 카카오 채널로 바로 문의해 주세요.<br />
+            원장님이 직접 답변드립니다.
           </p>
           <a
             href={CONTACT.kakaoChannel}
@@ -124,9 +124,8 @@ function FAQItem({
           {question}
         </span>
         <span
-          className={`w-7 h-7 border-[1.5px] border-rule flex-shrink-0 flex items-center justify-center text-muted transition-all duration-250 ${
-            isOpen ? "bg-navy border-navy text-white rotate-45" : ""
-          }`}
+          className={`w-7 h-7 border-[1.5px] border-rule flex-shrink-0 flex items-center justify-center text-muted transition-all duration-250 ${isOpen ? "bg-navy border-navy text-white rotate-45" : ""
+            }`}
         >
           <Plus size={16} />
         </span>

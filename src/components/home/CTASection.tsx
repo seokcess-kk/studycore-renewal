@@ -30,7 +30,7 @@ export function CTASection() {
           >
             <div className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase flex items-center gap-3 mb-8">
               <span className="w-8 h-0.5 bg-teal" />
-              Contact / 05
+              Contact / 04
             </div>
             <h2 className="font-serif text-[clamp(44px,7vw,96px)] font-black text-white leading-[0.92] tracking-[-0.04em] mb-13">
               상담

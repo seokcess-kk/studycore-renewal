@@ -113,7 +113,7 @@ export function ProgramsSection() {
           </h2>
           <div className="flex-1" />
           <p className="text-[13px] text-white/40 font-light max-w-[260px] md:text-right leading-[1.8]">
-            스터디코어에서 운영하는 프로그램을 확인하세요.
+            스터디코어의 운영 프로그램을 확인하세요.
           </p>
         </motion.div>
 

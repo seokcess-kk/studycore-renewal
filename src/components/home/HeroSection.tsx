@@ -69,7 +69,7 @@ export function HeroSection() {
             className="block w-10 h-[1.5px] bg-teal origin-left"
           />
           <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase">
-            Managed Study Hall · 광주 광산구
+            Managed Study Hall
           </span>
         </motion.div>
 
@@ -137,14 +137,14 @@ export function HeroSection() {
               <strong className="text-white/75 font-medium">
                 원장님이 직접 설계하고 운영하는
               </strong>{" "}
-              관리형 독서실로, 교시제와 수학 멘토 질문방으로 학습의 모든 과정을
+              관리형 독서실로<br />교시제와 수학 멘토 질문방으로 학습의 모든 과정을
               구조로 뒷받침합니다.
             </p>
             <Link
               href={ROUTES.CONSULT}
               className="cta-fill cta-fill-teal inline-block px-13 py-4 text-navy-dark text-[13.5px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
             >
-              입소 상담 신청하기
+              상담 신청하기
             </Link>
           </motion.div>
 

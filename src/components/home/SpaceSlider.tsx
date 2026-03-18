@@ -80,7 +80,7 @@ export function SpaceSlider() {
         className="px-6 md:px-13 mb-12 flex flex-col md:flex-row md:items-baseline gap-5 border-b-[1.5px] border-ink pb-10"
       >
         <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase">
-          Space / 03
+          Space / 02
         </span>
         <h2 className="font-serif text-[clamp(32px,5vw,56px)] font-black tracking-[-0.03em] text-ink">
           공간 소개
