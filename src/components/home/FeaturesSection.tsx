@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -120,8 +121,26 @@ export function FeaturesSection() {
         viewport={{ once: true, margin: "-100px" }}
         className="flex flex-col"
       >
-        {features.map((feature) => (
-          <FeatureRow key={feature.number} feature={feature} />
+        {features.map((feature, index) => (
+          <Fragment key={feature.number}>
+            <FeatureRow feature={feature} />
+            {/* 3행 뒤 시각적 브레이크 — 반복 피로 완화 */}
+            {index === 2 && (
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0 },
+                  show: { opacity: 1, transition: { duration: 0.6 } },
+                }}
+                className="py-12 md:py-16 px-6 md:px-16 border-b border-ink/[0.06] flex items-center gap-6 md:gap-10"
+              >
+                <span className="block w-10 h-[1.5px] bg-teal flex-shrink-0" />
+                <p className="font-serif text-[clamp(16px,2vw,20px)] font-bold text-ink/60 leading-[1.6] tracking-[-0.01em]">
+                  "공부를 <em className="text-teal not-italic">구조</em>로
+                  뒷받침하면, 의지만으로 안 되던 것도 됩니다."
+                </p>
+              </motion.div>
+            )}
+          </Fragment>
         ))}
       </motion.div>
 

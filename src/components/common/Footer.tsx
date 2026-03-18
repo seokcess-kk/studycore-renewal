@@ -9,7 +9,7 @@ export function Footer() {
         {/* 브랜드 */}
         <div className="text-center md:text-left">
           <div className="font-mono text-[9px] text-white/20 tracking-[0.3em] uppercase mb-1">
-            Managed Study Hall · Since 2024
+            Managed Study Hall · Since 2026
           </div>
           <div className="font-mono text-[14px] font-bold text-white/40 tracking-[0.18em]">
             STUDYCORE 1.0
@@ -44,10 +44,8 @@ export function Footer() {
             </Link>
           </div>
           <div className="text-[11px] text-white/20 font-light leading-relaxed">
-            {CONTACT.address}
-            <br />
             {CONTACT.phone} · {CONTACT.email}
-            <br />© 2025 STUDYCORE 1.0. All rights reserved.
+            <br />© 2026 STUDYCORE 1.0. All rights reserved.
           </div>
         </div>
       </div>

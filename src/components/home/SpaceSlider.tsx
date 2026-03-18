@@ -77,17 +77,17 @@ export function SpaceSlider() {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-40px" }}
-        className="px-6 md:px-13 mb-12 flex flex-col md:flex-row md:items-baseline gap-5"
+        className="px-6 md:px-13 mb-12 flex flex-col md:flex-row md:items-baseline gap-5 border-b-[1.5px] border-ink pb-10"
       >
         <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase">
           Space / 03
         </span>
-        <h2 className="font-serif text-[clamp(32px,5vw,56px)] font-black tracking-[-0.03em]">
+        <h2 className="font-serif text-[clamp(32px,5vw,56px)] font-black tracking-[-0.03em] text-ink">
           공간 소개
         </h2>
         <div className="flex-1" />
         <p className="text-[13px] text-muted font-light max-w-[220px] md:text-right leading-[1.7]">
-          촬영 후 실제 사진으로 교체 예정입니다.
+          애플타워 10층 전층, 학습에 최적화된 공간.
         </p>
       </motion.div>
 

@@ -45,7 +45,18 @@ export function HeroSection() {
       {/* 컨텐츠 그리드 */}
       <div className="relative z-[2] grid grid-cols-1 lg:grid-cols-2 min-h-screen">
         {/* 좌측: 헤드라인 */}
-        <div className="flex flex-col justify-end p-8 md:p-14 lg:border-r lg:border-white/[0.06]">
+        <div className="flex flex-col justify-end p-8 md:p-14 lg:border-r lg:border-white/[0.06] relative">
+          {/* 좌측 상단 장식 마크 */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.8 }}
+            className="absolute top-8 left-8 md:top-14 md:left-14 hidden lg:flex items-center gap-3"
+          >
+            <span className="block w-2 h-2 border border-teal/30" />
+            <span className="block w-1 h-1 bg-teal/20" />
+          </motion.div>
+
           {/* 서브 라벨 — teal 라인 장식 추가 */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -141,13 +152,18 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* 모바일: 하단 CTA */}
+      {/* 모바일: 서브카피 + 하단 CTA */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.5 }}
-        className="lg:hidden absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-navy-dark to-transparent"
+        className="lg:hidden absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-navy-dark via-navy-dark/80 to-transparent"
       >
+        <p className="text-[13px] text-white/40 font-light leading-[1.7] mb-5">
+          원장님이 직접 운영하는 관리형 독서실 —
+          <br />
+          교시제와 수학 멘토 질문방으로 학습을 구조화합니다.
+        </p>
         <Link
           href={ROUTES.CONSULT}
           className="cta-fill cta-fill-teal block w-full text-center px-6 py-4 text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
