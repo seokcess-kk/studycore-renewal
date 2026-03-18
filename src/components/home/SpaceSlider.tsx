@@ -87,7 +87,7 @@ export function SpaceSlider() {
         </h2>
         <div className="flex-1" />
         <p className="text-[13px] text-muted font-light max-w-[220px] md:text-right leading-[1.7]">
-          애플타워 10층 전층 학습에 최적화된 공간
+          애플타워 10층 쾌적한 학습공간
         </p>
       </motion.div>
 
