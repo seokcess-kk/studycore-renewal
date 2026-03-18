@@ -102,9 +102,9 @@ export default function AdminConsultationsPage() {
       </div>
 
       {/* 목록 */}
-      <div className="border border-rule bg-white">
+      <div className="border border-rule bg-white overflow-x-auto">
         {/* 테이블 헤더 */}
-        <div className="grid grid-cols-[1fr_120px_120px_100px_120px_50px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted">
+        <div className="grid grid-cols-[1fr_120px_120px_100px_120px_50px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted bg-stone min-w-[640px]">
           <span>이름 / 연락처</span>
           <span>상담 유형</span>
           <span>상태</span>
@@ -122,7 +122,7 @@ export default function AdminConsultationsPage() {
         ) : (
           consultations.map((c) => (
             <div key={c.id} className="border-b border-rule last:border-b-0">
-              <div className="grid grid-cols-[1fr_120px_120px_100px_120px_50px] items-center gap-4 px-4 py-3">
+              <div className="grid grid-cols-[1fr_120px_120px_100px_120px_50px] items-center gap-4 px-4 py-3 min-w-[640px]">
                 {/* 이름 + 연락처 + 확장 토글 */}
                 <button
                   onClick={() =>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AdminSidebar, AdminHeader } from "@/components/admin";
 import { Button, useToast } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -169,14 +168,7 @@ export default function AdminKakaoPage() {
   const studentTargets = allTargets.filter((t) => !t.isParent);
 
   return (
-    <div className="flex min-h-screen bg-stone">
-      <AdminSidebar />
-
-      <div className="flex-1">
-        <AdminHeader />
-
-        <main className="p-6">
-          <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto">
             {/* 안내 + 이력 조회 링크 */}
             <div className="flex items-center justify-between bg-navy/5 border border-navy/20 p-4 mb-6">
               <p className="text-[13px] text-navy">
@@ -435,9 +427,6 @@ export default function AdminKakaoPage() {
                 </li>
               </ul>
             </div>
-          </div>
-        </main>
-      </div>
     </div>
   );
 }

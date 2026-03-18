@@ -67,8 +67,8 @@ export default function AdminPopupsPage() {
         </Link>
       </div>
 
-      <div className="border border-rule bg-white">
-        <div className="grid grid-cols-[1fr_100px_140px_140px_80px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted">
+      <div className="border border-rule bg-white overflow-x-auto">
+        <div className="grid grid-cols-[1fr_100px_140px_140px_80px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted bg-stone min-w-[640px]">
           <span>제목</span>
           <span>상태</span>
           <span>시작일</span>
@@ -84,7 +84,7 @@ export default function AdminPopupsPage() {
           popups.map((p) => (
             <div
               key={p.id}
-              className="grid grid-cols-[1fr_100px_140px_140px_80px] items-center gap-4 border-b border-rule px-4 py-3 last:border-b-0 cursor-pointer hover:bg-stone/50 transition-colors"
+              className="grid grid-cols-[1fr_100px_140px_140px_80px] items-center gap-4 border-b border-rule px-4 py-3 last:border-b-0 cursor-pointer hover:bg-stone/50 transition-colors min-w-[640px]"
               onClick={() => router.push(`/admin/popups/${p.id}/edit`)}
             >
               <div className="min-w-0">

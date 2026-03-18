@@ -166,9 +166,9 @@ export default function AdminBlogPage() {
         </div>
 
         {/* 포스트 목록 */}
-        <div className="bg-white border border-rule">
+        <div className="bg-white border border-rule overflow-x-auto">
           {/* 테이블 헤더 */}
-          <div className="grid grid-cols-[1fr_100px_120px_120px] gap-4 px-4 py-3 border-b border-rule bg-stone text-[13px] font-medium text-muted">
+          <div className="grid grid-cols-[1fr_100px_120px_120px] gap-4 px-4 py-3 border-b border-rule bg-stone text-[13px] font-medium text-muted min-w-[640px]">
             <div>제목</div>
             <div className="text-center">상태</div>
             <div className="text-center">작성일</div>
@@ -181,7 +181,7 @@ export default function AdminBlogPage() {
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="grid grid-cols-[1fr_100px_120px_120px] gap-4 px-4 py-4"
+                  className="grid grid-cols-[1fr_100px_120px_120px] gap-4 px-4 py-4 min-w-[640px]"
                 >
                   <Skeleton className="h-5 w-3/4" />
                   <Skeleton className="h-5 w-16 mx-auto" />
@@ -206,7 +206,7 @@ export default function AdminBlogPage() {
               {posts.map((post) => (
                 <div
                   key={post.id}
-                  className="grid grid-cols-[1fr_100px_120px_120px] gap-4 px-4 py-4 items-center hover:bg-stone/50 transition-colors cursor-pointer"
+                  className="grid grid-cols-[1fr_100px_120px_120px] gap-4 px-4 py-4 items-center hover:bg-stone/50 transition-colors cursor-pointer min-w-[640px]"
                   onClick={() => router.push(`/admin/blog/${post.id}/edit`)}
                 >
                   {/* 제목 */}

@@ -132,8 +132,8 @@ export default function RegisterPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-stone px-4">
         <div className="w-full max-w-md border border-rule bg-white p-8 text-center">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center bg-yellow-100">
-            <Clock className="h-8 w-8 text-yellow-600" />
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center bg-navy/10">
+            <Clock className="h-8 w-8 text-navy" />
           </div>
 
           <h1 className="mb-2 font-serif text-2xl font-bold text-ink">

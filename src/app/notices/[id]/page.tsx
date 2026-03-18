@@ -51,11 +51,11 @@ export default function NoticeDetailPage({
       <>
         <Nav />
         <main className="pt-24 pb-20">
-          <section className="bg-stone py-12 px-6 md:px-13 border-b border-rule">
+          <section className="bg-navy py-12 px-6 md:px-13">
             <div className="max-w-3xl">
-              <Skeleton className="h-4 w-20 mb-4" />
-              <Skeleton className="h-10 w-3/4 mb-4" />
-              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-4 w-20 mb-4 bg-white/20" />
+              <Skeleton className="h-10 w-3/4 mb-4 bg-white/20" />
+              <Skeleton className="h-4 w-48 bg-white/20" />
             </div>
           </section>
           <section className="py-12 px-6 md:px-13">
@@ -97,31 +97,33 @@ export default function NoticeDetailPage({
       <Nav />
       <main className="pt-24 pb-20">
         {/* 헤더 */}
-        <section className="bg-stone py-12 px-6 md:px-13 border-b border-rule">
+        <section className="bg-navy py-12 px-6 md:px-13">
           <div className="max-w-3xl">
             <Link
               href={ROUTES.NOTICES}
-              className="inline-flex items-center gap-2 text-[13px] text-muted hover:text-ink mb-6"
+              className="inline-flex items-center gap-2 text-[13px] text-white/60 hover:text-white mb-6 transition-colors"
             >
               <ArrowLeft size={14} />
               목록으로
             </Link>
 
-            <span
-              className={`inline-block text-[11px] font-medium px-2 py-0.5 mb-4 ${
-                notice.category === "urgent"
-                  ? "bg-red-100 text-red-600"
-                  : "bg-white text-muted border border-rule"
-              }`}
-            >
-              {categoryLabel}
-            </span>
+            <div className="flex items-center gap-2 mb-4">
+              <span
+                className={`inline-block text-[11px] font-medium px-2 py-0.5 ${
+                  notice.category === "urgent"
+                    ? "bg-red-500/20 text-red-300"
+                    : "bg-white/10 text-white/60"
+                }`}
+              >
+                {categoryLabel}
+              </span>
+            </div>
 
-            <h1 className="font-serif text-2xl md:text-3xl font-bold text-ink leading-tight">
+            <h1 className="font-serif text-[clamp(20px,3vw,28px)] font-bold text-white leading-tight">
               {notice.title}
             </h1>
 
-            <div className="flex flex-wrap gap-4 mt-6 text-[13px] text-muted">
+            <div className="flex flex-wrap gap-4 mt-4 text-[13px] text-white/50">
               <span className="flex items-center gap-1.5">
                 <User size={14} />
                 {notice.author?.name || "관리자"}

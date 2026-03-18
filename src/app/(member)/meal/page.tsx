@@ -131,17 +131,23 @@ export default function LunchPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 min-h-screen bg-stone">
-        <div className="max-w-3xl mx-auto px-6 py-8">
-          {/* 헤더 */}
-          <div className="mb-8">
-            <h1 className="font-serif text-2xl font-bold text-ink mb-2">
+      <main className="pt-24 pb-20 bg-stone">
+        {/* 헤더 */}
+        <section className="bg-navy py-12 px-6 md:px-13">
+          <div className="max-w-3xl">
+            <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-3">
+              Meal / 도시락 신청
+            </span>
+            <h1 className="font-serif text-[clamp(24px,4vw,36px)] font-bold text-white">
               도시락 신청
             </h1>
-            <p className="text-muted text-[14px]">
+            <p className="mt-3 text-white/50 text-[15px]">
               원하는 요일과 식사를 선택해주세요.
             </p>
           </div>
+        </section>
+
+        <div className="max-w-3xl mx-auto px-6 py-8">
 
           {isLoading ? (
             <div className="space-y-4">

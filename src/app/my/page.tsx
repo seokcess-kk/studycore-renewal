@@ -64,58 +64,52 @@ export default function MyPage() {
     inactive: "비활성",
   };
 
-  const statusColor = {
-    pending: "bg-yellow-100 text-yellow-700",
-    active: "bg-teal/10 text-teal",
-    inactive: "bg-red-100 text-red-600",
-  };
 
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 bg-stone min-h-screen">
-        <div className="max-w-lg mx-auto px-6 py-8">
-          {/* 프로필 헤더 */}
-          <div className="bg-white border border-rule p-6 mb-6">
-            <div className="flex items-center gap-4">
-              {/* 아바타 */}
-              <AvatarUploader
-                userId={profile?.id || ""}
-                currentUrl={profile?.avatar_url}
-                onUpload={handleAvatarUpload}
-                size="sm"
-              />
-
-              {/* 정보 */}
-              <div className="flex-1">
-                <h1 className="font-serif text-xl font-bold text-ink">
-                  {profile?.name || "사용자"}
-                </h1>
-                <p className="text-[13px] text-muted mt-1">
-                  {profile?.school || "학교 미등록"}
-                  {profile?.grade && ` ${profile.grade}학년`}
-                </p>
-                <span
-                  className={`inline-block mt-2 text-[11px] font-medium px-2 py-0.5 ${
-                    statusColor[profile?.status as keyof typeof statusColor] ||
-                    statusColor.pending
-                  }`}
-                >
-                  {statusLabel[profile?.status as keyof typeof statusLabel] ||
-                    "알 수 없음"}
-                </span>
-              </div>
+      <main className="pt-24 pb-20 bg-stone">
+        {/* 프로필 헤더 */}
+        <section className="bg-navy py-12 px-6 md:px-13">
+          <div className="max-w-lg mx-auto flex items-center gap-4">
+            <AvatarUploader
+              userId={profile?.id || ""}
+              currentUrl={profile?.avatar_url}
+              onUpload={handleAvatarUpload}
+              size="sm"
+            />
+            <div className="flex-1">
+              <h1 className="font-serif text-xl font-bold text-white">
+                {profile?.name || "사용자"}
+              </h1>
+              <p className="text-[13px] text-white/50 mt-1">
+                {profile?.school || "학교 미등록"}
+                {profile?.grade && ` ${profile.grade}학년`}
+              </p>
+              <span
+                className={`inline-block mt-2 text-[11px] font-medium px-2 py-0.5 ${
+                  profile?.status === "active"
+                    ? "bg-teal/20 text-teal"
+                    : profile?.status === "inactive"
+                    ? "bg-red-500/20 text-red-300"
+                    : "bg-white/10 text-white/60"
+                }`}
+              >
+                {statusLabel[profile?.status as keyof typeof statusLabel] ||
+                  "알 수 없음"}
+              </span>
             </div>
-
-            {/* 승인 대기 안내 */}
-            {!isActive && (
-              <div className="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400">
-                <p className="text-[13px] text-yellow-700">
-                  관리자 승인 후 모든 기능을 이용하실 수 있습니다.
-                </p>
-              </div>
-            )}
           </div>
+          {!isActive && (
+            <div className="max-w-lg mx-auto mt-4 p-3 bg-white/10">
+              <p className="text-[13px] text-white/70">
+                관리자 승인 후 모든 기능을 이용하실 수 있습니다.
+              </p>
+            </div>
+          )}
+        </section>
+
+        <div className="max-w-lg mx-auto px-6 py-8">
 
           {/* 탭 네비게이션 */}
           <div className="flex border-b border-rule mb-6">

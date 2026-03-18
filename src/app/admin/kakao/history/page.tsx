@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { AdminSidebar, AdminHeader } from "@/components/admin";
 import { Button, useToast } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -158,14 +157,7 @@ export default function AdminKakaoHistoryPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-stone">
-      <AdminSidebar />
-
-      <div className="flex-1">
-        <AdminHeader />
-
-        <main className="p-6">
-          <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto">
             {/* 헤더 */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
@@ -419,9 +411,6 @@ export default function AdminKakaoHistoryPage() {
                 </div>
               )}
             </div>
-          </div>
-        </main>
-      </div>
     </div>
   );
 }
