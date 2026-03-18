@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ROUTES, CONTACT, LOCATION, KAKAO } from "@/lib/constants";
-import { ArrowRight, MapPin, Navigation } from "lucide-react";
+import { ArrowRight, MapPin, Navigation, Phone } from "lucide-react";
 
 const MAP_LINKS = [
   {
@@ -51,11 +51,17 @@ export function CTASection() {
               <span className="w-8 h-0.5 bg-teal" />
               Contact / 05
             </div>
-            <h2 className="font-serif text-[clamp(44px,7vw,96px)] font-black text-white leading-[0.92] tracking-[-0.04em] mb-13">
+            <h2 className="font-serif text-[clamp(44px,7vw,96px)] font-black text-white leading-[0.92] tracking-[-0.04em] mb-6">
               상담
               <br />
               신청
             </h2>
+
+            <p className="text-[15px] text-white/40 leading-[1.8] mb-13">
+              입소 상담, 시설 견학, 프로그램 문의 등
+              <br />
+              무엇이든 편하게 문의해 주세요.
+            </p>
 
             {/* 연락처 정보 */}
             <div className="flex flex-col">
@@ -64,9 +70,32 @@ export function CTASection() {
                 <br />
                 애플타워 10층
               </ContactRow>
-              <ContactRow label="Phone">{CONTACT.phone}</ContactRow>
-              <ContactRow label="Kakao">@스터디코어 1.0</ContactRow>
-              <ContactRow label="Email">{CONTACT.email}</ContactRow>
+              <ContactRow label="Phone">
+                <a
+                  href={`tel:${CONTACT.phone.replace(/-/g, "")}`}
+                  className="hover:text-teal transition-colors duration-200 cursor-pointer"
+                >
+                  {CONTACT.phone}
+                </a>
+              </ContactRow>
+              <ContactRow label="Kakao">
+                <a
+                  href={CONTACT.kakaoChannel}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-teal transition-colors duration-200 cursor-pointer"
+                >
+                  @스터디코어 1.0
+                </a>
+              </ContactRow>
+              <ContactRow label="Email">
+                <a
+                  href={`mailto:${CONTACT.email}`}
+                  className="hover:text-teal transition-colors duration-200 cursor-pointer"
+                >
+                  {CONTACT.email}
+                </a>
+              </ContactRow>
             </div>
           </motion.div>
         </div>
@@ -111,27 +140,34 @@ export function CTASection() {
           </div>
 
           {/* 하단: CTA */}
-          <div className="border-t border-white/[0.08] pt-10">
-            <p className="text-white/60 text-[15px] leading-[1.8] mb-8">
-              입소 상담, 시설 견학, 프로그램 문의 등<br />
-              무엇이든 편하게 문의해 주세요.
-              <br />
-              <br />
-              <strong className="text-white font-medium">
-                원장님이 직접 확인하고 연락드립니다.
-              </strong>
+          <div className="border-t border-white/[0.08] pt-10 flex flex-col flex-1 justify-end">
+            <p className="text-white/50 text-[13px] leading-[1.7] mb-3">
+              원장님이 직접 확인하고 연락드립니다.
             </p>
 
-            <Link
-              href={ROUTES.CONSULT}
-              className="cta-fill cta-fill-teal group inline-flex items-center gap-3 px-15 py-[18px] text-navy text-[14px] font-bold tracking-[0.05em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
-            >
-              상담 신청하기
-              <ArrowRight
-                size={16}
-                className="group-hover:translate-x-1 transition-transform duration-200"
-              />
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                href={ROUTES.CONSULT}
+                className="cta-fill cta-fill-teal group inline-flex items-center justify-center gap-3 px-13 py-[18px] text-navy text-[14px] font-bold tracking-[0.05em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300 cursor-pointer"
+              >
+                상담 신청하기
+                <ArrowRight
+                  size={16}
+                  className="group-hover:translate-x-1 transition-transform duration-200"
+                />
+              </Link>
+
+              <a
+                href={`tel:${CONTACT.phone.replace(/-/g, "")}`}
+                className="group inline-flex items-center justify-center gap-2 px-8 py-[18px] text-white/60 text-[14px] font-medium tracking-[0.02em] border-[1.5px] border-white/[0.12] hover:border-white/30 hover:text-white transition-all duration-300 cursor-pointer"
+              >
+                <Phone
+                  size={15}
+                  className="group-hover:scale-110 transition-transform duration-200"
+                />
+                전화 문의
+              </a>
+            </div>
           </div>
         </motion.div>
       </div>

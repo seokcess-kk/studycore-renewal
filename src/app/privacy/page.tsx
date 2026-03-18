@@ -108,7 +108,7 @@ export default function PrivacyPage() {
                 <p className="text-[14px]">
                   <strong>개인정보 보호책임자</strong>
                   <br />
-                  성명: 스터디코어 1.0 대표
+                  성명: 정원석
                   <br />
                   연락처: {CONTACT.phone}
                   <br />
