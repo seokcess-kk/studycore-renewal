@@ -116,6 +116,9 @@ export async function createSection(
       order_index: orderIndex,
       is_visible: input.is_visible ?? true,
       type: input.type ?? "onboarding",
+      category: input.category ?? "일반",
+      icon: input.icon ?? "FileText",
+      content_html: input.content_html ?? null,
     })
     .select()
     .single();

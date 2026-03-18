@@ -35,3 +35,15 @@ z-10    — DateSelector sticky 열
 ## 반응형 브레이크포인트
 - 질문방: `md` (768px) 기준 — Hero 버튼 hidden/floating 전환
 - 어드민: `lg` (1024px) 기준 — 사이드바 표시/숨김
+- 가이드: `lg` (1024px) 기준 — 사이드바 TOC 표시/모바일 드롭다운
+
+## 가이드/매뉴얼 UI 개선 (추가)
+
+### 변경/생성 파일 (7개)
+1. `supabase/migrations/038_enhance_guide_sections.sql` — category, icon, content_html 컬럼 추가
+2. `src/domains/guide/model.ts` — 스키마에 새 필드 추가
+3. `src/domains/guide/repository.ts` — create에 새 필드 반영
+4. `src/components/guide/GuidePageLayout.tsx` — 사이드바 TOC + 검색 + 리치 콘텐츠 뷰 공용 레이아웃
+5. `src/app/guide/page.tsx` — GuidePageLayout 사용
+6. `src/app/manual/page.tsx` — GuidePageLayout 사용
+7. `src/app/admin/guide/page.tsx` — Tiptap + 카테고리/아이콘/표시 토글

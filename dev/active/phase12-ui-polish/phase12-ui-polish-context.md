@@ -16,6 +16,19 @@
 9. 도시락 카드 패딩 불일치 (p-5)
 10. 아바타 삭제/업로드 버튼 크기 불일치
 
+## 가이드/매뉴얼 UI 개선 (2026-03-18)
+
+기존 `/guide`, `/manual` 페이지가 단순 아코디언 패턴 + 플레인텍스트만 표시.
+관리자 페이지도 textarea로만 입력.
+
+### 개선 사항
+- 사이드바 TOC + 리치 콘텐츠 뷰 "가이드 허브" 형태로 전환
+- 카테고리별 그룹핑, 검색, 이전/다음 네비게이션
+- 모바일 드롭다운 TOC
+- 관리자: Tiptap WYSIWYG 에디터, 카테고리 선택, 아이콘 선택, 표시/숨김 토글
+- DB: category, icon, content_html 컬럼 추가
+- 하위 호환: content_html이 null이면 기존 content 플레인텍스트 fallback
+
 ## 제약 사항
 - border-radius: 0 (globals.css 강제) — AvatarUploader 인라인 borderRadius: "50%"는 의도적 예외
 - box-shadow 절대 금지

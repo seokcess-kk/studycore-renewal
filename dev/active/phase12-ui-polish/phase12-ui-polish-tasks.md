@@ -26,3 +26,11 @@
 - [x] 아바타 삭제 w-6 / 업로드 w-8 → 모두 w-7 h-7 통일
 - [x] WeekdaySelector "(전체)" text-muted → text-teal underline
 - [x] DateSelector "(전체)" text-muted → text-teal underline
+
+## 가이드/매뉴얼 UI 개선
+
+- [x] DB 마이그레이션: guide_sections에 category, icon, content_html 컬럼 추가 (038)
+- [x] 도메인 model/repository: 새 필드 반영 (category, icon, content_html)
+- [x] GuidePageLayout 공용 컴포넌트: 사이드바 TOC + 검색 + 카테고리 그룹핑 + 이전/다음 네비게이션
+- [x] /guide, /manual 페이지: GuidePageLayout으로 통합 전환
+- [x] /admin/guide 관리자: textarea → Tiptap RichTextEditor, 카테고리/아이콘 선택, 표시/숨김 토글

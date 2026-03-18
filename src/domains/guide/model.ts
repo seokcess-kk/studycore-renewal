@@ -23,6 +23,9 @@ export const guideSectionSchema = z.object({
   order_index: z.number(),
   is_visible: z.boolean(),
   type: guideSectionTypeEnum.default("onboarding"),
+  category: z.string().default("일반"),
+  icon: z.string().default("FileText"),
+  content_html: z.string().nullable().optional(),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -36,6 +39,9 @@ export const createGuideSectionSchema = z.object({
   order_index: z.number().optional(),
   is_visible: z.boolean().optional(),
   type: guideSectionTypeEnum.optional(),
+  category: z.string().optional(),
+  icon: z.string().optional(),
+  content_html: z.string().nullable().optional(),
 });
 
 export type CreateGuideSectionInput = z.infer<typeof createGuideSectionSchema>;
@@ -46,6 +52,9 @@ export const updateGuideSectionSchema = z.object({
   content: z.string().min(1, "내용을 입력해주세요").optional(),
   order_index: z.number().optional(),
   is_visible: z.boolean().optional(),
+  category: z.string().optional(),
+  icon: z.string().optional(),
+  content_html: z.string().nullable().optional(),
 });
 
 export type UpdateGuideSectionInput = z.infer<typeof updateGuideSectionSchema>;

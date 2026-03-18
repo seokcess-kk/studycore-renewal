@@ -43,6 +43,7 @@
 - [ ] `024_add_question_pinned_and_fix_storage.sql` (질문 고정 + 이미지 RLS)
 - [ ] `025_fix_question_rls.sql` (질문/답변 DELETE 정책)
 - [ ] `026_add_guide_section_type.sql` (온보딩/매뉴얼 type 컬럼)
+- [ ] `038_enhance_guide_sections.sql` (category, icon, content_html 컬럼)
 
 ### 환경변수 설정
 - [x] `NEXT_PUBLIC_SUPABASE_URL` ✅
@@ -133,6 +134,13 @@ src/domains/
 ## 최근 변경사항
 
 ### 2026-03-18
+- **가이드/매뉴얼 UI 개선**
+  - DB: guide_sections에 category, icon, content_html 컬럼 추가 (038 마이그레이션)
+  - 공개 페이지: 사이드바 TOC + 검색 + 카테고리 그룹핑 + 이전/다음 네비게이션 (GuidePageLayout)
+  - 관리자: textarea → Tiptap RichTextEditor, 카테고리/아이콘 선택 UI, 표시/숨김 토글
+  - /guide, /manual 페이지를 GuidePageLayout 공용 컴포넌트로 통합
+  - 하위 호환: content_html null이면 기존 content 플레인텍스트 fallback
+
 - **Phase 12: UI 세부 폴리싱**
   - 질문방: 모바일 floating "질문하기" 버튼 추가, 필터 터치 영역 확대
   - 도시락: DateSelector sticky 첫 번째 열, 체크박스 크기 통일, "(전체)" 시각화
@@ -197,6 +205,7 @@ src/domains/
 - [ ] `024_add_question_pinned_and_fix_storage.sql`
 - [ ] `025_fix_question_rls.sql`
 - [ ] `026_add_guide_section_type.sql`
+- [ ] `038_enhance_guide_sections.sql`
 
 ### 즉시 가능
 1. Vercel 환경변수 설정 (`SUPABASE_SERVICE_ROLE_KEY`)
