@@ -21,7 +21,7 @@ function formatDate(dateStr: string | null): string {
 
 function parseDescription(description: string): string[] {
   return description
-    .split(/[.,]/)
+    .split("\n")
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
 }
@@ -311,7 +311,7 @@ export function ProgramsSection() {
 
                   {program.description && (
                     <p className="mt-2 text-[13px] text-white/30 leading-relaxed line-clamp-2">
-                      {program.description}
+                      {program.description.replace(/\n/g, " · ")}
                     </p>
                   )}
 
