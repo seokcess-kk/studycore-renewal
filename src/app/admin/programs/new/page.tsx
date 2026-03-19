@@ -94,11 +94,11 @@ export default function AdminProgramNewPage() {
             <textarea
               {...register("description")}
               rows={8}
-              placeholder={"프로그램 상세 설명을 입력하세요.\n\n한 줄에 하나씩 입력하면 홈페이지 카드에 불릿(·) 형태로 표시됩니다.\n상세 보기 팝업에서는 입력한 그대로 표시됩니다."}
+              placeholder={"- 대표원장 직접 운영·관리\n- 메디컬 재학 최상위권 조교 배치\n- 턴게이트 기반 출결 시스템\n\n위처럼 '- '로 시작하는 줄은 홈 카드에 불릿으로 표시됩니다.\n나머지 텍스트는 상세 보기 팝업에서만 표시됩니다."}
               className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none resize-none"
             />
             <p className="mt-1 text-xs text-muted">
-              홈 카드: 줄바꿈으로 불릿 분리 (최대 4개 표시) · 상세 팝업: 전체 내용 표시
+              &apos;- &apos;로 시작하는 줄 → 홈 카드 불릿 (최대 4개) · 나머지 → 상세 팝업에서만 표시
             </p>
           </div>
 

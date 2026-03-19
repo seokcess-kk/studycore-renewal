@@ -19,11 +19,13 @@ function formatDate(dateStr: string | null): string {
   });
 }
 
-function parseDescription(description: string): string[] {
+/** `- `로 시작하는 줄만 불릿으로 추출 */
+function parseBullets(description: string): string[] {
   return description
     .split("\n")
     .map((s) => s.trim())
-    .filter((s) => s.length > 0);
+    .filter((s) => s.startsWith("- "))
+    .map((s) => s.slice(2));
 }
 
 export function ProgramsSection() {
@@ -128,7 +130,7 @@ export function ProgramsSection() {
             className="mt-12"
           >
             {activePrograms.map((program) => {
-              const bullets = parseDescription(program.description || "");
+              const bullets = parseBullets(program.description || "");
               return (
                 <div
                   key={program.id}
@@ -311,7 +313,8 @@ export function ProgramsSection() {
 
                   {program.description && (
                     <p className="mt-2 text-[13px] text-white/30 leading-relaxed line-clamp-2">
-                      {program.description.replace(/\n/g, " · ")}
+                      {parseBullets(program.description).join(" · ") ||
+                        program.description.replace(/\n/g, " ")}
                     </p>
                   )}
 

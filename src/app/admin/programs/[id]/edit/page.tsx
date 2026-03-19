@@ -124,7 +124,7 @@ export default function AdminProgramEditPage() {
               className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none resize-none"
             />
             <p className="mt-1 text-xs text-muted">
-              홈 카드: 줄바꿈으로 불릿 분리 (최대 4개 표시) · 상세 팝업: 전체 내용 표시
+              &apos;- &apos;로 시작하는 줄 → 홈 카드 불릿 (최대 4개) · 나머지 → 상세 팝업에서만 표시
             </p>
           </div>
 
