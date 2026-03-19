@@ -311,12 +311,28 @@ export function ProgramsSection() {
                     {program.title}
                   </h4>
 
-                  {program.description && (
-                    <p className="mt-2 text-[13px] text-white/30 leading-relaxed line-clamp-2">
-                      {parseBullets(program.description).join(" · ") ||
-                        program.description.replace(/\n/g, " ")}
-                    </p>
-                  )}
+                  {program.description && (() => {
+                    const bullets = parseBullets(program.description);
+                    if (bullets.length > 0) {
+                      return (
+                        <div className="mt-2 space-y-1.5">
+                          {bullets.slice(0, 2).map((b, i) => (
+                            <div key={i} className="flex items-start gap-2">
+                              <span className="mt-1.5 w-1 h-1 bg-teal/40 flex-shrink-0" />
+                              <span className="text-[12px] text-white/35 leading-relaxed">
+                                {b}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }
+                    return (
+                      <p className="mt-2 text-[13px] text-white/30 leading-relaxed line-clamp-2">
+                        {program.description.replace(/\n/g, " ")}
+                      </p>
+                    );
+                  })()}
 
                   <span className="inline-block mt-3 text-[11px] text-teal/50 group-hover:text-teal/80 transition-colors font-mono">
                     상세 보기 →
