@@ -7,7 +7,9 @@ import { Nav, Footer, Skeleton } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getPublishedBlogList } from "@/domains/blog/service";
 import type { BlogPostWithAuthor } from "@/domains/blog/model";
-import { Calendar, Tag, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, Tag, ChevronLeft, ChevronRight, PenLine } from "lucide-react";
+import { useUserStore } from "@/stores/useUserStore";
+import { ROUTES } from "@/lib/constants";
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPostWithAuthor[]>([]);
@@ -16,6 +18,7 @@ export default function BlogPage() {
   const [total, setTotal] = useState(0);
   const [selectedTag, setSelectedTag] = useState<string | undefined>();
   const [allTags, setAllTags] = useState<string[]>([]);
+  const canAccessAdmin = useUserStore((state) => state.canAccessAdmin);
   const pageSize = 9;
 
   useEffect(() => {
@@ -65,6 +68,15 @@ export default function BlogPage() {
             <p className="mt-4 text-white/50 text-[15px] max-w-xl">
               입시 정보, 학습 팁, 스터디코어 소식을 전해드립니다.
             </p>
+            {canAccessAdmin && (
+              <Link
+                href={`${ROUTES.ADMIN_BLOG}/new`}
+                className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 border-[1.5px] border-teal text-teal text-[13px] font-bold tracking-[0.02em] hover:bg-teal hover:text-navy-dark transition-colors duration-200 cursor-pointer"
+              >
+                <PenLine size={14} />
+                글쓰기
+              </Link>
+            )}
           </div>
         </section>
 
@@ -77,7 +89,7 @@ export default function BlogPage() {
                   setSelectedTag(undefined);
                   setPage(1);
                 }}
-                className={`px-4 py-2 text-[13px] font-medium border whitespace-nowrap transition-colors ${
+                className={`px-4 py-2 text-[13px] font-medium border whitespace-nowrap transition-colors cursor-pointer ${
                   !selectedTag
                     ? "bg-navy border-navy text-white"
                     : "bg-white border-rule text-ink hover:border-navy"
@@ -92,7 +104,7 @@ export default function BlogPage() {
                     setSelectedTag(tag);
                     setPage(1);
                   }}
-                  className={`px-4 py-2 text-[13px] font-medium border whitespace-nowrap transition-colors ${
+                  className={`px-4 py-2 text-[13px] font-medium border whitespace-nowrap transition-colors cursor-pointer ${
                     selectedTag === tag
                       ? "bg-navy border-navy text-white"
                       : "bg-white border-rule text-ink hover:border-navy"
@@ -143,7 +155,7 @@ export default function BlogPage() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="w-10 h-10 flex items-center justify-center border border-rule text-ink hover:border-navy disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="w-10 h-10 flex items-center justify-center border border-rule text-ink hover:border-navy disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
                   <ChevronLeft size={18} />
                 </button>
@@ -151,7 +163,7 @@ export default function BlogPage() {
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-10 h-10 text-[14px] font-medium border transition-colors ${
+                    className={`w-10 h-10 text-[14px] font-medium border transition-colors cursor-pointer ${
                       page === i + 1
                         ? "bg-navy border-navy text-white"
                         : "border-rule text-ink hover:border-navy"
@@ -163,7 +175,7 @@ export default function BlogPage() {
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="w-10 h-10 flex items-center justify-center border border-rule text-ink hover:border-navy disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="w-10 h-10 flex items-center justify-center border border-rule text-ink hover:border-navy disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
                   <ChevronRight size={18} />
                 </button>

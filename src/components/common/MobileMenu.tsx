@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/client";
 import { signOut } from "@/domains/user/service";
 import { useUnansweredCount } from "@/hooks/useUnansweredCount";
 import { useActiveMealPeriod } from "@/hooks/useActiveMealPeriod";
+import { useMenuVisibility } from "@/hooks/useMenuVisibility";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const logout = useUserStore((state) => state.logout);
   const unansweredCount = useUnansweredCount();
   const hasActiveMealPeriod = useActiveMealPeriod();
+  const menuVisibility = useMenuVisibility();
 
   // pathname 변경 시 자동 닫힘
   useEffect(() => {
@@ -121,6 +123,16 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           >
             {isAuthenticated ? (
               <>
+                {menuVisibility.blog && (
+                  <motion.div variants={itemVariants}>
+                    <Link
+                      href={ROUTES.BLOG}
+                      className={linkClass(pathname.startsWith("/blog"))}
+                    >
+                      블로그
+                    </Link>
+                  </motion.div>
+                )}
                 <motion.div variants={itemVariants}>
                   <Link
                     href={ROUTES.NOTICES}
@@ -217,7 +229,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     href={getAnchorHref("#features")}
                     className={linkClass()}
                   >
-                    특징
+                    시스템
                   </Link>
                 </motion.div>
                 <motion.div variants={itemVariants}>
@@ -230,6 +242,16 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     FAQ
                   </Link>
                 </motion.div>
+                {menuVisibility.blog && (
+                  <motion.div variants={itemVariants}>
+                    <Link
+                      href={ROUTES.BLOG}
+                      className={linkClass(pathname.startsWith("/blog"))}
+                    >
+                      블로그
+                    </Link>
+                  </motion.div>
+                )}
 
                 <motion.div variants={itemVariants} className="border-t border-white/10 mt-6 pt-6">
                   <Link

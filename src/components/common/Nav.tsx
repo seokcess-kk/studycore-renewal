@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/client";
 import { signOut } from "@/domains/user/service";
 import { useUnansweredCount } from "@/hooks/useUnansweredCount";
 import { useActiveMealPeriod } from "@/hooks/useActiveMealPeriod";
+import { useMenuVisibility } from "@/hooks/useMenuVisibility";
 import { MobileMenu } from "./MobileMenu";
 import { SearchModal } from "./SearchModal";
 
@@ -33,6 +34,7 @@ export function Nav() {
   const logout = useUserStore((state) => state.logout);
   const unansweredCount = useUnansweredCount();
   const hasActiveMealPeriod = useActiveMealPeriod();
+  const menuVisibility = useMenuVisibility();
 
   // 홈이 아닌 페이지에서는 앵커 링크 앞에 / 추가
   const getAnchorHref = (anchor: string) => (isHome ? anchor : `/${anchor}`);
@@ -112,6 +114,11 @@ export function Nav() {
         <div className="flex items-center gap-6 md:gap-9">
           {isMounted && isAuthenticated ? (
             <>
+              {menuVisibility.blog && (
+                <Link href={ROUTES.BLOG} className={linkStyle(pathname.startsWith("/blog"))}>
+                  블로그
+                </Link>
+              )}
               <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>
                 공지사항
               </Link>
@@ -166,6 +173,11 @@ export function Nav() {
               <Link href={getAnchorHref("#faq")} className={linkStyle()}>
                 FAQ
               </Link>
+              {menuVisibility.blog && (
+                <Link href={ROUTES.BLOG} className={linkStyle(pathname.startsWith("/blog"))}>
+                  블로그
+                </Link>
+              )}
               <Link
                 href={ROUTES.LOGIN}
                 className={`hidden md:block text-[12px] transition-colors duration-150 ${isDarkText ? "text-ink/30 hover:text-ink/60" : "text-white/30 hover:text-white/60"
