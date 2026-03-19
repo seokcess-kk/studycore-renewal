@@ -1,188 +1,148 @@
-# CLAUDE.md
+<!--
+이 파일은 점진적으로 개선됩니다.
+클로드가 실수하거나 의도와 다른 결과를 낼 때마다,
+해당 케이스를 방지하는 규칙을 한 줄씩 추가해 주세요.
+예: "API 응답 타입을 변경할 때 프론트엔드 타입도 반드시 함께 수정할 것"
+-->
+<!-- 팀 공유 학습 시스템 -->
+<!-- 이 파일은 Git으로 관리됩니다. 규칙 추가/수정 시 PR을 통해 팀원 리뷰를 받아주세요. -->
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+# StudyCore Web
 
-## 서비스 목적
-관리형 독서실 홈페이지 (studycore-web).
-학부모·학생 유입을 위한 공개 홈페이지 +
-재원생 전용 서비스 (공지, 질문방, 도시락 신청) +
-어드민 패널.
-
-## 빌드 명령어
-```bash
-npm run dev            # 개발 서버 (localhost:3000, webpack 모드)
-npm run build          # 프로덕션 빌드
-npm run lint           # ESLint
-npx tsc --noEmit       # TypeScript 타입 체크
-npm run test:e2e       # Playwright E2E 테스트
-npm run test:e2e:ui    # Playwright UI 모드
-npx playwright test tests/foo.spec.ts  # 단일 E2E 테스트 실행
-```
+## 개요
+관리형 독서실 홈페이지. 공개 랜딩 + 재원생 서비스(공지·질문방·도시락) + 어드민 패널.
 
 ## 기술 스택
-- Next.js 16 (App Router, TypeScript strict mode) — `@/*` → `./src/*` path alias
-- Tailwind CSS v4 + shadcn/ui (border-radius:0 전체 적용 — shadcn 기본값 override)
-- Supabase (PostgreSQL + Auth + Storage + Edge Functions)
-- Zustand — 전역 상태 (유저 세션, 역할, 메뉴 노출 여부)
-- TanStack Query v5 — 서버 상태
-- react-hook-form + zod v4 — 모든 폼
-- Tiptap — 리치 텍스트 에디터 (어드민 블로그/공지 작성)
-- Framer Motion — 애니메이션
-- Playwright — E2E 테스트 (`e2e/` 디렉토리)
-- 배포: Vercel
+Next.js 16 (App Router, TS strict) · Tailwind v4 + shadcn/ui · Supabase (PG + Auth + Storage + Edge Functions) · Zustand · TanStack Query v5 · react-hook-form + zod v4 · Tiptap · Framer Motion · Playwright E2E · Vercel 배포. Path alias: `@/*` → `./src/*`
 
-## 아키텍처 개요
-
-### 라우트 그룹 (3계층)
-- `src/app/(public)/` — 공개 페이지 (홈, 블로그, 상담 신청, 소개, 후기 등)
-- `src/app/(member)/` + `src/app/my/` — 로그인 필요 (공지, 질문방, 도시락, 마이페이지)
-- `src/app/admin/` — 어드민 (admin/mentor 권한 필요)
-
-### DDD 3파일 패턴
-모든 도메인은 `src/domains/[도메인]/` 하위에 3개 파일로 구성:
+## 빌드 & 실행
+```bash
+npm install            # 의존성 설치
+npm run dev            # localhost:3000 (webpack)
+npm run build          # 프로덕션 빌드
+npm run lint           # ESLint
+npx tsc --noEmit       # 타입 체크
+npm run test:e2e       # Playwright E2E
 ```
-model.ts      → 타입, Zod 스키마
-repository.ts → Supabase 쿼리 (DB 접근 유일 경로)
-service.ts    → 비즈니스 로직
+
+## 디렉터리 구조
 ```
-도메인 (15개): user, notice, question, consultation, counseling, blog, meal, review, guide, notification, settings, popup, program, search
+src/app/(public)/      공개 페이지 (홈, 블로그, 상담, 소개, 후기)
+src/app/(member)/      재원생 전용 (공지, 질문방, 도시락) + src/app/my/
+src/app/admin/         어드민 (admin/mentor 권한)
+src/app/api/           Route Handlers (staff-login, create-staff, consult)
+src/domains/           DDD 3파일 패턴 — 상세: src/domains/CLAUDE.md
+src/components/        UI 컴포넌트 — 브랜드/패턴: src/components/CLAUDE.md
+src/stores/            Zustand 스토어
+src/hooks/             커스텀 훅
+src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
+```
 
-**도메인 간 호출 규칙**: service→service만 허용. repository→repository 직접 호출 금지.
+## 도메인 용어
+| 용어 | 의미 | 혼동 주의 |
+|------|------|----------|
+| Consultation (상담 신청) | 외부 방문자의 입소/견학 문의. status: `new→contacted→done` | Counseling과 **별개** 도메인 |
+| Counseling (상담 기록) | 스태프↔재원생 상담 내역 기록. types: admission/career/etc | Consultation과 혼동 금지 |
+| 재원생 (student) | 등록된 학생. 계정 상태: `pending→active→inactive` | User(시스템 사용자)와 구분 |
+| 스태프 | admin · mentor · assistant 통칭. `isStaffRole()`로 판별 | |
+| MealPeriod | 도시락 신청 기간. selection: `weekday`(요일) vs `date`(날짜) | |
+| Question | 재원생 Q&A. status: `pending→answered` | |
 
-### 인증 모델
-- **재원생**: 카카오 OAuth (Supabase Auth) → `/auth/callback` → `/register`(추가 정보)
-- **스태프(admin/mentor/assistant)**: 아이디 + 비밀번호
-  - Supabase Auth는 이메일 기반 → username 조회 → 더미 이메일(`username@studycore.internal`) → signInWithPassword
-  - 비밀번호 검증: `verify_staff_password` RPC (bcrypt, SECURITY DEFINER)
-  - 계정 잠금: 5회 실패 시 15분 (`login_attempts` 테이블)
+## 코딩 규칙
 
-### 권한 모델
-| 역할 | 접근 범위 | 코드 체크 |
-|------|----------|----------|
-| student | 공개 + 재원생 페이지 | `isStudent()` |
-| assistant | 공개 + 재원생 + `/admin/guide` | `isStaffRole()` |
-| mentor | 공개 + 재원생 + `/admin/*` | `hasAdminAccess()` |
+### 절대 금지 — 위반 발견 시 즉시 수정
+1. `rounded-*` 클래스 → border-radius 항상 0 (globals.css override)
+2. `shadow-*` 클래스 → box-shadow 불가
+3. `SUPABASE_SERVICE_ROLE_KEY` 클라이언트 노출
+4. Next.js Route에서 알림톡/SMS 직접 호출 → Supabase Edge Function 경유 필수
+5. 컴포넌트에서 직접 DB 쿼리 → `src/domains/[도메인]/repository.ts` 경유 필수
+6. 로그아웃 시 `router.push()` → `window.location.href = "/"` 사용 (전체 리로드)
+7. `SIGNED_OUT`에서 `setUser`/`setProfile` 개별 호출 → `logout()` 한 번 호출
+8. 도메인 repository→repository 직접 호출 → service→service만 허용
+
+### 필수 패턴
+- 모든 폼: react-hook-form + zod
+- Server Component / Route Handler → `createServerClient()` (lib/supabase/server.ts)
+- Client Component → `createBrowserClient()` (lib/supabase/client.ts)
+- RLS 우회 → `createAdminClient()` (lib/supabase/server.ts)
+- 권한 검사 → middleware.ts
+- 클릭 가능 요소 → `cursor-pointer` 필수
+- hover 상태 → `transition-colors duration-200` 이상
+
+### 인증
+- 재원생: 카카오 OAuth → `/auth/callback` → `/register`
+- 스태프: username → 이메일(`@studycore.internal`) 조회 → `signInWithPassword` → `verify_staff_password` RPC
+- 잠금: 5회 실패 → 15분 (`login_attempts`)
+- 로그아웃: `signOut()` → `logout()` → `window.location.href = "/"`
+
+### 권한
+| 역할 | 접근 | 체크 함수 |
+|------|------|----------|
+| student | 공개 + 재원생 | `isStudent()` |
+| assistant | + /admin/guide | `isStaffRole()` |
+| mentor | + /admin/* | `hasAdminAccess()` |
 | admin | 전체 | `hasAdminAccess()` |
 
-계정 상태 (재원생만): pending → active → inactive
-- middleware.ts에서 PROTECTED_ROUTES 접근 시 상태 체크
-- pending/inactive → 안내 페이지로 리다이렉트
-
-### 로그아웃 패턴 (3곳 통일)
-```ts
-const supabase = createClient();
-await signOut(supabase);   // domains/user/service — Supabase 세션/쿠키 정리
-logout();                  // Zustand store 완전 초기화
-window.location.href = "/"; // 전체 리로드 (router.push 사용 금지 — 캐시 문제)
-```
-
-### API Routes
-- `src/app/api/auth/staff-login/` — 스태프 로그인
-- `src/app/api/admin/create-staff/` — 스태프 계정 생성
-- `src/app/api/consult/` — 상담 신청 (Admin 클라이언트 사용)
-
-### Supabase 클라이언트 사용 규칙
-- Server Component / Route Handler → `createServerClient()` (`src/lib/supabase/server.ts`)
-- Client Component → `createBrowserClient()` (`src/lib/supabase/client.ts`)
-- Admin (Service Role) 클라이언트 → `createAdminClient()` (`src/lib/supabase/server.ts`) — RLS 우회 필요 시
-- `createClient`와 `createBrowserClient`는 같은 함수 (별칭)
-
 ### 상태 관리
-- `src/stores/useUserStore.ts` — Zustand + sessionStorage persist
-  - sessionStorage: 페이지 리로드 시 즉시 복원, 탭 닫으면 삭제
-  - 계산된 상태: `isStaff`, `isAdmin`, `isMentor`, `canAccessAdmin`, `isActive`
-  - `isLoading`은 persist 제외 (항상 초기값 true에서 시작)
-- `src/components/Providers.tsx` — `AuthInitializer`는 "검증" 역할만
-  - persist된 store와 Supabase 세션 일치 여부 확인
-  - 불일치 시에만 DB 재조회
-  - SIGNED_OUT 시 store 초기화
+- `useUserStore` (Zustand + sessionStorage persist). `isLoading`은 persist 제외
+- `AuthInitializer`: 검증만 수행. persist↔Supabase 불일치 시만 DB 재조회
 
-### 알림 흐름
-알림은 반드시 Supabase Edge Function 경유 (Next.js Route에서 직접 호출 금지):
+### 알림 흐름 (모두 Edge Function 경유)
 ```
-상담 신청 → notify-consult → 관리자: 알림톡 / 신청자: SMS
-재원생 질문 → notify-question → 멘토: 알림톡
-멘토 답변 → notify-answer → 재원생: 알림톡 (active만)
+상담 신청 → notify-consult     → 관리자 알림톡 + 신청자 SMS
+재원생 질문 → notify-question  → 멘토 알림톡
+멘토 답변 → notify-answer      → 재원생 알림톡 (active만)
 공지 발행 → send-kakao-alimtalk → 재원생/학부모
 ```
 
-## 홈페이지 섹션 구조
-`src/app/page.tsx`에서 순서대로 렌더링:
-```
-HeroSection → TrustStrip → FeaturesSection → ProgramsSection
-→ SpaceSlider → FAQSection → CTASection → PopupModal
-```
-각 섹션은 `src/components/home/`에 위치. 섹션 번호 라벨(01~05) 사용.
+## 검증 규칙 (Self-Verification)
+코드 변경 후 아래를 순서대로 수행. **에러 0개가 될 때까지 반복**한다. 1회 통과로 끝내지 말 것.
 
-## 모달 패턴
-프로젝트 내 모달은 다음 패턴을 따름:
-- ESC 키 닫기 + 오버레이 클릭 닫기 + `document.body.style.overflow` 스크롤 방지
-- Framer Motion `AnimatePresence` 사용
-- `fixed inset-0 z-50` 오버레이 + `relative z-10` 모달 본체
-- 기존 모달: `ConfirmModal` (확인/취소), `SearchModal` (검색), `ProgramDetailModal` (상세), `PopupModal` (프로모션)
+| 단계 | 명령어 | 실패 시 대응 |
+|------|--------|-------------|
+| 1. 타입 체크 | `npx tsc --noEmit` | 에러 파일:줄 확인 → 타입 수정 → **1단계 재실행**. import 경로 오타, 누락된 props가 80% |
+| 2. 빌드 | `npm run build` | 터미널 에러 메시지의 파일:줄 확인 → 수정 → **2단계 재실행**. Server/Client 혼용이 가장 흔함 |
+| 3. 린트 | `npm run lint` | `--fix`로 자동 수정 가능한 것 먼저 처리, 나머지 수동 수정 → **3단계 재실행** |
+| 4. UI 확인 | `npm run dev` | 변경한 페이지 경로 + 확인할 동작을 체크리스트로 제시 (아래 예시) |
 
-## CTA 버튼 패턴
-`globals.css`에 정의된 `cta-fill` 클래스 사용:
-```html
-<!-- 다크 배경: teal 채움 → hover 시 비움 -->
-<Link className="cta-fill cta-fill-teal ... border-teal hover:text-teal">
-<!-- 라이트 배경: navy 채움 → hover 시 비움 -->
-<Link className="cta-fill cta-fill-navy ... border-navy hover:text-navy">
+**핵심: 각 단계에서 에러가 발견되면 수정 후 해당 단계를 다시 실행한다. 에러 0개가 확인될 때까지 다음 단계로 넘어가지 않는다.**
+
+**UI 변경 시**: `.claude/skills/ui-ux-pro-max/SKILL.md` 스킬을 활용하여 기획·디자인 검토 수행.
+
+**UI 확인 체크리스트 예시** (UI 변경 시 반드시 이 형식으로 제시):
+```
+확인 페이지: http://localhost:3000/admin/meal
+- [ ] 테이블 렌더링 정상
+- [ ] 필터 클릭 시 데이터 갱신
+- [ ] 모바일 뷰포트(375px)에서 레이아웃 깨짐 없음
 ```
 
-## 브랜드 컬러 토큰
-```css
---navy:   #103050   /* 주색 — 버튼, 다크 섹션 */
---teal:   #57ADB1   /* 포인트 — 강조, CTA */
---teal-d: #3D8F94   /* teal hover 상태 */
---navy-d: #0A1F35   /* 다크 배경 — Hero, Footer */
---stone:  #F4F2EE   /* 라이트 배경 — 섹션 교차 */
---ink:    #111111   /* 본문 텍스트 */
---muted:  #888888   /* 보조 텍스트 */
---rule:   #E3E0DA   /* 구분선 */
-```
-
-## 타이포그래피
-- 헤드라인: Noto Serif KR (next/font/google)
-- 본문: Noto Sans KR
-- 번호·레이블: IBM Plex Mono
+추가 규칙:
+- Supabase 스키마 변경 시 `supabase/migrations/`에 SQL 파일 추가
+- 새 도메인 추가 시 `src/domains/CLAUDE.md`의 도메인 테이블도 업데이트
+- 에러를 사용자에게 보고만 하지 말 것. 원인 분석 → 수정 → 재검증까지 완료
 
 ## Phase 진행 규칙
-새로운 Phase 시작 시 반드시 `/dev/active/phase{N}-{name}/` 폴더에 3개 파일 생성:
+새 Phase → `dev/active/phase{N}-{name}/` 에 3개 파일 생성:
 ```
-dev/active/phase{N}-{name}/
-├── phase{N}-{name}-context.md   ← 결정 이력, 참고 자료, 제약 사항
-├── phase{N}-{name}-plan.md      ← 아키텍처 계획, 기술 결정, 설계
-└── phase{N}-{name}-tasks.md     ← 작업 목록, 체크리스트, 완료 기록
+phase{N}-{name}-context.md  ← 결정 이력, 제약 사항
+phase{N}-{name}-plan.md     ← 설계, 기술 결정
+phase{N}-{name}-tasks.md    ← 작업 목록, 완료 기록
 ```
 
-## 절대 위반 금지
-1. 모든 요소 border-radius: 0 — globals.css에서 override. `rounded-*` 클래스 사용 금지.
-2. box-shadow 절대 금지. `shadow-*` 클래스 사용 금지.
-3. 모든 폼 react-hook-form + zod 필수
-4. Server Component/Route Handler → createServerClient()
-5. Client Component → createBrowserClient()
-6. SUPABASE_SERVICE_ROLE_KEY 클라이언트 노출 금지
-7. 알림 발송 → Supabase Edge Function에서만
-8. 권한 검사 → middleware.ts에서 수행
-9. DB 쿼리 → src/domains/[도메인]/repository.ts 경유
-10. 로그아웃 시 `router.push()` 사용 금지 → `window.location.href` 사용 (전체 리로드 필수)
-11. 모든 클릭 가능 요소에 `cursor-pointer` 필수 (버튼, 링크, 카드 등)
-12. hover 상태에는 반드시 `transition-colors duration-200` 이상 적용
+## 참조 문서
+- `dev/active/PROJECT-STATUS.md` — 프로젝트 진행 현황
+- `docs/plans/` — Phase별 계획 문서
+- `.claude/skills/ui-ux-pro-max/SKILL.md` — UI/UX 기획·디자인 검토 스킬
+- `src/components/CLAUDE.md` — UI/브랜드 패턴 (컬러, 타이포, 모달, CTA)
+- `src/domains/CLAUDE.md` — DDD 3파일 패턴 + 도메인 목록
+- `src/app/admin/CLAUDE.md` — 어드민 전용 규칙
 
-## 자주 하는 실수 방지
-| 실수 | 올바른 방법 |
-|------|------------|
-| Server Component에서 `createClient()` 사용 | `@supabase/ssr`의 `createServerClient()` 사용 |
-| Client Component에서 `createServerClient()` 사용 | `createBrowserClient()` 사용 |
-| Next.js Route에서 알림톡/SMS 직접 호출 | Supabase Edge Function 경유 필수 |
-| `rounded-*` Tailwind 클래스 추가 | 절대 금지 — border-radius는 항상 0 |
-| `shadow-*` Tailwind 클래스 추가 | 절대 금지 |
-| 컴포넌트에서 직접 DB 쿼리 | `src/domains/[도메인]/repository.ts` 경유 |
-| `NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY` 생성 | 절대 금지 — 서버 전용 |
-| username으로 Supabase signIn 직접 호출 | username → 이메일 조회 → signInWithPassword |
-| shadcn 기본 rounded 그대로 사용 | globals.css `* { border-radius: 0 !important }` 필수 |
-| 로그아웃에서 `router.push()` 사용 | `window.location.href = "/"` 사용 (미들웨어 재실행 필요) |
-| SIGNED_OUT에서 setUser(null)+setProfile(null) 개별 호출 | `logout()` 한 번 호출 (파생 상태 완전 초기화) |
-| 클릭 가능 요소에 `cursor-pointer` 누락 | 버튼, 링크, 카드 등 모든 인터랙티브 요소에 필수 |
-| hover에 transition 없음 | `transition-colors duration-200` 이상 적용 |
+## 유지보수
+- **기능 추가/변경 후**: "CLAUDE.md에 이번 변경사항 반영할 게 있는지 확인해줘"
+- **월 1회 정기 점검**: "CLAUDE.md 전체를 리뷰해줘. 코드베이스와 맞지 않는 규칙, 빠진 규칙, 중복 찾아줘"
+- **같은 실수 2회 반복 시**: 해당 실수를 방지하는 규칙을 즉시 추가
+
+## 변경 이력
+<!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-03-19: CLAUDE.md 재설계 — 모듈 분리, 검증 루프 추가, 도메인 용어 정의, 중복 제거
