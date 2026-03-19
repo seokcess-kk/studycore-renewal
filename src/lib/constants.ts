@@ -17,6 +17,7 @@ export const CONTACT = {
   email: "studycore10@naver.com",
   address: "광주광역시 광산구 임방울대로 330 애플타워 10층",
   kakaoChannel: "http://pf.kakao.com/_execQn",
+  kakaoChatChannel: "http://pf.kakao.com/_execQn/chat",
 } as const;
 
 // 계정 역할

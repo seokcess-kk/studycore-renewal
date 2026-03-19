@@ -4,21 +4,38 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ROUTES, CONTACT } from "@/lib/constants";
 
-const headlineVariants = {
+/* ── 애니메이션 variants ── */
+const staggerContainer = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.18, delayChildren: 0.25 },
+    transition: { staggerChildren: 0.22, delayChildren: 0.3 },
   },
 };
 
-const lineVariants = {
-  hidden: { opacity: 0, y: 28, skewY: 2 },
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
   show: {
     opacity: 1,
     y: 0,
-    skewY: 0,
     transition: { type: "spring" as const, stiffness: 80, damping: 18 },
+  },
+};
+
+const sloganStagger = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.7 },
+  },
+};
+
+const sloganLine = {
+  hidden: { opacity: 0, x: -16 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: { type: "spring" as const, stiffness: 100, damping: 20 },
   },
 };
 
@@ -42,7 +59,7 @@ export function HeroSection() {
         10
       </div>
 
-      {/* 상단: 헤드라인 영역 (시선 최우선) */}
+      {/* ─── 상단: 대표문구 + 슬로건 ─── */}
       <div className="relative z-[2] flex-1 flex flex-col justify-center p-8 md:p-14">
         {/* 장식 마크 */}
         <motion.div
@@ -60,7 +77,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="flex items-center gap-4 mb-8 lg:mb-12"
+          className="flex items-center gap-4 mb-8 lg:mb-10"
         >
           <motion.span
             initial={{ scaleX: 0 }}
@@ -74,75 +91,117 @@ export function HeroSection() {
         </motion.div>
 
         {/* 메인 헤드라인 */}
-        <motion.h1
-          variants={headlineVariants}
+        <motion.div
+          variants={staggerContainer}
           initial="hidden"
           animate="show"
-          className="font-serif text-[clamp(60px,10vw,140px)] font-black leading-[0.88] tracking-[-0.04em] text-white/90"
         >
-          <motion.span variants={lineVariants} style={{ display: "block" }}>
-            집중이
-          </motion.span>
-          <motion.span
-            variants={lineVariants}
-            className="text-teal"
-            style={{
-              display: "block",
-              textShadow: "0 0 40px rgba(87,173,177,0.15)",
-            }}
+          {/* 대표문구 상단: 학습관리의 첫 번째 완성형 시스템 */}
+          <motion.p
+            variants={fadeUp}
+            className="font-serif text-[clamp(18px,3vw,28px)] font-medium text-white/50 tracking-[-0.02em] leading-[1.4] mb-2 md:mb-3"
           >
-            성적을
-          </motion.span>
-          <motion.span
-            variants={lineVariants}
-            className="text-transparent"
-            style={{
-              display: "block",
-              WebkitTextStroke: "2px rgba(255,255,255,0.18)",
-            }}
-          >
-            바꾼다
-          </motion.span>
-        </motion.h1>
+            학습관리의 첫 번째 완성형 시스템
+          </motion.p>
 
-        {/* 모바일 서브카피 (데스크탑은 하단 영역에 표시) */}
-        <motion.p
+          {/* 브랜드명: 스터디코어1.0 */}
+          <motion.h1
+            variants={fadeUp}
+            className="font-serif text-[clamp(40px,7vw,96px)] font-black leading-[0.92] tracking-[-0.04em] text-white/90"
+          >
+            <span className="text-teal" style={{ textShadow: "0 0 40px rgba(87,173,177,0.15)" }}>
+              스터디코어
+            </span>
+            <span
+              className="text-transparent ml-2 md:ml-4"
+              style={{ WebkitTextStroke: "2px rgba(255,255,255,0.18)" }}
+            >
+              1.0
+            </span>
+          </motion.h1>
+        </motion.div>
+
+        {/* 슬로건 3줄 */}
+        <motion.ul
+          variants={sloganStagger}
+          initial="hidden"
+          animate="show"
+          className="mt-8 md:mt-12 space-y-2.5 md:space-y-3"
+        >
+          {[
+            "학습은 의지가 아니라 구조입니다.",
+            "성과는 루틴에서 완성됩니다.",
+            "공부를 시스템으로 관리합니다.",
+          ].map((text) => (
+            <motion.li
+              key={text}
+              variants={sloganLine}
+              className="flex items-center gap-3 md:gap-4"
+            >
+              <span className="block w-1.5 h-1.5 bg-teal/40 shrink-0" />
+              <span className="text-[clamp(14px,1.8vw,18px)] text-white/55 font-light tracking-[-0.01em] leading-[1.6]">
+                {text}
+              </span>
+            </motion.li>
+          ))}
+        </motion.ul>
+
+        {/* 모바일 소개글 (데스크탑은 하단에 표시) */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="lg:hidden mt-8 text-[13px] text-white/40 font-light leading-[1.7] max-w-sm"
+          transition={{ duration: 0.6, delay: 1.0 }}
+          className="lg:hidden mt-10 max-w-md"
         >
-          원장님이 직접 운영하는 관리형 독서실 —
-          <br />
-          교시제와 수학 멘토 질문방으로 학습을 구조화합니다.
-        </motion.p>
+          <p className="text-[13px] text-white/35 font-light leading-[1.9]">
+            공부는 의지만으로 완성되지 않습니다.
+            <br />
+            환경과 관리, 그리고 루틴이 함께 설계되어야 합니다.
+          </p>
+          <p className="text-[13px] text-white/35 font-light leading-[1.9] mt-4">
+            스터디코어 1.0은{" "}
+            <strong className="text-white/65 font-medium">
+              대표원장이 직접 설계·운영하는
+            </strong>{" "}
+            관리형 독서실로 메디컬 재학 중인 최상위권 조교의 학습 관리와
+            턴게이트 기반 출결 시스템, 몰입에 최적화된 공간을 통해 학습의 전
+            과정을 체계적으로 관리합니다.
+          </p>
+        </motion.div>
       </div>
 
-      {/* 하단: 설명 + CTA | 메타 */}
+      {/* ─── 하단: 소개글 + CTA | 메타 ─── */}
       <div className="relative z-[2] border-t border-white/[0.06]">
         {/* 데스크탑: 2컬럼 */}
         <div className="hidden lg:grid lg:grid-cols-2">
-          {/* 좌: 설명 + CTA */}
+          {/* 좌: 소개글 + CTA */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
+            transition={{ duration: 0.7, delay: 0.9 }}
             className="p-14 lg:border-r border-white/[0.06]"
           >
+            <p className="text-[15px] leading-[2] text-white/40 font-light mb-4">
+              공부는 의지만으로 완성되지 않습니다.
+              <br />
+              환경과 관리, 그리고 루틴이 함께 설계되어야 합니다.
+            </p>
             <p className="text-[15px] leading-[2] text-white/40 font-light mb-10">
-              공부는 의지만으로 되지 않습니다. 좋은 환경이 있어야 합니다.
-              <br />
-              <br />
               스터디코어 1.0은{" "}
               <strong className="text-white/75 font-medium">
-                원장님이 직접 설계하고 운영하는
+                대표원장이 직접 설계·운영하는
               </strong>{" "}
-              관리형 독서실로<br />교시제와 수학 멘토 질문방으로 학습의 모든 과정을
-              구조로 뒷받침합니다.
+              관리형 독서실로,
+              <br />
+              메디컬 재학 중인 최상위권 조교의 학습 관리와
+              <br />
+              턴게이트 기반 출결 시스템, 몰입에 최적화된 공간을 통해
+              <br />
+              학습의 전 과정을 체계적으로 관리합니다.
             </p>
             <Link
               href={ROUTES.CONSULT}
-              className="cta-fill cta-fill-teal inline-block px-13 py-4 text-navy-dark text-[13.5px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
+              className="cursor-pointer cta-fill cta-fill-teal inline-block px-13 py-4 text-navy-dark text-[13.5px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
             >
               상담 신청하기
             </Link>
@@ -152,7 +211,7 @@ export function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.65 }}
+            transition={{ duration: 0.6, delay: 1.05 }}
             className="p-14 flex flex-col justify-center gap-4"
           >
             <MetaItem label="Location" value={CONTACT.address} />
@@ -165,12 +224,12 @@ export function HeroSection() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
           className="lg:hidden p-8"
         >
           <Link
             href={ROUTES.CONSULT}
-            className="cta-fill cta-fill-teal block w-full text-center px-6 py-4 text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
+            className="cursor-pointer cta-fill cta-fill-teal block w-full text-center px-6 py-4 text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
           >
             입소 상담 신청하기
           </Link>
