@@ -114,11 +114,6 @@ export function Nav() {
         <div className="flex items-center gap-6 md:gap-9">
           {isMounted && isAuthenticated ? (
             <>
-              {menuVisibility.blog && (
-                <Link href={ROUTES.BLOG} className={linkStyle(pathname.startsWith("/blog"))}>
-                  블로그
-                </Link>
-              )}
               <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>
                 공지사항
               </Link>
@@ -142,6 +137,11 @@ export function Nav() {
               ) : (
                 <Link href={ROUTES.MANUAL} className={linkStyle(pathname === "/manual")}>
                   매뉴얼
+                </Link>
+              )}
+              {menuVisibility.blog && (
+                <Link href={ROUTES.BLOG} className={linkStyle(pathname.startsWith("/blog"))}>
+                  블로그
                 </Link>
               )}
               <Link href={ROUTES.MY} className={linkStyle(pathname === "/my")}>

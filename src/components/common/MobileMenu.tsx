@@ -123,16 +123,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           >
             {isAuthenticated ? (
               <>
-                {menuVisibility.blog && (
-                  <motion.div variants={itemVariants}>
-                    <Link
-                      href={ROUTES.BLOG}
-                      className={linkClass(pathname.startsWith("/blog"))}
-                    >
-                      블로그
-                    </Link>
-                  </motion.div>
-                )}
                 <motion.div variants={itemVariants}>
                   <Link
                     href={ROUTES.NOTICES}
@@ -180,6 +170,16 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                       className={linkClass(pathname === "/manual")}
                     >
                       매뉴얼
+                    </Link>
+                  </motion.div>
+                )}
+                {menuVisibility.blog && (
+                  <motion.div variants={itemVariants}>
+                    <Link
+                      href={ROUTES.BLOG}
+                      className={linkClass(pathname.startsWith("/blog"))}
+                    >
+                      블로그
                     </Link>
                   </motion.div>
                 )}

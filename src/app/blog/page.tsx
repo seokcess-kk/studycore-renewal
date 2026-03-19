@@ -19,7 +19,7 @@ export default function BlogPage() {
   const [selectedTag, setSelectedTag] = useState<string | undefined>();
   const [allTags, setAllTags] = useState<string[]>([]);
   const canAccessAdmin = useUserStore((state) => state.canAccessAdmin);
-  const pageSize = 9;
+  const pageSize = 10;
 
   useEffect(() => {
     async function fetchPosts() {
@@ -52,26 +52,33 @@ export default function BlogPage() {
 
   const totalPages = Math.ceil(total / pageSize);
 
+  // Featured: 첫 번째 글, Side: 2~3번째, Rest: 4번째 이후
+  const featured = posts[0];
+  const sideCards = posts.slice(1, 3);
+  const restCards = posts.slice(3);
+
   return (
     <>
       <Nav />
       <main className="pt-24 pb-20">
         {/* 헤더 */}
         <section className="bg-navy py-16 px-6 md:px-13">
-          <div className="max-w-6xl mx-auto">
-            <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-4">
-              Blog / 블로그
-            </span>
-            <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
-              스터디코어 블로그
-            </h1>
-            <p className="mt-4 text-white/50 text-[15px] max-w-xl">
-              입시 정보, 학습 팁, 스터디코어 소식을 전해드립니다.
-            </p>
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-4">
+                Blog
+              </span>
+              <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
+                스터디코어 블로그
+              </h1>
+              <p className="mt-3 text-white/40 text-[15px] max-w-md">
+                입시 정보, 학습 팁, 스터디코어 소식을 전해드립니다.
+              </p>
+            </div>
             {canAccessAdmin && (
               <Link
                 href={`${ROUTES.ADMIN_BLOG}/new`}
-                className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 border-[1.5px] border-teal text-teal text-[13px] font-bold tracking-[0.02em] hover:bg-teal hover:text-navy-dark transition-colors duration-200 cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 border-[1.5px] border-teal text-teal text-[13px] font-bold tracking-[0.02em] hover:bg-teal hover:text-navy-dark transition-colors duration-200 cursor-pointer self-start md:self-auto"
               >
                 <PenLine size={14} />
                 글쓰기
@@ -121,18 +128,7 @@ export default function BlogPage() {
         <section className="px-6 md:px-13 py-12">
           <div className="max-w-6xl mx-auto">
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="border border-rule bg-white">
-                    <Skeleton className="aspect-[16/9] w-full" />
-                    <div className="p-5">
-                      <Skeleton className="h-5 w-3/4 mb-3" />
-                      <Skeleton className="h-4 w-full mb-2" />
-                      <Skeleton className="h-4 w-1/2" />
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <BlogSkeleton />
             ) : posts.length === 0 ? (
               <div className="text-center py-20">
                 <p className="text-muted text-[15px]">
@@ -142,11 +138,126 @@ export default function BlogPage() {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {posts.map((post) => (
-                  <BlogCard key={post.id} post={post} />
-                ))}
-              </div>
+              <>
+                {/* Featured + Side 영역 */}
+                <div className={`grid grid-cols-1 gap-6 mb-6 ${sideCards.length > 0 ? "lg:grid-cols-5" : ""}`}>
+                  {/* Featured (큰 카드) */}
+                  {featured && (
+                    <Link
+                      href={`/blog/${featured.slug}`}
+                      className={`group block ${sideCards.length > 0 ? "lg:col-span-3" : ""}`}
+                    >
+                      <article className="border border-rule bg-white overflow-hidden hover:border-navy transition-colors h-full flex flex-col">
+                        <div className="aspect-[16/9] relative bg-stone overflow-hidden">
+                          {featured.thumbnail_url ? (
+                            <Image
+                              src={featured.thumbnail_url}
+                              alt={featured.title}
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform duration-500"
+                              priority
+                            />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span className="text-muted text-[13px]">No Image</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-6 md:p-8 flex-1 flex flex-col">
+                          {featured.tags.length > 0 && (
+                            <div className="flex gap-2 mb-3 flex-wrap">
+                              {featured.tags.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="inline-flex items-center gap-1 text-[11px] font-medium text-teal"
+                                >
+                                  <Tag size={10} />
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          <h2 className="text-[22px] md:text-[26px] font-bold text-ink leading-snug line-clamp-2 group-hover:text-navy transition-colors font-serif">
+                            {featured.title}
+                          </h2>
+                          {featured.excerpt && (
+                            <p className="mt-3 text-[15px] text-muted line-clamp-3 flex-1">
+                              {featured.excerpt}
+                            </p>
+                          )}
+                          <div className="mt-4 flex items-center gap-2 text-[12px] text-muted">
+                            <Calendar size={12} />
+                            <span>{formatDate(featured.published_at)}</span>
+                          </div>
+                        </div>
+                      </article>
+                    </Link>
+                  )}
+
+                  {/* Side 카드 (2~3번째) */}
+                  {sideCards.length > 0 && (
+                    <div className="lg:col-span-2 flex flex-col gap-6">
+                      {sideCards.map((post, i) => (
+                        <Link
+                          key={post.id}
+                          href={`/blog/${post.slug}`}
+                          className="group block flex-1"
+                        >
+                          <article className="border border-rule bg-white overflow-hidden hover:border-navy transition-colors h-full flex flex-col">
+                            <div className="aspect-[2/1] relative bg-stone overflow-hidden">
+                              {post.thumbnail_url ? (
+                                <Image
+                                  src={post.thumbnail_url}
+                                  alt={post.title}
+                                  fill
+                                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                />
+                              ) : (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <span className="font-mono text-[48px] font-bold text-rule">
+                                    {String(i + 2).padStart(2, "0")}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="p-5 flex-1 flex flex-col">
+                              {post.tags.length > 0 && (
+                                <span className="text-[11px] font-medium text-teal mb-2 inline-flex items-center gap-1">
+                                  <Tag size={10} />
+                                  {post.tags[0]}
+                                </span>
+                              )}
+                              <h3 className="text-[17px] font-bold text-ink leading-snug line-clamp-2 group-hover:text-navy transition-colors">
+                                {post.title}
+                              </h3>
+                              <div className="mt-auto pt-3 flex items-center gap-2 text-[12px] text-muted">
+                                <Calendar size={12} />
+                                <span>{formatDate(post.published_at)}</span>
+                              </div>
+                            </div>
+                          </article>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* 나머지 카드 그리드 */}
+                {restCards.length > 0 && (
+                  <>
+                    <div className="border-t border-rule pt-8 mb-6">
+                      <span className="font-mono text-[10px] font-bold text-muted tracking-[0.2em] uppercase">
+                        More Posts
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                      {restCards.map((post) => (
+                        <CompactCard key={post.id} post={post} />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
             )}
 
             {/* 페이지네이션 */}
@@ -189,20 +300,12 @@ export default function BlogPage() {
   );
 }
 
-function BlogCard({ post }: { post: BlogPostWithAuthor }) {
-  const formattedDate = post.published_at
-    ? new Date(post.published_at).toLocaleDateString("ko-KR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "";
-
+/* ── Compact Card (4번째 이후) ── */
+function CompactCard({ post }: { post: BlogPostWithAuthor }) {
   return (
     <Link href={`/blog/${post.slug}`} className="group block">
-      <article className="border border-rule bg-white overflow-hidden hover:border-navy transition-colors">
-        {/* 썸네일 */}
-        <div className="aspect-[16/9] relative bg-stone overflow-hidden">
+      <article className="border border-rule bg-white overflow-hidden hover:border-navy transition-colors h-full flex flex-col">
+        <div className="aspect-[16/10] relative bg-stone overflow-hidden">
           {post.thumbnail_url ? (
             <Image
               src={post.thumbnail_url}
@@ -211,48 +314,67 @@ function BlogCard({ post }: { post: BlogPostWithAuthor }) {
               className="object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-muted text-[13px]">No Image</span>
+            <div className="absolute inset-0 flex items-center justify-center bg-stone">
+              <span className="font-mono text-[32px] font-bold text-rule">
+                {post.title.charAt(0)}
+              </span>
             </div>
           )}
         </div>
-
-        {/* 내용 */}
-        <div className="p-5">
-          {/* 태그 */}
+        <div className="p-4 flex-1 flex flex-col">
           {post.tags.length > 0 && (
-            <div className="flex gap-2 mb-3 flex-wrap">
-              {post.tags.slice(0, 2).map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex items-center gap-1 text-[11px] font-medium text-teal"
-                >
-                  <Tag size={10} />
-                  {tag}
-                </span>
-              ))}
-            </div>
+            <span className="text-[10px] font-medium text-teal mb-1.5 inline-flex items-center gap-1">
+              <Tag size={9} />
+              {post.tags[0]}
+            </span>
           )}
-
-          {/* 제목 */}
-          <h2 className="text-[17px] font-bold text-ink leading-snug line-clamp-2 group-hover:text-navy transition-colors">
+          <h3 className="text-[15px] font-bold text-ink leading-snug line-clamp-2 group-hover:text-navy transition-colors">
             {post.title}
-          </h2>
-
-          {/* 요약 */}
-          {post.excerpt && (
-            <p className="mt-2 text-[14px] text-muted line-clamp-2">
-              {post.excerpt}
-            </p>
-          )}
-
-          {/* 날짜 */}
-          <div className="mt-4 flex items-center gap-2 text-[12px] text-muted">
-            <Calendar size={12} />
-            <span>{formattedDate}</span>
+          </h3>
+          <div className="mt-auto pt-3 flex items-center gap-2 text-[11px] text-muted">
+            <Calendar size={11} />
+            <span>{formatDate(post.published_at)}</span>
           </div>
         </div>
       </article>
     </Link>
   );
+}
+
+/* ── 스켈레톤 ── */
+function BlogSkeleton() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="lg:col-span-3 border border-rule bg-white">
+        <Skeleton className="aspect-[16/9] w-full" />
+        <div className="p-8">
+          <Skeleton className="h-4 w-20 mb-4" />
+          <Skeleton className="h-7 w-3/4 mb-3" />
+          <Skeleton className="h-4 w-full mb-2" />
+          <Skeleton className="h-4 w-2/3" />
+        </div>
+      </div>
+      <div className="lg:col-span-2 flex flex-col gap-6">
+        {[0, 1].map((i) => (
+          <div key={i} className="flex-1 border border-rule bg-white">
+            <Skeleton className="aspect-[2/1] w-full" />
+            <div className="p-5">
+              <Skeleton className="h-3 w-16 mb-3" />
+              <Skeleton className="h-5 w-3/4" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── 날짜 포맷 ── */
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return "";
+  return new Date(dateStr).toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
