@@ -15,6 +15,7 @@ import {
   Phone,
   Layers,
   GraduationCap,
+  FileText,
   Menu,
   X,
 } from "lucide-react";
@@ -59,6 +60,11 @@ const navItems = [
     label: "프로그램 관리",
     href: "/admin/programs",
     icon: GraduationCap,
+  },
+  {
+    label: "블로그 관리",
+    href: "/admin/blog",
+    icon: FileText,
   },
   {
     label: "도시락 관리",
