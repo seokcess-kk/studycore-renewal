@@ -42,14 +42,13 @@ export function Nav() {
 
   // 링크 스타일
   const linkStyle = (isActive = false) =>
-    `hidden md:block text-[13px] transition-colors duration-150 ${
-      isDarkText
-        ? isActive
-          ? "text-ink font-medium"
-          : "text-ink/45 hover:text-ink"
-        : isActive
-          ? "text-white font-medium"
-          : "text-white/50 hover:text-white"
+    `hidden md:block text-[13px] transition-colors duration-150 ${isDarkText
+      ? isActive
+        ? "text-ink font-medium"
+        : "text-ink/45 hover:text-ink"
+      : isActive
+        ? "text-white font-medium"
+        : "text-white/50 hover:text-white"
     }`;
 
   // 로그아웃 핸들러
@@ -92,11 +91,10 @@ export function Nav() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-[300] px-6 md:px-13 flex items-center justify-between transition-all duration-300 ${
-          isDarkText
-            ? "bg-white/97 backdrop-blur-[12px] border-b border-rule"
-            : "bg-transparent"
-        } ${isScrolled ? "h-14" : isDarkText ? "h-16" : "h-20"}`}
+        className={`fixed top-0 left-0 right-0 z-[300] px-6 md:px-13 flex items-center justify-between transition-all duration-300 ${isDarkText
+          ? "bg-white/97 backdrop-blur-[12px] border-b border-rule"
+          : "bg-transparent"
+          } ${isScrolled ? "h-14" : isDarkText ? "h-16" : "h-20"}`}
       >
         {/* 로고 */}
         <Link href={ROUTES.HOME} className="flex items-center">
@@ -151,9 +149,8 @@ export function Nav() {
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className={`hidden md:block text-[12px] transition-colors duration-150 ${
-                  isDarkText ? "text-ink/30 hover:text-ink/60" : "text-white/30 hover:text-white/60"
-                } disabled:opacity-50`}
+                className={`hidden md:block text-[12px] transition-colors duration-150 ${isDarkText ? "text-ink/30 hover:text-ink/60" : "text-white/30 hover:text-white/60"
+                  } disabled:opacity-50`}
               >
                 {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
               </button>
@@ -161,7 +158,7 @@ export function Nav() {
           ) : (
             <>
               <Link href={getAnchorHref("#features")} className={linkStyle()}>
-                특징
+                시스템
               </Link>
               <Link href={getAnchorHref("#space")} className={linkStyle()}>
                 시설
@@ -171,19 +168,17 @@ export function Nav() {
               </Link>
               <Link
                 href={ROUTES.LOGIN}
-                className={`hidden md:block text-[12px] transition-colors duration-150 ${
-                  isDarkText ? "text-ink/30 hover:text-ink/60" : "text-white/30 hover:text-white/60"
-                }`}
+                className={`hidden md:block text-[12px] transition-colors duration-150 ${isDarkText ? "text-ink/30 hover:text-ink/60" : "text-white/30 hover:text-white/60"
+                  }`}
               >
                 로그인
               </Link>
               <Link
                 href={ROUTES.CONSULT}
-                className={`hidden md:block text-[12.5px] font-bold tracking-[0.04em] px-5 py-2.5 border-[1.5px] transition-colors duration-300 cta-fill ${
-                  isDarkText
-                    ? "cta-fill-navy border-navy text-white hover:text-navy"
-                    : "cta-fill-teal border-teal text-navy-dark hover:text-teal"
-                }`}
+                className={`hidden md:block text-[12.5px] font-bold tracking-[0.04em] px-5 py-2.5 border-[1.5px] transition-colors duration-300 cta-fill ${isDarkText
+                  ? "cta-fill-navy border-navy text-white hover:text-navy"
+                  : "cta-fill-teal border-teal text-navy-dark hover:text-teal"
+                  }`}
               >
                 무료 상담 신청
               </Link>
@@ -194,9 +189,8 @@ export function Nav() {
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className={`hidden md:block p-1.5 transition-colors ${
-              isDarkText ? "text-ink/30 hover:text-ink" : "text-white/30 hover:text-white"
-            }`}
+            className={`hidden md:block p-1.5 transition-colors ${isDarkText ? "text-ink/30 hover:text-ink" : "text-white/30 hover:text-white"
+              }`}
             aria-label="검색"
             title="검색 (Ctrl+K)"
           >
@@ -205,15 +199,14 @@ export function Nav() {
 
           {/* 모바일 햄버거 버튼 */}
           <button
-              type="button"
-              onClick={() => setIsMobileMenuOpen(true)}
-              className={`md:hidden p-1.5 transition-colors ${
-                isDarkText ? "text-ink" : "text-white"
+            type="button"
+            onClick={() => setIsMobileMenuOpen(true)}
+            className={`md:hidden p-1.5 transition-colors ${isDarkText ? "text-ink" : "text-white"
               }`}
-              aria-label="메뉴 열기"
-            >
-              <Menu size={24} />
-            </button>
+            aria-label="메뉴 열기"
+          >
+            <Menu size={24} />
+          </button>
         </div>
       </nav>
 
