@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>스터디코어 1.0 — Ver B</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#103050;--navy-d:#0A1F35;--teal:#57ADB1;
+  --ink:#0d0d0d;--white:#fff;--stone:#F4F2EE;
+  --rule:#E3E0DA;--muted:#888;
+  --serif:'Noto Serif KR',serif;
+  --sans:'Noto Sans KR',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--white);color:var(--ink);overflow-x:hidden}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  height:64px;padding:0 52px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background .3s,box-shadow .3s;
+}
+nav.on{
+  background:rgba(255,255,255,.97);backdrop-filter:blur(12px);
+  box-shadow:0 1px 0 var(--rule);
+}
+.nav-logo{height:28px;width:auto}
+.nav-r{display:flex;align-items:center;gap:36px}
+.nl{font-size:13px;color:rgba(255,255,255,.5);text-decoration:none;transition:color .15s}
+nav.on .nl{color:rgba(0,0,0,.45)}
+nav.on .nl:hover{color:var(--ink)}
+.nlogin{font-size:12px;color:rgba(255,255,255,.3);text-decoration:none;transition:color .15s}
+nav.on .nlogin{color:rgba(0,0,0,.3)}
+.ncta{
+  font-size:12.5px;font-weight:700;letter-spacing:.04em;
+  color:var(--navy);background:var(--teal);
+  padding:9px 22px;text-decoration:none;
+  border:1.5px solid var(--teal);transition:all .2s;
+}
+nav.on .ncta{background:var(--navy);border-color:var(--navy);color:#fff}
+.ncta:hover{background:transparent;color:var(--teal)}
+
+/* ── HERO — 풀스크린 타이포그래피 ── */
+.hero{
+  min-height:100vh;background:var(--navy-d);
+  display:grid;grid-template-columns:1fr 1fr;
+  position:relative;overflow:hidden;
+}
+/* 좌 텍스트 */
+.hero-left{
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:120px 56px 72px;position:relative;z-index:2;
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.hero-kicker{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  color:var(--teal);letter-spacing:.28em;text-transform:uppercase;
+  margin-bottom:40px;
+}
+.hero-h{
+  font-family:var(--serif);
+  font-size:clamp(60px,10vw,140px);
+  font-weight:900;line-height:.88;letter-spacing:-.04em;
+  color:rgba(255,255,255,.9);
+}
+.hero-h .t{color:var(--teal)}
+.hero-h .o{color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.2)}
+/* 우 상세 */
+.hero-right{
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:100px 56px 72px;position:relative;z-index:2;
+}
+.hero-right-top{padding-top:40px}
+.hero-desc{
+  font-size:15px;line-height:2;color:rgba(255,255,255,.4);
+  font-weight:300;margin-bottom:48px;
+}
+.hero-desc strong{color:rgba(255,255,255,.75);font-weight:500}
+.hero-cta{
+  display:inline-block;padding:16px 52px;
+  background:var(--teal);color:var(--navy-d);
+  font-size:13.5px;font-weight:700;letter-spacing:.04em;
+  text-decoration:none;border:1.5px solid var(--teal);transition:all .2s;
+}
+.hero-cta:hover{background:transparent;color:var(--teal)}
+/* 하단 메타 */
+.hero-meta{
+  display:flex;flex-direction:column;gap:16px;
+  padding-top:48px;border-top:1px solid rgba(255,255,255,.07);
+}
+.hero-meta-item{
+  display:flex;justify-content:space-between;align-items:baseline;
+}
+.hm-k{
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  color:var(--teal);letter-spacing:.2em;text-transform:uppercase;
+}
+.hm-v{font-size:13px;color:rgba(255,255,255,.45);font-weight:300}
+/* 격자 배경 */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(87,173,177,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(87,173,177,.04) 1px,transparent 1px);
+  background-size:72px 72px;pointer-events:none;z-index:1;
+}
+.hero-watermark{
+  position:absolute;right:-40px;bottom:-60px;
+  font-family:var(--mono);font-size:40vw;font-weight:700;
+  color:rgba(87,173,177,.03);line-height:1;z-index:1;
+  pointer-events:none;user-select:none;
+}
+
+/* ── FEATURES — 번호 스택형 ── */
+.feat-section{background:var(--stone);padding:112px 0}
+.feat-header{
+  padding:0 52px;margin-bottom:0;
+  display:flex;align-items:baseline;gap:20px;
+  border-bottom:1.5px solid var(--ink);padding-bottom:40px;
+}
+.fh-eyebrow{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  color:var(--teal);letter-spacing:.28em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.fh-title{
+  font-family:var(--serif);font-size:clamp(32px,5vw,60px);
+  font-weight:900;letter-spacing:-.03em;color:var(--ink);line-height:1;
+}
+.fh-fill{flex:1}
+.fh-desc{
+  font-size:13px;color:var(--muted);font-weight:300;
+  max-width:240px;text-align:right;line-height:1.8;
+}
+/* 행 */
+.frow{
+  display:grid;grid-template-columns:160px 1fr;
+  border-bottom:1px solid var(--rule);
+  position:relative;transition:background .2s;
+  margin:0 52px;
+}
+.frow::before{
+  content:'';position:absolute;left:-52px;right:-52px;top:0;bottom:0;
+  background:transparent;transition:background .2s;
+}
+.frow:hover::before{background:rgba(87,173,177,.04)}
+.frow-left{
+  padding:44px 0 44px 0;
+  display:flex;flex-direction:column;gap:8px;
+  border-right:1px solid var(--rule);
+}
+.frow-num{
+  font-family:var(--mono);font-size:clamp(48px,6vw,72px);
+  font-weight:700;color:rgba(16,48,80,.07);line-height:1;
+  transition:color .3s;
+}
+.frow:hover .frow-num{color:rgba(87,173,177,.2)}
+.frow-kw{
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  color:var(--teal);letter-spacing:.22em;text-transform:uppercase;
+  opacity:0;transition:opacity .25s;
+}
+.frow:hover .frow-kw{opacity:1}
+.frow-right{padding:44px 0 44px 48px}
+.frow-title{
+  font-family:var(--serif);font-size:clamp(18px,2vw,24px);
+  font-weight:900;letter-spacing:-.02em;color:var(--ink);
+  margin-bottom:14px;line-height:1.2;
+}
+.frow-body{
+  font-size:13.5px;line-height:2;color:#555;font-weight:300;
+  max-width:640px;margin-bottom:16px;
+}
+.frow-body strong{color:var(--navy);font-weight:700}
+.frow-tags{display:flex;gap:6px;flex-wrap:wrap}
+.rtag{
+  font-size:10.5px;font-weight:500;padding:3px 10px;
+  border:1px solid var(--rule);color:var(--muted);
+}
+.rtag.p{border-color:var(--teal);color:var(--teal);background:rgba(87,173,177,.06)}
+.btn-rule{
+  margin-top:12px;background:none;border:none;
+  font-size:11.5px;font-weight:700;color:var(--navy);
+  text-decoration:underline;text-underline-offset:3px;
+  cursor:pointer;padding:0;font-family:var(--sans);transition:color .2s;
+}
+.btn-rule:hover{color:var(--teal)}
+
+/* ── SPACE ── */
+.space-section{background:var(--white);padding:112px 0}
+.space-header{
+  padding:0 52px;margin-bottom:48px;
+  display:flex;align-items:baseline;gap:20px;
+}
+.sh-eyebrow{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--teal);letter-spacing:.28em;text-transform:uppercase}
+.sh-title{font-family:var(--serif);font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-.03em}
+.sh-fill{flex:1}
+.sh-desc{font-size:13px;color:var(--muted);font-weight:300;max-width:220px;text-align:right;line-height:1.7}
+.slider-wrap{overflow:hidden}
+.strack{display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.sli{min-width:100%;height:540px;flex-shrink:0;position:relative;overflow:hidden}
+.sli-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--navy-d),#1a4070);
+}
+.sli-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(87,173,177,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(87,173,177,.06) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.sli-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,31,53,.88) 0%,transparent 55%);z-index:2}
+.sli-c{position:absolute;bottom:0;left:0;right:0;z-index:3;padding:52px}
+.sli-label{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--teal);letter-spacing:.24em;text-transform:uppercase;margin-bottom:10px;display:block}
+.sli-title{font-family:var(--serif);font-size:28px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-.02em}
+.sli-desc{font-size:13.5px;color:rgba(255,255,255,.5);font-weight:300;line-height:1.7;max-width:440px}
+.sctrl{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:28px 52px 0;
+}
+.sdots{display:flex;gap:8px}
+.sd{width:6px;height:6px;background:var(--rule);border:none;cursor:pointer;padding:0;transition:all .2s}
+.sd.on{background:var(--navy);width:24px}
+.sarrs{display:flex;gap:8px}
+.sa{
+  width:44px;height:44px;border:1.5px solid var(--rule);
+  background:none;cursor:pointer;font-size:16px;color:var(--ink);
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.sa:hover{background:var(--navy);border-color:var(--navy);color:#fff}
+.scount{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.1em}
+
+/* ── FAQ ── */
+.faq-section{background:var(--white);padding:112px 52px;border-top:1px solid var(--rule)}
+.faq-inner{display:grid;grid-template-columns:320px 1fr;gap:96px}
+.faq-lft{position:sticky;top:96px}
+.faq-title{
+  font-family:var(--serif);font-size:clamp(36px,4vw,52px);
+  font-weight:900;letter-spacing:-.04em;line-height:1.05;
+  margin-bottom:24px;
+}
+.faq-sub{font-size:14px;line-height:1.9;color:var(--muted);font-weight:300;margin-bottom:36px}
+.kb{
+  display:inline-flex;align-items:center;gap:10px;
+  background:#FEE500;color:#191919;font-size:13px;
+  font-weight:700;padding:12px 20px;text-decoration:none;transition:opacity .15s;
+}
+.kb:hover{opacity:.85}
+.kbi{
+  width:18px;height:18px;background:#191919;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#FEE500;flex-shrink:0;
+}
+.faq-lst{display:flex;flex-direction:column}
+.qi{border-top:1px solid var(--rule);overflow:hidden}
+.qi:last-child{border-bottom:1px solid var(--rule)}
+.qq{
+  width:100%;background:none;border:none;
+  padding:28px 0;display:flex;justify-content:space-between;
+  align-items:center;cursor:pointer;text-align:left;gap:24px;
+}
+.qqt{
+  font-family:var(--serif);font-size:17px;font-weight:700;
+  color:var(--ink);letter-spacing:-.01em;line-height:1.4;
+}
+.qqi{
+  width:28px;height:28px;border:1.5px solid var(--rule);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:var(--muted);transition:all .25s;font-style:normal;
+}
+.qi.open .qqi{background:var(--navy);border-color:var(--navy);color:#fff;transform:rotate(45deg)}
+.qa{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1)}
+.qi.open .qa{max-height:500px}
+.qai{padding:0 0 28px;font-size:14px;line-height:1.9;color:#555;font-weight:300}
+.qai strong{color:var(--ink);font-weight:500}
+
+/* ── CONTACT ── */
+.co-section{background:var(--navy);padding:112px 52px;position:relative;overflow:hidden}
+.co-section::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(87,173,177,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(87,173,177,.04) 1px,transparent 1px);
+  background-size:80px 80px;pointer-events:none;
+}
+.co-in{display:grid;grid-template-columns:1fr 1fr;gap:0;position:relative;z-index:2}
+.colt{padding-right:96px;border-right:1px solid rgba(255,255,255,.08)}
+.coey{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  color:var(--teal);letter-spacing:.28em;text-transform:uppercase;
+  display:flex;align-items:center;gap:12px;margin-bottom:32px;
+}
+.coey::before{content:'';width:32px;height:2px;background:var(--teal)}
+.cotitle{
+  font-family:var(--serif);font-size:clamp(44px,7vw,96px);
+  font-weight:900;color:#fff;line-height:.92;
+  letter-spacing:-.04em;margin-bottom:52px;
+}
+.coinfo{display:flex;flex-direction:column}
+.cr{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:16px 0;border-bottom:1px solid rgba(255,255,255,.07);
+}
+.crk{font-family:var(--mono);font-size:10px;color:var(--teal);letter-spacing:.18em;text-transform:uppercase}
+.crv{font-size:14px;color:rgba(255,255,255,.6);text-align:right;line-height:1.7}
+.cort{padding-left:96px}
+.fhint{font-size:13px;color:rgba(255,255,255,.28);font-weight:300;margin-bottom:40px;display:block;line-height:1.7}
+.cfg{margin-bottom:32px}
+.cfl{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.12em;color:rgba(255,255,255,.3);
+  display:block;margin-bottom:10px;text-transform:uppercase;transition:color .2s;
+}
+.cfg:focus-within .cfl{color:var(--teal)}
+.cfi,.cfsel,.cfta{
+  width:100%;background:rgba(255,255,255,.05);border:none;
+  border-bottom:1.5px solid rgba(255,255,255,.12);padding:12px 0;
+  font-family:var(--sans);font-size:15px;font-weight:300;color:#fff;
+  outline:none;transition:border-color .2s;border-radius:0;appearance:none;
+}
+.cfi:focus,.cfsel:focus,.cfta:focus{border-color:var(--teal)}
+.cfi::placeholder,.cfta::placeholder{color:rgba(255,255,255,.2)}
+.cfsel option{background:var(--navy)}
+.cfta{resize:none;height:80px}
+.cfgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 36px}
+.csub{
+  margin-top:40px;padding:18px 60px;
+  background:var(--teal);color:var(--navy);
+  font-size:14px;font-weight:700;letter-spacing:.05em;
+  border:1.5px solid var(--teal);cursor:pointer;
+  display:inline-flex;align-items:center;gap:12px;
+  transition:all .2s;font-family:var(--sans);
+}
+.csub:hover{background:transparent;color:var(--teal);transform:translateY(-2px)}
+.csuba{transition:transform .2s}
+.csub:hover .csuba{transform:translateX(4px)}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--navy-d);padding:52px;border-top:1px solid rgba(87,173,177,.1);
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;
+}
+.ftag{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.2);letter-spacing:.3em;text-transform:uppercase;margin-bottom:5px}
+.fbrand{font-family:var(--mono);font-size:14px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.18em}
+.flinks{display:flex;gap:20px;justify-content:flex-end;margin-bottom:10px}
+.flink{font-size:11px;color:rgba(255,255,255,.25);text-decoration:none;transition:color .15s}
+.flink:hover{color:rgba(255,255,255,.6)}
+.fcopy{font-size:11px;color:rgba(255,255,255,.2);font-weight:300;line-height:2;text-align:right}
+
+/* ── 모달 ── */
+.mov{
+  position:fixed;inset:0;background:rgba(10,31,53,.85);
+  backdrop-filter:blur(4px);z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:all .3s;
+}
+.mov.on{opacity:1;visibility:visible}
+.mbox{
+  background:#fff;width:90%;max-width:500px;
+  transform:translateY(20px);transition:transform .3s;
+  border:1px solid var(--navy);
+}
+.mov.on .mbox{transform:translateY(0)}
+.mhd{
+  background:var(--navy);padding:24px 32px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.mhdtitle{font-family:var(--serif);color:#fff;font-size:18px;font-weight:700;letter-spacing:-.02em}
+.mcls{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;opacity:.7;transition:opacity .2s}
+.mcls:hover{opacity:1}
+.mbd{padding:32px}
+.mintro{font-size:13.5px;line-height:1.6;color:var(--muted);margin-bottom:24px;font-weight:300}
+.pr{margin-bottom:20px}
+.pr h4{font-size:14px;color:var(--navy);font-weight:700;margin-bottom:12px;border-left:2px solid var(--teal);padding-left:10px}
+.pr ul{list-style:none;padding:0}
+.pr li{font-size:13px;color:#444;margin-bottom:8px;padding-left:14px;position:relative;font-weight:300}
+.pr li::before{content:'·';position:absolute;left:0;color:var(--teal);font-weight:700}
+.praction{margin-top:32px;padding-top:20px;border-top:1px solid var(--rule);text-align:center}
+.praction strong{font-size:14px;color:#D93025;font-weight:700}
+
+/* 애니메이션 */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-kicker{animation:fadeUp .6s ease .1s both}
+.hero-h{animation:fadeUp .7s ease .2s both}
+.hero-right-top{animation:fadeUp .7s ease .3s both}
+.hero-meta{animation:fadeUp .6s ease .45s both}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s;will-change:opacity,transform}
+.reveal.on{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .hero-right{display:none}
+  .faq-inner{grid-template-columns:1fr;gap:40px}
+  .faq-lft{position:static}
+  .co-in{grid-template-columns:1fr;gap:60px}
+  .colt{padding-right:0;border-right:none}
+  .cort{padding-left:0}
+  footer{grid-template-columns:1fr;text-align:center}
+  .flinks{justify-content:center}
+  .fcopy{text-align:center}
+  .frow{grid-template-columns:100px 1fr;margin:0 20px}
+  .frow::before{left:-20px;right:-20px}
+}
+@media(max-width:640px){
+  nav{padding:0 20px}
+  .feat-header,.space-header,.faq-section,.co-section,footer{padding-left:20px;padding-right:20px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <img id="navLogo" class="nav-logo"
+    src="data:image/png;base64,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" data-dark="data:image/png;base64,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" data-light="data:image/png;base64,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" alt="STUDYCORE 1.0">
+  <div class="nav-r">
+    <a href="#features" class="nl">특징</a>
+    <a href="#space" class="nl">시설</a>
+    <a href="#faq" class="nl">FAQ</a>
+    <a href="#" class="nl nlogin">로그인</a>
+    <a href="#contact" class="ncta">무료 상담 신청</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-watermark">10</div>
+  <div class="hero-left">
+    <div class="hero-kicker">Managed Study Hall · 광주 광산구</div>
+    <h1 class="hero-h">
+      <span>집중이</span><br>
+      <span class="t">성적을</span><br>
+      <span class="o">바꾼다</span>
+    </h1>
+  </div>
+  <div class="hero-right">
+    <div class="hero-right-top">
+      <p class="hero-desc">
+        공부는 의지만으로 되지 않습니다. 좋은 환경이 있어야 합니다.<br><br>
+        스터디코어 1.0은 <strong>원장님이 직접 설계하고 운영하는</strong>
+        관리형 독서실로, 교시제와 수학 멘토 질문방으로
+        학습의 모든 과정을 구조로 뒷받침합니다.
+      </p>
+      <a href="#contact" class="hero-cta">입소 상담 신청하기</a>
+    </div>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span class="hm-k">Location</span><span class="hm-v">광주광역시 광산구 임방울대로 330 애플타워 10층</span></div>
+      <div class="hero-meta-item"><span class="hm-k">Contact</span><span class="hm-v">010-4408-3790</span></div>
+      <div class="hero-meta-item"><span class="hm-k">Type</span><span class="hm-v">관리형 독서실</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="feat-section" id="features">
+  <div class="feat-header reveal">
+    <span class="fh-eyebrow">Why Studycore / 02</span>
+    <h2 class="fh-title">6가지 차별점</h2>
+    <div class="fh-fill"></div>
+    <p class="fh-desc">스터디코어에서만 경험할 수 있는 것들입니다.</p>
+  </div>
+  <div class="frow reveal" style="transition-delay:.05s">
+    <div class="frow-left"><span class="frow-num">01</span><span class="frow-kw">시스템</span></div>
+    <div class="frow-right">
+      <div class="frow-title">교시제 관리 시스템</div>
+      <p class="frow-body">하루가 교시 단위로 운영됩니다. 시작 종이 울리면 자리에 앉고, 쉬는 시간에만 이동이 허용됩니다. 스스로 집중력을 만들려 애쓰지 않아도 되고, <strong>앉아있는 시간 자체가 실력으로 쌓입니다.</strong></p>
+      <div class="frow-tags"><span class="rtag p">핵심 시스템</span><span class="rtag">매일 운영</span></div>
+    </div>
+  </div>
+  <div class="frow reveal" style="transition-delay:.08s">
+    <div class="frow-left"><span class="frow-num">02</span><span class="frow-kw">멘토링</span></div>
+    <div class="frow-right">
+      <div class="frow-title">수학 전문 질문방</div>
+      <p class="frow-body">재원생 전용 질문방에 모르는 문제를 사진이나 텍스트로 올리면 국희재 수학학원 멘토가 직접 풀이를 설명합니다. 그날 모른 것을 그날 해결하니, <strong>오개념이 쌓이지 않고 다음 날 더 단단하게 시작할 수 있습니다.</strong></p>
+      <div class="frow-tags"><span class="rtag p">재원생 전용</span><span class="rtag">수학 멘토</span></div>
+    </div>
+  </div>
+  <div class="frow reveal" style="transition-delay:.11s">
+    <div class="frow-left"><span class="frow-num">03</span><span class="frow-kw">생활 관리</span></div>
+    <div class="frow-right">
+      <div class="frow-title">생활·출결 관리</div>
+      <p class="frow-body">출결 관리, 교시 중 휴대폰 수거, 상시 순찰로 집중을 방해하는 모든 요소를 차단합니다. 규정이 일관되게 지켜지기 때문에 <strong>학생 스스로도 공부 외의 것에 신경 쓸 이유가 없어집니다.</strong></p>
+      <div class="frow-tags"><span class="rtag">출결 관리</span><span class="rtag">휴대폰 수거</span><span class="rtag">상시 순찰</span></div>
+      <button class="btn-rule" id="btnModal">벌점 규정 확인하기</button>
+    </div>
+  </div>
+  <div class="frow reveal" style="transition-delay:.14s">
+    <div class="frow-left"><span class="frow-num">04</span><span class="frow-kw">콘텐츠</span></div>
+    <div class="frow-right">
+      <div class="frow-title">검증된 학습 자료</div>
+      <p class="frow-body">대치동 기반의 검증된 학습 자료를 제공합니다. 내신과 수능 대비 콘텐츠를 체계적으로 활용할 수 있어, <strong>무엇을 공부해야 할지 헤매는 시간 없이 바로 집중할 수 있습니다.</strong></p>
+      <div class="frow-tags"><span class="rtag p">내신·수능</span><span class="rtag">대치동 자료</span></div>
+    </div>
+  </div>
+  <div class="frow reveal" style="transition-delay:.17s">
+    <div class="frow-left"><span class="frow-num">05</span><span class="frow-kw">환경</span></div>
+    <div class="frow-right">
+      <div class="frow-title">쾌적한 학습 환경</div>
+      <p class="frow-body">애플타워 10층 전층을 사용합니다. 인체공학 칸막이 책상, 냉난방 완비, 자습실과 분리된 별도 휴게 공간을 갖추고 있어 <strong>공부 외의 불편함 없이 오직 학습에만 에너지를 쏟을 수 있습니다.</strong></p>
+      <div class="frow-tags"><span class="rtag">전층 운영</span><span class="rtag">공간 최적화</span></div>
+    </div>
+  </div>
+  <div class="frow reveal" style="transition-delay:.2s">
+    <div class="frow-left"><span class="frow-num">06</span><span class="frow-kw">원장 직영</span></div>
+    <div class="frow-right">
+      <div class="frow-title">원장 직접 1:1 맞춤 관리</div>
+      <p class="frow-body">원장님이 모든 학생의 이름과 상황을 직접 파악합니다. 대형 체인과 달리 관리의 책임이 한 사람에게 있어, <strong>학부모님도 누가 관리하는지 명확히 알고 안심할 수 있습니다.</strong></p>
+      <div class="frow-tags"><span class="rtag p">원장 직영</span><span class="rtag">직접 관리</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPACE -->
+<section class="space-section" id="space">
+  <div class="space-header reveal">
+    <span class="sh-eyebrow">Space / 03</span>
+    <h2 class="sh-title">공간 소개</h2>
+    <div class="sh-fill"></div>
+    <p class="sh-desc">촬영 후 실제 사진으로 교체 예정입니다.</p>
+  </div>
+  <div class="slider-wrap">
+    <div class="strack" id="strack">
+      <div class="sli"><div class="sli-bg"></div><div class="sli-grid"></div><div class="sli-ov"></div><div class="sli-c"><span class="sli-label">Main Hall</span><div class="sli-title">메인 자습실</div><p class="sli-desc">개인 칸막이 책상과 최적화된 조명으로 설계된 넓고 조용한 자습 공간입니다. 교시 시작과 함께 집중 모드가 시작됩니다.</p></div></div>
+      <div class="sli"><div class="sli-bg"></div><div class="sli-grid"></div><div class="sli-ov"></div><div class="sli-c"><span class="sli-label">Lounge</span><div class="sli-title">휴게 공간</div><p class="sli-desc">쉬는 시간에 완전히 긴장을 풀고 돌아올 수 있는 별도 공간입니다. 자습실과 분리되어 집중과 휴식의 경계가 명확합니다.</p></div></div>
+      <div class="sli"><div class="sli-bg"></div><div class="sli-grid"></div><div class="sli-ov"></div><div class="sli-c"><span class="sli-label">Facility</span><div class="sli-title">편의 시설</div><p class="sli-desc">정수기, 개인 사물함, 충전 시설을 기본 제공합니다. 공부 외의 불편함이 없도록 필요한 것들은 이미 갖춰져 있습니다.</p></div></div>
+      <div class="sli"><div class="sli-bg"></div><div class="sli-grid"></div><div class="sli-ov"></div><div class="sli-c"><span class="sli-label">Location</span><div class="sli-title">애플타워 10층</div><p class="sli-desc">광주광역시 광산구 임방울대로 330, 애플타워 10층. 버스·지하철 모두 접근이 편리하며, 건물 내 주차도 가능합니다.</p></div></div>
+    </div>
+  </div>
+  <div class="sctrl">
+    <div class="sdots"><button class="sd on" data-i="0"></button><button class="sd" data-i="1"></button><button class="sd" data-i="2"></button><button class="sd" data-i="3"></button></div>
+    <span class="scount" id="scount">01 / 04</span>
+    <div class="sarrs"><button class="sa" id="sprev">←</button><button class="sa" id="snext">→</button></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="faq-inner">
+    <div class="faq-lft reveal">
+      <div style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--teal);letter-spacing:.28em;text-transform:uppercase;margin-bottom:20px">FAQ / 04</div>
+      <h2 class="faq-title">자주<br>묻는<br>질문</h2>
+      <p class="faq-sub">더 궁금한 점은 카카오 채널로 바로 문의해 주세요. 원장님이 직접 답변드립니다.</p>
+      <a href="http://pf.kakao.com/_execQn" target="_blank" class="kb"><span class="kbi">K</span>카카오 채널 문의하기</a>
+    </div>
+    <div class="faq-lst reveal">
+      <div class="qi"><button class="qq"><span class="qqt">이용 요금은 얼마인가요?</span><i class="qqi">+</i></button><div class="qa"><div class="qai">정확한 요금은 상담을 통해 안내드립니다. 등록 기간과 이용 시간대에 따라 차이가 있을 수 있습니다. 부담 없이 <strong>무료 상담 신청</strong>을 먼저 이용해 주세요.</div></div></div>
+      <div class="qi"><button class="qq"><span class="qqt">정원이 있나요? 대기는 어떻게 하나요?</span><i class="qqi">+</i></button><div class="qa"><div class="qai">원장님이 모든 학생을 직접 관리하기 때문에 정원이 정해져 있습니다. <strong>대기 등록</strong>이 가능하며, 자리가 생기면 순서대로 연락드립니다.</div></div></div>
+      <div class="qi"><button class="qq"><span class="qqt">수학 질문방은 어떻게 이용하나요?</span><i class="qqi">+</i></button><div class="qa"><div class="qai">입소 후 별도 안내를 통해 이용할 수 있습니다. 모르는 문제를 사진으로 찍거나 직접 적어 올리면 <strong>국희재 수학학원 멘토가 풀이와 개념을 직접 설명</strong>해 드립니다.</div></div></div>
+      <div class="qi"><button class="qq"><span class="qqt">교시제는 어떻게 운영되나요?</span><i class="qqi">+</i></button><div class="qa"><div class="qai">하루 일과가 교시 단위로 운영됩니다. 교시가 시작되면 자리에 앉아 공부하고, 정해진 쉬는 시간에만 이동이 허용됩니다. <strong>스스로 집중을 유지하는 것보다 훨씬 효율적</strong>입니다.</div></div></div>
+      <div class="qi"><button class="qq"><span class="qqt">학부모님도 학습 현황을 알 수 있나요?</span><i class="qqi">+</i></button><div class="qa"><div class="qai">공지사항과 주요 안내는 학부모님께 카카오톡으로 전달됩니다. 원장님이 직접 내용을 확인하고 발송하기 때문에 <strong>오발송 없이 정확한 정보</strong>만 전달됩니다.</div></div></div>
+      <div class="qi"><button class="qq"><span class="qqt">입소 후 적응 기간이 있나요?</span><i class="qqi">+</i></button><div class="qa"><div class="qai">입소 첫날 생활 규정, 교시 시간표, 벌점 제도 전반을 안내드립니다. 규칙이 명확할수록 오히려 편하다는 이야기를 많이 듣습니다. <strong>첫 주 안에 충분히 적응</strong>합니다.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="co-section" id="contact">
+  <div class="co-in">
+    <div class="colt">
+      <div class="coey">Contact / 05</div>
+      <h2 class="cotitle">상담<br>신청</h2>
+      <div class="coinfo">
+        <div class="cr"><span class="crk">Location</span><span class="crv">광주 광산구 임방울대로 330<br>애플타워 10층</span></div>
+        <div class="cr"><span class="crk">Phone</span><span class="crv">010-4408-3790</span></div>
+        <div class="cr"><span class="crk">Kakao</span><span class="crv">@스터디코어 1.0</span></div>
+        <div class="cr"><span class="crk">Email</span><span class="crv"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a1d2d5d4c5d8c2ced3c49091e1cfc0d7c4d38fc2cecc">[email&#160;protected]</a></span></div>
+      </div>
+    </div>
+    <div class="cort">
+      <span class="fhint">문의 내용을 남겨주세요 — 원장님이 직접 연락드립니다</span>
+      <div class="cfgrid">
+        <div class="cfg"><label class="cfl">이름</label><input class="cfi" type="text" placeholder="홍길동"></div>
+        <div class="cfg"><label class="cfl">연락처</label><input class="cfi" type="tel" placeholder="010-0000-0000"></div>
+      </div>
+      <div class="cfg"><label class="cfl">상담 유형</label><select class="cfsel"><option value="" disabled selected>선택해주세요</option><option>입소 상담</option><option>시설 견학</option><option>프로그램 문의</option><option>기타</option></select></div>
+      <div class="cfg"><label class="cfl">문의 내용</label><textarea class="cfta" placeholder="궁금하신 점을 자유롭게 적어주세요."></textarea></div>
+      <button class="csub">신청하기 <span class="csuba">→</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="ftag">Managed Study Hall · Since 2024</div>
+    <div class="fbrand">STUDYCORE 1.0</div>
+  </div>
+  <div style="text-align:center">
+    <img src="data:image/png;base64,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" alt="STUDYCORE 1.0" style="height:56px;width:auto;opacity:.4">
+  </div>
+  <div>
+    <div class="flinks"><a href="#" class="flink">이용약관</a><a href="#" class="flink">개인정보처리방침</a></div>
+    <div class="fcopy">광주광역시 광산구 임방울대로 330 애플타워 10층<br>010-4408-3790 · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="92e1e6e7f6ebf1fde0f7a3a2d2fcf3e4f7e0bcf1fdff">[email&#160;protected]</a><br>© 2025 STUDYCORE 1.0. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- 모달 -->
+<div class="mov" id="modal">
+  <div class="mbox">
+    <div class="mhd"><h3 class="mhdtitle">출결 및 생활 벌점 규정</h3><button class="mcls" id="mclose">✕</button></div>
+    <div class="mbd">
+      <p class="mintro">스터디코어 1.0은 모든 재원생의 집중 환경을 위해 엄격한 페널티 시스템을 적용합니다.</p>
+      <div class="pr"><h4>지각 및 무단 결석</h4><ul><li>교시 시작 후 5분 이상 지각 시 : 벌점 1점</li><li>사전 연락 없는 무단 결석 : 벌점 3점</li></ul></div>
+      <div class="pr"><h4>학습 방해 및 소음</h4><ul><li>자습실 내 전자기기 소음 (진동 포함) : 벌점 2점</li><li>교시 중 무단 이동 및 잡담 : 벌점 2점</li></ul></div>
+      <div class="praction"><strong>누적 벌점 10점 초과 시 강제 퇴소 조치됩니다.</strong></div>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// NAV
+(function(){var nav=document.getElementById('nav'),logo=document.getElementById('navLogo'),hero=document.getElementById('hero');function tick(){var d=hero.getBoundingClientRect().bottom>40;nav.classList.toggle('on',!d);logo.src=d?logo.dataset.dark:logo.dataset.light;}window.addEventListener('scroll',tick,{passive:true});tick();})();
+// 슬라이더
+(function(){var track=document.getElementById('strack'),dots=document.querySelectorAll('.sd'),counter=document.getElementById('scount'),total=dots.length,cur=0,iv;function go(n){cur=(n+total)%total;track.style.transform='translateX(-'+(cur*100)+'%)';dots.forEach(function(d,i){d.classList.toggle('on',i===cur);});counter.textContent=String(cur+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');}function start(){iv=setInterval(function(){go(cur+1);},4000);}function stop(){clearInterval(iv);}document.getElementById('snext').addEventListener('click',function(){go(cur+1);});document.getElementById('sprev').addEventListener('click',function(){go(cur-1);});dots.forEach(function(d){d.addEventListener('click',function(){go(parseInt(d.dataset.i));});});start();track.addEventListener('mouseenter',stop);track.addEventListener('mouseleave',start);var sx=0;track.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;stop();},{passive:true});track.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)go(dx<0?cur+1:cur-1);start();},{passive:true});})();
+// Reveal
+(function(){var els=document.querySelectorAll('.reveal');var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}});},{threshold:0.04,rootMargin:'0px 0px -40px 0px'});els.forEach(function(el){io.observe(el);});})();
+// FAQ
+(function(){document.querySelectorAll('.qq').forEach(function(btn){btn.addEventListener('click',function(){var item=btn.closest('.qi'),isOpen=item.classList.contains('open');document.querySelectorAll('.qi').forEach(function(i){i.classList.remove('open');});if(!isOpen)item.classList.add('open');});});})();
+// 모달
+(function(){var modal=document.getElementById('modal'),open=document.getElementById('btnModal'),close=document.getElementById('mclose');if(open)open.addEventListener('click',function(){modal.classList.a

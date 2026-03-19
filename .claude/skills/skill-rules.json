@@ -1,0 +1,107 @@
+{
+  "version": "1.0",
+  "skills": {
+    "nextjs-app-router": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Next.js 14 App Router 패턴: Server/Client 컴포넌트, 데이터 패칭, 라우팅",
+      "promptTriggers": {
+        "keywords": ["page", "layout", "route", "server component", "client component", "SSG", "ISR", "generateStaticParams", "페이지", "라우트"],
+        "intentPatterns": [
+          "(create|add|만들|추가).*(page|layout|route|페이지)",
+          "(fetch|get|가져).*(data|server|서버)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["src/app/**/*.tsx", "src/app/**/*.ts"],
+        "contentPatterns": ["'use client'", "generateStaticParams", "generateMetadata"]
+      }
+    },
+    "supabase-patterns": {
+      "type": "domain",
+      "enforcement": "block",
+      "priority": "critical",
+      "description": "Supabase 클라이언트 사용 규칙: 브라우저 vs 서버 클라이언트, RLS, 인증 패턴",
+      "promptTriggers": {
+        "keywords": ["supabase", "database", "auth", "query", "insert", "update", "RLS", "데이터베이스", "인증"],
+        "intentPatterns": [
+          "(create|add|만들).*(client|query|table)",
+          "(auth|login|로그인|인증).*(supabase|user)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["src/**/*.ts", "src/**/*.tsx"],
+        "contentPatterns": ["createBrowserClient", "createServerClient", "supabase.from"]
+      }
+    },
+    "brand-design-system": {
+      "type": "guardrail",
+      "enforcement": "block",
+      "priority": "critical",
+      "description": "스터디코어 브랜드 규칙: Navy/Teal 컬러, border-radius:0, shadow 금지, 한글 폰트",
+      "promptTriggers": {
+        "keywords": ["style", "css", "design", "component", "button", "card", "UI", "스타일", "디자인", "컴포넌트"],
+        "intentPatterns": [
+          "(style|design|만들|create).*(component|button|card|컴포넌트|버튼)",
+          "(color|colour|색|색상|배경)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["src/components/**/*.tsx", "src/app/**/*.css", "tailwind.config.ts"],
+        "contentPatterns": ["className=", "style={", "rounded-", "shadow-"]
+      }
+    },
+    "ddd-domain-pattern": {
+      "type": "domain",
+      "enforcement": "block",
+      "priority": "critical",
+      "description": "DDD 3파일 패턴: model.ts / repository.ts / service.ts — 모든 도메인 적용",
+      "promptTriggers": {
+        "keywords": ["domain", "repository", "service", "model", "도메인", "서비스", "레포지토리"],
+        "intentPatterns": [
+          "(create|add|만들).*(domain|service|repository|model)",
+          "(user|notice|question|blog|lunch|counseling).*(logic|data|query)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["src/domains/**/*.ts"],
+        "contentPatterns": ["repository", "service", "model"]
+      }
+    },
+    "auth-route-guard": {
+      "type": "guardrail",
+      "enforcement": "block",
+      "priority": "critical",
+      "description": "라우트 보호: middleware.ts 패턴, 역할 검사, 계정 상태 게이트",
+      "promptTriggers": {
+        "keywords": ["auth", "middleware", "protect", "role", "permission", "인증", "권한", "미들웨어"],
+        "intentPatterns": [
+          "(protect|guard|restrict).*(route|page|access)",
+          "(check|verify|확인).*(role|permission|auth|권한)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["src/middleware.ts", "src/lib/supabase/**"],
+        "contentPatterns": ["middleware", "createServerClient", "getUser", "role"]
+      }
+    },
+    "notification-edge-functions": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "카카오 알림톡 + SMS는 Supabase Edge Function에서만 처리. 클라이언트 직접 호출 금지.",
+      "promptTriggers": {
+        "keywords": ["notification", "alimtalk", "SMS", "kakao", "알림", "알림톡", "문자"],
+        "intentPatterns": [
+          "(send|발송|보내).*(notification|alimtalk|SMS|알림|문자)",
+          "(notify|알림).*(mentor|student|admin|멘토|학생|관리자)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["supabase/functions/**/*.ts"],
+        "contentPatterns": ["Deno.serve", "EdgeFunction"]
+      }
+    }
+  }
+}
