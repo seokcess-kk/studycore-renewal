@@ -234,6 +234,28 @@ export async function toggleNoticePin(
 }
 
 /**
+ * 공지사항 순서 변경 (관리자용)
+ */
+export async function updateNoticeOrders(
+  supabase: SupabaseClient,
+  orders: { id: string; order_index: number }[]
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await noticeRepo.updateNoticeOrders(supabase, orders);
+    return { success: true };
+  } catch (error) {
+    console.error("공지사항 순서 변경 실패:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "공지사항 순서 변경 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+/**
  * 공지사항 첨부파일 목록 조회
  */
 export async function getNoticeAttachments(

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, Eye, Trash2 } from "lucide-react";
+import { Plus, Eye, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { createBrowserClient } from "@/lib/supabase/client";
@@ -11,6 +11,7 @@ import { formatDate } from "@/lib/utils";
 import { useToast } from "@/components/common/Toast";
 import { NOTICE_CATEGORY_LABELS } from "@/domains/notice/model";
 import type { NoticeWithAuthor, NoticeCategory } from "@/domains/notice/model";
+import { updateNoticeOrders } from "@/domains/notice/service";
 
 export default function AdminNoticesPage() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function AdminNoticesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
 
   useEffect(() => {
     fetchNotices();
@@ -41,6 +43,7 @@ export default function AdminNoticesPage() {
         `
         )
         .order("is_pinned", { ascending: false })
+        .order("order_index", { ascending: true })
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -83,6 +86,29 @@ export default function AdminNoticesPage() {
     }
   };
 
+  const handleMove = async (index: number, direction: "up" | "down") => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= notices.length) return;
+
+    setIsReordering(true);
+    const newNotices = [...notices];
+    [newNotices[index], newNotices[targetIndex]] = [newNotices[targetIndex], newNotices[index]];
+
+    const orders = newNotices.map((n, i) => ({ id: n.id, order_index: i + 1 }));
+
+    setNotices(newNotices);
+    const result = await updateNoticeOrders(supabase, orders);
+    if (!result.success) {
+      toast({
+        variant: "error",
+        title: "오류",
+        description: result.error || "순서 변경에 실패했습니다.",
+      });
+      await fetchNotices();
+    }
+    setIsReordering(false);
+  };
+
   const getCategoryBadgeClass = (category: NoticeCategory) => {
     switch (category) {
       case "urgent":
@@ -116,6 +142,9 @@ export default function AdminNoticesPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-rule bg-stone">
+              <th className="px-3 py-3 text-center text-sm font-medium text-ink w-20">
+                순서
+              </th>
               <th className="px-4 py-3 text-left text-sm font-medium text-ink">
                 카테고리
               </th>
@@ -142,23 +171,43 @@ export default function AdminNoticesPage() {
           <tbody className="divide-y divide-rule">
             {isLoading ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-muted">
+                <td colSpan={8} className="px-4 py-12 text-center text-muted">
                   로딩 중...
                 </td>
               </tr>
             ) : notices.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-muted">
+                <td colSpan={8} className="px-4 py-12 text-center text-muted">
                   공지사항이 없습니다
                 </td>
               </tr>
             ) : (
-              notices.map((notice) => (
+              notices.map((notice, idx) => (
                 <tr
                   key={notice.id}
                   className="hover:bg-stone/50 cursor-pointer"
                   onClick={() => router.push(`/admin/notices/${notice.id}/edit`)}
                 >
+                  <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-center gap-0.5">
+                      <button
+                        onClick={() => handleMove(idx, "up")}
+                        disabled={idx === 0 || isReordering}
+                        className="p-1 text-muted hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                        title="위로"
+                      >
+                        <ChevronUp className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => handleMove(idx, "down")}
+                        disabled={idx === notices.length - 1 || isReordering}
+                        className="p-1 text-muted hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                        title="아래로"
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex items-center border px-2 py-0.5 text-xs font-medium ${getCategoryBadgeClass(

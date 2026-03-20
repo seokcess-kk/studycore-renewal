@@ -41,6 +41,7 @@ export async function getNotices(
       { count: "exact" }
     )
     .order("is_pinned", { ascending: false })
+    .order("order_index", { ascending: true })
     .order("created_at", { ascending: false });
 
   if (options?.publishedOnly) {
@@ -193,6 +194,25 @@ export async function deleteNotice(
 
   if (error) {
     throw new Error(`공지사항 삭제 실패: ${error.message}`);
+  }
+}
+
+/**
+ * 공지사항 순서 일괄 업데이트
+ */
+export async function updateNoticeOrders(
+  supabase: SupabaseClient,
+  orders: { id: string; order_index: number }[]
+): Promise<void> {
+  for (const order of orders) {
+    const { error } = await supabase
+      .from("notices")
+      .update({ order_index: order.order_index })
+      .eq("id", order.id);
+
+    if (error) {
+      throw new Error(`공지사항 순서 업데이트 실패: ${error.message}`);
+    }
   }
 }
 

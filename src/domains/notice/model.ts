@@ -46,6 +46,7 @@ export const noticeSchema = z.object({
   category: z.enum(["general", "urgent", "material", "schedule", "event"]),
   is_pinned: z.boolean(),
   is_published: z.boolean(),
+  order_index: z.number(),
   view_count: z.number(),
   author_id: z.string().uuid(),
   created_at: z.string(),
