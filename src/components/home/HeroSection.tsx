@@ -215,7 +215,7 @@ export function HeroSection() {
             className="p-14 flex flex-col justify-center gap-4"
           >
             <MetaItem label="Location" value={CONTACT.address} />
-            <MetaItem label="Contact" value={CONTACT.kakaoChannel} />
+            <MetaItem label="Contact" value="카카오톡 문의" href={CONTACT.kakaoChatChannel} />
             <MetaItem label="Type" value="관리형 독서실" />
           </motion.div>
         </div>
@@ -239,13 +239,19 @@ export function HeroSection() {
   );
 }
 
-function MetaItem({ label, value }: { label: string; value: string }) {
+function MetaItem({ label, value, href }: { label: string; value: string; href?: string }) {
   return (
     <div className="flex justify-between items-baseline">
       <span className="font-mono text-[9px] font-bold text-teal tracking-[0.2em] uppercase">
         {label}
       </span>
-      <span className="text-[13px] text-white/45 font-light">{value}</span>
+      {href ? (
+        <a href={href} target="_blank" rel="noopener noreferrer" className="text-[13px] text-white/45 font-light hover:text-teal cursor-pointer transition-colors duration-200">
+          {value}
+        </a>
+      ) : (
+        <span className="text-[13px] text-white/45 font-light">{value}</span>
+      )}
     </div>
   );
 }
