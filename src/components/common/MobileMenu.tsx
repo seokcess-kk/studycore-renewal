@@ -154,22 +154,21 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     </Link>
                   </motion.div>
                 )}
-                {isStaff ? (
+                <motion.div variants={itemVariants}>
+                  <Link
+                    href={ROUTES.MANUAL}
+                    className={linkClass(pathname === "/manual")}
+                  >
+                    매뉴얼
+                  </Link>
+                </motion.div>
+                {isStaff && (
                   <motion.div variants={itemVariants}>
                     <Link
                       href={ROUTES.GUIDE}
                       className={linkClass(pathname === "/guide")}
                     >
                       온보딩
-                    </Link>
-                  </motion.div>
-                ) : (
-                  <motion.div variants={itemVariants}>
-                    <Link
-                      href={ROUTES.MANUAL}
-                      className={linkClass(pathname === "/manual")}
-                    >
-                      매뉴얼
                     </Link>
                   </motion.div>
                 )}

@@ -130,13 +130,12 @@ export function Nav() {
                   도시락
                 </Link>
               )}
-              {isStaff ? (
+              <Link href={ROUTES.MANUAL} className={linkStyle(pathname === "/manual")}>
+                매뉴얼
+              </Link>
+              {isStaff && (
                 <Link href={ROUTES.GUIDE} className={linkStyle(pathname === "/guide")}>
                   온보딩
-                </Link>
-              ) : (
-                <Link href={ROUTES.MANUAL} className={linkStyle(pathname === "/manual")}>
-                  매뉴얼
                 </Link>
               )}
               {menuVisibility.blog && (

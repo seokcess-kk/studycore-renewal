@@ -215,7 +215,7 @@ export function HeroSection() {
             className="p-14 flex flex-col justify-center gap-4"
           >
             <MetaItem label="Location" value={CONTACT.address} />
-            <MetaItem label="Contact" value={CONTACT.phone} />
+            <MetaItem label="Contact" value={CONTACT.kakaoChannel} />
             <MetaItem label="Type" value="관리형 독서실" />
           </motion.div>
         </div>
@@ -231,7 +231,7 @@ export function HeroSection() {
             href={ROUTES.CONSULT}
             className="cursor-pointer cta-fill cta-fill-teal block w-full text-center px-6 py-4 text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
           >
-            입소 상담 신청하기
+            상담 신청하기
           </Link>
         </motion.div>
       </div>

@@ -8,13 +8,13 @@ export const SITE = {
   tagline: "구조가 성적을 만든다",
   description:
     "광주 광산구 관리형 독서실 - 교시제, 수학 멘토 질문방, 원장 직접 관리",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "http://studycore.kr",
 } as const;
 
 // 연락처 정보
 export const CONTACT = {
   phone: "010-4408-3790",
-  email: "studycore10@naver.com",
+  email: "studycore10@gmail.com",
   address: "광주광역시 광산구 임방울대로 330 애플타워 10층",
   kakaoChannel: "http://pf.kakao.com/_execQn",
   kakaoChatChannel: "http://pf.kakao.com/_execQn/chat",
