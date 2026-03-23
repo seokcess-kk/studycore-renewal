@@ -2,9 +2,7 @@
  * 상담 신청 알림 Edge Function
  *
  * 트리거: 상담 신청 폼 제출
- * 발송 대상:
- *   1. 관리자 (알림톡/SMS)
- *   2. 신청자 (접수 확인 SMS)
+ * 발송 대상: 관리자 (알림톡 → SMS fallback)
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -50,7 +48,6 @@ serve(async (req: Request) => {
     const adminPhone = Deno.env.get("ADMIN_PHONE");
     const results = {
       adminNotified: false,
-      customerNotified: false,
       errors: [] as string[],
     };
 
@@ -114,68 +111,6 @@ serve(async (req: Request) => {
           results.errors.push(`관리자 알림 실패: ${smsResult.error || "알 수 없는 오류"}`);
         }
       }
-    }
-
-    // 2. 신청자에게 접수 확인 SMS
-    const customerMessage = `안녕하세요. 스터디코어1.0입니다.
-
-원활한 확인 및 기록 관리를 위해
-전화·문자 문의는
-카카오톡 채널 '스터디코어1.0'을 통해서만
-안내드리고 있습니다.
-
-※ 첫 번째 메시지 발송 시,
-아래 정보를 반드시 함께 작성해 주세요.
-
-[비재원생]
-- 학생이름
-- 연락처(본인)
-- 연락처(학부모)
-- 학교
-- 학년(2026년 기준)
-- 문의사항 (예: 3월 등록 안내)
-
-[재원생]
-- 학생이름 + 학생번호(휴대폰 뒤 4자리)
-- 문의 및 요청사항
-  (예: 월·수 수학학원 시간표 변경)
-
-아래 채널로 메시지를 남겨주시면
-확인 후 요청사항에 맞게 안내드리겠습니다.
-
-▶ 카카오톡 채널 검색: 스터디코어1.0
-http://pf.kakao.com/_execQn/chat`;
-
-    const customerResult = await sendSMS({
-      to: body.phone,
-      message: customerMessage,
-    });
-
-    if (customerResult.success) {
-      results.customerNotified = true;
-      // 고객 SMS 성공 로그
-      await logNotification({
-        type: "sms",
-        recipient_phone: body.phone,
-        recipient_name: body.name,
-        message: customerMessage,
-        status: "sent",
-        metadata: { trigger: "consult", type: "confirmation" },
-      });
-    } else {
-      results.errors.push(
-        `고객 알림 실패: ${customerResult.error || "알 수 없는 오류"}`
-      );
-      // 고객 SMS 실패 로그
-      await logNotification({
-        type: "sms",
-        recipient_phone: body.phone,
-        recipient_name: body.name,
-        message: customerMessage,
-        status: "failed",
-        error_message: customerResult.error || "알 수 없는 오류",
-        metadata: { trigger: "consult", type: "confirmation" },
-      });
     }
 
     return new Response(JSON.stringify(results), {
