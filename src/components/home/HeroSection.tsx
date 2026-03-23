@@ -191,7 +191,7 @@ export function HeroSection() {
               <strong className="text-white/75 font-medium">
                 대표원장이 직접 설계·운영하는
               </strong>{" "}
-              관리형 독서실로,
+              관리형 독서실로
               <br />
               메디컬 재학 중인 최상위권 조교의 학습 관리와
               <br />

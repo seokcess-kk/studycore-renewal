@@ -125,7 +125,7 @@ export default function ConsultPage() {
               무료 상담 신청
             </h1>
             <p className="mt-4 text-white/60 text-reading leading-relaxed">
-              입소 상담, 시설 견학, 프로그램 문의 등 무엇이든 편하게
+              등록 상담, 시설 견학, 프로그램 문의 등 무엇이든 편하게
               문의해 주세요.
               <br />
               원장님이 직접 확인하고 연락드립니다.
@@ -149,9 +149,8 @@ export default function ConsultPage() {
                   type="text"
                   placeholder="홍길동"
                   {...register("name")}
-                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors ${
-                    errors.name ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
-                  }`}
+                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors ${errors.name ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
+                    }`}
                 />
               </FormField>
 
@@ -168,9 +167,8 @@ export default function ConsultPage() {
                   placeholder="010-0000-0000"
                   {...register("phone")}
                   onChange={(e) => handlePhoneChange("phone", e)}
-                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors ${
-                    errors.phone ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
-                  }`}
+                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors ${errors.phone ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
+                    }`}
                 />
               </FormField>
 
@@ -185,9 +183,8 @@ export default function ConsultPage() {
                   type="text"
                   placeholder="예: 광주고 2학년"
                   {...register("school")}
-                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors ${
-                    errors.school ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
-                  }`}
+                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors ${errors.school ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
+                    }`}
                 />
               </FormField>
 
@@ -201,9 +198,8 @@ export default function ConsultPage() {
                 <select
                   id="consult-type"
                   {...register("consultType")}
-                  className={`w-full px-4 py-3 border bg-white text-ink text-reading focus:outline-none transition-colors appearance-none ${
-                    errors.consultType ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
-                  }`}
+                  className={`w-full px-4 py-3 border bg-white text-ink text-reading focus:outline-none transition-colors appearance-none ${errors.consultType ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
+                    }`}
                   defaultValue=""
                 >
                   <option value="" disabled>
@@ -224,9 +220,8 @@ export default function ConsultPage() {
                   placeholder="궁금하신 점을 자유롭게 적어주세요."
                   rows={4}
                   {...register("message")}
-                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors resize-none ${
-                    errors.message ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
-                  }`}
+                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors resize-none ${errors.message ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
+                    }`}
                 />
               </FormField>
 

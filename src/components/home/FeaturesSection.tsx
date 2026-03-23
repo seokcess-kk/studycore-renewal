@@ -12,7 +12,7 @@ const features = [
     keyword: "시스템",
     title: "교시제 관리 시스템",
     description:
-      "하루가 교시 단위로 운영됩니다.<br />시작 종이 울리면 자리에 앉고, 쉬는 시간에만 이동이 허용됩니다.<br />스스로 집중력을 만들려 애쓰지 않아도 되고,<br /><strong>앉아있는 시간 자체가 실력으로 쌓입니다.</strong>",
+      "하루가 교시 단위로 운영됩니다.<br />시작 종이 울리면 자리에 앉고, 쉬는 시간에만 이동이 허용됩니다.<br />스스로 집중력을 만들려 애쓰지 않아도 되고<br /><strong>앉아있는 시간 자체가 실력으로 쌓입니다.</strong>",
     tags: [
       { label: "핵심 시스템", primary: true },
       { label: "매일 운영", primary: false },
@@ -23,7 +23,7 @@ const features = [
     keyword: "멘토링",
     title: "수학 전문 질문방",
     description:
-      "재원생 전용 질문방에 모르는 문제를 사진이나 텍스트로 올리면<br />국희재 수학학원 멘토가 직접 풀이를 설명합니다.<br />그날 모른 것을 그날 해결하니,<br /><strong>오개념이 쌓이지 않고 다음 날 더 단단하게 시작할 수 있습니다.</strong>",
+      "재원생 전용 질문방에 모르는 문제를 사진이나 텍스트로 올리면<br />국희재 수학학원 멘토가 직접 풀이를 설명합니다.<br />그날 모른 것을 그날 해결하니<br /><strong>오개념이 쌓이지 않고 다음 날 더 단단하게 시작할 수 있습니다.</strong>",
     tags: [
       { label: "재원생 전용", primary: true },
       { label: "수학 멘토", primary: false },
@@ -46,7 +46,7 @@ const features = [
     keyword: "콘텐츠",
     title: "검증된 학습 자료",
     description:
-      "대치동 기반의 검증된 학습 자료를 제공합니다.<br />내신과 수능 대비 콘텐츠를 체계적으로 활용할 수 있어,<br /><strong>무엇을 공부해야 할지 헤매는 시간 없이 바로 집중할 수 있습니다.</strong>",
+      "대치동 기반의 검증된 학습 자료를 제공합니다.<br />내신과 수능 대비 콘텐츠를 체계적으로 활용할 수 있어<br /><strong>무엇을 공부해야 할지 헤매는 시간 없이 바로 집중할 수 있습니다.</strong>",
     tags: [
       { label: "내신·수능", primary: true },
       { label: "대치동 자료", primary: false },
@@ -57,7 +57,7 @@ const features = [
     keyword: "환경",
     title: "쾌적한 학습 환경",
     description:
-      "애플타워 10층 전층을 사용합니다.<br />인체공학 칸막이 책상, 냉난방 완비,<br />자습실과 분리된 별도 휴게 공간을 갖추고 있어<br /><strong>공부 외의 불편함 없이 오직 학습에만 에너지를 쏟을 수 있습니다.</strong>",
+      "애플타워 10층 100평대 공간 활용<br />인체공학 칸막이 책상, 냉난방 완비,<br />자습실과 분리된 별도 휴게 공간을 갖추고 있어<br /><strong>공부 외의 불편함 없이 오직 학습에만 에너지를 쏟을 수 있습니다.</strong>",
     tags: [
       { label: "전층 운영", primary: false },
       { label: "공간 최적화", primary: false },
@@ -68,7 +68,7 @@ const features = [
     keyword: "원장 직영",
     title: "원장 직접 1:1 맞춤 관리",
     description:
-      "원장님이 모든 학생의 이름과 상황을 직접 파악합니다.<br />대형 체인과 달리 관리의 책임이 한 사람에게 있어,<br /><strong>학부모님도 누가 관리하는지 명확히 알고 안심할 수 있습니다.</strong>",
+      "원장님이 모든 학생의 이름과 상황을 직접 파악합니다.<br />대형 체인과 달리 관리의 책임이 한 사람에게 있어<br /><strong>학부모님도 누가 관리하는지 명확히 알고 안심할 수 있습니다.</strong>",
     tags: [
       { label: "원장 직영", primary: true },
       { label: "직접 관리", primary: false },
@@ -91,82 +91,82 @@ export function FeaturesSection() {
   return (
     <section id="features" className="bg-stone section-lg">
       <div className="section-container">
-      {/* 헤더 */}
-      <motion.div
-        variants={{
-          hidden: { opacity: 0, y: 20 },
-          show: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-        }}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-40px" }}
-        className="mb-0 flex flex-col md:flex-row md:items-baseline gap-5 border-b-[1.5px] border-ink pb-10"
-      >
-        <span className="font-mono text-label font-bold text-teal tracking-label uppercase whitespace-nowrap">
-          Why Studycore / 01
-        </span>
-        <h2 className="font-serif text-fluid-h1 font-black tracking-heading text-ink leading-none">
-          6가지 차별점
-        </h2>
-        <div className="flex-1" />
-        <p className="text-secondary text-muted font-light max-w-[240px] md:text-right leading-prose">
-          스터디코어에서 경험할 수 있는 것들입니다.
-        </p>
-      </motion.div>
-
-      {/* 특징 행들 */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-100px" }}
-        className="flex flex-col"
-      >
-        {features.map((feature, index) => (
-          <Fragment key={feature.number}>
-            <FeatureRow feature={feature} />
-            {/* 3행 뒤 시각적 브레이크 — 반복 피로 완화 */}
-            {index === 2 && (
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0 },
-                  show: { opacity: 1, transition: { duration: 0.6 } },
-                }}
-                className="py-12 md:py-16 px-6 md:px-16 border-b border-ink/[0.06] flex items-center gap-6 md:gap-10"
-              >
-                <span className="block w-10 h-[1.5px] bg-teal flex-shrink-0" />
-                <p className="font-serif text-fluid-h3 font-bold text-ink/60 leading-ui tracking-heading">
-                  "공부를 <em className="text-teal not-italic">구조</em>로
-                  뒷받침하면, 의지만으로 안 되던 것도 됩니다."
-                </p>
-              </motion.div>
-            )}
-          </Fragment>
-        ))}
-      </motion.div>
-
-      {/* 인라인 CTA */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.5 }}
-        className="mt-16 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-t-[1.5px] border-ink pt-10"
-      >
-        <p className="text-body text-[#555] font-light leading-prose">
-          직접 경험해 보세요 — 무료 상담으로 시작할 수 있습니다.
-        </p>
-        <Link
-          href={ROUTES.CONSULT}
-          className="cta-fill cta-fill-navy group inline-flex items-center gap-2.5 px-8 py-3.5 text-white text-secondary font-bold tracking-cta border-[1.5px] border-navy hover:text-navy transition-colors duration-300 flex-shrink-0"
+        {/* 헤더 */}
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            show: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+          }}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-40px" }}
+          className="mb-0 flex flex-col md:flex-row md:items-baseline gap-5 border-b-[1.5px] border-ink pb-10"
         >
-          상담 신청하기
-          <ArrowRight
-            size={14}
-            className="group-hover:translate-x-1 transition-transform duration-200"
-          />
-        </Link>
-      </motion.div>
+          <span className="font-mono text-label font-bold text-teal tracking-label uppercase whitespace-nowrap">
+            Why Studycore / 01
+          </span>
+          <h2 className="font-serif text-fluid-h1 font-black tracking-heading text-ink leading-none">
+            6가지 차별점
+          </h2>
+          <div className="flex-1" />
+          <p className="text-secondary text-muted font-light max-w-[240px] md:text-right leading-prose">
+            스터디코어에서 경험할 수 있는 것들입니다.
+          </p>
+        </motion.div>
+
+        {/* 특징 행들 */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
+          className="flex flex-col"
+        >
+          {features.map((feature, index) => (
+            <Fragment key={feature.number}>
+              <FeatureRow feature={feature} />
+              {/* 3행 뒤 시각적 브레이크 — 반복 피로 완화 */}
+              {index === 2 && (
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0 },
+                    show: { opacity: 1, transition: { duration: 0.6 } },
+                  }}
+                  className="py-12 md:py-16 px-6 md:px-16 border-b border-ink/[0.06] flex items-center gap-6 md:gap-10"
+                >
+                  <span className="block w-10 h-[1.5px] bg-teal flex-shrink-0" />
+                  <p className="font-serif text-fluid-h3 font-bold text-ink/60 leading-ui tracking-heading">
+                    "공부를 <em className="text-teal not-italic">구조</em>로
+                    뒷받침하면, 의지만으로 안 되던 것도 됩니다."
+                  </p>
+                </motion.div>
+              )}
+            </Fragment>
+          ))}
+        </motion.div>
+
+        {/* 인라인 CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5 }}
+          className="mt-16 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-t-[1.5px] border-ink pt-10"
+        >
+          <p className="text-body text-[#555] font-light leading-prose">
+            직접 경험해 보세요 — 무료 상담으로 시작할 수 있습니다.
+          </p>
+          <Link
+            href={ROUTES.CONSULT}
+            className="cta-fill cta-fill-navy group inline-flex items-center gap-2.5 px-8 py-3.5 text-white text-secondary font-bold tracking-cta border-[1.5px] border-navy hover:text-navy transition-colors duration-300 flex-shrink-0"
+          >
+            상담 신청하기
+            <ArrowRight
+              size={14}
+              className="group-hover:translate-x-1 transition-transform duration-200"
+            />
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

@@ -36,7 +36,7 @@ const navItems = [
   { label: "프로그램 관리", href: "/admin/programs", icon: GraduationCap },
   { label: "블로그 관리", href: "/admin/blog", icon: FileText },
   { label: "도시락 관리", href: "/admin/meal", icon: UtensilsCrossed },
-  { label: "조교 온보딩", href: "/admin/guide", icon: BookOpen, assistantVisible: true },
+  { label: "온보딩/매뉴얼", href: "/admin/guide", icon: BookOpen, assistantVisible: true },
   { label: "설정", href: "/admin/settings", icon: Settings },
 ];
 

@@ -77,7 +77,7 @@ export type UserStatus = (typeof USER_STATUS)[keyof typeof USER_STATUS];
 
 // 상담 유형
 export const CONSULT_TYPES = [
-  { value: "admission", label: "입소 상담" },
+  { value: "admission", label: "등록 상담" },
   { value: "tour", label: "시설 견학" },
   { value: "program", label: "프로그램 문의" },
   { value: "etc", label: "기타" },
