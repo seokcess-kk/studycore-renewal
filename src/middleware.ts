@@ -76,10 +76,8 @@ export async function middleware(request: NextRequest) {
       .maybeSingle();
 
     if (!profile) {
-      // 프로필이 없으면 승인 대기 페이지로 (callback에서 생성 예정)
-      const url = request.nextUrl.clone();
-      url.pathname = "/pending-approval";
-      return NextResponse.redirect(url);
+      // 프로필 조회 실패 — 클라이언트에서 처리하도록 통과
+      return supabaseResponse;
     }
 
     // 어드민 라우트 접근 시 admin 또는 mentor 역할 확인
