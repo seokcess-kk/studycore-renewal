@@ -110,8 +110,8 @@ export const updateContactSchema = z.object({
     .string()
     .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다")
     .or(z.literal("")),
-  school: z.string().optional(),
-  grade: z.enum(["1", "2", "3", ""]).optional(),
+  school: z.string(),
+  grade: z.enum(["1", "2", "3", ""]),
   parent_phone: z
     .string()
     .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다")
