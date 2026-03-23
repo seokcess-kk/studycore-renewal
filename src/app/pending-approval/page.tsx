@@ -12,8 +12,8 @@ export default function PendingApprovalPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 min-h-screen bg-stone">
-        <div className="max-w-md mx-auto px-6 py-12">
+      <main className="page-body min-h-screen bg-stone">
+        <div className="container-narrow px-6 py-12">
           <div className="bg-white border border-rule p-8 text-center">
             {/* 아이콘 */}
             <div className="w-16 h-16 mx-auto mb-6 bg-teal/10 flex items-center justify-center">

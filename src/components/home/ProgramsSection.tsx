@@ -88,7 +88,7 @@ export function ProgramsSection() {
   );
 
   return (
-    <section className="bg-navy-dark py-28 relative overflow-hidden">
+    <section className="bg-navy-dark section-lg relative overflow-hidden">
       {/* 격자 배경 */}
       <div
         className="absolute inset-0 pointer-events-none"

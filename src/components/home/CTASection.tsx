@@ -42,7 +42,7 @@ const MAP_APPS = [
 
 export function CTASection() {
   return (
-    <section className="bg-navy py-28 px-6 md:px-13 relative overflow-hidden">
+    <section className="bg-navy section-lg px-6 md:px-13 relative overflow-hidden">
       {/* 격자 배경 */}
       <div
         className="absolute inset-0 pointer-events-none"

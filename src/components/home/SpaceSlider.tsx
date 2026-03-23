@@ -71,7 +71,7 @@ export function SpaceSlider() {
   };
 
   return (
-    <section id="space" className="bg-white py-28">
+    <section id="space" className="bg-white section-lg">
       {/* 헤더 */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

@@ -58,7 +58,7 @@ export default function WriteReviewPage() {
     return (
       <>
         <Nav />
-        <main className="pt-24 pb-20 bg-stone">
+        <main className="page-body bg-stone">
           <div className="max-w-lg mx-auto px-6 py-12 text-center">
             <p className="text-muted text-reading mb-4">
               활성 상태의 재원생만 후기를 작성할 수 있습니다.
@@ -88,7 +88,7 @@ export default function WriteReviewPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 bg-stone">
+      <main className="page-body bg-stone">
         <div className="max-w-lg mx-auto px-6">
           {/* 헤더 */}
           <div className="flex items-center gap-3 mb-6">

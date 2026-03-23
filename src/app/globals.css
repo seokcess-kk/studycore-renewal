@@ -85,6 +85,17 @@
   --tracking-tight: -0.03em;  /* 제목 압축 */
   --tracking-wide: 0.04em;    /* 버튼/CTA */
   --tracking-wider: 0.2em;    /* 라벨/대문자 */
+
+  /* ── 섹션 수직 패딩 ── */
+  --section-sm: 3rem;    /* 48px — 소섹션 */
+  --section-md: 5rem;    /* 80px — About 등 라이트 섹션 */
+  --section-lg: 7rem;    /* 112px — 마케팅 대형 섹션 */
+
+  /* ── 컨테이너 너비 ── */
+  --container-narrow: 28rem;   /* 448px — 로그인/등록 폼 */
+  --container-content: 48rem;  /* 768px — 약관/공지/블로그 본문 */
+  --container-wide: 64rem;     /* 1024px — 시스템/가이드 */
+  --container-full: 84rem;     /* 1344px — 팀/시설 그리드 */
 }
 
 :root {
@@ -258,6 +269,20 @@
   .tracking-heading { letter-spacing: var(--tracking-tight); }
   .tracking-cta     { letter-spacing: var(--tracking-wide); }
   .tracking-label   { letter-spacing: var(--tracking-wider); }
+
+  /* ── 섹션 패딩 유틸리티 ── */
+  .section-sm { padding-top: var(--section-sm); padding-bottom: var(--section-sm); }
+  .section-md { padding-top: var(--section-md); padding-bottom: var(--section-md); }
+  .section-lg { padding-top: var(--section-lg); padding-bottom: var(--section-lg); }
+
+  /* ── 컨테이너 너비 유틸리티 ── */
+  .container-narrow  { max-width: var(--container-narrow); margin-inline: auto; }
+  .container-content { max-width: var(--container-content); margin-inline: auto; }
+  .container-wide    { max-width: var(--container-wide); margin-inline: auto; }
+  .container-full    { max-width: var(--container-full); margin-inline: auto; }
+
+  /* ── 페이지 본문 래퍼 (pt-24 pb-20 대체) ── */
+  .page-body { padding-top: 6rem; padding-bottom: 5rem; }
 }
 
 /* 그리드 레이아웃(Editorial Layout)을 위한 커스텀 유틸리티 */

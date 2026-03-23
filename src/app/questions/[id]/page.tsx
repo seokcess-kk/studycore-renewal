@@ -85,7 +85,7 @@ export default function QuestionDetailPage() {
     return (
       <>
         <Nav />
-        <main className="pt-24 pb-20 min-h-screen bg-stone">
+        <main className="page-body min-h-screen bg-stone">
           <div className="max-w-md mx-auto px-6 py-16 text-center">
             <div className="w-16 h-16 bg-navy/10 flex items-center justify-center mx-auto mb-6">
               <Clock size={32} className="text-navy" />
@@ -107,15 +107,15 @@ export default function QuestionDetailPage() {
     return (
       <>
         <Nav />
-        <main className="pt-24 pb-20 min-h-screen">
+        <main className="page-body min-h-screen">
           <section className="bg-navy py-12 px-6 md:px-13">
-            <div className="max-w-4xl">
+            <div className="container-wide">
               <Skeleton className="h-4 w-24 bg-white/20 mb-4" />
               <Skeleton className="h-8 w-3/4 bg-white/20" />
             </div>
           </section>
           <section className="px-6 md:px-13 py-8">
-            <div className="max-w-4xl mx-auto space-y-4">
+            <div className="container-wide space-y-4">
               <Skeleton className="h-40 w-full" />
               <Skeleton className="h-24 w-full" />
             </div>
@@ -133,10 +133,10 @@ export default function QuestionDetailPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 min-h-screen">
+      <main className="page-body min-h-screen">
         {/* 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
-          <div className="max-w-4xl">
+          <div className="container-wide">
             <Link
               href={ROUTES.QUESTIONS}
               className="inline-flex items-center gap-2 text-white/60 hover:text-white text-secondary mb-4 transition-colors"
@@ -226,7 +226,7 @@ export default function QuestionDetailPage() {
 
         {/* 질문 내용 */}
         <section className="px-6 md:px-13 py-8">
-          <div className="max-w-4xl mx-auto">
+          <div className="container-wide">
             {/* 본문 */}
             <div className="bg-white border border-rule p-6 mb-6">
               <p className="text-reading text-ink whitespace-pre-wrap leading-relaxed">

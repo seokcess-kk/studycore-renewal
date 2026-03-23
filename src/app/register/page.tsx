@@ -131,7 +131,7 @@ export default function RegisterPage() {
   if (isSubmitted) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-stone px-4">
-        <div className="w-full max-w-md border border-rule bg-white p-8 text-center">
+        <div className="w-full container-narrow border border-rule bg-white p-8 text-center">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center bg-navy/10">
             <Clock className="h-8 w-8 text-navy" />
           </div>
@@ -164,7 +164,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-stone px-4">
-      <div className="w-full max-w-md border border-rule bg-white p-8">
+      <div className="w-full container-narrow border border-rule bg-white p-8">
         <div className="mb-6 text-center">
           <h1 className="font-serif text-2xl font-bold text-ink">
             추가 정보 입력

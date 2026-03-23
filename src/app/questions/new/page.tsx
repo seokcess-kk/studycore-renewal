@@ -59,7 +59,7 @@ export default function NewQuestionPage() {
     return (
       <>
         <Nav />
-        <main className="pt-24 pb-20 min-h-screen bg-stone">
+        <main className="page-body min-h-screen bg-stone">
           <div className="max-w-md mx-auto px-6 py-16 text-center">
             <div className="w-16 h-16 bg-navy/10 flex items-center justify-center mx-auto mb-6">
               <Clock size={32} className="text-navy" />
@@ -80,10 +80,10 @@ export default function NewQuestionPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 min-h-screen bg-stone">
+      <main className="page-body min-h-screen bg-stone">
         {/* 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
-          <div className="max-w-4xl">
+          <div className="container-wide">
             <Link
               href={ROUTES.QUESTIONS}
               className="inline-flex items-center gap-2 text-white/60 hover:text-white text-secondary mb-4 transition-colors"

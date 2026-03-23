@@ -62,7 +62,7 @@ export default function ConsultPage() {
     return (
       <>
         <Nav />
-        <main className="pt-24 pb-20 min-h-screen flex items-center justify-center">
+        <main className="page-body min-h-screen flex items-center justify-center">
           <div className="text-center px-6 max-w-md">
             <div className="w-16 h-16 bg-teal/10 flex items-center justify-center mx-auto mb-6">
               <CheckCircle size={32} className="text-teal" />
@@ -100,9 +100,9 @@ export default function ConsultPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20">
+      <main className="page-body">
         {/* 헤더 */}
-        <section className="bg-navy py-16 px-6 md:px-13 relative overflow-hidden">
+        <section className="bg-navy section-sm px-6 md:px-13 relative overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -130,7 +130,7 @@ export default function ConsultPage() {
         </section>
 
         {/* 폼 */}
-        <section className="py-16 px-6 md:px-13">
+        <section className="section-sm px-6 md:px-13">
           <div className="max-w-xl mx-auto">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* 이름 */}

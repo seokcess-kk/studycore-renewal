@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 min-h-screen flex items-center justify-center bg-stone">
+      <main className="page-body min-h-screen flex items-center justify-center bg-stone">
         <div className="text-center px-6 max-w-md">
           {/* 404 숫자 */}
           <div className="font-mono text-[120px] font-bold text-navy/10 leading-none mb-4">

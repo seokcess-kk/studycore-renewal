@@ -50,16 +50,16 @@ export default function NoticeDetailPage({
     return (
       <>
         <Nav />
-        <main className="pt-24 pb-20">
+        <main className="page-body">
           <section className="bg-navy py-12 px-6 md:px-13">
-            <div className="max-w-3xl">
+            <div className="container-content">
               <Skeleton className="h-4 w-20 mb-4 bg-white/20" />
               <Skeleton className="h-10 w-3/4 mb-4 bg-white/20" />
               <Skeleton className="h-4 w-48 bg-white/20" />
             </div>
           </section>
           <section className="py-12 px-6 md:px-13">
-            <div className="max-w-3xl">
+            <div className="container-content">
               <SkeletonText lines={10} />
             </div>
           </section>
@@ -73,7 +73,7 @@ export default function NoticeDetailPage({
     return (
       <>
         <Nav />
-        <main className="pt-24 pb-20 min-h-screen flex items-center justify-center">
+        <main className="page-body min-h-screen flex items-center justify-center">
           <div className="text-center">
             <p className="text-muted mb-4">{error || "공지사항을 찾을 수 없습니다."}</p>
             <button
@@ -95,10 +95,10 @@ export default function NoticeDetailPage({
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20">
+      <main className="page-body">
         {/* 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
-          <div className="max-w-3xl">
+          <div className="container-content">
             <Link
               href={ROUTES.NOTICES}
               className="inline-flex items-center gap-2 text-secondary text-white/60 hover:text-white mb-6 transition-colors"
@@ -146,7 +146,7 @@ export default function NoticeDetailPage({
 
         {/* 본문 */}
         <section className="py-12 px-6 md:px-13">
-          <div className="max-w-3xl">
+          <div className="container-content">
             <div
               className="prose prose-sm max-w-none text-reading leading-relaxed text-ink/80"
               dangerouslySetInnerHTML={{ __html: notice.content }}
@@ -157,7 +157,7 @@ export default function NoticeDetailPage({
         {/* 첨부파일 */}
         {attachments.length > 0 && (
           <section className="px-6 md:px-13">
-            <div className="max-w-3xl border-t border-rule pt-6 pb-6">
+            <div className="container-content border-t border-rule pt-6 pb-6">
               <h3 className="text-sm font-medium text-muted mb-3">
                 첨부파일 ({attachments.length})
               </h3>
@@ -191,7 +191,7 @@ export default function NoticeDetailPage({
 
         {/* 하단 네비게이션 */}
         <section className="px-6 md:px-13">
-          <div className="max-w-3xl border-t border-rule pt-8">
+          <div className="container-content border-t border-rule pt-8">
             <Link
               href={ROUTES.NOTICES}
               className="inline-flex items-center gap-2 px-6 py-3 border border-rule text-body font-medium text-ink hover:border-navy transition-colors"

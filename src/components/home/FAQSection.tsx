@@ -42,7 +42,7 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="bg-white py-28 px-6 md:px-13 border-t border-rule">
+    <section id="faq" className="bg-white section-lg px-6 md:px-13 border-t border-rule">
       <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-12 lg:gap-24">
         {/* 좌측: 타이틀 */}
         <motion.div

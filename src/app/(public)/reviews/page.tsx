@@ -85,8 +85,8 @@ export default function ReviewsPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 bg-stone min-h-screen">
-        <div className="max-w-4xl mx-auto px-6">
+      <main className="page-body bg-stone min-h-screen">
+        <div className="container-wide px-6">
           {/* 헤더 */}
           <div className="text-center mb-8">
             <span className="text-teal text-secondary font-medium tracking-wider uppercase">

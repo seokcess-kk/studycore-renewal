@@ -116,7 +116,7 @@ export default function LunchPage() {
     return (
       <>
         <Nav />
-        <main className="pt-24 pb-20 min-h-screen bg-stone">
+        <main className="page-body min-h-screen bg-stone">
           <div className="max-w-2xl mx-auto px-6 py-12 text-center">
             <UtensilsCrossed size={48} className="mx-auto mb-4 text-muted opacity-50" />
             <h1 className="font-serif text-2xl font-bold text-ink mb-2">
@@ -135,10 +135,10 @@ export default function LunchPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 bg-stone">
+      <main className="page-body bg-stone">
         {/* 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
-          <div className="max-w-3xl">
+          <div className="container-content">
             <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-3">
               Meal / 도시락 신청
             </span>
@@ -151,7 +151,7 @@ export default function LunchPage() {
           </div>
         </section>
 
-        <div className="max-w-3xl mx-auto px-6 py-8">
+        <div className="container-content px-6 py-8">
 
           {isLoading ? (
             <div className="space-y-4">
@@ -298,7 +298,7 @@ export default function LunchPage() {
       {/* Sticky 하단 제출 바 */}
       {period && !isLoading && !error && (
         <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-rule px-6 py-3">
-          <div className="max-w-3xl mx-auto flex items-center justify-between">
+          <div className="container-content flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-body text-muted">선택</span>
               <span className="text-[18px] font-bold text-ink">

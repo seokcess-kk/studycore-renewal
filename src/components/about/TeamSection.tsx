@@ -41,7 +41,7 @@ const team = [
 
 export function TeamSection() {
   return (
-    <section className="py-20 bg-white">
+    <section className="section-md bg-white">
       <div className="max-w-6xl mx-auto px-6">
         {/* 헤더 */}
         <motion.div

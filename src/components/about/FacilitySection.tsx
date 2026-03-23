@@ -50,7 +50,7 @@ export function FacilitySection() {
   const currentFacility = facilities[currentIndex];
 
   return (
-    <section className="py-20 bg-stone">
+    <section className="section-md bg-stone">
       <div className="max-w-6xl mx-auto px-6">
         {/* 헤더 */}
         <motion.div

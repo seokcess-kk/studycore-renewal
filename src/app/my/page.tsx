@@ -71,7 +71,7 @@ export default function MyPage() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 bg-stone">
+      <main className="page-body bg-stone">
         {/* 프로필 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
           <div className="max-w-lg mx-auto flex items-center gap-4">

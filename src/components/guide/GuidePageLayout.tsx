@@ -128,7 +128,7 @@ export function GuidePageLayout({
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20">
+      <main className="page-body">
         {/* 헤더 + 검색 */}
         <section className="bg-navy py-16 px-6 md:px-13">
           <div className="max-w-5xl mx-auto">

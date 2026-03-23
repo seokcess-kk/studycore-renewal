@@ -89,7 +89,7 @@ export function FeaturesSection() {
   };
 
   return (
-    <section id="features" className="bg-stone py-28 section-container">
+    <section id="features" className="bg-stone section-lg section-container">
       {/* 헤더 */}
       <motion.div
         variants={{

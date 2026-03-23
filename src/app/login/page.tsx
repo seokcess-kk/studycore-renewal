@@ -95,8 +95,8 @@ function LoginContent() {
   return (
     <>
       <Nav />
-      <main className="pt-24 pb-20 min-h-screen bg-stone">
-        <div className="max-w-md mx-auto px-6 py-12">
+      <main className="page-body min-h-screen bg-stone">
+        <div className="container-narrow px-6 py-12">
           {/* 헤더 */}
           <div className="text-center mb-10">
             <h1 className="font-serif text-3xl font-bold text-ink mb-2">
