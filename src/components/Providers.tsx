@@ -78,10 +78,20 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
         if (!mounted) return;
 
         if (profile) {
+          const wasNewLogin = !state.isAuthenticated;
           login(
             { id: user.id, email: user.email || "" },
             profile
           );
+
+          // 새 로그인 시 프로필 상태에 따라 리다이렉트
+          if (wasNewLogin && typeof window !== "undefined") {
+            const path = window.location.pathname;
+            if (profile.role === "student" && profile.status === "active" && !profile.phone && path !== "/my") {
+              window.location.href = "/my?complete-profile=true";
+              return;
+            }
+          }
         } else {
           setLoading(false);
         }
