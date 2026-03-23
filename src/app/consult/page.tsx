@@ -14,6 +14,7 @@ import {
 } from "@/domains/consultation/model";
 import { CONTACT, CONSULT_TYPES, ROUTES } from "@/lib/constants";
 import { CheckCircle } from "lucide-react";
+import { usePhoneFormat } from "@/hooks/usePhoneFormat";
 
 export default function ConsultPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -22,6 +23,7 @@ export default function ConsultPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<ConsultationFormInput>({
@@ -33,6 +35,8 @@ export default function ConsultPage() {
       message: "",
     },
   });
+
+  const handlePhoneChange = usePhoneFormat<ConsultationFormInput>(setValue);
 
   const onSubmit = async (data: ConsultationFormInput) => {
     try {
@@ -163,6 +167,7 @@ export default function ConsultPage() {
                   type="tel"
                   placeholder="010-0000-0000"
                   {...register("phone")}
+                  onChange={(e) => handlePhoneChange("phone", e)}
                   className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors ${
                     errors.phone ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
                   }`}

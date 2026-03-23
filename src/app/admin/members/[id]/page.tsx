@@ -23,6 +23,7 @@ import {
   adminUpdateMember,
   changeUserStatus,
 } from "@/domains/user/service";
+import { usePhoneFormat } from "@/hooks/usePhoneFormat";
 
 type MemberFormValues = {
   name: string;
@@ -49,6 +50,7 @@ export default function AdminMemberDetailPage() {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<MemberFormValues>({
     resolver: zodResolver(adminUpdateMemberSchema),
@@ -60,6 +62,8 @@ export default function AdminMemberDetailPage() {
       parent_phone: "",
     },
   });
+
+  const handlePhoneChange = usePhoneFormat<MemberFormValues>(setValue);
 
   useEffect(() => {
     async function fetchMember() {
@@ -216,8 +220,15 @@ export default function AdminMemberDetailPage() {
                 <input
                   type="tel"
                   {...register("phone")}
-                  className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                  onChange={(e) => handlePhoneChange("phone", e)}
+                  placeholder="010-0000-0000"
+                  className={`w-full border px-3 py-2 text-sm focus:outline-none ${
+                    errors.phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
+                  }`}
                 />
+                {errors.phone && (
+                  <p className="text-caption text-red-500 mt-1">{errors.phone.message}</p>
+                )}
               </div>
               {member.role === "student" && (
                 <>
@@ -252,8 +263,15 @@ export default function AdminMemberDetailPage() {
                     <input
                       type="tel"
                       {...register("parent_phone")}
-                      className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                      onChange={(e) => handlePhoneChange("parent_phone", e)}
+                      placeholder="010-0000-0000"
+                      className={`w-full border px-3 py-2 text-sm focus:outline-none ${
+                        errors.parent_phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
+                      }`}
                     />
+                    {errors.parent_phone && (
+                      <p className="text-caption text-red-500 mt-1">{errors.parent_phone.message}</p>
+                    )}
                   </div>
                 </>
               )}

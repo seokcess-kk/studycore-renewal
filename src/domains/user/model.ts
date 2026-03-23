@@ -96,10 +96,16 @@ export const updateProfileSchema = z.object({
 // 어드민 회원 수정 스키마
 export const adminUpdateMemberSchema = z.object({
   name: z.string().min(1, "이름을 입력해주세요"),
-  phone: z.string(),
+  phone: z
+    .string()
+    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다")
+    .or(z.literal("")),
   school: z.string(),
   grade: z.string(),
-  parent_phone: z.string(),
+  parent_phone: z
+    .string()
+    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다")
+    .or(z.literal("")),
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

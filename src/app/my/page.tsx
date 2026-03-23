@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { PasswordChangeForm } from "@/components/my/PasswordChangeForm";
+import { usePhoneFormat } from "@/hooks/usePhoneFormat";
 import { getMyQuestions, fetchUnansweredCount } from "@/domains/question/service";
 import { type QuestionWithAuthor } from "@/domains/question/model";
 
@@ -302,6 +303,7 @@ function ContactInfoSection() {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<UpdateContactInput>({
     resolver: zodResolver(updateContactSchema),
@@ -312,6 +314,8 @@ function ContactInfoSection() {
       parent_phone: profile?.parent_phone || "",
     },
   });
+
+  const handlePhoneChange = usePhoneFormat<UpdateContactInput>(setValue);
 
   const onSubmit = async (data: UpdateContactInput) => {
     if (!profile?.id) return;
@@ -401,6 +405,7 @@ function ContactInfoSection() {
               <input
                 type="tel"
                 {...register("phone")}
+                onChange={(e) => handlePhoneChange("phone", e)}
                 placeholder="010-0000-0000"
                 className={`flex-1 border px-3 py-1.5 text-body focus:outline-none ${
                   errors.phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
@@ -474,6 +479,7 @@ function ContactInfoSection() {
                 <input
                   type="tel"
                   {...register("parent_phone")}
+                  onChange={(e) => handlePhoneChange("parent_phone", e)}
                   placeholder="010-0000-0000"
                   className={`flex-1 border px-3 py-1.5 text-body focus:outline-none ${
                     errors.parent_phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"

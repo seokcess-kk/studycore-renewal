@@ -60,15 +60,3 @@ export function formatDateShort(date: string | Date): string {
   }).replace(/\. /g, ".").replace(".", "");
 }
 
-/**
- * 전화번호 포맷팅 (예: "01012345678" → "010-1234-5678")
- */
-export function formatPhoneNumber(phone: string): string {
-  const cleaned = phone.replace(/\D/g, "");
-  if (cleaned.length === 11) {
-    return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(7)}`;
-  } else if (cleaned.length === 10) {
-    return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-  }
-  return phone;
-}
