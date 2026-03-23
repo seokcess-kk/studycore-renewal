@@ -193,7 +193,7 @@ export default function AdminConsultationsPage() {
                       toast({ variant: "error", description: result.error || "삭제 실패" });
                     }
                   }}
-                  className="flex items-center justify-center text-muted hover:text-red-500 cursor-pointer"
+                  className="flex items-center justify-center text-muted hover:text-red-500 cursor-pointer transition-colors duration-200"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -219,7 +219,7 @@ export default function AdminConsultationsPage() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50"
+            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50 transition-colors duration-200"
           >
             이전
           </button>
@@ -229,7 +229,7 @@ export default function AdminConsultationsPage() {
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50"
+            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50 transition-colors duration-200"
           >
             다음
           </button>

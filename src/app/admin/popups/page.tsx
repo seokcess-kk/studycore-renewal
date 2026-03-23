@@ -110,7 +110,7 @@ export default function AdminPopupsPage() {
               </span>
               <button
                 onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }}
-                className="flex items-center text-muted hover:text-red-500"
+                className="flex items-center text-muted hover:text-red-500 transition-colors duration-200"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -124,7 +124,7 @@ export default function AdminPopupsPage() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50"
+            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50 transition-colors duration-200"
           >
             이전
           </button>
@@ -134,7 +134,7 @@ export default function AdminPopupsPage() {
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50"
+            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50 transition-colors duration-200"
           >
             다음
           </button>

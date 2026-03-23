@@ -72,7 +72,7 @@ export function AdminHeader({ title, breadcrumb }: AdminHeaderProps = {}) {
         <div className="flex items-center gap-2 text-sm">
           <Link
             href="/admin"
-            className="flex items-center text-muted hover:text-ink"
+            className="flex items-center text-muted hover:text-ink transition-colors duration-200"
           >
             <Home className="h-4 w-4" />
           </Link>
@@ -84,7 +84,7 @@ export function AdminHeader({ title, breadcrumb }: AdminHeaderProps = {}) {
               ) : (
                 <Link
                   href={crumb.href}
-                  className="text-muted hover:text-ink"
+                  className="text-muted hover:text-ink transition-colors duration-200"
                 >
                   {crumb.label}
                 </Link>

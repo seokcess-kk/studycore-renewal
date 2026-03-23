@@ -137,7 +137,7 @@ export function AdminSidebar() {
         {/* 모바일 닫기 버튼 */}
         <button
           onClick={() => setIsMobileOpen(false)}
-          className="lg:hidden p-1 text-muted hover:text-ink"
+          className="lg:hidden p-1 text-muted hover:text-ink transition-colors duration-200"
         >
           <X size={20} />
         </button>

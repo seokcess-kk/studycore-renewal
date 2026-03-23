@@ -299,7 +299,7 @@ export default function AdminKakaoHistoryPage() {
                 <div className="flex items-end">
                   <button
                     onClick={resetFilters}
-                    className="px-3 py-1.5 text-small text-muted hover:text-ink"
+                    className="px-3 py-1.5 text-small text-muted hover:text-ink transition-colors duration-200"
                   >
                     초기화
                   </button>
@@ -343,7 +343,7 @@ export default function AdminKakaoHistoryPage() {
                     </thead>
                     <tbody className="divide-y divide-rule">
                       {logs.map((log) => (
-                        <tr key={log.id} className="hover:bg-stone/50">
+                        <tr key={log.id} className="hover:bg-stone/50 transition-colors duration-200">
                           <td className="px-4 py-3 text-small text-muted whitespace-nowrap">
                             {formatDate(log.created_at)}
                           </td>
@@ -393,7 +393,7 @@ export default function AdminKakaoHistoryPage() {
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="p-1.5 border border-rule bg-white hover:bg-stone disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-1.5 border border-rule bg-white hover:bg-stone disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                     >
                       <ChevronLeft size={16} />
                     </button>
@@ -403,7 +403,7 @@ export default function AdminKakaoHistoryPage() {
                     <button
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page === totalPages}
-                      className="p-1.5 border border-rule bg-white hover:bg-stone disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-1.5 border border-rule bg-white hover:bg-stone disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                     >
                       <ChevronRight size={16} />
                     </button>

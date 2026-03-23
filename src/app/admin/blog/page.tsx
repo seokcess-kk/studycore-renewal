@@ -195,7 +195,7 @@ export default function AdminBlogPage() {
               <p>등록된 포스트가 없습니다.</p>
               <Link
                 href="/admin/blog/new"
-                className="inline-flex items-center gap-2 mt-4 text-teal hover:text-teal-d"
+                className="inline-flex items-center gap-2 mt-4 text-teal hover:text-teal-d transition-colors duration-200"
               >
                 <Plus size={16} />
                 첫 포스트 작성하기

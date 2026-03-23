@@ -161,7 +161,7 @@ export default function AdminNoticeEditPage() {
       <div className="flex items-center justify-between">
         <Link
           href="/admin/notices"
-          className="flex items-center gap-2 text-muted hover:text-ink"
+          className="flex items-center gap-2 text-muted hover:text-ink transition-colors duration-200"
         >
           <ArrowLeft className="h-4 w-4" />
           목록으로
@@ -325,7 +325,7 @@ export default function AdminNoticeEditPage() {
             <div className="mt-4 space-y-2">
               {existingAttachments.map((att) => (
                 <div key={att.id} className="flex items-center justify-between border border-rule px-3 py-2">
-                  <a href={att.file_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 min-w-0 hover:text-teal">
+                  <a href={att.file_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 min-w-0 hover:text-teal transition-colors duration-200">
                     <FileText className="h-4 w-4 flex-shrink-0 text-muted" />
                     <span className="truncate text-sm text-ink">{att.file_name}</span>
                     {att.file_size && <span className="flex-shrink-0 text-xs text-muted">({(att.file_size / 1024).toFixed(0)}KB)</span>}
@@ -338,7 +338,7 @@ export default function AdminNoticeEditPage() {
                       await deleteNoticeAttachment(supabase, att.id);
                       setExistingAttachments((prev) => prev.filter((a) => a.id !== att.id));
                     }}
-                    className="flex-shrink-0 p-1 text-muted hover:text-red-500"
+                    className="flex-shrink-0 p-1 text-muted hover:text-red-500 transition-colors duration-200"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -365,7 +365,7 @@ export default function AdminNoticeEditPage() {
                       if (path) await supabase.storage.from("notice-attachments").remove([path]);
                       setNewAttachments((prev) => prev.filter((_, i) => i !== idx));
                     }}
-                    className="flex-shrink-0 p-1 text-muted hover:text-red-500"
+                    className="flex-shrink-0 p-1 text-muted hover:text-red-500 transition-colors duration-200"
                   >
                     <X className="h-4 w-4" />
                   </button>

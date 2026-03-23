@@ -204,7 +204,7 @@ export default function QuestionDetailPage() {
                         setQuestion({ ...question, is_pinned: !question.is_pinned });
                       }
                     }}
-                    className="text-white/60 hover:text-white hover:bg-white/10"
+                    className="text-white/60 hover:text-white hover:bg-white/10 transition-colors duration-200"
                   >
                     {question.is_pinned ? <PinOff size={16} /> : <Pin size={16} />}
                   </Button>
@@ -214,7 +214,7 @@ export default function QuestionDetailPage() {
                     variant="ghost"
                     onClick={handleDelete}
                     disabled={isDeleting}
-                    className="text-white/60 hover:text-white hover:bg-white/10"
+                    className="text-white/60 hover:text-white hover:bg-white/10 transition-colors duration-200"
                   >
                     <Trash2 size={16} />
                   </Button>

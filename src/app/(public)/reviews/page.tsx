@@ -276,7 +276,7 @@ export default function ReviewsPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-2 border border-rule bg-white hover:bg-stone disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 border border-rule bg-white hover:bg-stone disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
                 <ChevronLeft size={16} />
               </button>
@@ -286,7 +286,7 @@ export default function ReviewsPage() {
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="p-2 border border-rule bg-white hover:bg-stone disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 border border-rule bg-white hover:bg-stone disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
                 <ChevronRight size={16} />
               </button>

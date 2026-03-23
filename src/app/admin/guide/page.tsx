@@ -476,7 +476,7 @@ export default function AdminGuidePage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleToggleVisibility(section)}
-                        className="text-muted hover:text-ink cursor-pointer"
+                        className="text-muted hover:text-ink cursor-pointer transition-colors duration-200"
                         title={section.is_visible ? "숨기기" : "표시하기"}
                         disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
                       >
@@ -488,14 +488,14 @@ export default function AdminGuidePage() {
                       </button>
                       <button
                         onClick={() => handleEdit(section)}
-                        className="text-muted hover:text-ink cursor-pointer"
+                        className="text-muted hover:text-ink cursor-pointer transition-colors duration-200"
                         disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
                       >
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setDeleteId(section.id)}
-                        className="text-muted hover:text-red-500 cursor-pointer"
+                        className="text-muted hover:text-red-500 cursor-pointer transition-colors duration-200"
                         disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
                       >
                         <Trash2 className="h-4 w-4" />

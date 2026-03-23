@@ -297,7 +297,7 @@ export default function AdminKakaoPage() {
                   {studentTargets.map((target) => (
                     <label
                       key={target.userId}
-                      className="flex items-center gap-2 px-3 py-2 hover:bg-stone cursor-pointer border-b border-rule last:border-b-0"
+                      className="flex items-center gap-2 px-3 py-2 hover:bg-stone cursor-pointer border-b border-rule last:border-b-0 transition-colors duration-200"
                     >
                       <input
                         type="checkbox"

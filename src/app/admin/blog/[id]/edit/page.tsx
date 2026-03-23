@@ -190,7 +190,7 @@ export default function AdminBlogEditPage() {
                   href={`/blog/${post.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="ml-auto flex items-center gap-1 text-secondary text-teal hover:text-teal-d"
+                  className="ml-auto flex items-center gap-1 text-secondary text-teal hover:text-teal-d transition-colors duration-200"
                 >
                   <ExternalLink size={14} />
                   미리보기
@@ -308,7 +308,7 @@ export default function AdminBlogEditPage() {
                     <button
                       type="button"
                       onClick={() => handleRemoveTag(tag)}
-                      className="text-muted hover:text-ink"
+                      className="text-muted hover:text-ink transition-colors duration-200"
                     >
                       <X size={12} />
                     </button>

@@ -150,7 +150,7 @@ export default function AdminMembersPage() {
               </tr>
             ) : (
               members.map((member) => (
-                <tr key={member.id} className="hover:bg-stone/50">
+                <tr key={member.id} className="hover:bg-stone/50 transition-colors duration-200">
                   <td className="px-4 py-3">
                     <span className="font-medium text-ink">{member.name}</span>
                   </td>

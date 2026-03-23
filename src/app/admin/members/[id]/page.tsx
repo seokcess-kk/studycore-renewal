@@ -165,7 +165,7 @@ export default function AdminMemberDetailPage() {
       <div className="flex items-center justify-between">
         <Link
           href="/admin/members"
-          className="flex items-center gap-2 text-muted hover:text-ink"
+          className="flex items-center gap-2 text-muted hover:text-ink transition-colors duration-200"
         >
           <ArrowLeft className="h-4 w-4" />
           목록으로
@@ -281,7 +281,7 @@ export default function AdminMemberDetailPage() {
                     </p>
                     <button
                       onClick={() => openStatusModal("active")}
-                      className="w-full bg-teal border border-teal px-3 py-2.5 text-sm font-medium text-white hover:bg-teal-d cursor-pointer"
+                      className="w-full bg-teal border border-teal px-3 py-2.5 text-sm font-medium text-white hover:bg-teal-d cursor-pointer transition-colors duration-200"
                     >
                       가입 승인
                     </button>
@@ -293,7 +293,7 @@ export default function AdminMemberDetailPage() {
                     {member.status === "active" && (
                       <button
                         onClick={() => openStatusModal("inactive")}
-                        className="w-full border border-rule px-3 py-2 text-sm text-muted hover:bg-stone cursor-pointer"
+                        className="w-full border border-rule px-3 py-2 text-sm text-muted hover:bg-stone cursor-pointer transition-colors duration-200"
                       >
                         계정 비활성화
                       </button>
@@ -301,7 +301,7 @@ export default function AdminMemberDetailPage() {
                     {member.status === "inactive" && (
                       <button
                         onClick={() => openStatusModal("active")}
-                        className="w-full border border-teal px-3 py-2 text-sm text-teal hover:bg-teal/5 cursor-pointer"
+                        className="w-full border border-teal px-3 py-2 text-sm text-teal hover:bg-teal/5 cursor-pointer transition-colors duration-200"
                       >
                         계정 재활성화
                       </button>

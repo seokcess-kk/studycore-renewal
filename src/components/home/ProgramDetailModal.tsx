@@ -114,7 +114,7 @@ export function ProgramDetailModal({
                   <p className="font-mono text-[48px] font-bold text-navy/[0.06] leading-none">
                     SC
                   </p>
-                  <p className="font-mono text-[9px] text-muted/40 tracking-[0.3em] uppercase mt-1">
+                  <p className="font-mono text-label text-muted/40 tracking-label uppercase mt-1">
                     Studycore 1.0
                   </p>
                 </div>
@@ -144,14 +144,14 @@ export function ProgramDetailModal({
               </div>
 
               {/* 제목 */}
-              <h2 id="program-modal-title" className="font-serif text-[clamp(22px,3vw,28px)] font-black text-ink tracking-[-0.02em] leading-tight mb-6">
+              <h2 id="program-modal-title" className="font-serif text-fluid-h2 font-black text-ink tracking-heading leading-tight mb-6">
                 {program.title}
               </h2>
 
               {/* 설명 */}
               {program.description && (
                 <div className="border-t border-rule pt-6 mb-8">
-                  <p className="text-[14px] text-ink/70 leading-[1.9] whitespace-pre-line">
+                  <p className="text-body text-ink/70 leading-prose whitespace-pre-line">
                     {program.description}
                   </p>
                 </div>
@@ -162,7 +162,7 @@ export function ProgramDetailModal({
                 <Link
                   href={ROUTES.CONSULT}
                   onClick={onClose}
-                  className="cta-fill cta-fill-navy group inline-flex items-center gap-3 px-8 py-4 text-white text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-navy hover:text-navy transition-colors duration-300 cursor-pointer"
+                  className="cta-fill cta-fill-navy group inline-flex items-center gap-3 px-8 py-4 text-white text-body font-bold tracking-cta border-[1.5px] border-navy hover:text-navy transition-colors duration-300 cursor-pointer"
                 >
                   상담 신청하기
                   <ArrowRight

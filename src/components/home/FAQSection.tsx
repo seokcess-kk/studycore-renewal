@@ -125,7 +125,7 @@ function FAQItem({
           {question}
         </span>
         <span
-          className={`w-7 h-7 border-[1.5px] border-rule flex-shrink-0 flex items-center justify-center text-muted transition-all duration-250 ${isOpen ? "bg-navy border-navy text-white rotate-45" : ""
+          className={`w-7 h-7 border-[1.5px] border-rule flex-shrink-0 flex items-center justify-center text-muted transition-all duration-300 ${isOpen ? "bg-navy border-navy text-white rotate-45" : ""
             }`}
         >
           <Plus size={16} />

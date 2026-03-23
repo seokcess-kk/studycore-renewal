@@ -34,7 +34,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-bold tracking-[0.04em] border-[1.5px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center font-bold tracking-cta border-[1.5px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
       primary:

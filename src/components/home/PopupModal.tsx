@@ -107,7 +107,7 @@ export function PopupModal() {
               {linkUrl && (
                 <a
                   href={linkUrl}
-                  className="cta-fill cta-fill-teal inline-flex items-center border-[1.5px] border-teal px-5 py-2.5 text-[13px] font-bold tracking-[0.04em] text-navy-dark hover:text-teal transition-colors duration-300"
+                  className="cta-fill cta-fill-teal inline-flex items-center border-[1.5px] border-teal px-5 py-2.5 text-secondary font-bold tracking-cta text-navy-dark hover:text-teal transition-colors duration-300"
                 >
                   {popup.link_text || "자세히 보기"}
                 </a>

@@ -185,7 +185,7 @@ export default function AdminNoticesPage() {
               notices.map((notice, idx) => (
                 <tr
                   key={notice.id}
-                  className="hover:bg-stone/50 cursor-pointer"
+                  className="hover:bg-stone/50 cursor-pointer transition-colors duration-200"
                   onClick={() => router.push(`/admin/notices/${notice.id}/edit`)}
                 >
                   <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
@@ -252,14 +252,14 @@ export default function AdminNoticesPage() {
                       <Link
                         href={`/notices/${notice.id}`}
                         target="_blank"
-                        className="text-muted hover:text-ink"
+                        className="text-muted hover:text-ink transition-colors duration-200"
                         title="미리보기"
                       >
                         <Eye className="h-4 w-4" />
                       </Link>
                       <button
                         onClick={() => setDeleteId(notice.id)}
-                        className="text-muted hover:text-red-500"
+                        className="text-muted hover:text-red-500 transition-colors duration-200"
                         title="삭제"
                       >
                         <Trash2 className="h-4 w-4" />

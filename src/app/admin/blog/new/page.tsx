@@ -232,7 +232,7 @@ export default function AdminBlogNewPage() {
                     <button
                       type="button"
                       onClick={() => handleRemoveTag(tag)}
-                      className="text-muted hover:text-ink"
+                      className="text-muted hover:text-ink transition-colors duration-200"
                     >
                       <X size={12} />
                     </button>

@@ -211,7 +211,7 @@ export default function AdminLunchPage() {
                       setSelectedPeriod(period);
                       setShowMobilePeriods(false);
                     }}
-                    className={`w-full text-left px-4 py-3 text-body ${
+                    className={`w-full text-left px-4 py-3 text-body transition-colors duration-200 ${
                       selectedPeriod?.id === period.id
                         ? "bg-stone font-medium"
                         : "hover:bg-stone/50"
@@ -238,7 +238,7 @@ export default function AdminLunchPage() {
                     setShowPeriodModal(true);
                     setShowMobilePeriods(false);
                   }}
-                  className="w-full flex items-center gap-2 px-4 py-3 text-secondary text-teal hover:bg-stone/50"
+                  className="w-full flex items-center gap-2 px-4 py-3 text-secondary text-teal hover:bg-stone/50 transition-colors duration-200"
                 >
                   <Plus size={14} />새 기간 추가
                 </button>
@@ -256,7 +256,7 @@ export default function AdminLunchPage() {
                     setEditingPeriod(null);
                     setShowPeriodModal(true);
                   }}
-                  className="flex items-center gap-1 text-secondary text-teal hover:text-teal-d cursor-pointer"
+                  className="flex items-center gap-1 text-secondary text-teal hover:text-teal-d cursor-pointer transition-colors duration-200"
                 >
                   <Plus size={14} />
                   추가
@@ -552,7 +552,7 @@ export default function AdminLunchPage() {
                             return (
                               <tr
                                 key={app.id}
-                                className="hover:bg-stone/30"
+                                className="hover:bg-stone/30 transition-colors duration-200"
                               >
                                 <td className="px-4 py-2.5 font-medium text-ink whitespace-nowrap sticky left-0 bg-white z-10">
                                   {app.student?.name || "알 수 없음"}

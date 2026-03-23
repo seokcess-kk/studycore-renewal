@@ -99,7 +99,7 @@ export default function AdminMemberNewPage() {
       {/* 상단 */}
       <Link
         href="/admin/members"
-        className="flex items-center gap-2 text-muted hover:text-ink"
+        className="flex items-center gap-2 text-muted hover:text-ink transition-colors duration-200"
       >
         <ArrowLeft className="h-4 w-4" />
         목록으로
@@ -155,7 +155,7 @@ export default function AdminMemberNewPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-muted hover:text-ink"
+                    className="text-muted hover:text-ink transition-colors duration-200"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
