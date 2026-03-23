@@ -13,6 +13,7 @@ import {
   User,
   Phone,
   School,
+  GraduationCap,
   LogOut,
   Bell,
   HelpCircle,
@@ -107,6 +108,13 @@ export default function MyPage() {
             <div className="max-w-lg mx-auto mt-4 p-3 bg-white/10">
               <p className="text-secondary text-white/70">
                 관리자 승인 후 모든 기능을 이용하실 수 있습니다.
+              </p>
+            </div>
+          )}
+          {isActive && (!profile?.phone || !profile?.school) && (
+            <div className="max-w-lg mx-auto mt-4 p-3 bg-teal/20 border border-teal/30">
+              <p className="text-secondary text-white font-medium">
+                연락처, 학교/학년 정보를 입력해 주세요. 아래 프로필에서 수정할 수 있습니다.
               </p>
             </div>
           )}
@@ -298,6 +306,8 @@ function ContactInfoSection() {
     resolver: zodResolver(updateContactSchema),
     defaultValues: {
       phone: profile?.phone || "",
+      school: profile?.school || "",
+      grade: (profile?.grade?.toString() as "1" | "2" | "3" | "") || "",
       parent_phone: profile?.parent_phone || "",
     },
   });
@@ -308,21 +318,25 @@ function ContactInfoSection() {
     const supabase = createClient();
     const result = await updateUserProfile(supabase, profile.id, {
       phone: data.phone.replace(/-/g, "") || undefined,
+      school: data.school || undefined,
+      grade: data.grade ? parseInt(data.grade) : undefined,
       parent_phone: data.parent_phone.replace(/-/g, "") || undefined,
     });
 
     if (result.success && result.profile) {
       setProfile(result.profile);
-      showSuccess("연락처가 수정되었습니다.");
+      showSuccess("내 정보가 수정되었습니다.");
       setIsEditing(false);
     } else {
-      showError(result.error || "연락처 수정에 실패했습니다.");
+      showError(result.error || "정보 수정에 실패했습니다.");
     }
   };
 
   const handleCancel = () => {
     reset({
       phone: profile?.phone || "",
+      school: profile?.school || "",
+      grade: (profile?.grade?.toString() as "1" | "2" | "3" | "") || "",
       parent_phone: profile?.parent_phone || "",
     });
     setIsEditing(false);
@@ -393,11 +407,43 @@ function ContactInfoSection() {
         )}
 
         {!isStaff && (
-          <InfoRow
-            icon={<School size={18} />}
-            label="학교"
-            value={profile?.school ? `${profile.school} ${profile.grade || ""}학년` : "-"}
-          />
+          isEditing ? (
+            <>
+              <div className="px-4 py-3">
+                <div className="flex items-center gap-4">
+                  <span className="text-muted"><School size={18} /></span>
+                  <span className="text-secondary text-muted w-24">학교</span>
+                  <input
+                    type="text"
+                    {...register("school")}
+                    placeholder="OO고등학교"
+                    className="flex-1 border border-rule px-3 py-1.5 text-body focus:outline-none focus:border-navy"
+                  />
+                </div>
+              </div>
+              <div className="px-4 py-3">
+                <div className="flex items-center gap-4">
+                  <span className="text-muted"><GraduationCap size={18} /></span>
+                  <span className="text-secondary text-muted w-24">학년</span>
+                  <select
+                    {...register("grade")}
+                    className="flex-1 border border-rule px-3 py-1.5 text-body focus:outline-none focus:border-navy bg-white cursor-pointer"
+                  >
+                    <option value="">선택</option>
+                    <option value="1">1학년</option>
+                    <option value="2">2학년</option>
+                    <option value="3">3학년</option>
+                  </select>
+                </div>
+              </div>
+            </>
+          ) : (
+            <InfoRow
+              icon={<School size={18} />}
+              label="학교"
+              value={profile?.school ? `${profile.school} ${profile.grade || ""}학년` : "-"}
+            />
+          )
         )}
 
         {!isStaff && (

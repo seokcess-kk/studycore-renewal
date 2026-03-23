@@ -29,8 +29,8 @@ export function getPostAuthDestination(
     return "/pending-approval";
   if (profile.role === "student" && profile.status === "inactive")
     return "/account-inactive";
-  // 승인된 학생인데 필수 정보 미입력 → 프로필 완성 페이지
+  // 승인된 학생인데 필수 정보 미입력 → 마이페이지로 이동
   if (profile.role === "student" && profile.status === "active" && !profile.phone)
-    return "/register";
+    return "/my";
   return fallbackNext;
 }
