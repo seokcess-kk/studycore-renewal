@@ -275,15 +275,9 @@ export async function getNotificationStats(
 /**
  * 알림 미리보기 생성
  */
-export function generatePreview(
-  message: string,
-  variables?: Record<string, string>
-): string {
-  void variables; // 추후 사용자 정의 변수 지원 시 사용
-  // 변수 치환
+export function generatePreview(message: string): string {
   let preview = message;
 
-  // 기본 변수 예시 값
   const defaultVariables: Record<string, string> = {
     "#{이름}": "홍길동",
     "#{학교}": "○○고등학교",
@@ -299,22 +293,4 @@ export function generatePreview(
   }
 
   return preview;
-}
-
-/**
- * 발송 결과 로그 생성 (테스트용)
- */
-export function createMockLogs(
-  targets: NotificationTarget[],
-  message: string
-): NotificationLog[] {
-  return targets.map((target, index) => ({
-    id: `mock-${index}`,
-    type: NotificationType.CUSTOM,
-    recipient_phone: target.phone,
-    recipient_name: target.name,
-    message,
-    status: NotificationStatus.PENDING,
-    sent_at: new Date().toISOString(),
-  }));
 }

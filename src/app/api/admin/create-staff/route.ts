@@ -3,6 +3,7 @@ import { createClient as createServerClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { hasAdminAccess } from "@/lib/constants";
 import { STAFF_AUTH_FIXED_PASSWORD } from "@/lib/staff-auth-config";
+import { checkRateLimit, STAFF_CREATE_RATE_LIMIT } from "@/lib/rate-limit";
 
 /** RLS를 우회하는 Service Role 클라이언트 (이 라우트 전용) */
 function getAdminClient() {
@@ -17,6 +18,21 @@ const INITIAL_PASSWORD = "1234";
 
 export async function POST(request: NextRequest) {
   try {
+    // 0. Rate Limiting
+    const forwarded = request.headers.get("x-forwarded-for");
+    const ip = forwarded?.split(",")[0]?.trim() || "unknown";
+    const rateLimitResult = checkRateLimit(
+      `create-staff:${ip}`,
+      STAFF_CREATE_RATE_LIMIT
+    );
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "너무 많은 요청입니다. 잠시 후 다시 시도해 주세요." },
+        { status: 429 }
+      );
+    }
+
     // 1. 요청자 권한 확인
     const supabase = await createServerClient();
     const { data: { user } } = await supabase.auth.getUser();

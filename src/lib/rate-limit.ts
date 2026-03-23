@@ -92,3 +92,12 @@ export const CONSULT_RATE_LIMIT: RateLimitConfig = {
   maxRequests: 3,
   windowMs: 60 * 1000, // 1분
 };
+
+/**
+ * 스태프 계정 생성 API용 Rate Limit 설정
+ * - 동일 IP에서 5분에 5회까지 허용
+ */
+export const STAFF_CREATE_RATE_LIMIT: RateLimitConfig = {
+  maxRequests: 5,
+  windowMs: 5 * 60 * 1000, // 5분
+};

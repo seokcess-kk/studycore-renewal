@@ -21,7 +21,7 @@ import * as consultationRepo from "./repository";
  *
  * 1. 폼 데이터 유효성 검사
  * 2. DB에 상담 신청 저장
- * 3. (TODO) Edge Function으로 알림 발송 트리거
+ * 3. Edge Function(notify-consult)으로 알림 발송
  */
 export async function submitConsultation(
   supabase: SupabaseClient,

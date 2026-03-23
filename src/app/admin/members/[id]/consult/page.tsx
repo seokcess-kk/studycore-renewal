@@ -19,6 +19,10 @@ import {
 } from "@/domains/counseling/model";
 import type { CounselingRecordWithProfiles } from "@/domains/counseling/model";
 import type { Profile } from "@/domains/user/model";
+import {
+  getStudentCounselings,
+  recordCounseling,
+} from "@/domains/counseling/service";
 
 export default function AdminMemberConsultPage() {
   const params = useParams();
@@ -62,26 +66,8 @@ export default function AdminMemberConsultPage() {
         setMember(memberData);
 
         // 상담 기록
-        const { data: recordsData, error: recordsError } = await supabase
-          .from("counseling_records")
-          .select(
-            `
-            *,
-            student:profiles!student_id (
-              name,
-              school,
-              grade
-            ),
-            counselor:profiles!counselor_id (
-              name
-            )
-          `
-          )
-          .eq("student_id", memberId)
-          .order("date", { ascending: false });
-
-        if (recordsError) throw recordsError;
-        setRecords(recordsData || []);
+        const recordsData = await getStudentCounselings(supabase, memberId);
+        setRecords(recordsData);
       } catch (error) {
         console.error("데이터 조회 실패:", error);
         toast({
@@ -101,12 +87,7 @@ export default function AdminMemberConsultPage() {
     if (!user) return;
 
     try {
-      const { error } = await supabase.from("counseling_records").insert({
-        ...data,
-        counselor_id: user.id,
-      });
-
-      if (error) throw error;
+      await recordCounseling(supabase, user.id, data);
 
       toast({
         variant: "success",
@@ -115,25 +96,8 @@ export default function AdminMemberConsultPage() {
       });
 
       // 목록 새로고침
-      const { data: newRecords } = await supabase
-        .from("counseling_records")
-        .select(
-          `
-          *,
-          student:profiles!student_id (
-            name,
-            school,
-            grade
-          ),
-          counselor:profiles!counselor_id (
-            name
-          )
-        `
-        )
-        .eq("student_id", memberId)
-        .order("date", { ascending: false });
-
-      setRecords(newRecords || []);
+      const newRecords = await getStudentCounselings(supabase, memberId);
+      setRecords(newRecords);
       setShowForm(false);
       reset();
     } catch (error) {

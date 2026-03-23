@@ -136,7 +136,17 @@ export default function AdminQuestionDetailPage() {
   }
 
   if (!question) {
-    return null;
+    return (
+      <div className="py-12 text-center">
+        <p className="text-muted">질문을 찾을 수 없습니다.</p>
+        <a
+          href="/admin/questions"
+          className="mt-4 inline-block text-teal hover:underline transition-colors duration-200"
+        >
+          목록으로 돌아가기
+        </a>
+      </div>
+    );
   }
 
   return (

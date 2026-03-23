@@ -177,19 +177,3 @@ export interface MealApplicationListResult {
   error?: string;
 }
 
-// ─────────────────────────────────────────────
-// 하위 호환성 별칭 (deprecated)
-// ─────────────────────────────────────────────
-
-/** @deprecated Use MealPeriod instead */
-export type LunchPeriod = MealPeriod;
-/** @deprecated Use MealApplication instead */
-export type LunchApplication = MealApplication;
-/** @deprecated Use MealApplicationWithStudent instead */
-export type LunchApplicationWithStudent = MealApplicationWithStudent;
-/** @deprecated Use MealSelections instead */
-export type LunchSelections = MealSelections;
-/** @deprecated Use CreateMealPeriodInput instead */
-export type CreateLunchPeriodInput = CreateMealPeriodInput;
-/** @deprecated Use UpdateMealPeriodInput instead */
-export type UpdateLunchPeriodInput = UpdateMealPeriodInput;
