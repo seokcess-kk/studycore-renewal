@@ -67,7 +67,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
           .from("profiles")
           .select("*")
           .eq("id", user.id)
-          .single();
+          .maybeSingle();
 
         if (!mounted) return;
 
