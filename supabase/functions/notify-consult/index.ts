@@ -64,8 +64,8 @@ serve(async (req: Request) => {
 
 관리자 페이지에서 확인해 주세요.`;
 
-      // 알림톡 시도 (SMS fallback 포함)
-      const alimtalkResult = await sendAlimtalk({
+      // 알림톡 시도 (실패 시 내부에서 SMS fallback)
+      const result = await sendAlimtalk({
         to: adminPhone,
         templateCode: ALIMTALK_TEMPLATES.CONSULT_ADMIN,
         variables: {
@@ -78,38 +78,27 @@ serve(async (req: Request) => {
         fallbackMessage: adminMessage,
       });
 
-      if (alimtalkResult.success) {
-        results.adminNotified = true;
-        await logNotification({
-          type: "alimtalk",
-          recipient_phone: adminPhone,
-          recipient_name: "관리자",
-          message: adminMessage,
-          template_code: ALIMTALK_TEMPLATES.CONSULT_ADMIN,
-          status: "sent",
-          metadata: { trigger: "consult", customerName: body.name },
-        });
-      } else {
-        // 알림톡+fallback 모두 실패 시 직접 SMS 시도
-        const smsResult = await sendSMS({
-          to: adminPhone,
-          message: adminMessage,
-        });
+      results.adminNotified = result.success;
 
-        results.adminNotified = smsResult.success;
-        await logNotification({
-          type: "sms",
-          recipient_phone: adminPhone,
-          recipient_name: "관리자",
-          message: adminMessage,
-          status: smsResult.success ? "sent" : "failed",
-          error_message: smsResult.success ? undefined : smsResult.error,
-          metadata: { trigger: "consult", customerName: body.name, fallback: true },
-        });
+      // 발송 로그 기록
+      await logNotification({
+        type: result.sentVia || "alimtalk",
+        recipient_phone: adminPhone,
+        recipient_name: "관리자",
+        message: adminMessage,
+        template_code: ALIMTALK_TEMPLATES.CONSULT_ADMIN,
+        status: result.success ? "sent" : "failed",
+        error_message: result.success ? undefined : result.error,
+        metadata: {
+          trigger: "consult",
+          customerName: body.name,
+          sentVia: result.sentVia,
+          alimtalkError: result.alimtalkError || undefined,
+        },
+      });
 
-        if (!smsResult.success) {
-          results.errors.push(`관리자 알림 실패: ${smsResult.error || "알 수 없는 오류"}`);
-        }
+      if (!result.success) {
+        results.errors.push(`관리자 알림 실패: ${result.error || "알 수 없는 오류"}`);
       }
     }
 

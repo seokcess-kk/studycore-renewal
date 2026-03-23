@@ -23,6 +23,10 @@ interface AlimtalkResponse {
   success: boolean;
   messageId?: string;
   error?: string;
+  /** 알림톡 실패 후 SMS fallback으로 성공한 경우 실패 사유 */
+  alimtalkError?: string;
+  /** 최종 발송 수단 */
+  sentVia?: "alimtalk" | "sms";
 }
 
 // 전화번호 정규화
@@ -121,7 +125,17 @@ export async function sendAlimtalk(
     },
   };
 
+  let alimtalkErrorDetail = "";
+
+  // 1차: 알림톡 시도
   try {
+    console.log("알림톡 발송 시도:", JSON.stringify({
+      to: normalizedTo,
+      templateId: options.templateCode,
+      pfId,
+      variables: options.variables,
+    }));
+
     const response = await fetch("https://api.solapi.com/messages/v4/send", {
       method: "POST",
       headers,
@@ -131,21 +145,27 @@ export async function sendAlimtalk(
     const data = await response.json();
 
     if (response.ok) {
+      console.log("알림톡 발송 성공:", data);
       return {
         success: true,
         messageId: data.messageId || data.groupId,
+        sentVia: "alimtalk",
       };
     }
 
-    // 알림톡 API 요청 자체가 실패 → 순수 SMS로 재시도
-    console.error("알림톡 발송 실패, SMS로 재시도:", data);
+    // 알림톡 실패 상세 로그
+    alimtalkErrorDetail = `[${response.status}] ${JSON.stringify(data)}`;
+    console.error("알림톡 발송 실패:", alimtalkErrorDetail);
   } catch (error) {
-    console.error("알림톡 발송 에러, SMS로 재시도:", error);
+    alimtalkErrorDetail = error instanceof Error ? error.message : String(error);
+    console.error("알림톡 발송 에러:", alimtalkErrorDetail);
   }
 
-  // 2차: 순수 SMS (kakaoOptions 없이)
+  // 2차: 순수 SMS fallback (kakaoOptions 없이)
   if (options.fallbackMessage) {
     try {
+      console.log("SMS fallback 시도:", normalizedTo);
+
       const smsMessage = {
         to: normalizedTo,
         from: normalizedFrom,
@@ -161,29 +181,33 @@ export async function sendAlimtalk(
       const smsData = await smsResponse.json();
 
       if (smsResponse.ok) {
+        console.log("SMS fallback 성공:", smsData);
         return {
           success: true,
           messageId: smsData.messageId || smsData.groupId,
+          sentVia: "sms",
+          alimtalkError: alimtalkErrorDetail,
         };
       }
 
-      console.error("SMS fallback도 실패:", smsData);
+      const smsError = `[${smsResponse.status}] ${JSON.stringify(smsData)}`;
+      console.error("SMS fallback 실패:", smsError);
       return {
         success: false,
-        error: smsData.errorMessage || smsData.message || "SMS fallback 실패",
+        error: `알림톡: ${alimtalkErrorDetail} / SMS: ${smsError}`,
       };
     } catch (error) {
       console.error("SMS fallback 에러:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "SMS fallback 중 오류",
+        error: `알림톡: ${alimtalkErrorDetail} / SMS: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
 
   return {
     success: false,
-    error: "알림톡 실패 + fallback 메시지 없음",
+    error: `알림톡 실패: ${alimtalkErrorDetail} (fallback 메시지 없음)`,
   };
 }
 
