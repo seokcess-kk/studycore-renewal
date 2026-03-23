@@ -47,10 +47,10 @@ export function Nav() {
     `hidden md:block text-secondary transition-colors duration-150 ${isDarkText
       ? isActive
         ? "text-ink font-medium"
-        : "text-ink/60 hover:text-ink"
+        : "text-ink/80 hover:text-ink"
       : isActive
         ? "text-white font-medium"
-        : "text-white/50 hover:text-white"
+        : "text-white/60 hover:text-white"
     }`;
 
   // 로그아웃 핸들러
@@ -155,7 +155,7 @@ export function Nav() {
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className={`hidden md:block text-small transition-colors duration-150 ${isDarkText ? "text-ink/50 hover:text-ink/80" : "text-white/50 hover:text-white/80"
+                className={`hidden md:block text-small transition-colors duration-150 ${isDarkText ? "text-ink/60 hover:text-ink" : "text-white/50 hover:text-white/80"
                   } disabled:opacity-50`}
               >
                 {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
@@ -179,7 +179,7 @@ export function Nav() {
               )}
               <Link
                 href={ROUTES.LOGIN}
-                className={`hidden md:block text-small transition-colors duration-150 ${isDarkText ? "text-ink/50 hover:text-ink/80" : "text-white/50 hover:text-white/80"
+                className={`hidden md:block text-small transition-colors duration-150 ${isDarkText ? "text-ink/60 hover:text-ink" : "text-white/50 hover:text-white/80"
                   }`}
               >
                 로그인
@@ -200,7 +200,7 @@ export function Nav() {
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className={`hidden md:block p-1.5 transition-colors ${isDarkText ? "text-ink/50 hover:text-ink" : "text-white/50 hover:text-white"
+            className={`hidden md:block p-1.5 transition-colors ${isDarkText ? "text-ink/60 hover:text-ink" : "text-white/50 hover:text-white"
               }`}
             aria-label="검색"
             title="검색 (Ctrl+K)"
