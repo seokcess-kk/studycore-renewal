@@ -112,7 +112,7 @@ export default function AdminBlogNewPage() {
         ]}
       />
 
-      <div className="p-6 container-wide">
+      <div className="p-6 max-w-4xl">
         <form className="space-y-6">
           {/* 제목 */}
           <div>

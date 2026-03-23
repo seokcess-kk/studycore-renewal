@@ -184,7 +184,7 @@ export default function AdminKakaoPage() {
   const studentTargets = allTargets.filter((t) => !t.isParent);
 
   return (
-    <div className="container-wide">
+    <div className="max-w-4xl">
       {/* 안내 + 이력 조회 링크 */}
       <div className="flex items-center justify-between bg-navy/5 border border-navy/20 p-4 mb-6">
         <p className="text-secondary text-navy">

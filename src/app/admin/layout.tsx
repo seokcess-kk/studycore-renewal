@@ -6,6 +6,7 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminErrorBoundary } from "@/components/common/ErrorBoundary";
 import { useUserStore } from "@/stores/useUserStore";
+import { usePathname } from "next/navigation";
 
 export default function AdminLayout({
   children,
@@ -13,7 +14,12 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { isAuthenticated, canAccessAdmin, isLoading } = useUserStore();
+  const pathname = usePathname();
+  const { isAuthenticated, canAccessAdmin, isStaff, isLoading } = useUserStore();
+
+  // /admin/guide는 assistant도 접근 가능 (isStaffRole)
+  const isGuideRoute = pathname.startsWith("/admin/guide");
+  const hasAccess = isGuideRoute ? isStaff : canAccessAdmin;
 
   useEffect(() => {
     if (isLoading) return;
@@ -23,13 +29,13 @@ export default function AdminLayout({
       return;
     }
 
-    if (!canAccessAdmin) {
+    if (!hasAccess) {
       router.replace("/");
       return;
     }
-  }, [isAuthenticated, canAccessAdmin, isLoading, router]);
+  }, [isAuthenticated, hasAccess, isLoading, router]);
 
-  if (isLoading || !isAuthenticated || !canAccessAdmin) {
+  if (isLoading || !isAuthenticated || !hasAccess) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">

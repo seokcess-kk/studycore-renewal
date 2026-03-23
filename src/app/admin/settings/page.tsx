@@ -123,7 +123,7 @@ export default function AdminSettingsPage() {
   ];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="container-content space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-6">
       {/* 메뉴 노출 설정 */}
       <div className="border border-rule bg-white p-6">
         <h2 className="mb-4 font-serif text-lg font-bold text-ink">

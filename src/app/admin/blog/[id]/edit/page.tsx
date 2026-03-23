@@ -145,7 +145,7 @@ export default function AdminBlogEditPage() {
             { label: "수정" },
           ]}
         />
-        <div className="p-6 container-wide space-y-6">
+        <div className="p-6 max-w-4xl space-y-6">
           <Skeleton className="h-12 w-full" />
           <Skeleton className="h-12 w-full" />
           <Skeleton className="h-24 w-full" />
@@ -166,7 +166,7 @@ export default function AdminBlogEditPage() {
         ]}
       />
 
-      <div className="p-6 container-wide">
+      <div className="p-6 max-w-4xl">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* 상태 표시 */}
           {post && (
