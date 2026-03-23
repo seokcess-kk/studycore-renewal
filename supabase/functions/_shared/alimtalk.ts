@@ -108,10 +108,12 @@ export async function sendAlimtalk(
   const normalizedTo = normalizePhone(options.to);
   const normalizedFrom = normalizePhone(senderPhone);
 
-  // Solapi 메시지 구성
-  const message: Record<string, unknown> = {
+  // 1차: 알림톡 시도 (ATA = 알림톡 + SMS 자동 fallback)
+  const alimtalkMessage = {
     to: normalizedTo,
     from: normalizedFrom,
+    type: "ATA",
+    text: options.fallbackMessage || "",
     kakaoOptions: {
       pfId,
       templateId: options.templateCode,
@@ -119,40 +121,70 @@ export async function sendAlimtalk(
     },
   };
 
-  // SMS fallback 설정
-  if (options.fallbackMessage) {
-    message.text = options.fallbackMessage;
-    message.type = "ATA"; // 알림톡 (Auto fallback to SMS)
-  }
-
   try {
     const response = await fetch("https://api.solapi.com/messages/v4/send", {
       method: "POST",
       headers,
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message: alimtalkMessage }),
     });
 
     const data = await response.json();
 
-    if (!response.ok) {
-      console.error("알림톡 발송 실패:", data);
+    if (response.ok) {
       return {
-        success: false,
-        error: data.errorMessage || data.message || "알림톡 발송에 실패했습니다.",
+        success: true,
+        messageId: data.messageId || data.groupId,
       };
     }
 
-    return {
-      success: true,
-      messageId: data.messageId || data.groupId,
-    };
+    // 알림톡 API 요청 자체가 실패 → 순수 SMS로 재시도
+    console.error("알림톡 발송 실패, SMS로 재시도:", data);
   } catch (error) {
-    console.error("알림톡 발송 에러:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "알림톡 발송 중 오류 발생",
-    };
+    console.error("알림톡 발송 에러, SMS로 재시도:", error);
   }
+
+  // 2차: 순수 SMS (kakaoOptions 없이)
+  if (options.fallbackMessage) {
+    try {
+      const smsMessage = {
+        to: normalizedTo,
+        from: normalizedFrom,
+        text: options.fallbackMessage,
+      };
+
+      const smsResponse = await fetch("https://api.solapi.com/messages/v4/send", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ message: smsMessage }),
+      });
+
+      const smsData = await smsResponse.json();
+
+      if (smsResponse.ok) {
+        return {
+          success: true,
+          messageId: smsData.messageId || smsData.groupId,
+        };
+      }
+
+      console.error("SMS fallback도 실패:", smsData);
+      return {
+        success: false,
+        error: smsData.errorMessage || smsData.message || "SMS fallback 실패",
+      };
+    } catch (error) {
+      console.error("SMS fallback 에러:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "SMS fallback 중 오류",
+      };
+    }
+  }
+
+  return {
+    success: false,
+    error: "알림톡 실패 + fallback 메시지 없음",
+  };
 }
 
 /**
