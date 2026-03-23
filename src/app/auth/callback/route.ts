@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     .from("profiles")
     .select("id, role, status, phone")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   const destination = getPostAuthDestination(profile, next);
   return NextResponse.redirect(`${origin}${destination}`);
