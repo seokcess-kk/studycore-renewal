@@ -86,7 +86,7 @@ export default function MyPage() {
               <h1 className="font-serif text-xl font-bold text-white">
                 {profile?.name || "사용자"}
               </h1>
-              <p className="text-secondary text-white/50 mt-1">
+              <p className="text-secondary text-white/70 mt-1">
                 {profile?.school || "학교 미등록"}
                 {profile?.grade && ` ${profile.grade}학년`}
               </p>

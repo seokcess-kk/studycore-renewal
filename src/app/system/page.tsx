@@ -21,7 +21,7 @@ export default function SystemPage() {
             <h1 className="font-serif text-[clamp(36px,5vw,56px)] font-black text-white leading-tight tracking-heading">
               구조가 성적을 만든다
             </h1>
-            <p className="mt-6 text-white/50 text-reading leading-relaxed max-w-xl">
+            <p className="mt-6 text-white/70 text-reading leading-relaxed max-w-xl">
               스터디코어 1.0은 교시제 시스템을 기반으로 운영됩니다. 명확한
               규칙과 일관된 관리가 학생의 집중력을 극대화합니다.
             </p>

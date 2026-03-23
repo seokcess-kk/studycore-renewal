@@ -179,7 +179,7 @@ export default function QuestionDetailPage() {
                 <h1 className="font-serif text-[clamp(20px,3vw,28px)] font-bold text-white">
                   {question.title}
                 </h1>
-                <div className="flex items-center gap-4 mt-3 text-secondary text-white/50">
+                <div className="flex items-center gap-4 mt-3 text-secondary text-white/70">
                   <span className="flex items-center gap-1">
                     <User size={12} />
                     {question.author?.name || "익명"}

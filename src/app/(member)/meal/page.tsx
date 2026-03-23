@@ -145,7 +145,7 @@ export default function LunchPage() {
             <h1 className="font-serif text-[clamp(24px,4vw,36px)] font-bold text-white">
               도시락 신청
             </h1>
-            <p className="mt-3 text-white/50 text-reading">
+            <p className="mt-3 text-white/70 text-reading">
               원하는 요일과 식사를 선택해주세요.
             </p>
           </div>

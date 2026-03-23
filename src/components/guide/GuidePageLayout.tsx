@@ -144,7 +144,7 @@ export function GuidePageLayout({
             <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
               {title}
             </h1>
-            <p className="mt-4 text-white/50 text-reading">{subtitle}</p>
+            <p className="mt-4 text-white/70 text-reading">{subtitle}</p>
 
             {/* 검색바 */}
             <div className="mt-8 relative max-w-md">
@@ -157,7 +157,7 @@ export function GuidePageLayout({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="검색어를 입력하세요..."
-                className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 text-white text-body placeholder:text-white/30 focus:outline-none focus:border-teal"
+                className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/40 text-white text-body placeholder:text-white/60 focus:outline-none focus:border-teal"
               />
             </div>
           </div>
@@ -201,7 +201,7 @@ export function GuidePageLayout({
                     <div className="border border-t-0 border-rule bg-white max-h-[60vh] overflow-y-auto">
                       {Object.entries(groupedSections).map(([category, items]) => (
                         <div key={category}>
-                          <div className="px-4 py-2 bg-stone text-caption font-mono font-bold text-muted uppercase tracking-wider">
+                          <div className="px-4 py-2 bg-stone text-caption font-mono font-bold text-ink/70 uppercase tracking-wider">
                             {category}
                           </div>
                           {items.map((section) => {
@@ -235,7 +235,7 @@ export function GuidePageLayout({
                     <div className="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto border border-rule bg-white">
                       {Object.entries(groupedSections).map(([category, items]) => (
                         <div key={category}>
-                          <div className="px-4 py-2.5 bg-stone text-caption font-mono font-bold text-muted uppercase tracking-wider border-b border-rule">
+                          <div className="px-4 py-2.5 bg-stone text-caption font-mono font-bold text-ink/70 uppercase tracking-wider border-b border-rule">
                             {category}
                           </div>
                           {items.map((section) => {

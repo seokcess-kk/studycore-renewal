@@ -123,7 +123,7 @@ export default function NoticeDetailPage({
               {notice.title}
             </h1>
 
-            <div className="flex flex-wrap gap-4 mt-4 text-secondary text-white/50">
+            <div className="flex flex-wrap gap-4 mt-4 text-secondary text-white/70">
               <span className="flex items-center gap-1.5">
                 <User size={14} />
                 {notice.author?.name || "관리자"}

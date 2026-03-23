@@ -56,7 +56,7 @@ export default function NoticesPage() {
             <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
               공지사항
             </h1>
-            <p className="mt-4 text-white/50 text-reading">
+            <p className="mt-4 text-white/70 text-reading">
               스터디코어 1.0의 중요한 소식과 안내사항입니다.
             </p>
           </div>

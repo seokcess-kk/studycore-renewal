@@ -71,7 +71,7 @@ export default function BlogPage() {
               <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
                 스터디코어 블로그
               </h1>
-              <p className="mt-3 text-white/40 text-reading max-w-md">
+              <p className="mt-3 text-white/60 text-reading max-w-md">
                 입시 정보, 학습 팁, 스터디코어 소식을 전해드립니다.
               </p>
             </div>

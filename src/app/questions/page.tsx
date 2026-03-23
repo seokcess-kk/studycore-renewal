@@ -136,7 +136,7 @@ export default function QuestionsPage() {
                   <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
                     수학 질문방
                   </h1>
-                  <p className="mt-4 text-white/50 text-reading">
+                  <p className="mt-4 text-white/70 text-reading">
                     모르는 문제를 올리면 멘토가 직접 풀이해 드립니다.
                   </p>
                 </div>
