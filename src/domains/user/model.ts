@@ -108,10 +108,10 @@ export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export const updateContactSchema = z.object({
   phone: z
     .string()
-    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다")
-    .or(z.literal("")),
-  school: z.string(),
-  grade: z.enum(["1", "2", "3", ""]),
+    .min(1, "연락처를 입력해주세요")
+    .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다"),
+  school: z.string().min(1, "학교를 입력해주세요"),
+  grade: z.enum(["1", "2", "3"], { message: "학년을 선택해주세요" }),
   parent_phone: z
     .string()
     .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다")

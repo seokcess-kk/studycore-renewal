@@ -308,7 +308,7 @@ function ContactInfoSection() {
     defaultValues: {
       phone: profile?.phone || "",
       school: profile?.school || "",
-      grade: (profile?.grade?.toString() as "1" | "2" | "3" | "") || "",
+      grade: (profile?.grade?.toString() as "1" | "2" | "3") || undefined,
       parent_phone: profile?.parent_phone || "",
     },
   });
@@ -318,9 +318,9 @@ function ContactInfoSection() {
 
     const supabase = createClient();
     const result = await updateUserProfile(supabase, profile.id, {
-      phone: data.phone.replace(/-/g, "") || undefined,
-      school: data.school || undefined,
-      grade: data.grade ? parseInt(data.grade) : undefined,
+      phone: data.phone.replace(/-/g, ""),
+      school: data.school,
+      grade: parseInt(data.grade),
       parent_phone: data.parent_phone.replace(/-/g, "") || undefined,
     });
 
@@ -342,7 +342,7 @@ function ContactInfoSection() {
     reset({
       phone: profile?.phone || "",
       school: profile?.school || "",
-      grade: (profile?.grade?.toString() as "1" | "2" | "3" | "") || "",
+      grade: (profile?.grade?.toString() as "1" | "2" | "3") || undefined,
       parent_phone: profile?.parent_phone || "",
     });
     setIsEditing(false);
@@ -354,14 +354,17 @@ function ContactInfoSection() {
         <h2 className="font-bold text-ink">내 정보</h2>
         {isEditing ? (
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="flex items-center gap-1.5 text-secondary text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors cursor-pointer"
-            >
-              <X size={14} />
-              취소
-            </button>
+            {/* 필수 정보 미입력 시 취소 불가 */}
+            {(profile?.phone && profile?.school && profile?.grade) && (
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="flex items-center gap-1.5 text-secondary text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors cursor-pointer"
+              >
+                <X size={14} />
+                취소
+              </button>
+            )}
             <button
               type="button"
               onClick={handleSubmit(onSubmit)}
@@ -394,7 +397,7 @@ function ContactInfoSection() {
           <div className="px-4 py-3">
             <div className="flex items-center gap-4">
               <span className="text-muted"><Phone size={18} /></span>
-              <span className="text-secondary text-muted w-24">연락처</span>
+              <span className="text-secondary text-muted w-24">연락처 <span className="text-red-500">*</span></span>
               <input
                 type="tel"
                 {...register("phone")}
@@ -418,22 +421,29 @@ function ContactInfoSection() {
               <div className="px-4 py-3">
                 <div className="flex items-center gap-4">
                   <span className="text-muted"><School size={18} /></span>
-                  <span className="text-secondary text-muted w-24">학교</span>
+                  <span className="text-secondary text-muted w-24">학교 <span className="text-red-500">*</span></span>
                   <input
                     type="text"
                     {...register("school")}
                     placeholder="OO고등학교"
-                    className="flex-1 border border-rule px-3 py-1.5 text-body focus:outline-none focus:border-navy"
+                    className={`flex-1 border px-3 py-1.5 text-body focus:outline-none ${
+                      errors.school ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
+                    }`}
                   />
                 </div>
+                {errors.school && (
+                  <p className="text-caption text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.school.message}</p>
+                )}
               </div>
               <div className="px-4 py-3">
                 <div className="flex items-center gap-4">
                   <span className="text-muted"><GraduationCap size={18} /></span>
-                  <span className="text-secondary text-muted w-24">학년</span>
+                  <span className="text-secondary text-muted w-24">학년 <span className="text-red-500">*</span></span>
                   <select
                     {...register("grade")}
-                    className="flex-1 border border-rule px-3 py-1.5 text-body focus:outline-none focus:border-navy bg-white cursor-pointer"
+                    className={`flex-1 border px-3 py-1.5 text-body focus:outline-none bg-white cursor-pointer ${
+                      errors.grade ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
+                    }`}
                   >
                     <option value="">선택</option>
                     <option value="1">1학년</option>
@@ -441,6 +451,9 @@ function ContactInfoSection() {
                     <option value="3">3학년</option>
                   </select>
                 </div>
+                {errors.grade && (
+                  <p className="text-caption text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.grade.message}</p>
+                )}
               </div>
             </>
           ) : (
