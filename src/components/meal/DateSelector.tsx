@@ -109,7 +109,7 @@ export function DateSelector({
   if (dates.length === 0) {
     return (
       <div className="border border-rule bg-white p-8 text-center text-muted">
-        <p className="text-[14px]">선택 가능한 날짜가 없습니다.</p>
+        <p className="text-body">선택 가능한 날짜가 없습니다.</p>
       </div>
     );
   }
@@ -119,16 +119,16 @@ export function DateSelector({
       <table className="w-full min-w-[600px]">
         <thead>
           <tr className="bg-stone border-b border-rule">
-            <th className="p-3 text-left text-[13px] font-medium text-muted w-24 sticky left-0 bg-stone z-10">
+            <th className="p-3 text-left text-secondary font-medium text-muted w-24 sticky left-0 bg-stone z-10">
               식사
             </th>
             {dates.map((date) => (
               <th
                 key={formatDate(date)}
-                className="p-2 text-center text-[12px] font-medium text-ink"
+                className="p-2 text-center text-small font-medium text-ink"
               >
                 <div>{formatDisplayDate(date)}</div>
-                <div className="text-[11px] text-muted">
+                <div className="text-caption text-muted">
                   ({getDayName(date)})
                 </div>
               </th>
@@ -140,14 +140,14 @@ export function DateSelector({
             <tr key={mealType} className="border-b border-rule last:border-b-0">
               <td className="p-3 sticky left-0 bg-white z-10">
                 <div className="flex flex-col gap-1">
-                  <span className="text-[13px] font-medium text-ink">
+                  <span className="text-secondary font-medium text-ink">
                     {MEAL_TYPE_LABELS[mealType]}
                   </span>
                   <button
                     type="button"
                     onClick={() => handleSelectAll(mealType)}
                     disabled={disabled}
-                    className={`text-[11px] font-medium px-2 py-0.5 border transition-colors cursor-pointer w-fit ${
+                    className={`text-caption font-medium px-2 py-0.5 border transition-colors cursor-pointer w-fit ${
                       dates.every((d) => isSelected(d, mealType))
                         ? "bg-teal/10 border-teal text-teal"
                         : "bg-stone border-rule text-muted hover:border-teal hover:text-teal"

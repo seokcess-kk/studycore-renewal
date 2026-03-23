@@ -81,13 +81,13 @@ export function WeekdaySelector({
     <div className="border border-rule bg-white">
       {/* 헤더 */}
       <div className="grid grid-cols-6 border-b border-rule bg-stone">
-        <div className="p-2 md:p-3 text-[12px] md:text-[13px] font-medium text-muted">
+        <div className="p-2 md:p-3 text-small md:text-secondary font-medium text-muted">
           식사
         </div>
         {weekdays.map((weekday) => (
           <div
             key={weekday}
-            className="p-2 md:p-3 text-center text-[13px] md:text-[14px] font-medium text-ink"
+            className="p-2 md:p-3 text-center text-secondary md:text-body font-medium text-ink"
           >
             {WEEKDAY_LABELS[weekday]}
           </div>
@@ -101,14 +101,14 @@ export function WeekdaySelector({
           className="grid grid-cols-6 border-b border-rule last:border-b-0"
         >
           <div className="p-2 md:p-3 flex flex-col items-start justify-center gap-1">
-            <span className="text-[13px] font-medium text-ink">
+            <span className="text-secondary font-medium text-ink">
               {MEAL_TYPE_LABELS[mealType]}
             </span>
             <button
               type="button"
               onClick={() => handleSelectAll(mealType)}
               disabled={disabled}
-              className={`text-[11px] font-medium px-2 py-0.5 border transition-colors cursor-pointer ${
+              className={`text-caption font-medium px-2 py-0.5 border transition-colors cursor-pointer ${
                 isAllSelected(mealType)
                   ? "bg-teal/10 border-teal text-teal"
                   : "bg-stone border-rule text-muted hover:border-teal hover:text-teal"

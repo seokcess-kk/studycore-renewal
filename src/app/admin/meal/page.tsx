@@ -192,7 +192,7 @@ export default function AdminLunchPage() {
           <div className="lg:hidden">
             <button
               onClick={() => setShowMobilePeriods(!showMobilePeriods)}
-              className="w-full flex items-center justify-between bg-white border border-rule px-4 py-3 text-[14px] font-medium text-ink"
+              className="w-full flex items-center justify-between bg-white border border-rule px-4 py-3 text-body font-medium text-ink"
             >
               <span>
                 {selectedPeriod ? selectedPeriod.title : "기간을 선택하세요"}
@@ -211,7 +211,7 @@ export default function AdminLunchPage() {
                       setSelectedPeriod(period);
                       setShowMobilePeriods(false);
                     }}
-                    className={`w-full text-left px-4 py-3 text-[14px] ${
+                    className={`w-full text-left px-4 py-3 text-body ${
                       selectedPeriod?.id === period.id
                         ? "bg-stone font-medium"
                         : "hover:bg-stone/50"
@@ -224,10 +224,10 @@ export default function AdminLunchPage() {
                         labels={{ active: "활성", inactive: "비활성" }}
                       />
                     </div>
-                    <p className="text-[12px] text-muted mt-0.5">
+                    <p className="text-small text-muted mt-0.5">
                       접수 {period.apply_start_date} ~ {period.apply_end_date}
                     </p>
-                    <p className="text-[12px] text-muted">
+                    <p className="text-small text-muted">
                       도시락 {period.start_date} ~ {period.end_date}
                     </p>
                   </button>
@@ -238,7 +238,7 @@ export default function AdminLunchPage() {
                     setShowPeriodModal(true);
                     setShowMobilePeriods(false);
                   }}
-                  className="w-full flex items-center gap-2 px-4 py-3 text-[13px] text-teal hover:bg-stone/50"
+                  className="w-full flex items-center gap-2 px-4 py-3 text-secondary text-teal hover:bg-stone/50"
                 >
                   <Plus size={14} />새 기간 추가
                 </button>
@@ -250,13 +250,13 @@ export default function AdminLunchPage() {
           <div className="hidden lg:block lg:col-span-1">
             <div className="bg-white border border-rule">
               <div className="flex items-center justify-between px-4 py-3 border-b border-rule bg-stone">
-                <h2 className="text-[14px] font-bold text-ink">신청 기간</h2>
+                <h2 className="text-body font-bold text-ink">신청 기간</h2>
                 <button
                   onClick={() => {
                     setEditingPeriod(null);
                     setShowPeriodModal(true);
                   }}
-                  className="flex items-center gap-1 text-[13px] text-teal hover:text-teal-d cursor-pointer"
+                  className="flex items-center gap-1 text-secondary text-teal hover:text-teal-d cursor-pointer"
                 >
                   <Plus size={14} />
                   추가
@@ -272,7 +272,7 @@ export default function AdminLunchPage() {
               ) : periods.length === 0 ? (
                 <div className="p-8 text-center text-muted">
                   <Calendar size={32} className="mx-auto mb-2 opacity-50" />
-                  <p className="text-[13px]">등록된 기간이 없습니다.</p>
+                  <p className="text-secondary">등록된 기간이 없습니다.</p>
                 </div>
               ) : (
                 <div className="divide-y divide-rule max-h-[500px] overflow-y-auto">
@@ -285,7 +285,7 @@ export default function AdminLunchPage() {
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <p className="text-[13px] font-medium text-ink leading-tight">
+                        <p className="text-secondary font-medium text-ink leading-tight">
                           {period.title}
                         </p>
                         <StatusBadge
@@ -293,17 +293,17 @@ export default function AdminLunchPage() {
                           labels={{ active: "활성", inactive: "비활성" }}
                         />
                       </div>
-                      <p className="text-[11px] text-muted mt-1">
+                      <p className="text-caption text-muted mt-1">
                         접수 {period.apply_start_date} ~ {period.apply_end_date}
                       </p>
-                      <p className="text-[11px] text-muted">
+                      <p className="text-caption text-muted">
                         도시락 {period.start_date} ~ {period.end_date}
                       </p>
                       <div className="flex gap-1.5 mt-1.5">
                         {period.meal_types.map((type) => (
                           <span
                             key={type}
-                            className="text-[10px] px-1.5 py-0.5 bg-stone text-muted"
+                            className="text-label px-1.5 py-0.5 bg-stone text-muted"
                           >
                             {
                               MEAL_TYPE_LABELS[
@@ -312,7 +312,7 @@ export default function AdminLunchPage() {
                             }
                           </span>
                         ))}
-                        <span className="text-[10px] px-1.5 py-0.5 bg-stone text-muted">
+                        <span className="text-label px-1.5 py-0.5 bg-stone text-muted">
                           {period.selection_type === "weekday"
                             ? "요일별"
                             : "날짜별"}
@@ -333,14 +333,14 @@ export default function AdminLunchPage() {
                 <div className="bg-white border border-rule">
                   <div className="flex items-center justify-between px-4 py-3 border-b border-rule bg-stone">
                     <div>
-                      <h2 className="text-[15px] font-bold text-ink">
+                      <h2 className="text-reading font-bold text-ink">
                         {selectedPeriod.title}
                       </h2>
-                      <p className="text-[12px] text-muted">
+                      <p className="text-small text-muted">
                         접수 {selectedPeriod.apply_start_date} ~{" "}
                         {selectedPeriod.apply_end_date}
                       </p>
-                      <p className="text-[12px] text-muted">
+                      <p className="text-small text-muted">
                         도시락 {selectedPeriod.start_date} ~{" "}
                         {selectedPeriod.end_date}
                       </p>
@@ -366,7 +366,7 @@ export default function AdminLunchPage() {
                       <button
                         onClick={handleExportExcel}
                         disabled={applications.length === 0}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-teal text-white text-[13px] font-medium hover:bg-teal-d transition-colors disabled:opacity-50 cursor-pointer"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-teal text-white text-secondary font-medium hover:bg-teal-d transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         <Download size={14} />
                         엑셀
@@ -378,7 +378,7 @@ export default function AdminLunchPage() {
                   <div className="px-4 py-4">
                     <div className="flex items-center gap-2 mb-3">
                       <Users size={14} className="text-muted" />
-                      <span className="text-[13px] font-medium text-ink">
+                      <span className="text-secondary font-medium text-ink">
                         신청 {applications.length}명
                         {unappliedStudents.length > 0 && (
                           <span className="text-muted font-normal">
@@ -391,7 +391,7 @@ export default function AdminLunchPage() {
 
                     {summary.length > 0 && (
                       <div className="overflow-x-auto">
-                        <table className="w-full text-[13px]">
+                        <table className="w-full text-secondary">
                           <thead>
                             <tr className="border-b border-rule">
                               <th className="text-left py-2 pr-4 font-medium text-muted">
@@ -492,7 +492,7 @@ export default function AdminLunchPage() {
                 {/* 신청자 매트릭스 테이블 */}
                 <div className="bg-white border border-rule">
                   <div className="px-4 py-3 border-b border-rule bg-stone">
-                    <h3 className="text-[14px] font-bold text-ink">
+                    <h3 className="text-body font-bold text-ink">
                       신청자 현황
                     </h3>
                   </div>
@@ -505,11 +505,11 @@ export default function AdminLunchPage() {
                     </div>
                   ) : applications.length === 0 ? (
                     <div className="p-12 text-center text-muted">
-                      <p className="text-[14px]">아직 신청이 없습니다.</p>
+                      <p className="text-body">아직 신청이 없습니다.</p>
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[13px]">
+                      <table className="w-full text-secondary">
                         <thead className="bg-stone sticky top-0">
                           <tr>
                             <th className="px-4 py-2.5 text-left font-medium text-muted whitespace-nowrap sticky left-0 bg-stone z-10">
@@ -574,7 +574,7 @@ export default function AdminLunchPage() {
                                       className="px-2 py-2.5 text-center"
                                     >
                                       {meals.length > 0 ? (
-                                        <span className="inline-flex items-center gap-0.5 text-[11px] font-medium">
+                                        <span className="inline-flex items-center gap-0.5 text-caption font-medium">
                                           {hasLunch && (
                                             <span className="px-1 py-0.5 bg-teal/10 text-teal">
                                               중
@@ -609,7 +609,7 @@ export default function AdminLunchPage() {
                   <div className="bg-white border border-rule">
                     <div className="px-4 py-3 border-b border-rule bg-stone flex items-center gap-2">
                       <UserX size={14} className="text-muted" />
-                      <h3 className="text-[14px] font-bold text-ink">
+                      <h3 className="text-body font-bold text-ink">
                         미신청 학생 ({unappliedStudents.length}명)
                       </h3>
                     </div>
@@ -618,7 +618,7 @@ export default function AdminLunchPage() {
                         {unappliedStudents.map((student) => (
                           <span
                             key={student.id}
-                            className="text-[12px] px-2.5 py-1 bg-stone text-ink"
+                            className="text-small px-2.5 py-1 bg-stone text-ink"
                           >
                             {student.name}
                             {student.school && (
@@ -637,7 +637,7 @@ export default function AdminLunchPage() {
             ) : (
               <div className="bg-white border border-rule p-12 text-center text-muted">
                 <Calendar size={48} className="mx-auto mb-4 opacity-50" />
-                <p className="text-[15px]">기간을 선택하세요</p>
+                <p className="text-reading">기간을 선택하세요</p>
               </div>
             )}
           </div>
@@ -743,7 +743,7 @@ function PeriodModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white w-full max-w-md mx-4">
         <div className="flex items-center justify-between px-6 py-4 border-b border-rule">
-          <h2 className="text-[17px] font-bold text-ink">
+          <h2 className="text-subhead font-bold text-ink">
             {period ? "기간 수정" : "새 기간 생성"}
           </h2>
           <button
@@ -757,19 +757,19 @@ function PeriodModal({
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
           {/* 기간명 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-1">
+            <label className="block text-secondary font-medium text-ink mb-1">
               기간명 <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               placeholder="예: 2024년 1월 도시락"
-              className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+              className={`w-full px-3 py-2 border text-body focus:border-navy focus:outline-none ${
                 errors.title ? "border-red-500" : "border-rule"
               }`}
               {...register("title")}
             />
             {errors.title && (
-              <p className="mt-1 text-[12px] text-red-500">
+              <p className="mt-1 text-small text-red-500">
                 {errors.title.message}
               </p>
             )}
@@ -777,36 +777,36 @@ function PeriodModal({
 
           {/* 접수 기간 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-2">
+            <label className="block text-secondary font-medium text-ink mb-2">
               접수 기간 <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] text-muted mb-1">시작일</label>
+                <label className="block text-caption text-muted mb-1">시작일</label>
                 <input
                   type="date"
-                  className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                  className={`w-full px-3 py-2 border text-body focus:border-navy focus:outline-none ${
                     errors.apply_start_date ? "border-red-500" : "border-rule"
                   }`}
                   {...register("apply_start_date")}
                 />
                 {errors.apply_start_date && (
-                  <p className="mt-1 text-[12px] text-red-500">
+                  <p className="mt-1 text-small text-red-500">
                     {errors.apply_start_date.message}
                   </p>
                 )}
               </div>
               <div>
-                <label className="block text-[11px] text-muted mb-1">종료일</label>
+                <label className="block text-caption text-muted mb-1">종료일</label>
                 <input
                   type="date"
-                  className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                  className={`w-full px-3 py-2 border text-body focus:border-navy focus:outline-none ${
                     errors.apply_end_date ? "border-red-500" : "border-rule"
                   }`}
                   {...register("apply_end_date")}
                 />
                 {errors.apply_end_date && (
-                  <p className="mt-1 text-[12px] text-red-500">
+                  <p className="mt-1 text-small text-red-500">
                     {errors.apply_end_date.message}
                   </p>
                 )}
@@ -816,36 +816,36 @@ function PeriodModal({
 
           {/* 도시락 기간 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-2">
+            <label className="block text-secondary font-medium text-ink mb-2">
               도시락 기간 <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] text-muted mb-1">시작일</label>
+                <label className="block text-caption text-muted mb-1">시작일</label>
                 <input
                   type="date"
-                  className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                  className={`w-full px-3 py-2 border text-body focus:border-navy focus:outline-none ${
                     errors.start_date ? "border-red-500" : "border-rule"
                   }`}
                   {...register("start_date")}
                 />
                 {errors.start_date && (
-                  <p className="mt-1 text-[12px] text-red-500">
+                  <p className="mt-1 text-small text-red-500">
                     {errors.start_date.message}
                   </p>
                 )}
               </div>
               <div>
-                <label className="block text-[11px] text-muted mb-1">종료일</label>
+                <label className="block text-caption text-muted mb-1">종료일</label>
                 <input
                   type="date"
-                  className={`w-full px-3 py-2 border text-[14px] focus:border-navy focus:outline-none ${
+                  className={`w-full px-3 py-2 border text-body focus:border-navy focus:outline-none ${
                     errors.end_date ? "border-red-500" : "border-rule"
                   }`}
                   {...register("end_date")}
                 />
                 {errors.end_date && (
-                  <p className="mt-1 text-[12px] text-red-500">
+                  <p className="mt-1 text-small text-red-500">
                     {errors.end_date.message}
                   </p>
                 )}
@@ -855,14 +855,14 @@ function PeriodModal({
 
           {/* 식사 유형 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-2">
+            <label className="block text-secondary font-medium text-ink mb-2">
               식사 유형 <span className="text-red-500">*</span>
             </label>
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => toggleMealType("lunch")}
-                className={`flex items-center gap-2 px-4 py-2 border text-[14px] transition-colors cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 border text-body transition-colors cursor-pointer ${
                   mealTypes?.includes("lunch")
                     ? "bg-teal/10 border-teal text-teal font-medium"
                     : "border-rule text-muted hover:border-teal"
@@ -874,7 +874,7 @@ function PeriodModal({
               <button
                 type="button"
                 onClick={() => toggleMealType("dinner")}
-                className={`flex items-center gap-2 px-4 py-2 border text-[14px] transition-colors cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 border text-body transition-colors cursor-pointer ${
                   mealTypes?.includes("dinner")
                     ? "bg-navy/10 border-navy text-navy font-medium"
                     : "border-rule text-muted hover:border-navy"
@@ -885,7 +885,7 @@ function PeriodModal({
               </button>
             </div>
             {errors.meal_types && (
-              <p className="mt-1 text-[12px] text-red-500">
+              <p className="mt-1 text-small text-red-500">
                 {errors.meal_types.message}
               </p>
             )}
@@ -893,14 +893,14 @@ function PeriodModal({
 
           {/* 선택 방식 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-2">
+            <label className="block text-secondary font-medium text-ink mb-2">
               선택 방식
             </label>
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => setValue("selection_type", "weekday")}
-                className={`flex-1 py-2 border text-[14px] text-center transition-colors cursor-pointer ${
+                className={`flex-1 py-2 border text-body text-center transition-colors cursor-pointer ${
                   selectionType === "weekday"
                     ? "bg-navy text-white border-navy font-medium"
                     : "border-rule text-muted hover:border-navy"
@@ -911,7 +911,7 @@ function PeriodModal({
               <button
                 type="button"
                 onClick={() => setValue("selection_type", "date")}
-                className={`flex-1 py-2 border text-[14px] text-center transition-colors cursor-pointer ${
+                className={`flex-1 py-2 border text-body text-center transition-colors cursor-pointer ${
                   selectionType === "date"
                     ? "bg-navy text-white border-navy font-medium"
                     : "border-rule text-muted hover:border-navy"
@@ -938,7 +938,7 @@ function PeriodModal({
               >
                 {isActive && <Check size={14} />}
               </div>
-              <span className="text-[14px] text-ink">
+              <span className="text-body text-ink">
                 활성화 (학생이 신청 가능)
               </span>
             </button>
@@ -949,7 +949,7 @@ function PeriodModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 px-4 py-2.5 bg-navy text-white text-[14px] font-medium hover:bg-navy-d transition-colors disabled:opacity-50 cursor-pointer"
+              className="flex-1 px-4 py-2.5 bg-navy text-white text-body font-medium hover:bg-navy-d transition-colors disabled:opacity-50 cursor-pointer"
             >
               {isSubmitting
                 ? "저장 중..."
@@ -960,7 +960,7 @@ function PeriodModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 border border-rule text-ink text-[14px] hover:border-navy transition-colors cursor-pointer"
+              className="px-4 py-2.5 border border-rule text-ink text-body hover:border-navy transition-colors cursor-pointer"
             >
               취소
             </button>

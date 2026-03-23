@@ -168,7 +168,7 @@ export function AdminSidebar() {
               {showBadge && (
                 <span
                   className={cn(
-                    "min-w-[20px] h-[20px] flex items-center justify-center text-[11px] font-bold px-1.5",
+                    "min-w-[20px] h-[20px] flex items-center justify-center text-caption font-bold px-1.5",
                     active ? "bg-white text-navy" : "bg-teal text-white"
                   )}
                 >

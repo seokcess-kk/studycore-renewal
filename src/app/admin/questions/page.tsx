@@ -84,7 +84,7 @@ export default function AdminQuestionsPage() {
                   <div className="mb-2 flex items-center gap-3">
                     <QuestionStatusBadge status={question.status} size="sm" />
                     {question.is_pinned && (
-                      <span className="flex items-center gap-1 text-[11px] text-teal font-medium">
+                      <span className="flex items-center gap-1 text-caption text-teal font-medium">
                         <Pin size={12} />
                         고정
                       </span>

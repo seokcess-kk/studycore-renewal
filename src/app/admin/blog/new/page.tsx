@@ -116,7 +116,7 @@ export default function AdminBlogNewPage() {
         <form className="space-y-6">
           {/* 제목 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-2">
+            <label className="block text-secondary font-medium text-ink mb-2">
               제목 <span className="text-red-500">*</span>
             </label>
             <input
@@ -124,10 +124,10 @@ export default function AdminBlogNewPage() {
               {...register("title")}
               onChange={handleTitleChange}
               placeholder="포스트 제목을 입력하세요"
-              className="w-full px-4 py-3 border border-rule text-[15px] focus:border-navy focus:outline-none"
+              className="w-full px-4 py-3 border border-rule text-reading focus:border-navy focus:outline-none"
             />
             {errors.title && (
-              <p className="mt-1 text-[13px] text-red-500">
+              <p className="mt-1 text-secondary text-red-500">
                 {errors.title.message}
               </p>
             )}
@@ -135,54 +135,54 @@ export default function AdminBlogNewPage() {
 
           {/* 슬러그 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-2">
+            <label className="block text-secondary font-medium text-ink mb-2">
               슬러그 (URL)
             </label>
             <div className="flex items-center gap-2">
-              <span className="text-[14px] text-muted">/blog/</span>
+              <span className="text-body text-muted">/blog/</span>
               <input
                 type="text"
                 {...register("slug")}
                 placeholder="post-slug"
-                className="flex-1 px-4 py-3 border border-rule text-[15px] focus:border-navy focus:outline-none font-mono"
+                className="flex-1 px-4 py-3 border border-rule text-reading focus:border-navy focus:outline-none font-mono"
               />
             </div>
             {errors.slug && (
-              <p className="mt-1 text-[13px] text-red-500">
+              <p className="mt-1 text-secondary text-red-500">
                 {errors.slug.message}
               </p>
             )}
-            <p className="mt-1 text-[12px] text-muted">
+            <p className="mt-1 text-small text-muted">
               영문 소문자, 숫자, 하이픈만 사용 가능합니다.
             </p>
           </div>
 
           {/* 요약 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-2">
+            <label className="block text-secondary font-medium text-ink mb-2">
               요약
             </label>
             <textarea
               {...register("excerpt")}
               rows={2}
               placeholder="포스트 요약 (목록에 표시됩니다)"
-              className="w-full px-4 py-3 border border-rule text-[15px] focus:border-navy focus:outline-none resize-none"
+              className="w-full px-4 py-3 border border-rule text-reading focus:border-navy focus:outline-none resize-none"
             />
           </div>
 
           {/* 썸네일 URL */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-2">
+            <label className="block text-secondary font-medium text-ink mb-2">
               썸네일 URL
             </label>
             <input
               type="text"
               {...register("thumbnail_url")}
               placeholder="https://example.com/image.jpg"
-              className="w-full px-4 py-3 border border-rule text-[15px] focus:border-navy focus:outline-none"
+              className="w-full px-4 py-3 border border-rule text-reading focus:border-navy focus:outline-none"
             />
             {errors.thumbnail_url && (
-              <p className="mt-1 text-[13px] text-red-500">
+              <p className="mt-1 text-secondary text-red-500">
                 {errors.thumbnail_url.message}
               </p>
             )}
@@ -190,7 +190,7 @@ export default function AdminBlogNewPage() {
 
           {/* 태그 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-2">
+            <label className="block text-secondary font-medium text-ink mb-2">
               태그
             </label>
             <div className="flex gap-2 mb-2">
@@ -210,13 +210,13 @@ export default function AdminBlogNewPage() {
                     }
                   }}
                   placeholder="태그 입력 후 Enter"
-                  className="w-full pl-10 pr-4 py-2 border border-rule text-[14px] focus:border-navy focus:outline-none"
+                  className="w-full pl-10 pr-4 py-2 border border-rule text-body focus:border-navy focus:outline-none"
                 />
               </div>
               <button
                 type="button"
                 onClick={handleAddTag}
-                className="px-4 py-2 bg-stone text-ink text-[14px] font-medium hover:bg-rule transition-colors"
+                className="px-4 py-2 bg-stone text-ink text-body font-medium hover:bg-rule transition-colors"
               >
                 추가
               </button>
@@ -226,7 +226,7 @@ export default function AdminBlogNewPage() {
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-stone text-[13px]"
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-stone text-secondary"
                   >
                     {tag}
                     <button
@@ -244,17 +244,17 @@ export default function AdminBlogNewPage() {
 
           {/* 본문 */}
           <div>
-            <label className="block text-[13px] font-medium text-ink mb-2">
+            <label className="block text-secondary font-medium text-ink mb-2">
               본문 (Markdown) <span className="text-red-500">*</span>
             </label>
             <textarea
               {...register("content")}
               rows={20}
               placeholder="Markdown 형식으로 작성하세요..."
-              className="w-full px-4 py-3 border border-rule text-[15px] font-mono focus:border-navy focus:outline-none resize-y"
+              className="w-full px-4 py-3 border border-rule text-reading font-mono focus:border-navy focus:outline-none resize-y"
             />
             {errors.content && (
-              <p className="mt-1 text-[13px] text-red-500">
+              <p className="mt-1 text-secondary text-red-500">
                 {errors.content.message}
               </p>
             )}
@@ -266,7 +266,7 @@ export default function AdminBlogNewPage() {
               type="button"
               onClick={handleSubmit((data) => onSubmit(data, false))}
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-3 border border-rule text-ink text-[14px] font-medium hover:border-navy transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-3 border border-rule text-ink text-body font-medium hover:border-navy transition-colors disabled:opacity-50"
             >
               <Save size={16} />
               임시저장
@@ -275,7 +275,7 @@ export default function AdminBlogNewPage() {
               type="button"
               onClick={handleSubmit((data) => onSubmit(data, true))}
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-3 bg-teal text-white text-[14px] font-medium hover:bg-teal-d transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-3 bg-teal text-white text-body font-medium hover:bg-teal-d transition-colors disabled:opacity-50"
             >
               <Eye size={16} />
               발행하기
@@ -283,7 +283,7 @@ export default function AdminBlogNewPage() {
             <button
               type="button"
               onClick={() => router.push("/admin/blog")}
-              className="px-6 py-3 text-muted text-[14px] hover:text-ink transition-colors"
+              className="px-6 py-3 text-muted text-body hover:text-ink transition-colors"
             >
               취소
             </button>

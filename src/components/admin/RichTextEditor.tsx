@@ -203,7 +203,7 @@ export function RichTextEditor({
       {/* 에디터 */}
       <div className="border border-t-0 border-rule bg-white relative">
         {placeholder && editor.isEmpty && (
-          <div className="absolute p-4 text-muted/50 text-[14px] pointer-events-none">
+          <div className="absolute p-4 text-muted/50 text-body pointer-events-none">
             {placeholder}
           </div>
         )}

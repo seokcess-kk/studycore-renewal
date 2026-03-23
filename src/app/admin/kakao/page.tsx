@@ -187,13 +187,13 @@ export default function AdminKakaoPage() {
     <div className="max-w-4xl mx-auto">
       {/* 안내 + 이력 조회 링크 */}
       <div className="flex items-center justify-between bg-navy/5 border border-navy/20 p-4 mb-6">
-        <p className="text-[13px] text-navy">
+        <p className="text-secondary text-navy">
           재원생 및 학부모에게 알림톡(또는 SMS)을 발송합니다.
           템플릿 심사 전까지는 SMS로 발송됩니다.
         </p>
         <Link
           href="/admin/kakao/history"
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-navy/20 text-[12px] text-navy hover:bg-navy/5 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-navy/20 text-small text-navy hover:bg-navy/5 transition-colors"
         >
           <History size={14} />
           발송 이력
@@ -219,7 +219,7 @@ export default function AdminKakaoPage() {
                 onChange={() => setTargetType("all")}
                 className="w-4 h-4 accent-navy"
               />
-              <span className="text-[14px]">전체 재원생</span>
+              <span className="text-body">전체 재원생</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -230,7 +230,7 @@ export default function AdminKakaoPage() {
                 onChange={() => setTargetType("parents")}
                 className="w-4 h-4 accent-navy"
               />
-              <span className="text-[14px]">학부모만</span>
+              <span className="text-body">학부모만</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -241,7 +241,7 @@ export default function AdminKakaoPage() {
                 onChange={() => setTargetType("selected")}
                 className="w-4 h-4 accent-navy"
               />
-              <span className="text-[14px]">선택</span>
+              <span className="text-body">선택</span>
             </label>
           </div>
 
@@ -254,7 +254,7 @@ export default function AdminKakaoPage() {
                 onChange={(e) => setIncludeParents(e.target.checked)}
                 className="w-4 h-4 accent-navy"
               />
-              <span className="text-[13px] text-muted">
+              <span className="text-secondary text-muted">
                 학부모도 포함
               </span>
             </label>
@@ -286,7 +286,7 @@ export default function AdminKakaoPage() {
                         onChange={toggleSelectAll}
                         className="w-4 h-4 accent-navy"
                       />
-                      <span className="text-[12px] font-medium">
+                      <span className="text-small font-medium">
                         전체 선택 ({selectedIds.length}/
                         {studentTargets.length})
                       </span>
@@ -305,8 +305,8 @@ export default function AdminKakaoPage() {
                         onChange={() => toggleSelect(target.userId)}
                         className="w-4 h-4 accent-navy"
                       />
-                      <span className="text-[13px]">{target.name}</span>
-                      <span className="text-[11px] text-muted ml-auto">
+                      <span className="text-secondary">{target.name}</span>
+                      <span className="text-caption text-muted ml-auto">
                         {target.phone}
                       </span>
                     </label>
@@ -320,7 +320,7 @@ export default function AdminKakaoPage() {
           <div className="mt-4 pt-4 border-t border-rule">
             <div className="flex items-center gap-2">
               <UserCheck size={16} className="text-teal" />
-              <span className="text-[14px] font-medium">
+              <span className="text-body font-medium">
                 발송 대상: {filteredTargets.length}명
               </span>
             </div>
@@ -341,15 +341,15 @@ export default function AdminKakaoPage() {
               placeholder="메시지를 입력하세요..."
               rows={6}
               maxLength={1000}
-              className={`w-full px-3 py-2 border text-[14px] resize-none focus:outline-none ${
+              className={`w-full px-3 py-2 border text-body resize-none focus:outline-none ${
                 errors.message ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
               }`}
             />
             <div className="flex justify-between mt-1">
-              <span className={`text-[11px] ${errors.message ? "text-red-500" : "text-muted"}`}>
+              <span className={`text-caption ${errors.message ? "text-red-500" : "text-muted"}`}>
                 {errors.message?.message || "[스터디코어] 태그가 자동으로 추가됩니다."}
               </span>
-              <span className="text-[11px] text-muted">
+              <span className="text-caption text-muted">
                 {message.length} / 1000
               </span>
             </div>
@@ -359,11 +359,11 @@ export default function AdminKakaoPage() {
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <Eye size={14} className="text-muted" />
-              <span className="text-[12px] font-medium text-muted">
+              <span className="text-small font-medium text-muted">
                 미리보기
               </span>
             </div>
-            <div className="bg-stone p-3 border border-rule text-[13px] whitespace-pre-wrap min-h-[80px]">
+            <div className="bg-stone p-3 border border-rule text-secondary whitespace-pre-wrap min-h-[80px]">
               {preview ? (
                 `[스터디코어] ${preview}`
               ) : (
@@ -387,7 +387,7 @@ export default function AdminKakaoPage() {
                 ) : (
                   <CheckCircle size={16} className="text-teal" />
                 )}
-                <span className="text-[13px]">
+                <span className="text-secondary">
                   성공: {sendResult.success}건
                   {sendResult.failed > 0 &&
                     ` / 실패: ${sendResult.failed}건`}
@@ -424,10 +424,10 @@ export default function AdminKakaoPage() {
 
       {/* 안내 사항 */}
       <div className="mt-6 p-4 bg-stone border border-rule">
-        <h3 className="text-[13px] font-medium text-ink mb-2">
+        <h3 className="text-secondary font-medium text-ink mb-2">
           알림 발송 안내
         </h3>
-        <ul className="text-[12px] text-muted space-y-1">
+        <ul className="text-small text-muted space-y-1">
           <li>
             • 현재 알림톡 템플릿 심사 전으로, SMS로 발송됩니다.
           </li>

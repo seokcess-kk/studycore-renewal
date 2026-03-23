@@ -122,12 +122,12 @@ export default function AdminBlogPage() {
                 placeholder="제목 또는 내용 검색..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-rule text-[14px] focus:border-navy focus:outline-none"
+                className="w-full pl-10 pr-4 py-2 border border-rule text-body focus:border-navy focus:outline-none"
               />
             </div>
             <button
               type="submit"
-              className="px-4 py-2 bg-navy text-white text-[14px] font-medium hover:bg-navy-d transition-colors"
+              className="px-4 py-2 bg-navy text-white text-body font-medium hover:bg-navy-d transition-colors"
             >
               검색
             </button>
@@ -146,7 +146,7 @@ export default function AdminBlogPage() {
                   setFilter(e.target.value as "all" | "published" | "draft");
                   setPage(1);
                 }}
-                className="pl-10 pr-8 py-2 border border-rule text-[14px] focus:border-navy focus:outline-none appearance-none bg-white"
+                className="pl-10 pr-8 py-2 border border-rule text-body focus:border-navy focus:outline-none appearance-none bg-white"
               >
                 <option value="all">전체</option>
                 <option value="published">발행됨</option>
@@ -157,7 +157,7 @@ export default function AdminBlogPage() {
             {/* 새 포스트 */}
             <Link
               href="/admin/blog/new"
-              className="flex items-center gap-2 px-4 py-2 bg-teal text-white text-[14px] font-medium hover:bg-teal-d transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-teal text-white text-body font-medium hover:bg-teal-d transition-colors"
             >
               <Plus size={16} />
               새 포스트
@@ -168,7 +168,7 @@ export default function AdminBlogPage() {
         {/* 포스트 목록 */}
         <div className="bg-white border border-rule overflow-x-auto">
           {/* 테이블 헤더 */}
-          <div className="grid grid-cols-[1fr_100px_120px_120px] gap-4 px-4 py-3 border-b border-rule bg-stone text-[13px] font-medium text-muted min-w-[640px]">
+          <div className="grid grid-cols-[1fr_100px_120px_120px] gap-4 px-4 py-3 border-b border-rule bg-stone text-secondary font-medium text-muted min-w-[640px]">
             <div>제목</div>
             <div className="text-center">상태</div>
             <div className="text-center">작성일</div>
@@ -211,7 +211,7 @@ export default function AdminBlogPage() {
                 >
                   {/* 제목 */}
                   <div>
-                    <p className="text-[15px] font-medium text-ink line-clamp-1">
+                    <p className="text-reading font-medium text-ink line-clamp-1">
                       {post.title}
                     </p>
                     {post.tags.length > 0 && (
@@ -219,7 +219,7 @@ export default function AdminBlogPage() {
                         {post.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
-                            className="text-[11px] px-1.5 py-0.5 bg-stone text-muted"
+                            className="text-caption px-1.5 py-0.5 bg-stone text-muted"
                           >
                             {tag}
                           </span>
@@ -240,7 +240,7 @@ export default function AdminBlogPage() {
                   </div>
 
                   {/* 작성일 */}
-                  <div className="text-center text-[13px] text-muted">
+                  <div className="text-center text-secondary text-muted">
                     {new Date(post.created_at).toLocaleDateString("ko-KR")}
                   </div>
 
@@ -291,7 +291,7 @@ export default function AdminBlogPage() {
               <button
                 key={i}
                 onClick={() => setPage(i + 1)}
-                className={`w-10 h-10 text-[14px] font-medium border transition-colors ${
+                className={`w-10 h-10 text-body font-medium border transition-colors ${
                   page === i + 1
                     ? "bg-navy border-navy text-white"
                     : "border-rule text-ink hover:border-navy"

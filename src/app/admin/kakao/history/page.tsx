@@ -120,7 +120,7 @@ export default function AdminKakaoHistoryPage() {
 
     return (
       <span
-        className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium ${config.className}`}
+        className={`inline-flex items-center gap-1 px-2 py-0.5 text-caption font-medium ${config.className}`}
       >
         <Icon size={12} />
         {config.text}
@@ -137,7 +137,7 @@ export default function AdminKakaoHistoryPage() {
 
     return (
       <span
-        className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium ${config.className}`}
+        className={`inline-flex items-center px-2 py-0.5 text-caption font-medium ${config.className}`}
       >
         {config.text}
       </span>
@@ -190,25 +190,25 @@ export default function AdminKakaoHistoryPage() {
             {stats && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="bg-white border border-rule p-4">
-                  <div className="text-[12px] text-muted mb-1">전체</div>
+                  <div className="text-small text-muted mb-1">전체</div>
                   <div className="text-2xl font-semibold text-ink">
                     {stats.total.toLocaleString()}
                   </div>
                 </div>
                 <div className="bg-white border border-rule p-4">
-                  <div className="text-[12px] text-teal mb-1">성공</div>
+                  <div className="text-small text-teal mb-1">성공</div>
                   <div className="text-2xl font-semibold text-teal">
                     {stats.sent.toLocaleString()}
                   </div>
                 </div>
                 <div className="bg-white border border-rule p-4">
-                  <div className="text-[12px] text-red-500 mb-1">실패</div>
+                  <div className="text-small text-red-500 mb-1">실패</div>
                   <div className="text-2xl font-semibold text-red-500">
                     {stats.failed.toLocaleString()}
                   </div>
                 </div>
                 <div className="bg-white border border-rule p-4">
-                  <div className="text-[12px] text-yellow-600 mb-1">대기</div>
+                  <div className="text-small text-yellow-600 mb-1">대기</div>
                   <div className="text-2xl font-semibold text-yellow-600">
                     {stats.pending.toLocaleString()}
                   </div>
@@ -220,13 +220,13 @@ export default function AdminKakaoHistoryPage() {
             <div className="bg-white border border-rule p-4 mb-6">
               <div className="flex items-center gap-2 mb-3">
                 <Filter size={16} className="text-muted" />
-                <span className="text-[13px] font-medium">필터</span>
+                <span className="text-secondary font-medium">필터</span>
               </div>
 
               <div className="flex flex-wrap gap-4">
                 {/* 유형 필터 */}
                 <div>
-                  <label className="block text-[11px] text-muted mb-1">
+                  <label className="block text-caption text-muted mb-1">
                     유형
                   </label>
                   <select
@@ -235,7 +235,7 @@ export default function AdminKakaoHistoryPage() {
                       setTypeFilter(e.target.value as TypeFilter);
                       setPage(1);
                     }}
-                    className="px-3 py-1.5 border border-rule text-[13px] focus:outline-none focus:border-navy min-w-[100px]"
+                    className="px-3 py-1.5 border border-rule text-secondary focus:outline-none focus:border-navy min-w-[100px]"
                   >
                     <option value="">전체</option>
                     <option value="sms">SMS</option>
@@ -245,7 +245,7 @@ export default function AdminKakaoHistoryPage() {
 
                 {/* 상태 필터 */}
                 <div>
-                  <label className="block text-[11px] text-muted mb-1">
+                  <label className="block text-caption text-muted mb-1">
                     상태
                   </label>
                   <select
@@ -254,7 +254,7 @@ export default function AdminKakaoHistoryPage() {
                       setStatusFilter(e.target.value as StatusFilter);
                       setPage(1);
                     }}
-                    className="px-3 py-1.5 border border-rule text-[13px] focus:outline-none focus:border-navy min-w-[100px]"
+                    className="px-3 py-1.5 border border-rule text-secondary focus:outline-none focus:border-navy min-w-[100px]"
                   >
                     <option value="">전체</option>
                     <option value="sent">성공</option>
@@ -265,7 +265,7 @@ export default function AdminKakaoHistoryPage() {
 
                 {/* 시작일 */}
                 <div>
-                  <label className="block text-[11px] text-muted mb-1">
+                  <label className="block text-caption text-muted mb-1">
                     시작일
                   </label>
                   <input
@@ -275,13 +275,13 @@ export default function AdminKakaoHistoryPage() {
                       setStartDate(e.target.value);
                       setPage(1);
                     }}
-                    className="px-3 py-1.5 border border-rule text-[13px] focus:outline-none focus:border-navy"
+                    className="px-3 py-1.5 border border-rule text-secondary focus:outline-none focus:border-navy"
                   />
                 </div>
 
                 {/* 종료일 */}
                 <div>
-                  <label className="block text-[11px] text-muted mb-1">
+                  <label className="block text-caption text-muted mb-1">
                     종료일
                   </label>
                   <input
@@ -291,7 +291,7 @@ export default function AdminKakaoHistoryPage() {
                       setEndDate(e.target.value);
                       setPage(1);
                     }}
-                    className="px-3 py-1.5 border border-rule text-[13px] focus:outline-none focus:border-navy"
+                    className="px-3 py-1.5 border border-rule text-secondary focus:outline-none focus:border-navy"
                   />
                 </div>
 
@@ -299,7 +299,7 @@ export default function AdminKakaoHistoryPage() {
                 <div className="flex items-end">
                   <button
                     onClick={resetFilters}
-                    className="px-3 py-1.5 text-[12px] text-muted hover:text-ink"
+                    className="px-3 py-1.5 text-small text-muted hover:text-ink"
                   >
                     초기화
                   </button>
@@ -312,31 +312,31 @@ export default function AdminKakaoHistoryPage() {
               {isLoading ? (
                 <div className="p-12 text-center">
                   <Loader2 size={24} className="animate-spin mx-auto text-muted" />
-                  <p className="mt-2 text-[13px] text-muted">로딩 중...</p>
+                  <p className="mt-2 text-secondary text-muted">로딩 중...</p>
                 </div>
               ) : logs.length === 0 ? (
                 <div className="p-12 text-center">
                   <MessageSquare size={32} className="mx-auto text-rule mb-2" />
-                  <p className="text-[13px] text-muted">발송 이력이 없습니다.</p>
+                  <p className="text-secondary text-muted">발송 이력이 없습니다.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="bg-stone border-b border-rule">
-                        <th className="px-4 py-3 text-left text-[11px] font-medium text-muted uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-caption font-medium text-muted uppercase tracking-wider">
                           발송일시
                         </th>
-                        <th className="px-4 py-3 text-left text-[11px] font-medium text-muted uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-caption font-medium text-muted uppercase tracking-wider">
                           유형
                         </th>
-                        <th className="px-4 py-3 text-left text-[11px] font-medium text-muted uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-caption font-medium text-muted uppercase tracking-wider">
                           수신자
                         </th>
-                        <th className="px-4 py-3 text-left text-[11px] font-medium text-muted uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-caption font-medium text-muted uppercase tracking-wider">
                           메시지
                         </th>
-                        <th className="px-4 py-3 text-left text-[11px] font-medium text-muted uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-caption font-medium text-muted uppercase tracking-wider">
                           상태
                         </th>
                       </tr>
@@ -344,29 +344,29 @@ export default function AdminKakaoHistoryPage() {
                     <tbody className="divide-y divide-rule">
                       {logs.map((log) => (
                         <tr key={log.id} className="hover:bg-stone/50">
-                          <td className="px-4 py-3 text-[12px] text-muted whitespace-nowrap">
+                          <td className="px-4 py-3 text-small text-muted whitespace-nowrap">
                             {formatDate(log.created_at)}
                           </td>
                           <td className="px-4 py-3">
                             <TypeBadge type={log.type} />
                           </td>
                           <td className="px-4 py-3">
-                            <div className="text-[13px] text-ink">
+                            <div className="text-secondary text-ink">
                               {log.recipient_name || "-"}
                             </div>
-                            <div className="text-[11px] text-muted">
+                            <div className="text-caption text-muted">
                               {log.recipient_phone}
                             </div>
                           </td>
                           <td className="px-4 py-3">
                             <div
-                              className="text-[12px] text-ink max-w-xs truncate"
+                              className="text-small text-ink max-w-xs truncate"
                               title={log.message}
                             >
                               {log.message}
                             </div>
                             {log.error_message && (
-                              <div className="text-[11px] text-red-500 mt-0.5">
+                              <div className="text-caption text-red-500 mt-0.5">
                                 {log.error_message}
                               </div>
                             )}
@@ -384,7 +384,7 @@ export default function AdminKakaoHistoryPage() {
               {/* 페이지네이션 */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-between px-4 py-3 border-t border-rule bg-stone">
-                  <div className="text-[12px] text-muted">
+                  <div className="text-small text-muted">
                     총 {total.toLocaleString()}건 중{" "}
                     {((page - 1) * LIMIT + 1).toLocaleString()}-
                     {Math.min(page * LIMIT, total).toLocaleString()}건
@@ -397,7 +397,7 @@ export default function AdminKakaoHistoryPage() {
                     >
                       <ChevronLeft size={16} />
                     </button>
-                    <span className="px-3 text-[12px]">
+                    <span className="px-3 text-small">
                       {page} / {totalPages}
                     </span>
                     <button

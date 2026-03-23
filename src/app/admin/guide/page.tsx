@@ -387,7 +387,7 @@ export default function AdminGuidePage() {
             setActiveType("onboarding");
             handleCancel();
           }}
-          className={`px-4 py-3 text-[14px] font-medium border-b-2 transition-colors ${
+          className={`px-4 py-3 text-body font-medium border-b-2 transition-colors ${
             activeType === "onboarding"
               ? "border-navy text-navy"
               : "border-transparent text-muted hover:text-ink"
@@ -400,7 +400,7 @@ export default function AdminGuidePage() {
             setActiveType("manual");
             handleCancel();
           }}
-          className={`px-4 py-3 text-[14px] font-medium border-b-2 transition-colors ${
+          className={`px-4 py-3 text-body font-medium border-b-2 transition-colors ${
             activeType === "manual"
               ? "border-navy text-navy"
               : "border-transparent text-muted hover:text-ink"
@@ -412,7 +412,7 @@ export default function AdminGuidePage() {
 
       {/* 상단 */}
       <div className="flex items-center justify-between">
-        <p className="text-muted text-[14px]">
+        <p className="text-muted text-body">
           {activeType === "onboarding"
             ? "조교 온보딩 문서를 관리합니다. /guide에 표시됩니다."
             : "재원생 이용 매뉴얼을 관리합니다. /manual에 표시됩니다."}

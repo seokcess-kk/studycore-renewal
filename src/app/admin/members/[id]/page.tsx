@@ -205,7 +205,7 @@ export default function AdminMemberDetailPage() {
                   }`}
                 />
                 {errors.name && (
-                  <p className="text-[11px] text-red-500 mt-1">{errors.name.message}</p>
+                  <p className="text-caption text-red-500 mt-1">{errors.name.message}</p>
                 )}
               </div>
               <div>
@@ -276,7 +276,7 @@ export default function AdminMemberDetailPage() {
               <div className="space-y-4">
                 {member.status === "pending" && (
                   <div className="p-3 bg-yellow-50 border border-yellow-200">
-                    <p className="text-[13px] text-yellow-700 mb-2">
+                    <p className="text-secondary text-yellow-700 mb-2">
                       가입 승인 대기 중입니다.
                     </p>
                     <button

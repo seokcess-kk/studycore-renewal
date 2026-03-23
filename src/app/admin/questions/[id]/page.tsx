@@ -162,7 +162,7 @@ export default function AdminQuestionDetailPage() {
           </span>
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted hover:text-red-500 border border-rule hover:border-red-300 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-small text-muted hover:text-red-500 border border-rule hover:border-red-300 transition-colors cursor-pointer"
           >
             <Trash2 size={14} />
             삭제
@@ -192,7 +192,7 @@ export default function AdminQuestionDetailPage() {
                 setQuestion({ ...question, is_pinned: !question.is_pinned });
               }
             }}
-            className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-[12px] border border-rule hover:bg-stone transition-colors cursor-pointer"
+            className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-small border border-rule hover:bg-stone transition-colors cursor-pointer"
           >
             {question.is_pinned ? (
               <>
@@ -216,7 +216,7 @@ export default function AdminQuestionDetailPage() {
           <span>{formatDistanceToNow(question.created_at)}</span>
         </div>
 
-        <p className="text-[15px] text-ink whitespace-pre-wrap leading-relaxed">
+        <p className="text-reading text-ink whitespace-pre-wrap leading-relaxed">
           {question.content}
         </p>
 
@@ -405,7 +405,7 @@ function AnswerCard({
               {answer.author?.name || "스태프"}
             </p>
             <span
-              className={`text-[10px] font-medium px-1.5 py-0.5 ${badge.className}`}
+              className={`text-label font-medium px-1.5 py-0.5 ${badge.className}`}
             >
               {badge.text}
             </span>
@@ -423,7 +423,7 @@ function AnswerCard({
       </div>
 
       {/* 답변 내용 */}
-      <p className="text-[15px] text-ink whitespace-pre-wrap leading-relaxed">
+      <p className="text-reading text-ink whitespace-pre-wrap leading-relaxed">
         {answer.content}
       </p>
 
