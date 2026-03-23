@@ -35,7 +35,7 @@ function MapLoading() {
     <div className="aspect-square bg-navy/10 flex items-center justify-center">
       <div className="text-center text-muted">
         <Loader2 size={32} className="mx-auto mb-2 animate-spin" />
-        <p className="text-[14px]">지도 로딩 중...</p>
+        <p className="text-body">지도 로딩 중...</p>
       </div>
     </div>
   );
@@ -47,8 +47,8 @@ function MapFallback({ message }: { message: string }) {
     <div className="aspect-square bg-navy/10 flex items-center justify-center">
       <div className="text-center text-muted">
         <MapPin size={48} className="mx-auto mb-2 opacity-50" />
-        <p className="text-[14px]">{message}</p>
-        <p className="text-[12px] mt-2 max-w-[200px]">{CONTACT.address}</p>
+        <p className="text-body">{message}</p>
+        <p className="text-small mt-2 max-w-[200px]">{CONTACT.address}</p>
       </div>
     </div>
   );
@@ -110,8 +110,8 @@ function KakaoMapView() {
     >
       <MapMarker position={{ lat: LOCATION.lat, lng: LOCATION.lng }}>
         <div className="p-2 min-w-[150px]">
-          <p className="font-bold text-[13px] text-ink">{LOCATION.name}</p>
-          <p className="text-[11px] text-muted mt-0.5">애플타워 10층</p>
+          <p className="font-bold text-secondary text-ink">{LOCATION.name}</p>
+          <p className="text-caption text-muted mt-0.5">애플타워 10층</p>
         </div>
       </MapMarker>
     </Map>
@@ -132,7 +132,7 @@ export function LocationSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <span className="text-teal text-[13px] font-medium tracking-wider uppercase">
+          <span className="text-teal text-secondary font-medium tracking-label uppercase">
             Location
           </span>
           <h2 className="font-serif text-2xl md:text-3xl font-bold text-ink mt-3">
@@ -166,7 +166,7 @@ export function LocationSection() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="bg-white border border-rule p-6"
           >
-            <h3 className="font-bold text-ink text-[18px] mb-6">연락처 정보</h3>
+            <h3 className="font-bold text-ink text-subhead mb-6">연락처 정보</h3>
 
             <div className="space-y-5">
               {info.map((item) => (
@@ -175,10 +175,10 @@ export function LocationSection() {
                     <item.icon size={18} className="text-teal" />
                   </div>
                   <div>
-                    <p className="text-[12px] text-muted uppercase tracking-wider">
+                    <p className="text-small text-muted uppercase tracking-label">
                       {item.label}
                     </p>
-                    <p className="text-[14px] text-ink mt-0.5">{item.value}</p>
+                    <p className="text-body text-ink mt-0.5">{item.value}</p>
                   </div>
                 </div>
               ))}
@@ -190,7 +190,7 @@ export function LocationSection() {
                 href={CONTACT.kakaoChannel}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full py-3 bg-navy text-white text-center text-[14px] font-medium hover:bg-navy-d transition-colors"
+                className="block w-full py-3 bg-navy text-white text-center text-body font-medium hover:bg-navy-d transition-colors"
               >
                 카카오톡 상담하기
               </a>

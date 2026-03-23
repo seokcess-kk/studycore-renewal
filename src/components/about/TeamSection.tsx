@@ -51,13 +51,13 @@ export function TeamSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <span className="text-teal text-[13px] font-medium tracking-wider uppercase">
+          <span className="text-teal text-secondary font-medium tracking-label uppercase">
             Our Team
           </span>
           <h2 className="font-serif text-2xl md:text-3xl font-bold text-ink mt-3">
             전문 멘토진
           </h2>
-          <p className="text-muted text-[14px] mt-4 max-w-xl mx-auto">
+          <p className="text-muted text-body mt-4 max-w-xl mx-auto">
             각 과목 전문가로 구성된 멘토진이 학생들의 학습을 돕습니다.
           </p>
         </motion.div>
@@ -87,11 +87,11 @@ export function TeamSection() {
               </div>
 
               {/* 정보 */}
-              <h3 className="font-bold text-ink text-[16px]">{member.name}</h3>
-              <p className="text-teal text-[13px] font-medium mt-1">
+              <h3 className="font-bold text-ink text-subhead">{member.name}</h3>
+              <p className="text-teal text-secondary font-medium mt-1">
                 {member.subject} {member.role}
               </p>
-              <p className="text-muted text-[12px] mt-3 leading-relaxed">
+              <p className="text-muted text-small mt-3 leading-relaxed">
                 {member.bio}
               </p>
             </motion.div>

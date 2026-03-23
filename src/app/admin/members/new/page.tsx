@@ -95,7 +95,7 @@ export default function AdminMemberNewPage() {
   };
 
   return (
-    <div className="mx-auto max-w-lg space-y-6">
+    <div className="container-narrow space-y-6">
       {/* 상단 */}
       <Link
         href="/admin/members"

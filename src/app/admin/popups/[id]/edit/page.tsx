@@ -111,7 +111,7 @@ export default function AdminPopupEditPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="container-content space-y-6">
       <div className="flex items-center justify-between">
         <Link
           href="/admin/popups"

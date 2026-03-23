@@ -59,6 +59,8 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 6. 로그아웃 시 `router.push()` → `window.location.href = "/"` 사용 (전체 리로드)
 7. `SIGNED_OUT`에서 `setUser`/`setProfile` 개별 호출 → `logout()` 한 번 호출
 8. 도메인 repository→repository 직접 호출 → service→service만 허용
+9. `text-[Npx]` 직접 사용 → 디자인 토큰 (`text-label`~`text-subhead`, `text-fluid-*`) 사용 필수
+10. `leading-[N]` / `tracking-[Nem]` 직접 사용 → 토큰 (`leading-heading`/`leading-ui`/`leading-prose`, `tracking-heading`/`tracking-cta`/`tracking-label`) 사용 필수
 
 ### 필수 패턴
 - 모든 폼: react-hook-form + zod
@@ -68,6 +70,12 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 - 권한 검사 → middleware.ts
 - 클릭 가능 요소 → `cursor-pointer` 필수
 - hover 상태 → `transition-colors duration-200` 이상
+- 폰트 사이즈 → `text-label`~`text-subhead` / `text-fluid-*` 토큰 사용 (`text-[Npx]` 금지)
+- 섹션 패딩 → `section-sm`/`section-md`/`section-lg` 사용
+- 페이지 본문 → `page-body` 사용 (`pt-24 pb-20` 금지)
+- 컨테이너 너비 → `container-narrow`/`container-content`/`container-wide`/`container-full` 사용
+- line-height → `leading-heading`/`leading-ui`/`leading-prose` 사용 (`leading-[N]` 금지)
+- letter-spacing → `tracking-heading`/`tracking-cta`/`tracking-label` 사용 (`tracking-[Nem]` 금지)
 
 ### 인증
 - 재원생: 카카오 OAuth → `/auth/callback` → `/register`

@@ -60,7 +60,7 @@ export function FacilitySection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <span className="text-teal text-[13px] font-medium tracking-wider uppercase">
+          <span className="text-teal text-secondary font-medium tracking-label uppercase">
             Facilities
           </span>
           <h2 className="font-serif text-2xl md:text-3xl font-bold text-ink mt-3">
@@ -81,17 +81,17 @@ export function FacilitySection() {
             <div className="aspect-video bg-navy/10 flex items-center justify-center">
               {/* 실제 이미지가 있으면 표시, 없으면 플레이스홀더 */}
               <div className="text-center text-muted">
-                <p className="text-[14px]">이미지 준비 중</p>
-                <p className="text-[12px] mt-1">{currentFacility.title}</p>
+                <p className="text-body">이미지 준비 중</p>
+                <p className="text-small mt-1">{currentFacility.title}</p>
               </div>
             </div>
 
             {/* 캡션 */}
             <div className="p-6">
-              <h3 className="font-bold text-ink text-[18px] mb-2">
+              <h3 className="font-bold text-ink text-subhead mb-2">
                 {currentFacility.title}
               </h3>
-              <p className="text-muted text-[14px]">
+              <p className="text-muted text-body">
                 {currentFacility.description}
               </p>
             </div>
