@@ -1,13 +1,22 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Nav, Footer, Button } from "@/components/common";
+import { Nav, Footer, Button, useToast } from "@/components/common";
 import { ROUTES, CONTACT } from "@/lib/constants";
 import { useUserStore } from "@/stores/useUserStore";
 
 export default function PendingApprovalPage() {
   const profile = useUserStore((state) => state.profile);
-  // 접근 제어는 middleware에서 서버 판정 (클라이언트 리다이렉트 불필요)
+  const { success } = useToast();
+  const toastShown = useRef(false);
+
+  useEffect(() => {
+    if (!toastShown.current) {
+      toastShown.current = true;
+      success("가입 신청이 완료되었습니다. 관리자 승인을 기다려 주세요.");
+    }
+  }, [success]);
 
   return (
     <>
