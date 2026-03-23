@@ -379,7 +379,7 @@ export default function AdminGuidePage() {
   );
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="container-wide space-y-6">
       {/* 타입 탭 */}
       <div className="flex border-b border-rule">
         <button
