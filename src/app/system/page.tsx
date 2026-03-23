@@ -15,13 +15,13 @@ export default function SystemPage() {
         {/* 헤더 */}
         <section className="bg-navy-dark py-20 px-6 md:px-13">
           <div className="max-w-4xl">
-            <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-4">
+            <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
               System / 운영 시스템
             </span>
-            <h1 className="font-serif text-[clamp(36px,5vw,56px)] font-black text-white leading-tight tracking-[-0.03em]">
+            <h1 className="font-serif text-[clamp(36px,5vw,56px)] font-black text-white leading-tight tracking-heading">
               구조가 성적을 만든다
             </h1>
-            <p className="mt-6 text-white/50 text-[15px] leading-relaxed max-w-xl">
+            <p className="mt-6 text-white/50 text-reading leading-relaxed max-w-xl">
               스터디코어 1.0은 교시제 시스템을 기반으로 운영됩니다. 명확한
               규칙과 일관된 관리가 학생의 집중력을 극대화합니다.
             </p>
@@ -39,7 +39,7 @@ export default function SystemPage() {
                 교시제 시스템
               </h2>
             </div>
-            <div className="space-y-6 text-[15px] text-ink/70 leading-relaxed">
+            <div className="space-y-6 text-reading text-ink/70 leading-relaxed">
               <p>
                 하루 일과는 <strong className="text-ink">교시 단위</strong>로
                 운영됩니다. 시작 종이 울리면 자리에 앉아 학습을 시작하고, 정해진
@@ -47,7 +47,7 @@ export default function SystemPage() {
               </p>
               <div className="bg-stone p-6">
                 <h3 className="font-bold text-ink mb-4">운영 시간표 예시</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[14px]">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-body">
                   <div className="border-l-2 border-teal pl-3">
                     <span className="text-muted block">1교시</span>
                     <span className="font-medium">09:00 - 10:30</span>
@@ -65,7 +65,7 @@ export default function SystemPage() {
                     <span className="font-medium">14:40 - 16:10</span>
                   </div>
                 </div>
-                <p className="mt-4 text-[13px] text-muted">
+                <p className="mt-4 text-secondary text-muted">
                   * 실제 운영 시간표는 상담 시 안내드립니다.
                 </p>
               </div>
@@ -116,7 +116,7 @@ export default function SystemPage() {
                 벌점 제도
               </h2>
             </div>
-            <p className="text-[15px] text-ink/70 leading-relaxed mb-6">
+            <p className="text-reading text-ink/70 leading-relaxed mb-6">
               모든 재원생의 집중 환경을 위해 명확한 페널티 시스템을 운영합니다.
             </p>
             <div className="bg-stone p-6 space-y-4">
@@ -136,7 +136,7 @@ export default function SystemPage() {
               />
             </div>
             <div className="mt-6 p-4 bg-red-50 border-l-4 border-red-500">
-              <p className="text-[14px] font-bold text-red-700">
+              <p className="text-body font-bold text-red-700">
                 누적 벌점 10점 초과 시 강제 퇴소 조치됩니다.
               </p>
             </div>
@@ -160,7 +160,7 @@ function RuleItem({
       <div className="w-1 bg-teal flex-shrink-0" />
       <div>
         <h3 className="font-bold text-ink mb-1">{title}</h3>
-        <p className="text-[14px] text-ink/60">{description}</p>
+        <p className="text-body text-ink/60">{description}</p>
       </div>
     </div>
   );
@@ -175,12 +175,12 @@ function PenaltyItem({
 }) {
   return (
     <div>
-      <h4 className="font-bold text-ink mb-2 text-[14px]">{category}</h4>
+      <h4 className="font-bold text-ink mb-2 text-body">{category}</h4>
       <ul className="space-y-2">
         {items.map((item, index) => (
           <li
             key={index}
-            className="flex justify-between text-[14px] text-ink/70"
+            className="flex justify-between text-body text-ink/70"
           >
             <span>{item.rule}</span>
             <span className="font-mono font-bold text-red-500">

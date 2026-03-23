@@ -93,7 +93,7 @@ export default function QuestionDetailPage() {
             <h1 className="font-serif text-2xl font-bold text-ink mb-4">
               승인 대기 중
             </h1>
-            <p className="text-muted text-[15px] leading-relaxed">
+            <p className="text-muted text-reading leading-relaxed">
               질문방은 관리자 승인 후 이용 가능합니다.
             </p>
           </div>
@@ -139,7 +139,7 @@ export default function QuestionDetailPage() {
           <div className="max-w-4xl">
             <Link
               href={ROUTES.QUESTIONS}
-              className="inline-flex items-center gap-2 text-white/60 hover:text-white text-[13px] mb-4 transition-colors"
+              className="inline-flex items-center gap-2 text-white/60 hover:text-white text-secondary mb-4 transition-colors"
             >
               <ArrowLeft size={14} />
               질문 목록으로
@@ -148,7 +148,7 @@ export default function QuestionDetailPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <span
-                    className={`text-[11px] font-medium px-2 py-0.5 ${
+                    className={`text-caption font-medium px-2 py-0.5 ${
                       isAnswered
                         ? "bg-teal/20 text-teal"
                         : "bg-white/10 text-white/60"
@@ -157,7 +157,7 @@ export default function QuestionDetailPage() {
                     {isAnswered ? "답변 완료" : "답변 대기"}
                   </span>
                   <span
-                    className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 ${
+                    className={`inline-flex items-center gap-1 text-caption font-medium px-2 py-0.5 ${
                       question.is_public
                         ? "bg-white/10 text-white/80"
                         : "bg-white/5 text-white/50"
@@ -179,7 +179,7 @@ export default function QuestionDetailPage() {
                 <h1 className="font-serif text-[clamp(20px,3vw,28px)] font-bold text-white">
                   {question.title}
                 </h1>
-                <div className="flex items-center gap-4 mt-3 text-[13px] text-white/50">
+                <div className="flex items-center gap-4 mt-3 text-secondary text-white/50">
                   <span className="flex items-center gap-1">
                     <User size={12} />
                     {question.author?.name || "익명"}
@@ -229,14 +229,14 @@ export default function QuestionDetailPage() {
           <div className="max-w-4xl mx-auto">
             {/* 본문 */}
             <div className="bg-white border border-rule p-6 mb-6">
-              <p className="text-[15px] text-ink whitespace-pre-wrap leading-relaxed">
+              <p className="text-reading text-ink whitespace-pre-wrap leading-relaxed">
                 {question.content}
               </p>
 
               {/* 첨부 이미지 */}
               {question.image_urls && question.image_urls.length > 0 && (
                 <div className="mt-6 pt-6 border-t border-rule">
-                  <div className="flex items-center gap-2 text-[13px] text-muted mb-3">
+                  <div className="flex items-center gap-2 text-secondary text-muted mb-3">
                     <ImageIcon size={14} />
                     첨부 이미지 ({question.image_urls.length})
                   </div>
@@ -275,7 +275,7 @@ export default function QuestionDetailPage() {
               ) : (
                 <div className="bg-stone border border-rule p-8 text-center">
                   <Clock size={32} className="mx-auto text-muted mb-3" />
-                  <p className="text-muted text-[14px]">
+                  <p className="text-muted text-body">
                     아직 답변이 없습니다. 멘토가 곧 답변해 드릴 예정입니다.
                   </p>
                 </div>
@@ -338,10 +338,10 @@ function AnswerCard({ answer, onImageClick }: { answer: AnswerWithAuthor; onImag
           <CheckCircle size={18} className="text-teal" />
         </div>
         <div>
-          <p className="text-[14px] font-medium text-ink">
+          <p className="text-body font-medium text-ink">
             {answer.author?.name || "멘토"}
           </p>
-          <p className="text-[12px] text-muted">
+          <p className="text-small text-muted">
             {new Date(answer.created_at).toLocaleDateString("ko-KR", {
               year: "numeric",
               month: "long",
@@ -354,7 +354,7 @@ function AnswerCard({ answer, onImageClick }: { answer: AnswerWithAuthor; onImag
       </div>
 
       {/* 답변 내용 */}
-      <p className="text-[15px] text-ink whitespace-pre-wrap leading-relaxed">
+      <p className="text-reading text-ink whitespace-pre-wrap leading-relaxed">
         {answer.content}
       </p>
 

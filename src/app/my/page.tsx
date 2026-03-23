@@ -85,12 +85,12 @@ export default function MyPage() {
               <h1 className="font-serif text-xl font-bold text-white">
                 {profile?.name || "사용자"}
               </h1>
-              <p className="text-[13px] text-white/50 mt-1">
+              <p className="text-secondary text-white/50 mt-1">
                 {profile?.school || "학교 미등록"}
                 {profile?.grade && ` ${profile.grade}학년`}
               </p>
               <span
-                className={`inline-block mt-2 text-[11px] font-medium px-2 py-0.5 ${
+                className={`inline-block mt-2 text-caption font-medium px-2 py-0.5 ${
                   profile?.status === "active"
                     ? "bg-teal/20 text-teal"
                     : profile?.status === "inactive"
@@ -105,7 +105,7 @@ export default function MyPage() {
           </div>
           {!isActive && (
             <div className="max-w-lg mx-auto mt-4 p-3 bg-white/10">
-              <p className="text-[13px] text-white/70">
+              <p className="text-secondary text-white/70">
                 관리자 승인 후 모든 기능을 이용하실 수 있습니다.
               </p>
             </div>
@@ -118,7 +118,7 @@ export default function MyPage() {
           <div className="flex border-b border-rule mb-6">
             <button
               onClick={() => setActiveTab("profile")}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 text-[14px] font-medium border-b-2 transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-2 py-3 text-body font-medium border-b-2 transition-colors ${
                 activeTab === "profile"
                   ? "border-navy text-navy"
                   : "border-transparent text-muted hover:text-ink"
@@ -130,7 +130,7 @@ export default function MyPage() {
             <button
               onClick={() => setActiveTab("questions")}
               disabled={!isActive}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 text-[14px] font-medium border-b-2 transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-2 py-3 text-body font-medium border-b-2 transition-colors ${
                 activeTab === "questions"
                   ? "border-navy text-navy"
                   : "border-transparent text-muted hover:text-ink"
@@ -191,7 +191,7 @@ export default function MyPage() {
           )}
 
           {/* 버전 정보 */}
-          <p className="text-center text-[12px] text-muted/50 mt-8">
+          <p className="text-center text-small text-muted/50 mt-8">
             스터디코어 1.0 v1.0.0
           </p>
         </div>
@@ -213,8 +213,8 @@ function InfoRow({
   return (
     <div className="flex items-center gap-4 px-4 py-3">
       <span className="text-muted">{icon}</span>
-      <span className="text-[13px] text-muted w-24">{label}</span>
-      <span className="text-[14px] text-ink flex-1">{value}</span>
+      <span className="text-secondary text-muted w-24">{label}</span>
+      <span className="text-body text-ink flex-1">{value}</span>
     </div>
   );
 }
@@ -239,8 +239,8 @@ function MenuItem({
     return (
       <div className={`${className} opacity-50 cursor-not-allowed`}>
         <span className="text-muted">{icon}</span>
-        <span className="text-[14px] text-ink flex-1">{label}</span>
-        <span className="text-[11px] text-muted">준비 중</span>
+        <span className="text-body text-ink flex-1">{label}</span>
+        <span className="text-caption text-muted">준비 중</span>
       </div>
     );
   }
@@ -254,7 +254,7 @@ function MenuItem({
         className={className}
       >
         <span className="text-muted">{icon}</span>
-        <span className="text-[14px] text-ink flex-1">{label}</span>
+        <span className="text-body text-ink flex-1">{label}</span>
         <ChevronRight size={16} className="text-rule" />
       </a>
     );
@@ -263,7 +263,7 @@ function MenuItem({
   return (
     <a href={href} className={className}>
       <span className="text-muted">{icon}</span>
-      <span className="text-[14px] text-ink flex-1">{label}</span>
+      <span className="text-body text-ink flex-1">{label}</span>
       <ChevronRight size={16} className="text-rule" />
     </a>
   );
@@ -335,7 +335,7 @@ function ContactInfoSection() {
             <button
               type="button"
               onClick={handleCancel}
-              className="flex items-center gap-1.5 text-[13px] text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 text-secondary text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors cursor-pointer"
             >
               <X size={14} />
               취소
@@ -344,7 +344,7 @@ function ContactInfoSection() {
               type="button"
               onClick={handleSubmit(onSubmit)}
               disabled={isSubmitting}
-              className="flex items-center gap-1.5 text-[13px] text-white bg-teal hover:bg-teal-d font-medium disabled:opacity-50 px-3 py-1.5 border border-teal transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 text-secondary text-white bg-teal hover:bg-teal-d font-medium disabled:opacity-50 px-3 py-1.5 border border-teal transition-colors cursor-pointer"
             >
               <Save size={14} />
               {isSubmitting ? "저장 중..." : "저장"}
@@ -353,7 +353,7 @@ function ContactInfoSection() {
         ) : (
           <button
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-1.5 text-[13px] text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-secondary text-muted hover:text-ink px-3 py-1.5 border border-rule transition-colors cursor-pointer"
           >
             <Pencil size={14} />
             수정
@@ -367,18 +367,18 @@ function ContactInfoSection() {
           <div className="px-4 py-3">
             <div className="flex items-center gap-4">
               <span className="text-muted"><Phone size={18} /></span>
-              <span className="text-[13px] text-muted w-24">연락처</span>
+              <span className="text-secondary text-muted w-24">연락처</span>
               <input
                 type="tel"
                 {...register("phone")}
                 placeholder="010-0000-0000"
-                className={`flex-1 border px-3 py-1.5 text-[14px] focus:outline-none ${
+                className={`flex-1 border px-3 py-1.5 text-body focus:outline-none ${
                   errors.phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
                 }`}
               />
             </div>
             {errors.phone && (
-              <p className="text-[11px] text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.phone.message}</p>
+              <p className="text-caption text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.phone.message}</p>
             )}
           </div>
         ) : (
@@ -395,18 +395,18 @@ function ContactInfoSection() {
           <div className="px-4 py-3">
             <div className="flex items-center gap-4">
               <span className="text-muted"><Phone size={18} /></span>
-              <span className="text-[13px] text-muted w-24">학부모 연락처</span>
+              <span className="text-secondary text-muted w-24">학부모 연락처</span>
               <input
                 type="tel"
                 {...register("parent_phone")}
                 placeholder="010-0000-0000"
-                className={`flex-1 border px-3 py-1.5 text-[14px] focus:outline-none ${
+                className={`flex-1 border px-3 py-1.5 text-body focus:outline-none ${
                   errors.parent_phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
                 }`}
               />
             </div>
             {errors.parent_phone && (
-              <p className="text-[11px] text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.parent_phone.message}</p>
+              <p className="text-caption text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.parent_phone.message}</p>
             )}
           </div>
         ) : (
@@ -454,7 +454,7 @@ function MyQuestionsTab() {
     return (
       <div className="bg-white border border-rule p-8 text-center">
         <MessageCircle size={48} className="mx-auto mb-4 text-muted opacity-50" />
-        <p className="text-[15px] text-muted mb-4">
+        <p className="text-reading text-muted mb-4">
           작성한 질문이 없습니다.
         </p>
         <Link href={ROUTES.QUESTIONS + "/new"}>
@@ -469,12 +469,12 @@ function MyQuestionsTab() {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[13px] text-muted">
+        <span className="text-secondary text-muted">
           총 {questions.length}개
         </span>
         <Link
           href={ROUTES.QUESTIONS}
-          className="text-[13px] text-teal hover:underline"
+          className="text-secondary text-teal hover:underline"
         >
           질문방 바로가기
         </Link>
@@ -493,7 +493,7 @@ function MyQuestionsTab() {
             <div className="flex items-center gap-2 mb-2">
               {/* 상태 뱃지 */}
               <span
-                className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 ${
+                className={`inline-flex items-center gap-1 text-caption font-medium px-2 py-0.5 ${
                   isAnswered
                     ? "bg-teal/10 text-teal"
                     : "bg-stone text-muted"
@@ -513,7 +513,7 @@ function MyQuestionsTab() {
               </span>
               {/* 공개/비공개 뱃지 */}
               <span
-                className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 ${
+                className={`inline-flex items-center gap-1 text-caption font-medium px-2 py-0.5 ${
                   isPublic
                     ? "bg-navy/5 text-navy"
                     : "bg-stone text-muted"
@@ -532,10 +532,10 @@ function MyQuestionsTab() {
                 )}
               </span>
             </div>
-            <h3 className="text-[14px] font-medium text-ink truncate">
+            <h3 className="text-body font-medium text-ink truncate">
               {question.title}
             </h3>
-            <p className="text-[12px] text-muted mt-1">
+            <p className="text-small text-muted mt-1">
               {new Date(question.created_at).toLocaleDateString("ko-KR")}
             </p>
           </Link>
@@ -569,8 +569,8 @@ function StaffQuestionSummary() {
             <MessageCircle size={20} className="text-teal" />
           </div>
           <div>
-            <p className="text-[14px] font-medium text-ink">질문방 관리</p>
-            <p className="text-[12px] text-muted">
+            <p className="text-body font-medium text-ink">질문방 관리</p>
+            <p className="text-small text-muted">
               {count > 0
                 ? `미답변 질문 ${count}개`
                 : "모든 질문에 답변 완료"}
@@ -578,7 +578,7 @@ function StaffQuestionSummary() {
           </div>
         </div>
         {count > 0 && (
-          <span className="min-w-[24px] h-[24px] flex items-center justify-center bg-teal text-white text-[12px] font-bold px-2">
+          <span className="min-w-[24px] h-[24px] flex items-center justify-center bg-teal text-white text-small font-bold px-2">
             {count}
           </span>
         )}

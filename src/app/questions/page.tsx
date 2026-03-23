@@ -71,7 +71,7 @@ export default function QuestionsPage() {
             <h1 className="font-serif text-2xl font-bold text-ink mb-4">
               승인 대기 중
             </h1>
-            <p className="text-muted text-[15px] leading-relaxed">
+            <p className="text-muted text-reading leading-relaxed">
               질문방은 관리자 승인 후 이용 가능합니다.
             </p>
           </div>
@@ -94,7 +94,7 @@ export default function QuestionsPage() {
                   질문 관리
                 </h1>
                 {pendingCount > 0 && (
-                  <span className="bg-teal text-white text-[12px] font-bold px-2.5 py-1">
+                  <span className="bg-teal text-white text-small font-bold px-2.5 py-1">
                     미답변 {pendingCount}
                   </span>
                 )}
@@ -130,13 +130,13 @@ export default function QuestionsPage() {
             <section className="bg-navy py-16 px-6 md:px-13">
               <div className="max-w-4xl flex flex-col md:flex-row md:items-end md:justify-between gap-6">
                 <div>
-                  <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-4">
+                  <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
                     Questions / 수학 질문방
                   </span>
                   <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
                     수학 질문방
                   </h1>
-                  <p className="mt-4 text-white/50 text-[15px]">
+                  <p className="mt-4 text-white/50 text-reading">
                     모르는 문제를 올리면 멘토가 직접 풀이해 드립니다.
                   </p>
                 </div>
@@ -208,7 +208,7 @@ export default function QuestionsPage() {
                 {!isStaff && (
                   <Link
                     href={`${ROUTES.QUESTIONS}/new`}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-teal border-[1.5px] border-teal text-white text-[13px] font-bold tracking-[0.04em] hover:bg-teal-d transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-teal border-[1.5px] border-teal text-white text-secondary font-bold tracking-cta hover:bg-teal-d transition-colors cursor-pointer"
                   >
                     <Pencil size={14} />
                     첫 질문 작성하기
@@ -230,7 +230,7 @@ export default function QuestionsPage() {
               /* 재원생: 게시판형 컴팩트 목록 */
               <div className="border border-rule bg-white divide-y divide-rule">
                 {/* 헤더 행 — 데스크톱만 */}
-                <div className="hidden md:grid grid-cols-[auto_1fr_100px_80px] items-center gap-4 px-5 py-2.5 bg-stone text-[11px] font-medium text-muted tracking-wide uppercase">
+                <div className="hidden md:grid grid-cols-[auto_1fr_100px_80px] items-center gap-4 px-5 py-2.5 bg-stone text-caption font-medium text-muted tracking-wide uppercase">
                   <span className="w-[52px]">상태</span>
                   <span>제목</span>
                   <span className="text-center">작성자</span>
@@ -277,7 +277,7 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-4 py-3 text-[14px] font-medium border-b-2 transition-colors cursor-pointer ${
+      className={`flex items-center gap-2 px-4 py-3 text-body font-medium border-b-2 transition-colors cursor-pointer ${
         active
           ? "border-navy text-navy"
           : "border-transparent text-muted hover:text-ink"
@@ -300,7 +300,7 @@ function FilterButton({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2.5 text-[13px] font-medium border transition-colors cursor-pointer ${
+      className={`px-4 py-2.5 text-secondary font-medium border transition-colors cursor-pointer ${
         active
           ? "bg-navy border-navy text-white"
           : "bg-white border-rule text-ink hover:border-navy"
@@ -325,7 +325,7 @@ function StaffFilterButton({
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-1.5 text-[12px] font-medium transition-colors cursor-pointer ${
+      className={`px-3 py-1.5 text-small font-medium transition-colors cursor-pointer ${
         active
           ? "bg-white text-navy"
           : "bg-white/10 text-white/70 hover:bg-white/20"
@@ -370,7 +370,7 @@ function QuestionRow({
       <div className="hidden md:grid grid-cols-[auto_1fr_100px_80px] items-center gap-4 px-5 py-3">
         {/* 상태 뱃지 */}
         <span
-          className={`w-[52px] text-center text-[11px] font-medium px-1.5 py-0.5 ${
+          className={`w-[52px] text-center text-caption font-medium px-1.5 py-0.5 ${
             isAnswered ? "bg-teal/10 text-teal" : "bg-stone text-muted"
           }`}
         >
@@ -380,22 +380,22 @@ function QuestionRow({
         {/* 제목 + 태그 */}
         <div className="flex items-center gap-2 min-w-0">
           {question.is_pinned && (
-            <span className="flex-shrink-0 text-[10px] font-bold text-teal bg-teal/10 px-1.5 py-0.5">고정</span>
+            <span className="flex-shrink-0 text-label font-bold text-teal bg-teal/10 px-1.5 py-0.5">고정</span>
           )}
-          <h3 className="text-[14px] text-ink truncate group-hover:text-navy transition-colors">
+          <h3 className="text-body text-ink truncate group-hover:text-navy transition-colors">
             {question.title}
           </h3>
           {!question.is_public && (
             <Lock size={11} className="flex-shrink-0 text-muted/50" />
           )}
           {isOwner && (
-            <span className="flex-shrink-0 text-[10px] font-medium text-teal">내 글</span>
+            <span className="flex-shrink-0 text-label font-medium text-teal">내 글</span>
           )}
           {hasImages && (
             <ImageIcon size={12} className="flex-shrink-0 text-muted/40" />
           )}
           {(question.view_count ?? 0) > 0 && (
-            <span className="flex-shrink-0 flex items-center gap-0.5 text-[11px] text-muted/50">
+            <span className="flex-shrink-0 flex items-center gap-0.5 text-caption text-muted/50">
               <Eye size={10} />
               {question.view_count}
             </span>
@@ -403,12 +403,12 @@ function QuestionRow({
         </div>
 
         {/* 작성자 */}
-        <span className="text-[12px] text-muted text-center truncate">
+        <span className="text-small text-muted text-center truncate">
           {question.author?.name || "익명"}
         </span>
 
         {/* 날짜 */}
-        <span className="text-[12px] text-muted text-right">
+        <span className="text-small text-muted text-right">
           {formatShortDate(question.created_at)}
         </span>
       </div>
@@ -417,26 +417,26 @@ function QuestionRow({
       <div className="md:hidden px-4 py-3">
         <div className="flex items-center gap-2 mb-1">
           <span
-            className={`text-[10px] font-medium px-1.5 py-0.5 ${
+            className={`text-label font-medium px-1.5 py-0.5 ${
               isAnswered ? "bg-teal/10 text-teal" : "bg-stone text-muted"
             }`}
           >
             {isAnswered ? "완료" : "대기"}
           </span>
           {question.is_pinned && (
-            <span className="text-[10px] font-bold text-teal bg-teal/10 px-1.5 py-0.5">고정</span>
+            <span className="text-label font-bold text-teal bg-teal/10 px-1.5 py-0.5">고정</span>
           )}
           {!question.is_public && (
             <Lock size={10} className="text-muted/50" />
           )}
           {isOwner && (
-            <span className="text-[10px] font-medium text-teal">내 글</span>
+            <span className="text-label font-medium text-teal">내 글</span>
           )}
         </div>
-        <h3 className="text-[14px] text-ink truncate group-hover:text-navy transition-colors">
+        <h3 className="text-body text-ink truncate group-hover:text-navy transition-colors">
           {question.title}
         </h3>
-        <div className="flex items-center gap-3 mt-1.5 text-[11px] text-muted">
+        <div className="flex items-center gap-3 mt-1.5 text-caption text-muted">
           <span>{question.author?.name || "익명"}</span>
           <span>{formatShortDate(question.created_at)}</span>
           {hasImages && <ImageIcon size={11} className="text-muted/40" />}

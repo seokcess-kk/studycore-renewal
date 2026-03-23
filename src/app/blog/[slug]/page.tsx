@@ -95,7 +95,7 @@ export default function BlogPostPage() {
                   <Link
                     key={tag}
                     href={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="inline-flex items-center gap-1 text-[11px] font-medium text-teal hover:text-teal-d transition-colors"
+                    className="inline-flex items-center gap-1 text-caption font-medium text-teal hover:text-teal-d transition-colors"
                   >
                     <Tag size={10} />
                     {tag}
@@ -110,7 +110,7 @@ export default function BlogPostPage() {
             </h1>
 
             {/* 메타 정보 */}
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-[13px] text-white/60">
+            <div className="mt-6 flex flex-wrap items-center gap-4 text-secondary text-white/60">
               <div className="flex items-center gap-2">
                 <Calendar size={14} />
                 <span>{formattedDate}</span>
@@ -162,7 +162,7 @@ export default function BlogPostPage() {
                   </h3>
                 ),
                 p: ({ children }) => (
-                  <p className="text-[16px] leading-[1.8] text-ink mb-4">
+                  <p className="text-subhead leading-prose text-ink mb-4">
                     {children}
                   </p>
                 ),
@@ -175,7 +175,7 @@ export default function BlogPostPage() {
                   </ol>
                 ),
                 li: ({ children }) => (
-                  <li className="text-[16px] leading-[1.8] text-ink">
+                  <li className="text-subhead leading-prose text-ink">
                     {children}
                   </li>
                 ),
@@ -187,11 +187,11 @@ export default function BlogPostPage() {
                 code: ({ children, className }) => {
                   const isInline = !className;
                   return isInline ? (
-                    <code className="bg-stone px-1.5 py-0.5 text-[14px] font-mono text-navy">
+                    <code className="bg-stone px-1.5 py-0.5 text-body font-mono text-navy">
                       {children}
                     </code>
                   ) : (
-                    <code className="block bg-navy-d p-4 text-[14px] font-mono text-white overflow-x-auto">
+                    <code className="block bg-navy-d p-4 text-body font-mono text-white overflow-x-auto">
                       {children}
                     </code>
                   );
@@ -258,10 +258,10 @@ export default function BlogPostPage() {
                     className="text-muted group-hover:text-navy transition-colors"
                   />
                   <div>
-                    <span className="text-[12px] text-muted block">
+                    <span className="text-small text-muted block">
                       이전 포스트
                     </span>
-                    <span className="text-[14px] font-medium text-ink group-hover:text-navy transition-colors line-clamp-1">
+                    <span className="text-body font-medium text-ink group-hover:text-navy transition-colors line-clamp-1">
                       {adjacentPosts.prev.title}
                     </span>
                   </div>
@@ -276,10 +276,10 @@ export default function BlogPostPage() {
                   className="group flex items-center gap-3 text-right flex-1 justify-end"
                 >
                   <div>
-                    <span className="text-[12px] text-muted block">
+                    <span className="text-small text-muted block">
                       다음 포스트
                     </span>
-                    <span className="text-[14px] font-medium text-ink group-hover:text-navy transition-colors line-clamp-1">
+                    <span className="text-body font-medium text-ink group-hover:text-navy transition-colors line-clamp-1">
                       {adjacentPosts.next.title}
                     </span>
                   </div>
@@ -299,7 +299,7 @@ export default function BlogPostPage() {
         <div className="max-w-3xl mx-auto px-6 md:px-13 py-8">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-[14px] text-muted hover:text-navy transition-colors"
+            className="inline-flex items-center gap-2 text-body text-muted hover:text-navy transition-colors"
           >
             <ChevronLeft size={16} />
             목록으로 돌아가기

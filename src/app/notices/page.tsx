@@ -50,13 +50,13 @@ export default function NoticesPage() {
         {/* 헤더 */}
         <section className="bg-navy py-16 px-6 md:px-13">
           <div className="max-w-4xl">
-            <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-4">
+            <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
               Notices / 공지사항
             </span>
             <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
               공지사항
             </h1>
-            <p className="mt-4 text-white/50 text-[15px]">
+            <p className="mt-4 text-white/50 text-reading">
               스터디코어 1.0의 중요한 소식과 안내사항입니다.
             </p>
           </div>
@@ -120,7 +120,7 @@ export default function NoticesPage() {
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-10 h-10 text-[14px] font-medium border transition-colors ${
+                    className={`w-10 h-10 text-body font-medium border transition-colors ${
                       page === i + 1
                         ? "bg-navy border-navy text-white"
                         : "border-rule text-ink hover:border-navy"
@@ -151,7 +151,7 @@ function FilterButton({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 text-[13px] font-medium border whitespace-nowrap transition-colors ${
+      className={`px-4 py-2 text-secondary font-medium border whitespace-nowrap transition-colors ${
         active
           ? "bg-navy border-navy text-white"
           : "bg-white border-rule text-ink hover:border-navy"
@@ -182,7 +182,7 @@ function NoticeItem({ notice }: { notice: NoticeWithAuthor }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <span
-            className={`text-[11px] font-medium px-2 py-0.5 ${
+            className={`text-caption font-medium px-2 py-0.5 ${
               notice.category === "urgent"
                 ? "bg-red-100 text-red-600"
                 : "bg-stone text-muted"
@@ -191,10 +191,10 @@ function NoticeItem({ notice }: { notice: NoticeWithAuthor }) {
             {categoryLabel}
           </span>
         </div>
-        <h3 className="text-[15px] font-medium text-ink truncate group-hover:text-navy transition-colors">
+        <h3 className="text-reading font-medium text-ink truncate group-hover:text-navy transition-colors">
           {notice.title}
         </h3>
-        <p className="text-[13px] text-muted mt-1">
+        <p className="text-secondary text-muted mt-1">
           {new Date(notice.created_at).toLocaleDateString("ko-KR")} ·{" "}
           {notice.author?.name || "관리자"}
           {(notice.view_count ?? 0) > 0 && (

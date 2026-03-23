@@ -65,20 +65,20 @@ export default function BlogPage() {
         <section className="bg-navy py-16 px-6 md:px-13">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
-              <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-4">
+              <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
                 Blog
               </span>
               <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
                 스터디코어 블로그
               </h1>
-              <p className="mt-3 text-white/40 text-[15px] max-w-md">
+              <p className="mt-3 text-white/40 text-reading max-w-md">
                 입시 정보, 학습 팁, 스터디코어 소식을 전해드립니다.
               </p>
             </div>
             {canAccessAdmin && (
               <Link
                 href={`${ROUTES.ADMIN_BLOG}/new`}
-                className="inline-flex items-center gap-2 px-5 py-2.5 border-[1.5px] border-teal text-teal text-[13px] font-bold tracking-[0.02em] hover:bg-teal hover:text-navy-dark transition-colors duration-200 cursor-pointer self-start md:self-auto"
+                className="inline-flex items-center gap-2 px-5 py-2.5 border-[1.5px] border-teal text-teal text-secondary font-bold tracking-cta hover:bg-teal hover:text-navy-dark transition-colors duration-200 cursor-pointer self-start md:self-auto"
               >
                 <PenLine size={14} />
                 글쓰기
@@ -96,7 +96,7 @@ export default function BlogPage() {
                   setSelectedTag(undefined);
                   setPage(1);
                 }}
-                className={`px-4 py-2 text-[13px] font-medium border whitespace-nowrap transition-colors cursor-pointer ${
+                className={`px-4 py-2 text-secondary font-medium border whitespace-nowrap transition-colors cursor-pointer ${
                   !selectedTag
                     ? "bg-navy border-navy text-white"
                     : "bg-white border-rule text-ink hover:border-navy"
@@ -111,7 +111,7 @@ export default function BlogPage() {
                     setSelectedTag(tag);
                     setPage(1);
                   }}
-                  className={`px-4 py-2 text-[13px] font-medium border whitespace-nowrap transition-colors cursor-pointer ${
+                  className={`px-4 py-2 text-secondary font-medium border whitespace-nowrap transition-colors cursor-pointer ${
                     selectedTag === tag
                       ? "bg-navy border-navy text-white"
                       : "bg-white border-rule text-ink hover:border-navy"
@@ -131,7 +131,7 @@ export default function BlogPage() {
               <BlogSkeleton />
             ) : posts.length === 0 ? (
               <div className="text-center py-20">
-                <p className="text-muted text-[15px]">
+                <p className="text-muted text-reading">
                   {selectedTag
                     ? `"${selectedTag}" 태그의 포스트가 없습니다.`
                     : "등록된 포스트가 없습니다."}
@@ -159,7 +159,7 @@ export default function BlogPage() {
                             />
                           ) : (
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-muted text-[13px]">No Image</span>
+                              <span className="text-muted text-secondary">No Image</span>
                             </div>
                           )}
                         </div>
@@ -169,7 +169,7 @@ export default function BlogPage() {
                               {featured.tags.slice(0, 3).map((tag) => (
                                 <span
                                   key={tag}
-                                  className="inline-flex items-center gap-1 text-[11px] font-medium text-teal"
+                                  className="inline-flex items-center gap-1 text-caption font-medium text-teal"
                                 >
                                   <Tag size={10} />
                                   {tag}
@@ -181,11 +181,11 @@ export default function BlogPage() {
                             {featured.title}
                           </h2>
                           {featured.excerpt && (
-                            <p className="mt-3 text-[15px] text-muted line-clamp-3 flex-1">
+                            <p className="mt-3 text-reading text-muted line-clamp-3 flex-1">
                               {featured.excerpt}
                             </p>
                           )}
-                          <div className="mt-4 flex items-center gap-2 text-[12px] text-muted">
+                          <div className="mt-4 flex items-center gap-2 text-small text-muted">
                             <Calendar size={12} />
                             <span>{formatDate(featured.published_at)}</span>
                           </div>
@@ -222,15 +222,15 @@ export default function BlogPage() {
                             </div>
                             <div className="p-5 flex-1 flex flex-col">
                               {post.tags.length > 0 && (
-                                <span className="text-[11px] font-medium text-teal mb-2 inline-flex items-center gap-1">
+                                <span className="text-caption font-medium text-teal mb-2 inline-flex items-center gap-1">
                                   <Tag size={10} />
                                   {post.tags[0]}
                                 </span>
                               )}
-                              <h3 className="text-[17px] font-bold text-ink leading-snug line-clamp-2 group-hover:text-navy transition-colors">
+                              <h3 className="text-subhead font-bold text-ink leading-snug line-clamp-2 group-hover:text-navy transition-colors">
                                 {post.title}
                               </h3>
-                              <div className="mt-auto pt-3 flex items-center gap-2 text-[12px] text-muted">
+                              <div className="mt-auto pt-3 flex items-center gap-2 text-small text-muted">
                                 <Calendar size={12} />
                                 <span>{formatDate(post.published_at)}</span>
                               </div>
@@ -246,7 +246,7 @@ export default function BlogPage() {
                 {restCards.length > 0 && (
                   <>
                     <div className="border-t border-rule pt-8 mb-6">
-                      <span className="font-mono text-[10px] font-bold text-muted tracking-[0.2em] uppercase">
+                      <span className="font-mono text-label font-bold text-muted tracking-label uppercase">
                         More Posts
                       </span>
                     </div>
@@ -274,7 +274,7 @@ export default function BlogPage() {
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-10 h-10 text-[14px] font-medium border transition-colors cursor-pointer ${
+                    className={`w-10 h-10 text-body font-medium border transition-colors cursor-pointer ${
                       page === i + 1
                         ? "bg-navy border-navy text-white"
                         : "border-rule text-ink hover:border-navy"
@@ -323,15 +323,15 @@ function CompactCard({ post }: { post: BlogPostWithAuthor }) {
         </div>
         <div className="p-4 flex-1 flex flex-col">
           {post.tags.length > 0 && (
-            <span className="text-[10px] font-medium text-teal mb-1.5 inline-flex items-center gap-1">
+            <span className="text-label font-medium text-teal mb-1.5 inline-flex items-center gap-1">
               <Tag size={9} />
               {post.tags[0]}
             </span>
           )}
-          <h3 className="text-[15px] font-bold text-ink leading-snug line-clamp-2 group-hover:text-navy transition-colors">
+          <h3 className="text-reading font-bold text-ink leading-snug line-clamp-2 group-hover:text-navy transition-colors">
             {post.title}
           </h3>
-          <div className="mt-auto pt-3 flex items-center gap-2 text-[11px] text-muted">
+          <div className="mt-auto pt-3 flex items-center gap-2 text-caption text-muted">
             <Calendar size={11} />
             <span>{formatDate(post.published_at)}</span>
           </div>

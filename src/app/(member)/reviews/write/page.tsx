@@ -60,7 +60,7 @@ export default function WriteReviewPage() {
         <Nav />
         <main className="pt-24 pb-20 bg-stone">
           <div className="max-w-lg mx-auto px-6 py-12 text-center">
-            <p className="text-muted text-[15px] mb-4">
+            <p className="text-muted text-reading mb-4">
               활성 상태의 재원생만 후기를 작성할 수 있습니다.
             </p>
             <Button variant="secondary" onClick={() => router.push("/reviews")}>
@@ -105,7 +105,7 @@ export default function WriteReviewPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="bg-white border border-rule p-6">
             {/* 카테고리 */}
             <div className="mb-6">
-              <label className="block text-[13px] font-medium text-ink mb-2">
+              <label className="block text-secondary font-medium text-ink mb-2">
                 작성자 유형
               </label>
               <div className="flex gap-2">
@@ -115,7 +115,7 @@ export default function WriteReviewPage() {
                       key={cat}
                       type="button"
                       onClick={() => setValue("category", cat, { shouldValidate: true })}
-                      className={`flex-1 py-2 text-[13px] font-medium border transition-colors cursor-pointer ${
+                      className={`flex-1 py-2 text-secondary font-medium border transition-colors cursor-pointer ${
                         category === cat
                           ? "bg-navy text-white border-navy"
                           : "bg-white text-muted border-rule hover:border-navy"
@@ -127,13 +127,13 @@ export default function WriteReviewPage() {
                 )}
               </div>
               {errors.category && (
-                <p className="text-[12px] text-red-500 mt-1">{errors.category.message}</p>
+                <p className="text-small text-red-500 mt-1">{errors.category.message}</p>
               )}
             </div>
 
             {/* 별점 */}
             <div className="mb-6">
-              <label className="block text-[13px] font-medium text-ink mb-2">
+              <label className="block text-secondary font-medium text-ink mb-2">
                 만족도
               </label>
               <div className="flex gap-1">
@@ -156,18 +156,18 @@ export default function WriteReviewPage() {
                     />
                   </button>
                 ))}
-                <span className="ml-2 text-[14px] text-muted self-center">
+                <span className="ml-2 text-body text-muted self-center">
                   {rating}점
                 </span>
               </div>
               {errors.rating && (
-                <p className="text-[12px] text-red-500 mt-1">{errors.rating.message}</p>
+                <p className="text-small text-red-500 mt-1">{errors.rating.message}</p>
               )}
             </div>
 
             {/* 내용 */}
             <div className="mb-6">
-              <label className="block text-[13px] font-medium text-ink mb-2">
+              <label className="block text-secondary font-medium text-ink mb-2">
                 후기 내용
               </label>
               <textarea
@@ -175,13 +175,13 @@ export default function WriteReviewPage() {
                 placeholder="스터디코어에서의 경험을 자유롭게 작성해주세요."
                 rows={8}
                 maxLength={1000}
-                className="w-full px-3 py-2 border border-rule text-[14px] resize-none focus:outline-none focus:border-navy"
+                className="w-full px-3 py-2 border border-rule text-body resize-none focus:outline-none focus:border-navy"
               />
               <div className="flex justify-between mt-1">
-                <span className={`text-[11px] ${errors.content ? "text-red-500" : "text-muted"}`}>
+                <span className={`text-caption ${errors.content ? "text-red-500" : "text-muted"}`}>
                   {errors.content?.message || "최소 10자 이상 작성해주세요."}
                 </span>
-                <span className="text-[11px] text-muted">
+                <span className="text-caption text-muted">
                   {content.length} / 1000
                 </span>
               </div>
@@ -189,7 +189,7 @@ export default function WriteReviewPage() {
 
             {/* 이미지 업로드 */}
             <div className="mb-6">
-              <label className="block text-[13px] font-medium text-ink mb-2">
+              <label className="block text-secondary font-medium text-ink mb-2">
                 사진 첨부 (선택)
               </label>
               <ImageUploader
@@ -218,7 +218,7 @@ export default function WriteReviewPage() {
 
           {/* 안내 */}
           <div className="mt-4 p-4 bg-stone border border-rule">
-            <p className="text-[12px] text-muted">
+            <p className="text-small text-muted">
               • 작성된 후기는 관리자 확인 후 공개됩니다.
               <br />
               • 부적절한 내용은 삭제될 수 있습니다.

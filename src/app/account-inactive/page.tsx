@@ -38,7 +38,7 @@ export default function AccountInactivePage() {
             </h1>
 
             {/* 설명 */}
-            <p className="text-muted text-[14px] leading-relaxed mb-6">
+            <p className="text-muted text-body leading-relaxed mb-6">
               현재 계정이 비활성화 상태입니다.
               <br />
               서비스 이용을 원하시면 관리자에게 문의해 주세요.
@@ -46,17 +46,17 @@ export default function AccountInactivePage() {
 
             {/* 안내 박스 */}
             <div className="bg-stone p-4 mb-6 text-left">
-              <p className="text-[13px] text-muted mb-2">
+              <p className="text-secondary text-muted mb-2">
                 <strong className="text-ink">이름:</strong> {profile?.name || "-"}
               </p>
-              <p className="text-[13px] text-muted">
+              <p className="text-secondary text-muted">
                 <strong className="text-ink">상태:</strong>{" "}
                 <span className="text-muted">비활성</span>
               </p>
             </div>
 
             {/* 안내 */}
-            <p className="text-[13px] text-muted mb-6">
+            <p className="text-secondary text-muted mb-6">
               퇴소 처리된 재원생의 경우 계정이 비활성화됩니다.
               <br />
               재등록 문의는 아래 채널로 연락해 주세요.

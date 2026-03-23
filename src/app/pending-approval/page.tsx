@@ -38,7 +38,7 @@ export default function PendingApprovalPage() {
             </h1>
 
             {/* 설명 */}
-            <p className="text-muted text-[14px] leading-relaxed mb-6">
+            <p className="text-muted text-body leading-relaxed mb-6">
               재원생 등록 신청이 접수되었습니다.
               <br />
               관리자 승인 후 서비스 이용이 가능합니다.
@@ -46,20 +46,20 @@ export default function PendingApprovalPage() {
 
             {/* 안내 박스 */}
             <div className="bg-stone p-4 mb-6 text-left">
-              <p className="text-[13px] text-muted mb-2">
+              <p className="text-secondary text-muted mb-2">
                 <strong className="text-ink">이름:</strong> {profile?.name || "-"}
               </p>
-              <p className="text-[13px] text-muted mb-2">
+              <p className="text-secondary text-muted mb-2">
                 <strong className="text-ink">연락처:</strong> {profile?.phone || "-"}
               </p>
-              <p className="text-[13px] text-muted">
+              <p className="text-secondary text-muted">
                 <strong className="text-ink">상태:</strong>{" "}
                 <span className="text-teal">승인 대기</span>
               </p>
             </div>
 
             {/* 안내 */}
-            <p className="text-[13px] text-muted mb-6">
+            <p className="text-secondary text-muted mb-6">
               승인은 보통 1~2일 내에 완료됩니다.
               <br />
               문의사항은 아래 채널로 연락해 주세요.

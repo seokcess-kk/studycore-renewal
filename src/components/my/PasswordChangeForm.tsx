@@ -59,7 +59,7 @@ export function PasswordChangeForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="px-4 pb-4 space-y-4">
           {/* 현재 비밀번호 */}
           <div>
-            <label htmlFor="pw-current" className="block text-[13px] text-muted mb-1">
+            <label htmlFor="pw-current" className="block text-secondary text-muted mb-1">
               현재 비밀번호
             </label>
             <div className="relative">
@@ -67,7 +67,7 @@ export function PasswordChangeForm() {
                 id="pw-current"
                 type={showCurrent ? "text" : "password"}
                 {...register("currentPassword")}
-                className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-[14px] focus:border-navy focus:outline-none pr-10"
+                className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-body focus:border-navy focus:outline-none pr-10"
               />
               <button
                 type="button"
@@ -79,7 +79,7 @@ export function PasswordChangeForm() {
               </button>
             </div>
             {errors.currentPassword && (
-              <p className="mt-1 text-[12px] text-red-500">
+              <p className="mt-1 text-small text-red-500">
                 {errors.currentPassword.message}
               </p>
             )}
@@ -87,7 +87,7 @@ export function PasswordChangeForm() {
 
           {/* 새 비밀번호 */}
           <div>
-            <label htmlFor="pw-new" className="block text-[13px] text-muted mb-1">
+            <label htmlFor="pw-new" className="block text-secondary text-muted mb-1">
               새 비밀번호
             </label>
             <div className="relative">
@@ -95,7 +95,7 @@ export function PasswordChangeForm() {
                 id="pw-new"
                 type={showNew ? "text" : "password"}
                 {...register("newPassword")}
-                className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-[14px] focus:border-navy focus:outline-none pr-10"
+                className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-body focus:border-navy focus:outline-none pr-10"
               />
               <button
                 type="button"
@@ -107,7 +107,7 @@ export function PasswordChangeForm() {
               </button>
             </div>
             {errors.newPassword && (
-              <p className="mt-1 text-[12px] text-red-500">
+              <p className="mt-1 text-small text-red-500">
                 {errors.newPassword.message}
               </p>
             )}
@@ -115,17 +115,17 @@ export function PasswordChangeForm() {
 
           {/* 비밀번호 확인 */}
           <div>
-            <label htmlFor="pw-confirm" className="block text-[13px] text-muted mb-1">
+            <label htmlFor="pw-confirm" className="block text-secondary text-muted mb-1">
               새 비밀번호 확인
             </label>
             <input
               id="pw-confirm"
               type="password"
               {...register("confirmPassword")}
-              className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-[14px] focus:border-navy focus:outline-none"
+              className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-body focus:border-navy focus:outline-none"
             />
             {errors.confirmPassword && (
-              <p className="mt-1 text-[12px] text-red-500">
+              <p className="mt-1 text-small text-red-500">
                 {errors.confirmPassword.message}
               </p>
             )}

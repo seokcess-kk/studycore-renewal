@@ -102,7 +102,7 @@ function LoginContent() {
             <h1 className="font-serif text-3xl font-bold text-ink mb-2">
               로그인
             </h1>
-            <p className="text-muted text-[14px]">
+            <p className="text-muted text-body">
               스터디코어 1.0 재원생 서비스
             </p>
           </div>
@@ -112,7 +112,7 @@ function LoginContent() {
             <button
               type="button"
               onClick={() => setLoginType("kakao")}
-              className={`flex-1 py-3 text-[14px] font-medium transition-colors ${
+              className={`flex-1 py-3 text-body font-medium transition-colors ${
                 loginType === "kakao"
                   ? "bg-navy text-white"
                   : "bg-white text-ink hover:bg-stone"
@@ -123,7 +123,7 @@ function LoginContent() {
             <button
               type="button"
               onClick={() => setLoginType("staff")}
-              className={`flex-1 py-3 text-[14px] font-medium transition-colors ${
+              className={`flex-1 py-3 text-body font-medium transition-colors ${
                 loginType === "staff"
                   ? "bg-navy text-white"
                   : "bg-white text-ink hover:bg-stone"
@@ -140,7 +140,7 @@ function LoginContent() {
                 type="button"
                 onClick={handleKakaoLogin}
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-3 bg-[#FEE500] text-[#191919] text-[15px] font-bold py-4 hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-[#FEE500] text-[#191919] text-reading font-bold py-4 hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                   <path
@@ -154,7 +154,7 @@ function LoginContent() {
               </button>
 
               <div className="text-center">
-                <p className="text-[13px] text-muted leading-relaxed">
+                <p className="text-secondary text-muted leading-relaxed">
                   재원생으로 등록된 카카오 계정으로 로그인해 주세요.
                   <br />
                   최초 로그인 시 관리자 승인이 필요합니다.
@@ -167,7 +167,7 @@ function LoginContent() {
           {loginType === "staff" && (
             <form onSubmit={handleSubmit(onStaffSubmit)} className="space-y-6">
               <div>
-                <label htmlFor="staff-username" className="block mb-2 text-[14px] font-medium text-ink">
+                <label htmlFor="staff-username" className="block mb-2 text-body font-medium text-ink">
                   아이디
                 </label>
                 <input
@@ -175,17 +175,17 @@ function LoginContent() {
                   type="text"
                   placeholder="staff_id"
                   {...register("username")}
-                  className="w-full px-4 py-3 border border-rule bg-white text-ink text-[15px] placeholder:text-muted/50 focus:border-navy focus:outline-none"
+                  className="w-full px-4 py-3 border border-rule bg-white text-ink text-reading placeholder:text-muted/50 focus:border-navy focus:outline-none"
                 />
                 {errors.username && (
-                  <p className="mt-1 text-[13px] text-red-500">
+                  <p className="mt-1 text-secondary text-red-500">
                     {errors.username.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="staff-password" className="block mb-2 text-[14px] font-medium text-ink">
+                <label htmlFor="staff-password" className="block mb-2 text-body font-medium text-ink">
                   비밀번호
                 </label>
                 <input
@@ -193,10 +193,10 @@ function LoginContent() {
                   type="password"
                   placeholder="••••••••"
                   {...register("password")}
-                  className="w-full px-4 py-3 border border-rule bg-white text-ink text-[15px] placeholder:text-muted/50 focus:border-navy focus:outline-none"
+                  className="w-full px-4 py-3 border border-rule bg-white text-ink text-reading placeholder:text-muted/50 focus:border-navy focus:outline-none"
                 />
                 {errors.password && (
-                  <p className="mt-1 text-[13px] text-red-500">
+                  <p className="mt-1 text-secondary text-red-500">
                     {errors.password.message}
                   </p>
                 )}
@@ -212,7 +212,7 @@ function LoginContent() {
                 로그인
               </Button>
 
-              <p className="text-center text-[13px] text-muted">
+              <p className="text-center text-secondary text-muted">
                 Staff 계정은 관리자에게 문의해 주세요.
               </p>
             </form>
@@ -220,12 +220,12 @@ function LoginContent() {
 
           {/* 하단 링크 */}
           <div className="mt-12 pt-8 border-t border-rule text-center">
-            <p className="text-[14px] text-muted mb-4">
+            <p className="text-body text-muted mb-4">
               아직 재원생이 아니신가요?
             </p>
             <Link
               href={ROUTES.CONSULT}
-              className="inline-block text-teal text-[14px] font-medium underline"
+              className="inline-block text-teal text-body font-medium underline"
             >
               무료 상담 신청하기
             </Link>
@@ -233,7 +233,7 @@ function LoginContent() {
 
           {/* 문의 안내 */}
           <div className="mt-8 p-4 bg-white border border-rule text-center">
-            <p className="text-[13px] text-muted">
+            <p className="text-secondary text-muted">
               로그인에 문제가 있으신가요?{" "}
               <a
                 href={CONTACT.kakaoChannel}

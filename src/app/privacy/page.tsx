@@ -21,7 +21,7 @@ export default function PrivacyPage() {
             <h1 className="font-serif text-3xl font-bold text-ink mb-4">
               개인정보처리방침
             </h1>
-            <p className="text-muted text-[14px]">
+            <p className="text-muted text-body">
               최종 수정일: 2025년 1월 1일
             </p>
           </div>
@@ -48,16 +48,16 @@ export default function PrivacyPage() {
             <PrivacySection title="2. 수집하는 개인정보 항목">
               <p>회사는 다음의 개인정보 항목을 수집합니다.</p>
               <div className="bg-stone p-4 my-4">
-                <h4 className="font-bold text-[14px] mb-2">
+                <h4 className="font-bold text-body mb-2">
                   [상담 신청 시 수집 항목]
                 </h4>
-                <p className="text-[14px]">이름, 연락처, 상담 유형, 문의 내용</p>
+                <p className="text-body">이름, 연락처, 상담 유형, 문의 내용</p>
               </div>
               <div className="bg-stone p-4">
-                <h4 className="font-bold text-[14px] mb-2">
+                <h4 className="font-bold text-body mb-2">
                   [재원생 등록 시 수집 항목]
                 </h4>
-                <p className="text-[14px]">
+                <p className="text-body">
                   이름, 연락처, 학교, 학년, 학부모 연락처
                 </p>
               </div>
@@ -105,7 +105,7 @@ export default function PrivacyPage() {
 
             <PrivacySection title="7. 개인정보 보호책임자">
               <div className="bg-stone p-4">
-                <p className="text-[14px]">
+                <p className="text-body">
                   <strong>개인정보 보호책임자</strong>
                   <br />
                   성명: 정원석
@@ -123,7 +123,7 @@ export default function PrivacyPage() {
                 따른 변경내용의 추가, 삭제 및 정정이 있는 경우에는 변경사항의
                 시행 7일 전부터 공지사항을 통하여 고지할 것입니다.
               </p>
-              <p className="mt-4 text-[14px] text-muted">
+              <p className="mt-4 text-body text-muted">
                 본 방침은 2025년 1월 1일부터 시행됩니다.
               </p>
             </PrivacySection>
@@ -145,7 +145,7 @@ function PrivacySection({
   return (
     <div className="mb-10">
       <h2 className="text-lg font-bold text-ink mb-4">{title}</h2>
-      <div className="text-[15px] text-ink/70 leading-relaxed space-y-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_li]:text-[14px]">
+      <div className="text-reading text-ink/70 leading-relaxed space-y-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_li]:text-body">
         {children}
       </div>
     </div>

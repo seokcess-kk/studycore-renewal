@@ -67,10 +67,10 @@ export function AnswerForm({ questionId, onSuccess, compact }: AnswerFormProps) 
         {...register("content")}
         rows={compact ? 4 : 6}
         placeholder="답변을 입력해주세요 (10자 이상)"
-        className="w-full border border-rule px-4 py-3 text-[14px] text-ink focus:border-navy focus:outline-none"
+        className="w-full border border-rule px-4 py-3 text-body text-ink focus:border-navy focus:outline-none"
       />
       {errors.content && (
-        <p className="text-[12px] text-red-500">{errors.content.message}</p>
+        <p className="text-small text-red-500">{errors.content.message}</p>
       )}
 
       <ImageUploader

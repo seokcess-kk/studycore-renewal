@@ -99,39 +99,39 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span
-                className={`text-[11px] font-medium px-2 py-0.5 ${
+                className={`text-caption font-medium px-2 py-0.5 ${
                   isAnswered ? "bg-teal/10 text-teal" : "bg-stone text-muted"
                 }`}
               >
                 {isAnswered ? "답변 완료" : "미답변"}
               </span>
               {question.is_pinned && (
-                <span className="text-[11px] font-medium px-2 py-0.5 bg-teal/10 text-teal flex items-center gap-1">
+                <span className="text-caption font-medium px-2 py-0.5 bg-teal/10 text-teal flex items-center gap-1">
                   <Pin size={10} />
                   고정
                 </span>
               )}
               <span
-                className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 ${
+                className={`inline-flex items-center gap-1 text-caption font-medium px-2 py-0.5 ${
                   question.is_public ? "bg-navy/5 text-navy" : "bg-stone text-muted"
                 }`}
               >
                 {question.is_public ? <Globe size={10} /> : <Lock size={10} />}
                 {question.is_public ? "공개" : "비공개"}
               </span>
-              <span className="text-[11px] text-muted flex items-center gap-1">
+              <span className="text-caption text-muted flex items-center gap-1">
                 <User size={10} />
                 {question.author?.name || "익명"}
               </span>
               <ElapsedBadge createdAt={question.created_at} isPending={isPending} />
             </div>
 
-            <h3 className="text-[14px] font-medium text-ink truncate">
+            <h3 className="text-body font-medium text-ink truncate">
               {question.title}
             </h3>
 
             {!isExpanded && (
-              <p className="text-[13px] text-muted mt-1 line-clamp-1">
+              <p className="text-secondary text-muted mt-1 line-clamp-1">
                 {question.content}
               </p>
             )}
@@ -152,14 +152,14 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
             <button
               type="button"
               onClick={handlePin}
-              className="flex items-center gap-1 px-2 py-1 text-[12px] text-muted hover:text-ink transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-2 py-1 text-small text-muted hover:text-ink transition-colors cursor-pointer"
             >
               {question.is_pinned ? <PinOff size={12} /> : <Pin size={12} />}
               {question.is_pinned ? "고정 해제" : "고정"}
             </button>
             <Link
               href={`${ROUTES.QUESTIONS}/${question.id}`}
-              className="flex items-center gap-1 px-2 py-1 text-[12px] text-muted hover:text-ink transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-2 py-1 text-small text-muted hover:text-ink transition-colors cursor-pointer"
             >
               <ExternalLink size={12} />
               상세 페이지
@@ -168,12 +168,12 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
 
           <div className="p-4 space-y-4">
             {isLoadingDetail ? (
-              <p className="text-[13px] text-muted py-4 text-center">로딩 중...</p>
+              <p className="text-secondary text-muted py-4 text-center">로딩 중...</p>
             ) : (
               <>
                 {/* 질문 전문 */}
                 <div>
-                  <p className="text-[14px] text-ink whitespace-pre-wrap leading-relaxed">
+                  <p className="text-body text-ink whitespace-pre-wrap leading-relaxed">
                     {question.content}
                   </p>
                   {question.image_urls && question.image_urls.length > 0 && (
@@ -193,18 +193,18 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                 {/* 기존 답변 */}
                 {detail?.answers && detail.answers.length > 0 && (
                   <div className="border-t border-rule pt-4 space-y-3">
-                    <p className="text-[12px] font-medium text-muted">
+                    <p className="text-small font-medium text-muted">
                       답변 {detail.answers.length}개
                     </p>
                     {detail.answers.map((answer: AnswerWithAuthor) => (
                       <div key={answer.id} className="bg-teal/5 border border-teal/20 p-3">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-[12px] font-medium text-ink">
+                          <span className="text-small font-medium text-ink">
                             {answer.author?.name || "멘토"}
                           </span>
                           <ElapsedBadge createdAt={answer.created_at} />
                         </div>
-                        <p className="text-[13px] text-ink whitespace-pre-wrap">
+                        <p className="text-secondary text-ink whitespace-pre-wrap">
                           {answer.content}
                         </p>
                       </div>
@@ -214,7 +214,7 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
 
                 {/* 답변 작성 폼 */}
                 <div className="border-t border-rule pt-4">
-                  <p className="text-[12px] font-medium text-muted mb-2">답변 작성</p>
+                  <p className="text-small font-medium text-muted mb-2">답변 작성</p>
                   <AnswerForm
                     questionId={question.id}
                     onSuccess={handleAnswered}

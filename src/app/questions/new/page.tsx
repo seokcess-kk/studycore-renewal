@@ -67,7 +67,7 @@ export default function NewQuestionPage() {
             <h1 className="font-serif text-2xl font-bold text-ink mb-4">
               승인 대기 중
             </h1>
-            <p className="text-muted text-[15px] leading-relaxed">
+            <p className="text-muted text-reading leading-relaxed">
               질문방은 관리자 승인 후 이용 가능합니다.
             </p>
           </div>
@@ -86,7 +86,7 @@ export default function NewQuestionPage() {
           <div className="max-w-4xl">
             <Link
               href={ROUTES.QUESTIONS}
-              className="inline-flex items-center gap-2 text-white/60 hover:text-white text-[13px] mb-4 transition-colors"
+              className="inline-flex items-center gap-2 text-white/60 hover:text-white text-secondary mb-4 transition-colors"
             >
               <ArrowLeft size={14} />
               질문 목록으로
@@ -105,7 +105,7 @@ export default function NewQuestionPage() {
               <div>
                 <label
                   htmlFor="title"
-                  className="block text-[13px] font-medium text-ink mb-2"
+                  className="block text-secondary font-medium text-ink mb-2"
                 >
                   제목 <span className="text-red-500">*</span>
                 </label>
@@ -113,13 +113,13 @@ export default function NewQuestionPage() {
                   id="title"
                   type="text"
                   placeholder="질문 제목을 입력하세요"
-                  className={`w-full px-4 py-3 border bg-white text-[15px] focus:outline-none focus:border-navy ${
+                  className={`w-full px-4 py-3 border bg-white text-reading focus:outline-none focus:border-navy ${
                     errors.title ? "border-red-500" : "border-rule"
                   }`}
                   {...register("title")}
                 />
                 {errors.title && (
-                  <p className="mt-1 text-[12px] text-red-500">
+                  <p className="mt-1 text-small text-red-500">
                     {errors.title.message}
                   </p>
                 )}
@@ -129,7 +129,7 @@ export default function NewQuestionPage() {
               <div>
                 <label
                   htmlFor="content"
-                  className="block text-[13px] font-medium text-ink mb-2"
+                  className="block text-secondary font-medium text-ink mb-2"
                 >
                   내용 <span className="text-red-500">*</span>
                 </label>
@@ -137,13 +137,13 @@ export default function NewQuestionPage() {
                   id="content"
                   rows={8}
                   placeholder="질문 내용을 상세히 작성해주세요. 문제 번호, 교재명 등을 포함하면 더 정확한 답변을 받을 수 있습니다."
-                  className={`w-full px-4 py-3 border bg-white text-[15px] resize-none focus:outline-none focus:border-navy ${
+                  className={`w-full px-4 py-3 border bg-white text-reading resize-none focus:outline-none focus:border-navy ${
                     errors.content ? "border-red-500" : "border-rule"
                   }`}
                   {...register("content")}
                 />
                 {errors.content && (
-                  <p className="mt-1 text-[12px] text-red-500">
+                  <p className="mt-1 text-small text-red-500">
                     {errors.content.message}
                   </p>
                 )}
@@ -151,10 +151,10 @@ export default function NewQuestionPage() {
 
               {/* 이미지 첨부 */}
               <div>
-                <label className="block text-[13px] font-medium text-ink mb-2">
+                <label className="block text-secondary font-medium text-ink mb-2">
                   이미지 첨부 (선택)
                 </label>
-                <p className="text-[12px] text-muted mb-3">
+                <p className="text-small text-muted mb-3">
                   문제 사진이나 풀이 과정을 첨부하면 더 정확한 답변을 받을 수 있습니다.
                 </p>
                 <ImageUploader
@@ -178,11 +178,11 @@ export default function NewQuestionPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <Globe size={14} className="text-teal" />
-                      <span className="text-[14px] font-medium text-ink">
+                      <span className="text-body font-medium text-ink">
                         다른 학생에게 공개
                       </span>
                     </div>
-                    <p className="text-[12px] text-muted mt-1">
+                    <p className="text-small text-muted mt-1">
                       공개하면 다른 재원생들도 질문과 답변을 볼 수 있습니다.
                     </p>
                   </div>
@@ -191,10 +191,10 @@ export default function NewQuestionPage() {
 
               {/* 안내 */}
               <div className="bg-stone p-4 border border-rule">
-                <h3 className="text-[13px] font-medium text-ink mb-2">
+                <h3 className="text-secondary font-medium text-ink mb-2">
                   질문 작성 안내
                 </h3>
-                <ul className="text-[12px] text-muted space-y-1">
+                <ul className="text-small text-muted space-y-1">
                   <li>• 질문은 멘토에게 알림이 발송됩니다.</li>
                   <li>• 답변이 등록되면 알림을 받을 수 있습니다.</li>
                   <li>• 답변이 달린 질문은 수정/삭제가 불가합니다.</li>

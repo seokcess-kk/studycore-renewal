@@ -101,7 +101,7 @@ export default function NoticeDetailPage({
           <div className="max-w-3xl">
             <Link
               href={ROUTES.NOTICES}
-              className="inline-flex items-center gap-2 text-[13px] text-white/60 hover:text-white mb-6 transition-colors"
+              className="inline-flex items-center gap-2 text-secondary text-white/60 hover:text-white mb-6 transition-colors"
             >
               <ArrowLeft size={14} />
               목록으로
@@ -109,7 +109,7 @@ export default function NoticeDetailPage({
 
             <div className="flex items-center gap-2 mb-4">
               <span
-                className={`inline-block text-[11px] font-medium px-2 py-0.5 ${
+                className={`inline-block text-caption font-medium px-2 py-0.5 ${
                   notice.category === "urgent"
                     ? "bg-red-500/20 text-red-300"
                     : "bg-white/10 text-white/60"
@@ -123,7 +123,7 @@ export default function NoticeDetailPage({
               {notice.title}
             </h1>
 
-            <div className="flex flex-wrap gap-4 mt-4 text-[13px] text-white/50">
+            <div className="flex flex-wrap gap-4 mt-4 text-secondary text-white/50">
               <span className="flex items-center gap-1.5">
                 <User size={14} />
                 {notice.author?.name || "관리자"}
@@ -148,7 +148,7 @@ export default function NoticeDetailPage({
         <section className="py-12 px-6 md:px-13">
           <div className="max-w-3xl">
             <div
-              className="prose prose-sm max-w-none text-[15px] leading-relaxed text-ink/80"
+              className="prose prose-sm max-w-none text-reading leading-relaxed text-ink/80"
               dangerouslySetInnerHTML={{ __html: notice.content }}
             />
           </div>
@@ -194,7 +194,7 @@ export default function NoticeDetailPage({
           <div className="max-w-3xl border-t border-rule pt-8">
             <Link
               href={ROUTES.NOTICES}
-              className="inline-flex items-center gap-2 px-6 py-3 border border-rule text-[14px] font-medium text-ink hover:border-navy transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 border border-rule text-body font-medium text-ink hover:border-navy transition-colors"
             >
               <ArrowLeft size={14} />
               목록으로 돌아가기

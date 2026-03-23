@@ -89,13 +89,13 @@ export default function ReviewsPage() {
         <div className="max-w-4xl mx-auto px-6">
           {/* 헤더 */}
           <div className="text-center mb-8">
-            <span className="text-teal text-[13px] font-medium tracking-wider uppercase">
+            <span className="text-teal text-secondary font-medium tracking-wider uppercase">
               Reviews
             </span>
             <h1 className="font-serif text-2xl md:text-3xl font-bold text-ink mt-2">
               수강 후기
             </h1>
-            <p className="text-muted text-[14px] mt-3">
+            <p className="text-muted text-body mt-3">
               스터디코어를 경험한 학생과 학부모님의 진솔한 이야기
             </p>
           </div>
@@ -113,7 +113,7 @@ export default function ReviewsPage() {
                       {renderStars(Math.round(stats.averageRating))}
                     </div>
                   </div>
-                  <div className="text-[13px] text-muted">
+                  <div className="text-secondary text-muted">
                     총 {stats.total}개의 리뷰
                   </div>
                 </div>
@@ -126,7 +126,7 @@ export default function ReviewsPage() {
                       stats.total > 0 ? (count / stats.total) * 100 : 0;
                     return (
                       <div key={rating} className="text-center">
-                        <div className="text-[11px] text-muted mb-1">
+                        <div className="text-caption text-muted mb-1">
                           {rating}점
                         </div>
                         <div className="w-8 h-16 bg-stone relative">
@@ -135,7 +135,7 @@ export default function ReviewsPage() {
                             style={{ height: `${percentage}%` }}
                           />
                         </div>
-                        <div className="text-[11px] text-muted mt-1">
+                        <div className="text-caption text-muted mt-1">
                           {count}
                         </div>
                       </div>
@@ -154,7 +154,7 @@ export default function ReviewsPage() {
                   setCategory("");
                   setPage(1);
                 }}
-                className={`px-3 py-1.5 text-[13px] font-medium border transition-colors ${
+                className={`px-3 py-1.5 text-secondary font-medium border transition-colors ${
                   category === ""
                     ? "bg-navy text-white border-navy"
                     : "bg-white text-muted border-rule hover:border-navy"
@@ -170,7 +170,7 @@ export default function ReviewsPage() {
                       setCategory(cat);
                       setPage(1);
                     }}
-                    className={`px-3 py-1.5 text-[13px] font-medium border transition-colors ${
+                    className={`px-3 py-1.5 text-secondary font-medium border transition-colors ${
                       category === cat
                         ? "bg-navy text-white border-navy"
                         : "bg-white text-muted border-rule hover:border-navy"
@@ -202,7 +202,7 @@ export default function ReviewsPage() {
           ) : reviews.length === 0 ? (
             <div className="bg-white border border-rule p-12 text-center">
               <MessageSquare size={48} className="mx-auto text-rule mb-4" />
-              <p className="text-muted text-[14px]">
+              <p className="text-muted text-body">
                 아직 등록된 후기가 없습니다.
               </p>
             </div>
@@ -216,16 +216,16 @@ export default function ReviewsPage() {
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-ink text-[15px]">
+                        <span className="font-medium text-ink text-reading">
                           {review.author_name}
                         </span>
-                        <span className="px-2 py-0.5 bg-stone text-[11px] text-muted">
+                        <span className="px-2 py-0.5 bg-stone text-caption text-muted">
                           {CATEGORY_LABELS[review.category]}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         {renderStars(review.rating)}
-                        <span className="text-[12px] text-muted">
+                        <span className="text-small text-muted">
                           {new Date(review.created_at).toLocaleDateString(
                             "ko-KR"
                           )}
@@ -233,13 +233,13 @@ export default function ReviewsPage() {
                       </div>
                     </div>
                     {review.is_featured && (
-                      <span className="px-2 py-0.5 bg-teal/10 text-teal text-[11px] font-medium">
+                      <span className="px-2 py-0.5 bg-teal/10 text-teal text-caption font-medium">
                         추천
                       </span>
                     )}
                   </div>
 
-                  <p className="text-[14px] text-ink leading-relaxed whitespace-pre-wrap">
+                  <p className="text-body text-ink leading-relaxed whitespace-pre-wrap">
                     {review.content}
                   </p>
 
@@ -280,7 +280,7 @@ export default function ReviewsPage() {
               >
                 <ChevronLeft size={16} />
               </button>
-              <span className="px-4 text-[13px]">
+              <span className="px-4 text-secondary">
                 {page} / {totalPages}
               </span>
               <button

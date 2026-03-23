@@ -139,13 +139,13 @@ export default function LunchPage() {
         {/* 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
           <div className="max-w-3xl">
-            <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-3">
+            <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-3">
               Meal / 도시락 신청
             </span>
             <h1 className="font-serif text-[clamp(24px,4vw,36px)] font-bold text-white">
               도시락 신청
             </h1>
-            <p className="mt-3 text-white/50 text-[15px]">
+            <p className="mt-3 text-white/50 text-reading">
               원하는 요일과 식사를 선택해주세요.
             </p>
           </div>
@@ -162,10 +162,10 @@ export default function LunchPage() {
             /* 에러 상태 */
             <div className="bg-white border border-red-200 p-12 text-center">
               <AlertCircle size={48} className="mx-auto mb-4 text-red-400" />
-              <h2 className="text-[17px] font-bold text-ink mb-2">
+              <h2 className="text-subhead font-bold text-ink mb-2">
                 오류가 발생했습니다
               </h2>
-              <p className="text-[14px] text-muted mb-4">{error}</p>
+              <p className="text-body text-muted mb-4">{error}</p>
               <Button
                 variant="secondary"
                 size="sm"
@@ -178,10 +178,10 @@ export default function LunchPage() {
             /* 활성 기간 없음 */
             <div className="bg-white border border-rule p-12 text-center">
               <Calendar size={48} className="mx-auto mb-4 text-muted opacity-50" />
-              <h2 className="text-[17px] font-bold text-ink mb-2">
+              <h2 className="text-subhead font-bold text-ink mb-2">
                 현재 신청 가능한 기간이 없습니다
               </h2>
-              <p className="text-[14px] text-muted">
+              <p className="text-body text-muted">
                 새로운 신청 기간이 열리면 공지사항을 통해 안내드리겠습니다.
               </p>
             </div>
@@ -192,10 +192,10 @@ export default function LunchPage() {
                 <div className="bg-teal/10 border border-teal p-4 mb-6 flex items-center gap-3">
                   <CheckCircle2 size={20} className="text-teal flex-shrink-0" />
                   <div>
-                    <p className="text-[14px] font-bold text-ink">
+                    <p className="text-body font-bold text-ink">
                       신청 완료 ({selectionCount}끼)
                     </p>
-                    <p className="text-[12px] text-muted">
+                    <p className="text-small text-muted">
                       {new Date(application.created_at).toLocaleDateString("ko-KR")} 신청
                       {application.updated_at !== application.created_at &&
                         ` · ${new Date(application.updated_at).toLocaleDateString("ko-KR")} 수정`}
@@ -209,10 +209,10 @@ export default function LunchPage() {
               <div className="bg-white border border-rule p-4 md:p-6 mb-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-[16px] font-bold text-ink mb-1">
+                    <h2 className="text-subhead font-bold text-ink mb-1">
                       {period.title}
                     </h2>
-                    <div className="flex flex-wrap items-center gap-3 text-[13px] text-muted">
+                    <div className="flex flex-wrap items-center gap-3 text-secondary text-muted">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} />
                         도시락 {period.start_date} ~ {period.end_date}
@@ -230,7 +230,7 @@ export default function LunchPage() {
                     {period.meal_types.map((type) => (
                       <span
                         key={type}
-                        className="text-[12px] px-2 py-1 bg-stone text-ink"
+                        className="text-small px-2 py-1 bg-stone text-ink"
                       >
                         {MEAL_TYPE_LABELS[type as MealTypeValue]}
                       </span>
@@ -269,7 +269,7 @@ export default function LunchPage() {
                       .map(([key, meals]) => (
                         <span
                           key={key}
-                          className="text-[12px] px-2 py-1 bg-stone text-ink"
+                          className="text-small px-2 py-1 bg-stone text-ink"
                         >
                           {period.selection_type === "weekday"
                             ? ["일", "월", "화", "수", "목", "금", "토"][parseInt(key)]
@@ -283,8 +283,8 @@ export default function LunchPage() {
 
               {/* 안내 */}
               <div className="p-4 bg-navy/5 border border-navy/10 mb-24">
-                <h3 className="text-[13px] font-bold text-ink mb-2">안내사항</h3>
-                <ul className="text-[12px] text-muted space-y-1">
+                <h3 className="text-secondary font-bold text-ink mb-2">안내사항</h3>
+                <ul className="text-small text-muted space-y-1">
                   <li>• 신청 기간 내에는 언제든 수정 가능합니다.</li>
                   <li>• 신청 기간이 종료되면 수정이 불가합니다.</li>
                   <li>• 문의사항은 관리실로 연락해주세요.</li>
@@ -300,12 +300,12 @@ export default function LunchPage() {
         <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-rule px-6 py-3">
           <div className="max-w-3xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-[14px] text-muted">선택</span>
+              <span className="text-body text-muted">선택</span>
               <span className="text-[18px] font-bold text-ink">
                 {selectionCount}끼
               </span>
               {application && !hasChanges && (
-                <span className="text-[12px] text-teal font-medium flex items-center gap-1">
+                <span className="text-small text-teal font-medium flex items-center gap-1">
                   <CheckCircle2 size={12} />
                   저장됨
                 </span>

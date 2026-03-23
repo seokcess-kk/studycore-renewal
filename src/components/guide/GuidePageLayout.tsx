@@ -132,13 +132,13 @@ export function GuidePageLayout({
         {/* 헤더 + 검색 */}
         <section className="bg-navy py-16 px-6 md:px-13">
           <div className="max-w-5xl mx-auto">
-            <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase block mb-4">
+            <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
               {label}
             </span>
             <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
               {title}
             </h1>
-            <p className="mt-4 text-white/50 text-[15px]">{subtitle}</p>
+            <p className="mt-4 text-white/50 text-reading">{subtitle}</p>
 
             {/* 검색바 */}
             <div className="mt-8 relative max-w-md">
@@ -151,7 +151,7 @@ export function GuidePageLayout({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="검색어를 입력하세요..."
-                className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 text-white text-[14px] placeholder:text-white/30 focus:outline-none focus:border-teal"
+                className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 text-white text-body placeholder:text-white/30 focus:outline-none focus:border-teal"
               />
             </div>
           </div>
@@ -181,7 +181,7 @@ export function GuidePageLayout({
                     onClick={() => setMobileTocOpen(!mobileTocOpen)}
                     className="w-full flex items-center justify-between p-4 border border-rule bg-white text-left"
                   >
-                    <span className="text-[14px] font-medium text-ink truncate">
+                    <span className="text-body font-medium text-ink truncate">
                       {activeSection?.title || "섹션 선택"}
                     </span>
                     <ChevronDown
@@ -195,7 +195,7 @@ export function GuidePageLayout({
                     <div className="border border-t-0 border-rule bg-white max-h-[60vh] overflow-y-auto">
                       {Object.entries(groupedSections).map(([category, items]) => (
                         <div key={category}>
-                          <div className="px-4 py-2 bg-stone text-[11px] font-mono font-bold text-muted uppercase tracking-wider">
+                          <div className="px-4 py-2 bg-stone text-caption font-mono font-bold text-muted uppercase tracking-wider">
                             {category}
                           </div>
                           {items.map((section) => {
@@ -211,7 +211,7 @@ export function GuidePageLayout({
                                 }`}
                               >
                                 <Icon size={16} className="flex-shrink-0" />
-                                <span className="text-[14px] truncate">
+                                <span className="text-body truncate">
                                   {section.title}
                                 </span>
                               </button>
@@ -229,7 +229,7 @@ export function GuidePageLayout({
                     <div className="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto border border-rule bg-white">
                       {Object.entries(groupedSections).map(([category, items]) => (
                         <div key={category}>
-                          <div className="px-4 py-2.5 bg-stone text-[11px] font-mono font-bold text-muted uppercase tracking-wider border-b border-rule">
+                          <div className="px-4 py-2.5 bg-stone text-caption font-mono font-bold text-muted uppercase tracking-wider border-b border-rule">
                             {category}
                           </div>
                           {items.map((section) => {
@@ -245,7 +245,7 @@ export function GuidePageLayout({
                                 }`}
                               >
                                 <Icon size={14} className="flex-shrink-0" />
-                                <span className="text-[13px] truncate">
+                                <span className="text-secondary truncate">
                                   {section.title}
                                 </span>
                               </button>
@@ -262,7 +262,7 @@ export function GuidePageLayout({
                       <article className="border border-rule bg-white">
                         {/* 섹션 헤더 */}
                         <div className="p-6 md:p-8 border-b border-rule">
-                          <span className="font-mono text-[12px] text-teal font-bold">
+                          <span className="font-mono text-small text-teal font-bold">
                             {String(activeSection.order_index).padStart(2, "0")}
                           </span>
                           <h2 className="mt-2 font-serif text-[clamp(22px,3vw,28px)] font-bold text-ink leading-tight">
@@ -280,7 +280,7 @@ export function GuidePageLayout({
                               }}
                             />
                           ) : (
-                            <div className="text-[14px] text-ink leading-relaxed whitespace-pre-wrap">
+                            <div className="text-body text-ink leading-relaxed whitespace-pre-wrap">
                               {activeSection.content}
                             </div>
                           )}
@@ -291,7 +291,7 @@ export function GuidePageLayout({
                           {prevSection ? (
                             <button
                               onClick={() => handleSelectSection(prevSection.id)}
-                              className="flex items-center gap-2 text-muted hover:text-teal transition-colors text-[14px]"
+                              className="flex items-center gap-2 text-muted hover:text-teal transition-colors text-body"
                             >
                               <ChevronLeft size={16} />
                               <span className="truncate max-w-[200px]">
@@ -304,7 +304,7 @@ export function GuidePageLayout({
                           {nextSection ? (
                             <button
                               onClick={() => handleSelectSection(nextSection.id)}
-                              className="flex items-center gap-2 text-muted hover:text-teal transition-colors text-[14px] ml-auto"
+                              className="flex items-center gap-2 text-muted hover:text-teal transition-colors text-body ml-auto"
                             >
                               <span className="truncate max-w-[200px]">
                                 {nextSection.title}

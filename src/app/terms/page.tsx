@@ -21,7 +21,7 @@ export default function TermsPage() {
             <h1 className="font-serif text-3xl font-bold text-ink mb-4">
               이용약관
             </h1>
-            <p className="text-muted text-[14px]">
+            <p className="text-muted text-body">
               최종 수정일: 2025년 1월 1일
             </p>
           </div>
@@ -120,10 +120,10 @@ export default function TermsPage() {
             </TermsSection>
 
             <div className="mt-12 p-6 bg-stone">
-              <p className="text-[14px] text-muted">
+              <p className="text-body text-muted">
                 본 약관에 대한 문의사항이 있으시면 아래 연락처로 문의해 주세요.
               </p>
-              <p className="mt-2 text-[14px]">
+              <p className="mt-2 text-body">
                 <strong>스터디코어 1.0</strong>
                 <br />
                 전화: {CONTACT.phone}
@@ -149,7 +149,7 @@ function TermsSection({
   return (
     <div className="mb-8">
       <h2 className="text-lg font-bold text-ink mb-3">{title}</h2>
-      <div className="text-[15px] text-ink/70 leading-relaxed space-y-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 [&_li]:text-[14px]">
+      <div className="text-reading text-ink/70 leading-relaxed space-y-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 [&_li]:text-body">
         {children}
       </div>
     </div>
