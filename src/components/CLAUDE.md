@@ -59,13 +59,14 @@
 | `section-md` | 80px (5rem) | About 등 라이트 섹션 |
 | `section-lg` | 112px (7rem) | 마케팅 대형 섹션 |
 
-### 컨테이너 너비 (`max-width` + `margin-inline: auto`)
+### 컨테이너 너비 (Tailwind `max-w-*` + `mx-auto`)
 | 클래스 | 너비 | 용도 |
 |--------|------|------|
-| `container-narrow` | 448px (28rem) | 로그인/등록 폼 |
-| `container-content` | 768px (48rem) | 약관/공지/블로그 본문 |
-| `container-wide` | 1024px (64rem) | 시스템/가이드, 어드민 넓은 폼 |
-| `container-full` | 1344px (84rem) | 팀/시설 그리드 |
+| `max-w-md mx-auto` | 448px | 로그인/등록 폼 |
+| `max-w-3xl mx-auto` | 768px | 약관/공지/블로그 본문 |
+| `max-w-4xl mx-auto` | 1024px | 시스템/가이드 |
+| `max-w-6xl mx-auto` | 1344px | 팀/시설 그리드 |
+※ 어드민 내부: `mx-auto` 생략 (좌측 정렬), 상세 → `admin/CLAUDE.md`
 
 ### 페이지 본문 래퍼
 | 클래스 | 효과 | 대체 패턴 |

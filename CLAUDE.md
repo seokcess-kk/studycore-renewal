@@ -73,7 +73,7 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 - 폰트 사이즈 → `text-label`~`text-subhead` / `text-fluid-*` 토큰 사용 (`text-[Npx]` 금지)
 - 섹션 패딩 → `section-sm`/`section-md`/`section-lg` 사용
 - 페이지 본문 → `page-body` 사용 (`pt-24 pb-20` 금지)
-- 컨테이너 너비 → `container-narrow`/`container-content`/`container-wide`/`container-full` 사용
+- 컨테이너 너비 → Tailwind `max-w-md`/`max-w-3xl`/`max-w-4xl`/`max-w-6xl` + `mx-auto` 사용
 - line-height → `leading-heading`/`leading-ui`/`leading-prose` 사용 (`leading-[N]` 금지)
 - letter-spacing → `tracking-heading`/`tracking-cta`/`tracking-label` 사용 (`tracking-[Nem]` 금지)
 
