@@ -118,6 +118,7 @@ function FAQItem({
     <div className={`border-t border-rule overflow-hidden ${isLast ? "border-b" : ""}`}>
       <button
         onClick={onToggle}
+        aria-expanded={isOpen}
         className="w-full py-7 flex justify-between items-center text-left gap-6"
       >
         <span className="font-serif text-[17px] font-bold text-ink tracking-[-0.01em] leading-[1.4]">

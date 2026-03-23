@@ -59,11 +59,12 @@ export function PasswordChangeForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="px-4 pb-4 space-y-4">
           {/* 현재 비밀번호 */}
           <div>
-            <label className="block text-[13px] text-muted mb-1">
+            <label htmlFor="pw-current" className="block text-[13px] text-muted mb-1">
               현재 비밀번호
             </label>
             <div className="relative">
               <input
+                id="pw-current"
                 type={showCurrent ? "text" : "password"}
                 {...register("currentPassword")}
                 className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-[14px] focus:border-navy focus:outline-none pr-10"
@@ -71,6 +72,7 @@ export function PasswordChangeForm() {
               <button
                 type="button"
                 onClick={() => setShowCurrent(!showCurrent)}
+                aria-label={showCurrent ? "비밀번호 숨기기" : "비밀번호 보기"}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted"
               >
                 {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -85,11 +87,12 @@ export function PasswordChangeForm() {
 
           {/* 새 비밀번호 */}
           <div>
-            <label className="block text-[13px] text-muted mb-1">
+            <label htmlFor="pw-new" className="block text-[13px] text-muted mb-1">
               새 비밀번호
             </label>
             <div className="relative">
               <input
+                id="pw-new"
                 type={showNew ? "text" : "password"}
                 {...register("newPassword")}
                 className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-[14px] focus:border-navy focus:outline-none pr-10"
@@ -97,6 +100,7 @@ export function PasswordChangeForm() {
               <button
                 type="button"
                 onClick={() => setShowNew(!showNew)}
+                aria-label={showNew ? "비밀번호 숨기기" : "비밀번호 보기"}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted"
               >
                 {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -111,10 +115,11 @@ export function PasswordChangeForm() {
 
           {/* 비밀번호 확인 */}
           <div>
-            <label className="block text-[13px] text-muted mb-1">
+            <label htmlFor="pw-confirm" className="block text-[13px] text-muted mb-1">
               새 비밀번호 확인
             </label>
             <input
+              id="pw-confirm"
               type="password"
               {...register("confirmPassword")}
               className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-[14px] focus:border-navy focus:outline-none"

@@ -167,10 +167,11 @@ function LoginContent() {
           {loginType === "staff" && (
             <form onSubmit={handleSubmit(onStaffSubmit)} className="space-y-6">
               <div>
-                <label className="block mb-2 text-[14px] font-medium text-ink">
+                <label htmlFor="staff-username" className="block mb-2 text-[14px] font-medium text-ink">
                   아이디
                 </label>
                 <input
+                  id="staff-username"
                   type="text"
                   placeholder="staff_id"
                   {...register("username")}
@@ -184,10 +185,11 @@ function LoginContent() {
               </div>
 
               <div>
-                <label className="block mb-2 text-[14px] font-medium text-ink">
+                <label htmlFor="staff-password" className="block mb-2 text-[14px] font-medium text-ink">
                   비밀번호
                 </label>
                 <input
+                  id="staff-password"
                   type="password"
                   placeholder="••••••••"
                   {...register("password")}

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { getActivePopups } from "@/domains/popup/service";
 import type { Popup } from "@/domains/popup/model";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 function isDismissedToday(popupId: string): boolean {
   const key = `popup_dismissed_${popupId}`;
@@ -24,6 +25,7 @@ function dismissToday(popupId: string) {
 export function PopupModal() {
   const [popup, setPopup] = useState<Popup | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const focusTrapRef = useFocusTrap(isOpen);
 
   useEffect(() => {
     async function loadPopup() {
@@ -61,6 +63,10 @@ export function PopupModal() {
           onClick={handleClose}
         >
           <motion.div
+            ref={focusTrapRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="popup-modal-title"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
@@ -71,6 +77,7 @@ export function PopupModal() {
             {/* 닫기 버튼 */}
             <button
               onClick={handleClose}
+              aria-label="닫기"
               className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center bg-ink/60 text-white hover:bg-ink transition-colors"
             >
               <X className="h-4 w-4" />
@@ -89,7 +96,7 @@ export function PopupModal() {
 
             {/* 콘텐츠 */}
             <div className="p-6">
-              <h3 className="mb-2 font-serif text-lg font-bold text-navy">
+              <h3 id="popup-modal-title" className="mb-2 font-serif text-lg font-bold text-navy">
                 {popup.title}
               </h3>
               {popup.content && (

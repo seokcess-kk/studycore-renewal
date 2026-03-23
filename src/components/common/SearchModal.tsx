@@ -7,6 +7,7 @@ import { Search, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { search } from "@/domains/search/service";
 import type { SearchResult } from "@/domains/search/model";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [focusIndex, setFocusIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const focusTrapRef = useFocusTrap(isOpen);
   const router = useRouter();
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -116,6 +118,10 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
           }}
         >
           <motion.div
+            ref={focusTrapRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="검색"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -136,6 +142,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
               <button
                 type="button"
                 onClick={onClose}
+                aria-label="검색 닫기"
                 className="text-muted hover:text-ink p-1"
               >
                 <X size={16} />

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { X, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/common/Button";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -33,6 +34,8 @@ export function ConfirmModal({
 }: ConfirmModalProps) {
   const displayMessage = description || message || "";
   const displayVariant = confirmVariant || variant;
+  const focusTrapRef = useFocusTrap(isOpen);
+
   // ESC 키로 닫기
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -60,7 +63,13 @@ export function ConfirmModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      ref={focusTrapRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-modal-title"
+      className="fixed inset-0 z-50 flex items-center justify-center"
+    >
       {/* 배경 오버레이 */}
       <div
         className="absolute inset-0 bg-black/50"
@@ -72,6 +81,7 @@ export function ConfirmModal({
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}
+          aria-label="닫기"
           className="absolute right-4 top-4 text-muted hover:text-ink"
         >
           <X className="h-5 w-5" />
@@ -99,7 +109,7 @@ export function ConfirmModal({
         )}
 
         {/* 타이틀 */}
-        <h2 className="mb-2 text-center font-serif text-xl font-bold text-ink">
+        <h2 id="confirm-modal-title" className="mb-2 text-center font-serif text-xl font-bold text-ink">
           {title}
         </h2>
 

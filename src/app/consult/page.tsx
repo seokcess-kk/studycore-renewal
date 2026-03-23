@@ -120,7 +120,7 @@ export default function ConsultPage() {
             <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight tracking-[-0.03em]">
               무료 상담 신청
             </h1>
-            <p className="mt-4 text-white/50 text-[15px] leading-relaxed">
+            <p className="mt-4 text-white/60 text-[15px] leading-relaxed">
               입소 상담, 시설 견학, 프로그램 문의 등 무엇이든 편하게
               문의해 주세요.
               <br />
@@ -136,10 +136,12 @@ export default function ConsultPage() {
               {/* 이름 */}
               <FormField
                 label="이름"
+                htmlFor="consult-name"
                 error={errors.name?.message}
                 required
               >
                 <input
+                  id="consult-name"
                   type="text"
                   placeholder="홍길동"
                   {...register("name")}
@@ -152,10 +154,12 @@ export default function ConsultPage() {
               {/* 연락처 */}
               <FormField
                 label="연락처"
+                htmlFor="consult-phone"
                 error={errors.phone?.message}
                 required
               >
                 <input
+                  id="consult-phone"
                   type="tel"
                   placeholder="010-0000-0000"
                   {...register("phone")}
@@ -168,9 +172,11 @@ export default function ConsultPage() {
               {/* 학교 및 학년 */}
               <FormField
                 label="학교 및 학년"
+                htmlFor="consult-school"
                 error={errors.school?.message}
               >
                 <input
+                  id="consult-school"
                   type="text"
                   placeholder="예: 광주고 2학년"
                   {...register("school")}
@@ -183,10 +189,12 @@ export default function ConsultPage() {
               {/* 상담 유형 */}
               <FormField
                 label="상담 유형"
+                htmlFor="consult-type"
                 error={errors.consultType?.message}
                 required
               >
                 <select
+                  id="consult-type"
                   {...register("consultType")}
                   className={`w-full px-4 py-3 border bg-white text-ink text-[15px] focus:outline-none transition-colors appearance-none ${
                     errors.consultType ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
@@ -205,8 +213,9 @@ export default function ConsultPage() {
               </FormField>
 
               {/* 문의 내용 */}
-              <FormField label="문의 내용" error={errors.message?.message}>
+              <FormField label="문의 내용" htmlFor="consult-message" error={errors.message?.message}>
                 <textarea
+                  id="consult-message"
                   placeholder="궁금하신 점을 자유롭게 적어주세요."
                   rows={4}
                   {...register("message")}
@@ -274,20 +283,22 @@ export default function ConsultPage() {
 
 function FormField({
   label,
+  htmlFor,
   error,
   required,
   children,
 }: {
   label: string;
+  htmlFor: string;
   error?: string;
   required?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="flex">
+      <label htmlFor={htmlFor} className="flex">
         <span className="text-[13px] font-bold text-ink tracking-tight">{label}</span>
-        {required && <span className="text-teal ml-1 text-[13px] font-bold">*</span>}
+        {required && <span className="text-teal ml-1 text-[13px] font-bold" aria-hidden="true">*</span>}
       </label>
       {children}
       {error && (

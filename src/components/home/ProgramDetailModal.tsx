@@ -6,6 +6,7 @@ import { X, Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 import type { Program } from "@/domains/program/model";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return "";
@@ -25,6 +26,8 @@ export function ProgramDetailModal({
   program,
   onClose,
 }: ProgramDetailModalProps) {
+  const focusTrapRef = useFocusTrap(!!program);
+
   // ESC 키로 닫기
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -52,7 +55,13 @@ export function ProgramDetailModal({
   return (
     <AnimatePresence>
       {program && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8">
+        <div
+          ref={focusTrapRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="program-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
+        >
           {/* 배경 오버레이 */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -74,6 +83,7 @@ export function ProgramDetailModal({
             {/* 닫기 버튼 */}
             <button
               onClick={onClose}
+              aria-label="닫기"
               className="absolute right-4 top-4 z-20 w-8 h-8 flex items-center justify-center bg-white/80 border border-rule text-muted hover:text-ink transition-colors cursor-pointer"
             >
               <X size={16} />
@@ -134,7 +144,7 @@ export function ProgramDetailModal({
               </div>
 
               {/* 제목 */}
-              <h2 className="font-serif text-[clamp(22px,3vw,28px)] font-black text-ink tracking-[-0.02em] leading-tight mb-6">
+              <h2 id="program-modal-title" className="font-serif text-[clamp(22px,3vw,28px)] font-black text-ink tracking-[-0.02em] leading-tight mb-6">
                 {program.title}
               </h2>
 
