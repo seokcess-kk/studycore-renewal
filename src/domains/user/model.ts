@@ -104,12 +104,14 @@ export const adminUpdateMemberSchema = z.object({
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 
-// 연락처 수정 스키마 (마이페이지용)
+// 내 정보 수정 스키마 (마이페이지용)
 export const updateContactSchema = z.object({
   phone: z
     .string()
     .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다")
     .or(z.literal("")),
+  school: z.string().optional(),
+  grade: z.enum(["1", "2", "3", ""]).optional(),
   parent_phone: z
     .string()
     .regex(/^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/, "올바른 전화번호 형식이 아닙니다")
