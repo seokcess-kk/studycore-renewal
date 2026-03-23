@@ -205,7 +205,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="text-[14px] text-white/40 hover:text-white/70 transition-colors"
+                    className="text-[14px] text-white/60 hover:text-white/80 transition-colors"
                   >
                     로그아웃
                   </button>
@@ -255,7 +255,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <motion.div variants={itemVariants} className="border-t border-white/10 mt-6 pt-6">
                   <Link
                     href={ROUTES.LOGIN}
-                    className="block text-[14px] text-white/50 hover:text-white transition-colors"
+                    className="block text-[14px] text-white/60 hover:text-white transition-colors"
                   >
                     로그인
                   </Link>

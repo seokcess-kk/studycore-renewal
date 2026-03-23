@@ -116,7 +116,7 @@ export function ProgramsSection() {
             프로그램 안내
           </h2>
           <div className="flex-1" />
-          <p className="text-[13px] text-white/40 font-light max-w-[260px] md:text-right leading-[1.8]">
+          <p className="text-[13px] text-white/60 font-light max-w-[260px] md:text-right leading-[1.8]">
             스터디코어의 운영 프로그램을 확인하세요.
           </p>
         </motion.div>
@@ -145,7 +145,7 @@ export function ProgramsSection() {
                           모집중
                         </span>
                         {program.start_date && (
-                          <span className="flex items-center gap-1.5 font-mono text-[11px] text-white/40">
+                          <span className="flex items-center gap-1.5 font-mono text-[11px] text-white/60">
                             <Calendar size={12} />
                             {formatDate(program.start_date)}~
                           </span>
@@ -196,7 +196,7 @@ export function ProgramsSection() {
                             e.stopPropagation();
                             setSelectedProgram(program);
                           }}
-                          className="text-[13px] text-white/40 hover:text-teal border-b border-white/20 hover:border-teal pb-0.5 transition-colors duration-200 cursor-pointer"
+                          className="text-[13px] text-white/60 hover:text-teal border-b border-white/30 hover:border-teal pb-0.5 transition-colors duration-200 cursor-pointer"
                         >
                           상세 보기
                         </button>
@@ -226,7 +226,7 @@ export function ProgramsSection() {
                             <p className="font-mono text-[80px] font-bold text-teal/[0.08] leading-none">
                               SC
                             </p>
-                            <p className="font-mono text-[10px] text-white/20 tracking-[0.3em] uppercase mt-2">
+                            <p className="font-mono text-[10px] text-white/50 tracking-[0.3em] uppercase mt-2">
                               Studycore 1.0
                             </p>
                           </div>
@@ -249,7 +249,7 @@ export function ProgramsSection() {
             className="mt-12"
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-mono text-[11px] font-bold text-white/30 tracking-[0.2em] uppercase">
+              <h3 className="font-mono text-[11px] font-bold text-white/50 tracking-[0.2em] uppercase">
                 지난 프로그램
               </h3>
               {/* 슬라이드 컨트롤 */}
@@ -301,7 +301,7 @@ export function ProgramsSection() {
                     <span className="bg-white/10 px-2 py-0.5 text-[10px] font-bold text-white/50">
                       종료
                     </span>
-                    <span className="font-mono text-[10px] text-white/30">
+                    <span className="font-mono text-[10px] text-white/50">
                       {formatDate(program.start_date)}
                       {program.end_date && ` — ${formatDate(program.end_date)}`}
                     </span>
@@ -319,7 +319,7 @@ export function ProgramsSection() {
                           {bullets.slice(0, 2).map((b, i) => (
                             <div key={i} className="flex items-start gap-2">
                               <span className="mt-1.5 w-1 h-1 bg-teal/40 flex-shrink-0" />
-                              <span className="text-[12px] text-white/35 leading-relaxed">
+                              <span className="text-[12px] text-white/55 leading-relaxed">
                                 {b}
                               </span>
                             </div>
@@ -328,7 +328,7 @@ export function ProgramsSection() {
                       );
                     }
                     return (
-                      <p className="mt-2 text-[13px] text-white/30 leading-relaxed line-clamp-2">
+                      <p className="mt-2 text-[13px] text-white/50 leading-relaxed line-clamp-2">
                         {program.description.replace(/\n/g, " ")}
                       </p>
                     );

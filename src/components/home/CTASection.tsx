@@ -76,7 +76,7 @@ export function CTASection() {
               <br />
               신청
             </h2>
-            <p className="text-[15px] text-white/40 leading-[1.8] mb-10">
+            <p className="text-[15px] text-white/60 leading-[1.8] mb-10">
               입소 상담, 시설 견학, 프로그램 문의 등
               <br />
               무엇이든 편하게 문의해 주세요.
@@ -118,7 +118,7 @@ export function CTASection() {
 
             {/* CTA + 카카오 + QR */}
             <div className="border-t border-white/[0.08] pt-8 mt-auto">
-              <p className="text-white/50 text-[13px] leading-[1.7] mb-4">
+              <p className="text-white/60 text-[13px] leading-[1.7] mb-4">
                 원장님이 직접 확인하고 연락드립니다.
               </p>
 
@@ -166,7 +166,7 @@ export function CTASection() {
                     <MessageCircle size={13} />
                     카카오톡 문의
                   </span>
-                  <p className="text-[13px] text-white/40 leading-[1.7] font-light">
+                  <p className="text-[13px] text-white/60 leading-[1.7] font-light">
                     카카오톡 채널로 문의 주시면
                     <br />
                     가장 빠르고 정확하게 안내드릴 수 있습니다.
@@ -189,7 +189,7 @@ export function CTASection() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <MapPin size={14} className="text-teal" />
-              <span className="font-mono text-[10px] text-white/40 tracking-[0.18em] uppercase">
+              <span className="font-mono text-[10px] text-white/60 tracking-[0.18em] uppercase">
                 Location
               </span>
             </div>
@@ -241,7 +241,7 @@ function ContactItem({
         <span className="block font-mono text-[9px] font-bold text-teal/60 tracking-[0.18em] uppercase mb-1">
           {label}
         </span>
-        <span className="text-[14px] text-white/60 leading-[1.7]">
+        <span className="text-[14px] text-white/70 leading-[1.7]">
           {children}
         </span>
       </div>

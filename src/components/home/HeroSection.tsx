@@ -99,7 +99,7 @@ export function HeroSection() {
           {/* 대표문구 상단: 학습관리의 첫 번째 완성형 시스템 */}
           <motion.p
             variants={fadeUp}
-            className="font-serif text-[clamp(18px,3vw,28px)] font-medium text-white/50 tracking-[-0.02em] leading-[1.4] mb-2 md:mb-3"
+            className="font-serif text-[clamp(18px,3vw,28px)] font-medium text-white/60 tracking-[-0.02em] leading-[1.4] mb-2 md:mb-3"
           >
             학습관리의 첫 번째 완성형 시스템
           </motion.p>
@@ -139,7 +139,7 @@ export function HeroSection() {
               className="flex items-center gap-3 md:gap-4"
             >
               <span className="block w-1.5 h-1.5 bg-teal/40 shrink-0" />
-              <span className="text-[clamp(14px,1.8vw,18px)] text-white/55 font-light tracking-[-0.01em] leading-[1.6]">
+              <span className="text-[clamp(14px,1.8vw,18px)] text-white/65 font-light tracking-[-0.01em] leading-[1.6]">
                 {text}
               </span>
             </motion.li>
@@ -153,12 +153,12 @@ export function HeroSection() {
           transition={{ duration: 0.6, delay: 1.0 }}
           className="lg:hidden mt-10 max-w-md"
         >
-          <p className="text-[13px] text-white/35 font-light leading-[1.9]">
+          <p className="text-[13px] text-white/60 font-light leading-[1.9]">
             공부는 의지만으로 완성되지 않습니다.
             <br />
             환경과 관리, 그리고 루틴이 함께 설계되어야 합니다.
           </p>
-          <p className="text-[13px] text-white/35 font-light leading-[1.9] mt-4">
+          <p className="text-[13px] text-white/60 font-light leading-[1.9] mt-4">
             스터디코어 1.0은{" "}
             <strong className="text-white/65 font-medium">
               대표원장이 직접 설계·운영하는
@@ -181,12 +181,12 @@ export function HeroSection() {
             transition={{ duration: 0.7, delay: 0.9 }}
             className="p-14 lg:border-r border-white/[0.06]"
           >
-            <p className="text-[15px] leading-[2] text-white/40 font-light mb-4">
+            <p className="text-[15px] leading-[2] text-white/60 font-light mb-4">
               공부는 의지만으로 완성되지 않습니다.
               <br />
               환경과 관리, 그리고 루틴이 함께 설계되어야 합니다.
             </p>
-            <p className="text-[15px] leading-[2] text-white/40 font-light mb-10">
+            <p className="text-[15px] leading-[2] text-white/60 font-light mb-10">
               스터디코어 1.0은{" "}
               <strong className="text-white/75 font-medium">
                 대표원장이 직접 설계·운영하는
@@ -246,11 +246,11 @@ function MetaItem({ label, value, href }: { label: string; value: string; href?:
         {label}
       </span>
       {href ? (
-        <a href={href} target="_blank" rel="noopener noreferrer" className="text-[13px] text-white/45 font-light hover:text-teal cursor-pointer transition-colors duration-200">
+        <a href={href} target="_blank" rel="noopener noreferrer" className="text-[13px] text-white/60 font-light hover:text-teal cursor-pointer transition-colors duration-200">
           {value}
         </a>
       ) : (
-        <span className="text-[13px] text-white/45 font-light">{value}</span>
+        <span className="text-[13px] text-white/60 font-light">{value}</span>
       )}
     </div>
   );

@@ -128,7 +128,7 @@ export function TrustStrip() {
               >
                 <CountUpValue stat={stat} inView={inView} />
                 <motion.span
-                  className="font-mono text-[10px] text-white/40 tracking-[0.18em] uppercase mt-3"
+                  className="font-mono text-[10px] text-white/60 tracking-[0.18em] uppercase mt-3"
                   initial={{ opacity: 0 }}
                   animate={inView ? { opacity: 1 } : {}}
                   transition={{ duration: 0.4, delay: i * 0.1 + 0.3 }}

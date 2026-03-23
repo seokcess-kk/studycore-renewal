@@ -117,7 +117,13 @@ export default function RootLayout({
       <body
         className={`${notoSerifKR.variable} ${notoSansKR.variable} ${ibmPlexMono.variable} font-sans antialiased flex flex-col min-h-dvh`}
       >
-        <Providers>{children}</Providers>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[9999] focus:bg-navy focus:text-white focus:px-6 focus:py-3 focus:text-[14px] focus:font-bold"
+        >
+          본문으로 건너뛰기
+        </a>
+        <Providers><div id="main-content">{children}</div></Providers>
       </body>
     </html>
   );
