@@ -62,6 +62,8 @@ export default function PendingApprovalPage() {
             <p className="text-secondary text-muted mb-6">
               승인은 보통 1~2일 내에 완료됩니다.
               <br />
+              승인 후 다시 로그인하시면 서비스를 이용하실 수 있습니다.
+              <br />
               문의사항은 아래 채널로 연락해 주세요.
             </p>
 

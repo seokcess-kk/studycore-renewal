@@ -122,6 +122,7 @@ export default function AdminMemberDetailPage() {
         title: "상태 변경 완료",
         description: `회원 상태가 ${newStatus === "active" ? "활성" : newStatus === "inactive" ? "비활성" : "승인 대기"}으로 변경되었습니다.`,
       });
+
     } else {
       toast({
         variant: "error",
