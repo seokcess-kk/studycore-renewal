@@ -287,17 +287,18 @@ export async function createQuestion(
       .single();
 
     // 비동기로 알림 발송 (실패해도 질문 등록은 성공)
-    supabase.functions
-      .invoke("notify-question", {
-        body: {
-          questionId: question.id,
-          studentName: profile?.name || "학생",
-          title: validationResult.data.title,
-        },
-      })
-      .catch((err) => {
-        console.error("알림 발송 실패:", err);
-      });
+    fetch("/api/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "question",
+        questionId: question.id,
+        studentName: profile?.name || "학생",
+        title: validationResult.data.title,
+      }),
+    }).catch((err) => {
+      console.error("알림 발송 실패:", err);
+    });
 
     return { success: true, question };
   } catch (error) {
@@ -490,18 +491,19 @@ export async function createAnswer(
 
     if (questionData) {
       // 비동기로 알림 발송 (실패해도 답변 등록은 성공)
-      supabase.functions
-        .invoke("notify-answer", {
-          body: {
-            questionId: input.question_id,
-            studentId: questionData.author_id,
-            mentorName: mentorProfile?.name || "멘토",
-            questionTitle: questionData.title,
-          },
-        })
-        .catch((err) => {
-          console.error("알림 발송 실패:", err);
-        });
+      fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "answer",
+          questionId: input.question_id,
+          studentId: questionData.author_id,
+          mentorName: mentorProfile?.name || "멘토",
+          questionTitle: questionData.title,
+        }),
+      }).catch((err) => {
+        console.error("알림 발송 실패:", err);
+      });
     }
 
     return { success: true, answer };

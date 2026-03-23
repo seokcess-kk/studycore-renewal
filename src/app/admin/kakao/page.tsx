@@ -150,21 +150,20 @@ export default function AdminKakaoPage() {
     setSendResult(null);
 
     try {
-      const supabase = createClient();
+      const response = await fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "custom",
+          recipients: filteredTargets,
+          message: pendingSendData.message.trim(),
+        }),
+      });
 
-      const { data: resData, error } = await supabase.functions.invoke(
-        "send-kakao-alimtalk",
-        {
-          body: {
-            type: "custom",
-            recipients: filteredTargets,
-            message: pendingSendData.message.trim(),
-          },
-        }
-      );
+      const resData = await response.json();
 
-      if (error) {
-        throw error;
+      if (!response.ok || !resData.success) {
+        throw new Error(resData.error || "발송 실패");
       }
 
       setSendResult({

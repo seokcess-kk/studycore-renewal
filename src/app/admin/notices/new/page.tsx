@@ -85,18 +85,25 @@ export default function AdminNoticeNewPage() {
       if (publish && alimtalkTarget !== "none" && result.notice) {
         try {
           const includeParents = alimtalkTarget === "parents";
-          await supabase.functions.invoke("send-kakao-alimtalk", {
-            body: {
+          const notifyRes = await fetch("/api/notify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
               type: "notice",
               noticeId: result.notice.id,
               noticeTitle: data.title,
               includeParents,
-            },
+            }),
           });
-          toast({
-            variant: "success",
-            description: `알림톡 발송을 요청했습니다. (대상: ${includeParents ? "재원생 + 학부모" : "재원생 전체"})`,
-          });
+          const notifyResult = await notifyRes.json();
+          if (notifyResult.success) {
+            toast({
+              variant: "success",
+              description: `알림톡 발송을 요청했습니다. (대상: ${includeParents ? "재원생 + 학부모" : "재원생 전체"})`,
+            });
+          } else {
+            throw new Error(notifyResult.error);
+          }
         } catch (err) {
           console.error("알림톡 발송 실패:", err);
           toast({
