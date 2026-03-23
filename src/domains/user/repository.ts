@@ -21,12 +21,9 @@ export async function getProfileById(
     .from("profiles")
     .select("*")
     .eq("id", userId)
-    .single();
+    .maybeSingle();
 
   if (error) {
-    if (error.code === "PGRST116") {
-      return null;
-    }
     throw new Error(`프로필 조회 실패: ${error.message}`);
   }
 

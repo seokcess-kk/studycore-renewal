@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
       .from("profiles")
       .select("status")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     // 상태 불일치 시 홈으로 리다이렉트
     if (pathname === "/pending-approval" && profile?.status !== "pending") {
@@ -73,7 +73,7 @@ export async function middleware(request: NextRequest) {
       .from("profiles")
       .select("role, status")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     if (!profile) {
       // 프로필이 없으면 회원가입 페이지로 (신규 카카오 가입)
