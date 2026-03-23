@@ -90,7 +90,6 @@ serve(async (req: Request) => {
         variables: {
           학생이름: body.studentName,
           제목: body.title,
-          질문ID: body.questionId,
         },
         fallbackMessage: smsMessage,
       });

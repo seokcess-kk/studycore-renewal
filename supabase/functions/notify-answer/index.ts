@@ -112,7 +112,6 @@ serve(async (req: Request) => {
       variables: {
         제목: body.questionTitle || "질문",
         멘토이름: body.mentorName,
-        질문ID: body.questionId,
       },
       fallbackMessage: smsMessage,
     });
