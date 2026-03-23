@@ -85,6 +85,8 @@ export async function POST(request: NextRequest) {
       edgeFunctionBody = {
         type: "notice",
         recipients,
+        noticeTitle: data.noticeTitle,
+        noticeUrl,
         message: `[스터디코어] 새 공지사항: ${data.noticeTitle}\n\n${noticeUrl}`,
       };
     }

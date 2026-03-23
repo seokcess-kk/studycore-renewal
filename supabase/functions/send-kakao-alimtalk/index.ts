@@ -1,11 +1,12 @@
 /**
- * 수동 알림톡 발송 Edge Function
+ * 알림톡/SMS 발송 Edge Function
  *
- * 트리거: /admin/kakao에서 수동 발송
- * 발송 대상: 선택된 수신자 목록
+ * type=notice → 알림톡 템플릿(SC_NOTICE_STUDENT) + SMS fallback
+ * type=custom → SMS 대량 발송
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { sendAlimtalk, ALIMTALK_TEMPLATES } from "../_shared/alimtalk.ts";
 import { sendBulkSMSSameMessage } from "../_shared/sms.ts";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { logNotificationsBatch, NotificationLogEntry } from "../_shared/notification-logger.ts";
@@ -17,118 +18,132 @@ interface Recipient {
   isParent?: boolean;
 }
 
-interface SendAlimtalkRequest {
+interface SendRequest {
   type: string;
   recipients: Recipient[];
   message: string;
-  sentBy?: string; // 발송자 ID
+  noticeTitle?: string;
+  noticeUrl?: string;
+  sentBy?: string;
 }
 
 serve(async (req: Request) => {
-  // CORS 처리
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 
   try {
-    const body: SendAlimtalkRequest = await req.json();
+    const body: SendRequest = await req.json();
 
-    // 필수 필드 검증
     if (!body.recipients || body.recipients.length === 0) {
       return new Response(
         JSON.stringify({ error: "발송 대상이 없습니다." }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     if (!body.message || body.message.trim() === "") {
       return new Response(
         JSON.stringify({ error: "메시지를 입력해주세요." }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // 메시지 앞에 [스터디코어] 태그 추가
     const formattedMessage = body.message.startsWith("[스터디코어]")
       ? body.message
       : `[스터디코어] ${body.message}`;
 
-    // 전화번호 목록 추출
-    const phones = body.recipients.map((r) => r.phone);
+    let sentCount = 0;
+    let failedCount = 0;
+    const logEntries: NotificationLogEntry[] = [];
 
-    // 배치 API로 대량 발송 (동일 메시지)
-    const result = await sendBulkSMSSameMessage(phones, formattedMessage);
+    // ─── notice 타입: 알림톡 템플릿 개별 발송 ───
+    if (body.type === "notice" && body.noticeTitle) {
+      for (const r of body.recipients) {
+        const result = await sendAlimtalk({
+          to: r.phone,
+          templateCode: ALIMTALK_TEMPLATES.NOTICE_STUDENT,
+          variables: {
+            제목: body.noticeTitle,
+            URL: body.noticeUrl || "https://www.studycore.kr/notices",
+          },
+          fallbackMessage: formattedMessage,
+        });
 
-    // 발송 로그 생성 (배치)
-    const failedPhones = new Set(
-      result.errors.map((e) => e.phone?.replace(/[^0-9]/g, ""))
-    );
+        if (result.success) {
+          sentCount++;
+        } else {
+          failedCount++;
+        }
 
-    const logEntries: NotificationLogEntry[] = body.recipients.map((r) => {
-      const normalizedPhone = r.phone.replace(/[^0-9]/g, "");
-      const isFailed = failedPhones.has(normalizedPhone);
-      const errorInfo = result.errors.find(
-        (e) => e.phone?.replace(/[^0-9]/g, "") === normalizedPhone
+        logEntries.push({
+          type: (result.sentVia || "alimtalk") as "sms" | "alimtalk",
+          recipient_phone: r.phone,
+          recipient_name: r.name,
+          message: formattedMessage,
+          template_code: ALIMTALK_TEMPLATES.NOTICE_STUDENT,
+          status: result.success ? "sent" : "failed",
+          error_message: result.success ? undefined : result.error,
+          sent_by: body.sentBy,
+          metadata: {
+            trigger: "notice",
+            sentVia: result.sentVia,
+            alimtalkError: result.alimtalkError,
+            userId: r.userId,
+            isParent: r.isParent,
+          },
+        });
+
+        // 100ms 딜레이 (rate limit)
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
+    // ─── custom 타입: SMS 대량 발송 ───
+    else {
+      const phones = body.recipients.map((r) => r.phone);
+      const result = await sendBulkSMSSameMessage(phones, formattedMessage);
+
+      sentCount = result.success;
+      failedCount = result.failed;
+
+      const failedPhones = new Set(
+        result.errors.map((e) => e.phone?.replace(/[^0-9]/g, ""))
       );
 
-      return {
-        type: "sms" as const,
-        recipient_phone: r.phone,
-        recipient_name: r.name,
-        message: formattedMessage,
-        status: isFailed ? ("failed" as const) : ("sent" as const),
-        error_message: isFailed ? errorInfo?.error : undefined,
-        sent_by: body.sentBy,
-        metadata: {
-          trigger: "manual",
-          type: body.type || "custom",
-          userId: r.userId,
-          isParent: r.isParent,
-        },
-      };
-    });
+      for (const r of body.recipients) {
+        const normalizedPhone = r.phone.replace(/[^0-9]/g, "");
+        const isFailed = failedPhones.has(normalizedPhone);
+        const errorInfo = result.errors.find(
+          (e) => e.phone?.replace(/[^0-9]/g, "") === normalizedPhone
+        );
 
-    // 배치 로그 저장
+        logEntries.push({
+          type: "sms",
+          recipient_phone: r.phone,
+          recipient_name: r.name,
+          message: formattedMessage,
+          status: isFailed ? "failed" : "sent",
+          error_message: isFailed ? errorInfo?.error : undefined,
+          sent_by: body.sentBy,
+          metadata: {
+            trigger: "manual",
+            type: body.type || "custom",
+            userId: r.userId,
+            isParent: r.isParent,
+          },
+        });
+      }
+    }
+
     await logNotificationsBatch(logEntries);
-
-    // 응답용 로그 (기존 호환성 유지)
-    const logs = body.recipients.map((r, index) => {
-      const normalizedPhone = r.phone.replace(/[^0-9]/g, "");
-      const hasError = failedPhones.has(normalizedPhone);
-      return {
-        id: `log-${Date.now()}-${index}`,
-        type: body.type || "custom",
-        recipient_phone: r.phone,
-        recipient_name: r.name,
-        message: formattedMessage,
-        status: hasError ? "failed" : "sent",
-        sent_at: new Date().toISOString(),
-        error: hasError
-          ? result.errors.find(
-              (e) => e.phone?.replace(/[^0-9]/g, "") === normalizedPhone
-            )?.error
-          : undefined,
-      };
-    });
 
     return new Response(
       JSON.stringify({
         success: true,
-        sentCount: result.success,
-        failedCount: result.failed,
+        sentCount,
+        failedCount,
         totalRecipients: body.recipients.length,
-        logs,
-        errors: result.errors.length > 0 ? result.errors : undefined,
       }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("send-kakao-alimtalk error:", error);
@@ -136,10 +151,7 @@ serve(async (req: Request) => {
       JSON.stringify({
         error: error instanceof Error ? error.message : "알 수 없는 오류",
       }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
