@@ -245,6 +245,30 @@ export async function sendCustomNotification(
 }
 
 // ─────────────────────────────────────────────
+// 로그 조회 서비스
+// ─────────────────────────────────────────────
+
+/**
+ * 알림 발송 이력 조회
+ */
+export async function getNotificationLogs(
+  supabase: SupabaseClient,
+  filter: Parameters<typeof repository.getNotificationLogs>[1]
+) {
+  return repository.getNotificationLogs(supabase, filter);
+}
+
+/**
+ * 알림 통계 조회
+ */
+export async function getNotificationStats(
+  supabase: SupabaseClient,
+  filter: Parameters<typeof repository.getNotificationStats>[1]
+) {
+  return repository.getNotificationStats(supabase, filter);
+}
+
+// ─────────────────────────────────────────────
 // 미리보기 및 유틸리티
 // ─────────────────────────────────────────────
 

@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import {
   getNotificationLogs,
   getNotificationStats,
-} from "@/domains/notification/repository";
+} from "@/domains/notification/service";
 import type {
   NotificationLogDB,
   NotificationStats,

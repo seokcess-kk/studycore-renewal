@@ -37,6 +37,7 @@ export default function AdminNoticeNewPage() {
   );
   const [attachments, setAttachments] = useState<{ name: string; url: string; size: number; type: string }[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [alimtalkTarget, setAlimtalkTarget] = useState<"none" | "students" | "parents">("none");
 
   const {
     register,
@@ -76,6 +77,31 @@ export default function AdminNoticeNewPage() {
             file_url: att.url,
             file_size: att.size,
             file_type: att.type,
+          });
+        }
+      }
+
+      // 알림톡 발송
+      if (publish && alimtalkTarget !== "none" && result.notice) {
+        try {
+          const includeParents = alimtalkTarget === "parents";
+          await supabase.functions.invoke("send-kakao-alimtalk", {
+            body: {
+              type: "notice",
+              noticeId: result.notice.id,
+              noticeTitle: data.title,
+              includeParents,
+            },
+          });
+          toast({
+            variant: "success",
+            description: `알림톡 발송을 요청했습니다. (대상: ${includeParents ? "재원생 + 학부모" : "재원생 전체"})`,
+          });
+        } catch (err) {
+          console.error("알림톡 발송 실패:", err);
+          toast({
+            variant: "error",
+            description: "공지는 발행되었으나 알림톡 발송에 실패했습니다.",
           });
         }
       }
@@ -377,22 +403,43 @@ export default function AdminNoticeNewPage() {
         {/* 알림톡 발송 옵션 */}
         <div className="border border-rule bg-white p-6">
           <h3 className="mb-4 font-medium text-ink">알림톡 발송 (선택)</h3>
-          <div className="space-y-2 text-sm text-muted">
-            <label className="flex items-center gap-2">
-              <input type="radio" name="alimtalk" value="none" defaultChecked />
+          <div className="space-y-2 text-sm text-ink">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="alimtalk"
+                value="none"
+                checked={alimtalkTarget === "none"}
+                onChange={() => setAlimtalkTarget("none")}
+                className="w-4 h-4 accent-navy"
+              />
               발송 안 함
             </label>
-            <label className="flex items-center gap-2">
-              <input type="radio" name="alimtalk" value="students" />
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="alimtalk"
+                value="students"
+                checked={alimtalkTarget === "students"}
+                onChange={() => setAlimtalkTarget("students")}
+                className="w-4 h-4 accent-navy"
+              />
               재원생 전체
             </label>
-            <label className="flex items-center gap-2">
-              <input type="radio" name="alimtalk" value="parents" />
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="alimtalk"
+                value="parents"
+                checked={alimtalkTarget === "parents"}
+                onChange={() => setAlimtalkTarget("parents")}
+                className="w-4 h-4 accent-navy"
+              />
               재원생 + 학부모
             </label>
           </div>
           <p className="mt-3 text-xs text-muted">
-            * 발행 후 수동으로 알림톡을 발송할 수 있습니다.
+            * 발행 시 선택한 대상에게 알림톡이 자동 발송됩니다.
           </p>
         </div>
       </form>

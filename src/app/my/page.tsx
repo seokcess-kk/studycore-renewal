@@ -285,7 +285,7 @@ function formatPhone(phone: string | null | undefined): string {
 
 // 연락처 정보 수정 섹션
 function ContactInfoSection() {
-  const { profile, setProfile } = useUserStore();
+  const { profile, setProfile, isStaff } = useUserStore();
   const { success: showSuccess, error: showError } = useToast();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -364,6 +364,11 @@ function ContactInfoSection() {
       </div>
       <div className="divide-y divide-rule">
         <InfoRow icon={<User size={18} />} label="이름" value={profile?.name || "-"} />
+        {isStaff && (
+          <InfoRow icon={<Shield size={18} />} label="역할" value={
+            profile?.role === "admin" ? "관리자" : profile?.role === "mentor" ? "멘토" : "조교"
+          } />
+        )}
 
         {isEditing ? (
           <div className="px-4 py-3">
@@ -387,32 +392,36 @@ function ContactInfoSection() {
           <InfoRow icon={<Phone size={18} />} label="연락처" value={formatPhone(profile?.phone) || "-"} />
         )}
 
-        <InfoRow
-          icon={<School size={18} />}
-          label="학교"
-          value={profile?.school ? `${profile.school} ${profile.grade || ""}학년` : "-"}
-        />
+        {!isStaff && (
+          <InfoRow
+            icon={<School size={18} />}
+            label="학교"
+            value={profile?.school ? `${profile.school} ${profile.grade || ""}학년` : "-"}
+          />
+        )}
 
-        {isEditing ? (
-          <div className="px-4 py-3">
-            <div className="flex items-center gap-4">
-              <span className="text-muted"><Phone size={18} /></span>
-              <span className="text-secondary text-muted w-24">학부모 연락처</span>
-              <input
-                type="tel"
-                {...register("parent_phone")}
-                placeholder="010-0000-0000"
-                className={`flex-1 border px-3 py-1.5 text-body focus:outline-none ${
-                  errors.parent_phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
-                }`}
-              />
+        {!isStaff && (
+          isEditing ? (
+            <div className="px-4 py-3">
+              <div className="flex items-center gap-4">
+                <span className="text-muted"><Phone size={18} /></span>
+                <span className="text-secondary text-muted w-24">학부모 연락처</span>
+                <input
+                  type="tel"
+                  {...register("parent_phone")}
+                  placeholder="010-0000-0000"
+                  className={`flex-1 border px-3 py-1.5 text-body focus:outline-none ${
+                    errors.parent_phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
+                  }`}
+                />
+              </div>
+              {errors.parent_phone && (
+                <p className="text-caption text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.parent_phone.message}</p>
+              )}
             </div>
-            {errors.parent_phone && (
-              <p className="text-caption text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.parent_phone.message}</p>
-            )}
-          </div>
-        ) : (
-          <InfoRow icon={<Phone size={18} />} label="학부모 연락처" value={formatPhone(profile?.parent_phone) || "-"} />
+          ) : (
+            <InfoRow icon={<Phone size={18} />} label="학부모 연락처" value={formatPhone(profile?.parent_phone) || "-"} />
+          )
         )}
       </div>
     </div>

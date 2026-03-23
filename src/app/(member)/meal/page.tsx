@@ -301,7 +301,7 @@ export default function LunchPage() {
           <div className="max-w-3xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-body text-muted">선택</span>
-              <span className="text-[18px] font-bold text-ink">
+              <span className="text-subhead font-bold text-ink">
                 {selectionCount}끼
               </span>
               {application && !hasChanges && (

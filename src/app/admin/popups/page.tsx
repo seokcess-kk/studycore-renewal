@@ -7,6 +7,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
+import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { getPopupList, deletePopup } from "@/domains/popup/service";
 import type { Popup } from "@/domains/popup/model";
 
@@ -18,6 +19,8 @@ export default function AdminPopupsPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const pageSize = 10;
 
   const fetchData = useCallback(async () => {
@@ -37,15 +40,18 @@ export default function AdminPopupsPage() {
     fetchData();
   }, [fetchData]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("이 팝업을 삭제하시겠습니까?")) return;
-    const result = await deletePopup(supabase, id);
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    setIsDeleting(true);
+    const result = await deletePopup(supabase, deleteTargetId);
     if (result.success) {
       toast({ variant: "success", description: "팝업이 삭제되었습니다." });
       fetchData();
     } else {
       toast({ variant: "error", description: result.error || "삭제 실패" });
     }
+    setIsDeleting(false);
+    setDeleteTargetId(null);
   };
 
   const isActive = (p: Popup) => {
@@ -109,7 +115,7 @@ export default function AdminPopupsPage() {
                 {new Date(p.end_date).toLocaleDateString("ko-KR")}
               </span>
               <button
-                onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }}
+                onClick={(e) => { e.stopPropagation(); setDeleteTargetId(p.id); }}
                 className="flex items-center text-muted hover:text-red-500 transition-colors duration-200"
               >
                 <Trash2 className="h-4 w-4" />
@@ -140,6 +146,16 @@ export default function AdminPopupsPage() {
           </button>
         </div>
       )}
+      <ConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDelete}
+        title="팝업 삭제"
+        description="이 팝업을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+        confirmText="삭제"
+        variant="danger"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

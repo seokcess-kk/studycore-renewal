@@ -334,17 +334,17 @@ export function ImageUploader({
           />
 
           <Upload size={24} className="mx-auto text-muted mb-2" />
-          <p className="text-[14px] text-ink">
+          <p className="text-body text-ink">
             클릭하거나 이미지를 드래그하세요
           </p>
-          <p className="text-[12px] text-muted mt-1">
+          <p className="text-small text-muted mt-1">
             최대 {maxFiles}개, 각 {maxSizeMB}MB 이하
           </p>
         </div>
       )}
 
       {/* 에러 메시지 */}
-      {error && <p className="text-[13px] text-red-600">{error}</p>}
+      {error && <p className="text-secondary text-red-600">{error}</p>}
 
       {/* 업로드 중 (미리보기 포함) */}
       {uploading.length > 0 && (
@@ -373,7 +373,7 @@ export function ImageUploader({
                       style={{ width: `${file.progress}%` }}
                     />
                   </div>
-                  <span className="text-[11px] text-white mt-1">
+                  <span className="text-caption text-white mt-1">
                     {file.progress}%
                     {file.retryCount > 0 && ` (재시도 ${file.retryCount}/${MAX_RETRY_COUNT})`}
                   </span>
@@ -390,7 +390,7 @@ export function ImageUploader({
                   >
                     <RotateCcw size={18} className="text-red-600" />
                   </button>
-                  <span className="text-[11px] text-white mt-2">재시도</span>
+                  <span className="text-caption text-white mt-2">재시도</span>
                 </div>
               )}
 
@@ -434,7 +434,7 @@ export function ImageUploader({
               )}
 
               {/* 순서 표시 */}
-              <div className="absolute bottom-2 left-2 w-5 h-5 bg-navy text-white text-[10px] font-mono flex items-center justify-center">
+              <div className="absolute bottom-2 left-2 w-5 h-5 bg-navy text-white text-label font-mono flex items-center justify-center">
                 {index + 1}
               </div>
             </div>
@@ -449,14 +449,14 @@ export function ImageUploader({
               className="aspect-square border-2 border-dashed border-rule flex flex-col items-center justify-center text-muted hover:border-navy hover:text-navy transition-colors disabled:opacity-50"
             >
               <ImageIcon size={20} />
-              <span className="text-[11px] mt-1">추가</span>
+              <span className="text-caption mt-1">추가</span>
             </button>
           )}
         </div>
       )}
 
       {/* 카운터 */}
-      <p className="text-[12px] text-muted text-right">
+      <p className="text-small text-muted text-right">
         {value.length + activeUploading.length} / {maxFiles}
         {failedUploads.length > 0 && (
           <span className="text-red-500 ml-2">

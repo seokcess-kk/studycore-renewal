@@ -32,6 +32,7 @@ import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { useToast } from "@/components/common/Toast";
 import { createBrowserClient } from "@/lib/supabase/client";
+import { useUserStore } from "@/stores/useUserStore";
 import {
   getSectionList,
   createSection,
@@ -90,6 +91,7 @@ const FORM_DEFAULTS: GuideSectionFormValues = {
 export default function AdminGuidePage() {
   const supabase = createBrowserClient();
   const { showToast } = useToast();
+  const { canAccessAdmin } = useUserStore();
 
   const [sections, setSections] = useState<GuideSection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -417,14 +419,16 @@ export default function AdminGuidePage() {
             ? "조교 온보딩 문서를 관리합니다. /guide에 표시됩니다."
             : "재원생 이용 매뉴얼을 관리합니다. /manual에 표시됩니다."}
         </p>
-        <Button
-          variant="primary"
-          onClick={() => setShowAddForm(true)}
-          disabled={showAddForm || !!editingId}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          섹션 추가
-        </Button>
+        {canAccessAdmin && (
+          <Button
+            variant="primary"
+            onClick={() => setShowAddForm(true)}
+            disabled={showAddForm || !!editingId}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            섹션 추가
+          </Button>
+        )}
       </div>
 
       {/* 새 섹션 추가 폼 */}
@@ -473,34 +477,36 @@ export default function AdminGuidePage() {
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleToggleVisibility(section)}
-                        className="text-muted hover:text-ink cursor-pointer transition-colors duration-200"
-                        title={section.is_visible ? "숨기기" : "표시하기"}
-                        disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
-                      >
-                        {section.is_visible ? (
-                          <Eye className="h-4 w-4" />
-                        ) : (
-                          <EyeOff className="h-4 w-4" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleEdit(section)}
-                        className="text-muted hover:text-ink cursor-pointer transition-colors duration-200"
-                        disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => setDeleteId(section.id)}
-                        className="text-muted hover:text-red-500 cursor-pointer transition-colors duration-200"
-                        disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+                    {canAccessAdmin && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleToggleVisibility(section)}
+                          className="text-muted hover:text-ink cursor-pointer transition-colors duration-200"
+                          title={section.is_visible ? "숨기기" : "표시하기"}
+                          disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
+                        >
+                          {section.is_visible ? (
+                            <Eye className="h-4 w-4" />
+                          ) : (
+                            <EyeOff className="h-4 w-4" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleEdit(section)}
+                          className="text-muted hover:text-ink cursor-pointer transition-colors duration-200"
+                          disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeleteId(section.id)}
+                          className="text-muted hover:text-red-500 cursor-pointer transition-colors duration-200"
+                          disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                   {section.content_html ? (
                     <div

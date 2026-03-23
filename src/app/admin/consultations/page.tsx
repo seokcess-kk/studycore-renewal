@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { ChevronDown, ChevronUp, Phone, Trash2 } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
+import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import {
   getConsultationList,
   changeConsultationStatus,
@@ -44,6 +45,8 @@ export default function AdminConsultationsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const pageSize = 15;
 
   const fetchData = useCallback(async () => {
@@ -78,6 +81,20 @@ export default function AdminConsultationsPage() {
     } else {
       toast({ variant: "error", description: result.error || "상태 변경 실패" });
     }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    setIsDeleting(true);
+    const result = await deleteConsultation(supabase, deleteTargetId);
+    if (result.success) {
+      toast({ variant: "success", description: "삭제되었습니다." });
+      fetchData();
+    } else {
+      toast({ variant: "error", description: result.error || "삭제 실패" });
+    }
+    setIsDeleting(false);
+    setDeleteTargetId(null);
   };
 
   const totalPages = Math.ceil(total / pageSize);
@@ -183,16 +200,7 @@ export default function AdminConsultationsPage() {
 
                 {/* 삭제 */}
                 <button
-                  onClick={async () => {
-                    if (!confirm("이 상담 신청을 삭제하시겠습니까?")) return;
-                    const result = await deleteConsultation(supabase, c.id);
-                    if (result.success) {
-                      toast({ variant: "success", description: "삭제되었습니다." });
-                      fetchData();
-                    } else {
-                      toast({ variant: "error", description: result.error || "삭제 실패" });
-                    }
-                  }}
+                  onClick={() => setDeleteTargetId(c.id)}
                   className="flex items-center justify-center text-muted hover:text-red-500 cursor-pointer transition-colors duration-200"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -235,6 +243,16 @@ export default function AdminConsultationsPage() {
           </button>
         </div>
       )}
+      <ConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDelete}
+        title="상담 신청 삭제"
+        description="이 상담 신청을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+        confirmText="삭제"
+        variant="danger"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

@@ -78,7 +78,7 @@ export default function QuestionDetailPage() {
   const isOwner = user?.id === question?.author_id;
   const canDelete = isOwner && question?.status === "pending";
   const isAnswered = question?.status === "answered";
-  const canAnswer = canAccessAdmin && !isOwner; // 멘토/관리자만 답변 가능 (본인 질문 제외)
+  const canAnswer = isStaff && !isOwner; // 모든 스태프(admin/mentor/assistant)가 답변 가능 (본인 질문 제외)
 
   // 비활성 사용자 안내 (스태프 제외)
   if (!isStaff && !isActive && isAuthenticated) {

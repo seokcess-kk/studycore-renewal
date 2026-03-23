@@ -16,6 +16,7 @@ import {
   History,
 } from "lucide-react";
 import { Button, useToast } from "@/components/common";
+import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { createClient } from "@/lib/supabase/client";
 import {
   getActiveStudentAndParentContacts,
@@ -58,6 +59,8 @@ export default function AdminKakaoPage() {
   const [isLoadingTargets, setIsLoadingTargets] = useState(true);
 
   // 발송 상태
+  const [showSendModal, setShowSendModal] = useState(false);
+  const [pendingSendData, setPendingSendData] = useState<KakaoMessageForm | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [sendResult, setSendResult] = useState<{
     success: number;
@@ -126,21 +129,19 @@ export default function AdminKakaoPage() {
     }
   };
 
-  // 발송
-  const handleSend = async (data: KakaoMessageForm) => {
+  // 발송 확인
+  const handleSendRequest = (data: KakaoMessageForm) => {
     if (filteredTargets.length === 0) {
       showToast("발송 대상이 없습니다.", "error");
       return;
     }
+    setPendingSendData(data);
+    setShowSendModal(true);
+  };
 
-    if (
-      !confirm(
-        `${filteredTargets.length}명에게 메시지를 발송하시겠습니까?`
-      )
-    ) {
-      return;
-    }
-
+  // 실제 발송
+  const handleSendConfirm = async () => {
+    if (!pendingSendData) return;
     setIsSending(true);
     setSendResult(null);
 
@@ -153,7 +154,7 @@ export default function AdminKakaoPage() {
           body: {
             type: "custom",
             recipients: filteredTargets,
-            message: data.message.trim(),
+            message: pendingSendData.message.trim(),
           },
         }
       );
@@ -178,6 +179,8 @@ export default function AdminKakaoPage() {
       showToast("발송 중 오류가 발생했습니다.", "error");
     } finally {
       setIsSending(false);
+      setShowSendModal(false);
+      setPendingSendData(null);
     }
   };
 
@@ -399,7 +402,7 @@ export default function AdminKakaoPage() {
           {/* 발송 버튼 */}
           <Button
             variant="primary"
-            onClick={handleSubmit(handleSend)}
+            onClick={handleSubmit(handleSendRequest)}
             disabled={
               isSending ||
               !message.trim() ||
@@ -421,6 +424,17 @@ export default function AdminKakaoPage() {
           </Button>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showSendModal}
+        onClose={() => { setShowSendModal(false); setPendingSendData(null); }}
+        onConfirm={handleSendConfirm}
+        title="메시지 발송 확인"
+        description={`${filteredTargets.length}명에게 메시지를 발송하시겠습니까? 발송 비용이 발생할 수 있습니다.`}
+        confirmText="발송"
+        variant="warning"
+        isLoading={isSending}
+      />
 
       {/* 안내 사항 */}
       <div className="mt-6 p-4 bg-stone border border-rule">
