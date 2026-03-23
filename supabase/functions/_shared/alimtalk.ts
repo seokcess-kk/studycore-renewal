@@ -112,6 +112,13 @@ export async function sendAlimtalk(
   const normalizedTo = normalizePhone(options.to);
   const normalizedFrom = normalizePhone(senderPhone);
 
+  // 변수 키를 #{키} 형식으로 변환 (Solapi 요구사항)
+  const wrappedVariables: Record<string, string> = {};
+  for (const [key, value] of Object.entries(options.variables || {})) {
+    const wrappedKey = key.startsWith("#{") ? key : `#{${key}}`;
+    wrappedVariables[wrappedKey] = value;
+  }
+
   // 1차: 알림톡 시도 (ATA = 알림톡 + SMS 자동 fallback)
   const alimtalkMessage = {
     to: normalizedTo,
@@ -121,7 +128,7 @@ export async function sendAlimtalk(
     kakaoOptions: {
       pfId,
       templateId: options.templateCode,
-      variables: options.variables || {},
+      variables: wrappedVariables,
     },
   };
 
