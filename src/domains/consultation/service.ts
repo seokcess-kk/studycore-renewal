@@ -46,23 +46,34 @@ export async function submitConsultation(
       createData
     );
 
-    // 4. Edge Function 호출 (notify-consult) — SMS 알림
+    // 4. Edge Function 호출 (notify-consult) — 직접 HTTP 호출
     try {
-      const { error: fnError } = await supabase.functions.invoke(
-        "notify-consult",
-        {
-          body: {
-            consultationId: consultation.id,
-            name: consultation.name,
-            phone: consultation.phone,
-            school: consultation.school,
-            consultType: consultation.consult_type,
-            message: consultation.message,
-          },
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+      if (supabaseUrl && serviceRoleKey) {
+        const response = await fetch(
+          `${supabaseUrl}/functions/v1/notify-consult`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${serviceRoleKey}`,
+            },
+            body: JSON.stringify({
+              name: consultation.name,
+              phone: consultation.phone,
+              school: consultation.school,
+              consultType: consultation.consult_type,
+              message: consultation.message,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          console.error("상담 알림 발송 실패:", response.status, errorData);
         }
-      );
-      if (fnError) {
-        console.error("상담 알림 발송 실패 (Edge Function):", fnError);
       }
     } catch (notifyError) {
       // 네트워크 에러 등 — 상담 신청 자체를 실패 처리하지 않음
