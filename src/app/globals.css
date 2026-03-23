@@ -61,11 +61,30 @@
   --radius-3xl: 0rem;
   --radius-4xl: 0rem;
 
-  /* 유체 타이포그래피 (Fluid Typography) 설정 */
-  --fluid-h1: clamp(3.5rem, 8vw, 8.75rem); /* clamp(56px, 8vw, 140px) */
-  --fluid-h2: clamp(2rem, 4.5vw, 3.75rem); /* clamp(32px, 4.5vw, 60px) */
-  --fluid-h3: clamp(1.125rem, 2vw, 1.5rem); /* clamp(18px, 2vw, 24px) */
-  --fluid-display: clamp(3.25rem, 5vw, 4.5rem); /* clamp(52px, 5vw, 72px) */
+  /* ── 타입 스케일 (고정) ── */
+  --text-label: 0.625rem;     /* 10px — mono 섹션 라벨, 장식 텍스트 */
+  --text-caption: 0.6875rem;  /* 11px — 뱃지, 태그, 타임스탬프 */
+  --text-small: 0.75rem;      /* 12px — 보조 메타, 에러 메시지 */
+  --text-secondary: 0.8125rem;/* 13px — 네비 링크, 보조 텍스트 */
+  --text-body: 0.875rem;      /* 14px — 본문, 폼 입력, 테이블 */
+  --text-reading: 0.9375rem;  /* 15px — 긴 설명문, 소개 문단 */
+  --text-subhead: 1.0625rem;  /* 17px — FAQ 질문, 카드 제목 */
+
+  /* ── 타입 스케일 (유동 — 마케팅 헤딩) ── */
+  --fluid-display: clamp(2.5rem, 7vw, 6rem);    /* 40–96px — 히어로 H1, 브랜드명 */
+  --fluid-h1: clamp(2rem, 5vw, 3.5rem);         /* 32–56px — 섹션 대제목 */
+  --fluid-h2: clamp(1.375rem, 3vw, 2rem);       /* 22–32px — 페이지 제목, 중제목 */
+  --fluid-h3: clamp(1.125rem, 2vw, 1.5rem);     /* 18–24px — 피처 제목 */
+
+  /* ── line-height ── */
+  --leading-tight: 1.15;   /* 제목 */
+  --leading-normal: 1.4;   /* UI 텍스트 */
+  --leading-relaxed: 1.7;  /* 본문 문단 */
+
+  /* ── letter-spacing ── */
+  --tracking-tight: -0.03em;  /* 제목 압축 */
+  --tracking-wide: 0.04em;    /* 버튼/CTA */
+  --tracking-wider: 0.2em;    /* 라벨/대문자 */
 }
 
 :root {
@@ -215,19 +234,30 @@
     border-color: #103050;
   }
 
-  /* 유체 타이포그래피 (Fluid Typography) 클래스 추가 */
-  .text-fluid-h1 {
-    font-size: var(--fluid-h1);
-  }
-  .text-fluid-h2 {
-    font-size: var(--fluid-h2);
-  }
-  .text-fluid-h3 {
-    font-size: var(--fluid-h3);
-  }
-  .text-fluid-display {
-    font-size: var(--fluid-display);
-  }
+  /* ── 고정 타입 스케일 유틸리티 ── */
+  .text-label     { font-size: var(--text-label); }
+  .text-caption   { font-size: var(--text-caption); }
+  .text-small     { font-size: var(--text-small); }
+  .text-secondary { font-size: var(--text-secondary); }
+  .text-body      { font-size: var(--text-body); }
+  .text-reading   { font-size: var(--text-reading); }
+  .text-subhead   { font-size: var(--text-subhead); }
+
+  /* ── 유동 타입 스케일 유틸리티 ── */
+  .text-fluid-display { font-size: var(--fluid-display); }
+  .text-fluid-h1      { font-size: var(--fluid-h1); }
+  .text-fluid-h2      { font-size: var(--fluid-h2); }
+  .text-fluid-h3      { font-size: var(--fluid-h3); }
+
+  /* ── line-height 유틸리티 ── */
+  .leading-heading  { line-height: var(--leading-tight); }
+  .leading-ui       { line-height: var(--leading-normal); }
+  .leading-prose    { line-height: var(--leading-relaxed); }
+
+  /* ── tracking 유틸리티 ── */
+  .tracking-heading { letter-spacing: var(--tracking-tight); }
+  .tracking-cta     { letter-spacing: var(--tracking-wide); }
+  .tracking-label   { letter-spacing: var(--tracking-wider); }
 }
 
 /* 그리드 레이아웃(Editorial Layout)을 위한 커스텀 유틸리티 */

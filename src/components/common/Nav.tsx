@@ -44,7 +44,7 @@ export function Nav() {
 
   // 링크 스타일
   const linkStyle = (isActive = false) =>
-    `hidden md:block text-[13px] transition-colors duration-150 ${isDarkText
+    `hidden md:block text-secondary transition-colors duration-150 ${isDarkText
       ? isActive
         ? "text-ink font-medium"
         : "text-ink/60 hover:text-ink"
@@ -120,7 +120,7 @@ export function Nav() {
               <Link href={ROUTES.QUESTIONS} className={`${linkStyle(pathname.startsWith("/questions"))} relative`}>
                 질문방
                 {canAccessAdmin && unansweredCount > 0 && (
-                  <span className="absolute -top-1.5 -right-3.5 min-w-[18px] h-[18px] flex items-center justify-center bg-teal text-white text-[10px] font-bold leading-none px-1">
+                  <span className="absolute -top-1.5 -right-3.5 min-w-[18px] h-[18px] flex items-center justify-center bg-teal text-white text-label font-bold leading-none px-1">
                     {unansweredCount > 99 ? "99+" : unansweredCount}
                   </span>
                 )}
@@ -155,7 +155,7 @@ export function Nav() {
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className={`hidden md:block text-[12px] transition-colors duration-150 ${isDarkText ? "text-ink/50 hover:text-ink/80" : "text-white/50 hover:text-white/80"
+                className={`hidden md:block text-small transition-colors duration-150 ${isDarkText ? "text-ink/50 hover:text-ink/80" : "text-white/50 hover:text-white/80"
                   } disabled:opacity-50`}
               >
                 {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
@@ -179,14 +179,14 @@ export function Nav() {
               )}
               <Link
                 href={ROUTES.LOGIN}
-                className={`hidden md:block text-[12px] transition-colors duration-150 ${isDarkText ? "text-ink/50 hover:text-ink/80" : "text-white/50 hover:text-white/80"
+                className={`hidden md:block text-small transition-colors duration-150 ${isDarkText ? "text-ink/50 hover:text-ink/80" : "text-white/50 hover:text-white/80"
                   }`}
               >
                 로그인
               </Link>
               <Link
                 href={ROUTES.CONSULT}
-                className={`hidden md:block text-[12.5px] font-bold tracking-[0.04em] px-5 py-2.5 border-[1.5px] transition-colors duration-300 cta-fill ${isDarkText
+                className={`hidden md:block text-secondary font-bold tracking-cta px-5 py-2.5 border-[1.5px] transition-colors duration-300 cta-fill ${isDarkText
                   ? "cta-fill-navy border-navy text-white hover:text-navy"
                   : "cta-fill-teal border-teal text-navy-dark hover:text-teal"
                   }`}

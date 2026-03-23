@@ -65,18 +65,18 @@ export function CTASection() {
             className="flex flex-col h-full"
           >
             {/* 섹션 라벨 */}
-            <div className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase flex items-center gap-3 mb-8">
+            <div className="font-mono text-label font-bold text-teal tracking-label uppercase flex items-center gap-3 mb-8">
               <span className="w-8 h-0.5 bg-teal" />
               Contact / 05
             </div>
 
             {/* 타이틀 + 설명 */}
-            <h2 className="font-serif text-[clamp(44px,7vw,96px)] font-black text-white leading-[0.92] tracking-[-0.04em] mb-6">
+            <h2 className="font-serif text-fluid-display font-black text-white leading-heading tracking-heading mb-6">
               상담
               <br />
               신청
             </h2>
-            <p className="text-[15px] text-white/60 leading-[1.8] mb-10">
+            <p className="text-reading text-white/60 leading-prose mb-10">
               입소 상담, 시설 견학, 프로그램 문의 등
               <br />
               무엇이든 편하게 문의해 주세요.
@@ -118,7 +118,7 @@ export function CTASection() {
 
             {/* CTA + 카카오 + QR */}
             <div className="border-t border-white/[0.08] pt-8 mt-auto">
-              <p className="text-white/60 text-[13px] leading-[1.7] mb-4">
+              <p className="text-white/60 text-secondary leading-prose mb-4">
                 원장님이 직접 확인하고 연락드립니다.
               </p>
 
@@ -126,7 +126,7 @@ export function CTASection() {
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   href={ROUTES.CONSULT}
-                  className="cta-fill cta-fill-teal group inline-flex items-center justify-center gap-3 px-10 py-4 text-navy text-[14px] font-bold tracking-[0.05em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300 cursor-pointer"
+                  className="cta-fill cta-fill-teal group inline-flex items-center justify-center gap-3 px-10 py-4 text-navy text-body font-bold tracking-cta border-[1.5px] border-teal hover:text-teal transition-colors duration-300 cursor-pointer"
                 >
                   상담 신청하기
                   <ArrowRight
@@ -137,7 +137,7 @@ export function CTASection() {
 
                 <a
                   href={`tel:${CONTACT.phone.replace(/-/g, "")}`}
-                  className="group inline-flex items-center justify-center gap-2 px-6 py-4 text-white/60 text-[14px] font-medium tracking-[0.02em] border-[1.5px] border-white/[0.12] hover:border-white/30 hover:text-white transition-all duration-300 cursor-pointer"
+                  className="group inline-flex items-center justify-center gap-2 px-6 py-4 text-white/60 text-body font-medium tracking-cta border-[1.5px] border-white/[0.12] hover:border-white/30 hover:text-white transition-all duration-300 cursor-pointer"
                 >
                   <Phone size={14} />
                   전화 문의
@@ -162,11 +162,11 @@ export function CTASection() {
                   />
                 </a>
                 <div>
-                  <span className="flex items-center gap-1.5 text-[#FEE500] text-[12px] font-bold tracking-[0.04em] mb-1.5">
+                  <span className="flex items-center gap-1.5 text-[#FEE500] text-small font-bold tracking-cta mb-1.5">
                     <MessageCircle size={13} />
                     카카오톡 문의
                   </span>
-                  <p className="text-[13px] text-white/60 leading-[1.7] font-light">
+                  <p className="text-secondary text-white/60 leading-prose font-light">
                     카카오톡 채널로 문의 주시면
                     <br />
                     가장 빠르고 정확하게 안내드릴 수 있습니다.
@@ -189,7 +189,7 @@ export function CTASection() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <MapPin size={14} className="text-teal" />
-              <span className="font-mono text-[10px] text-white/60 tracking-[0.18em] uppercase">
+              <span className="font-mono text-label text-white/60 tracking-label uppercase">
                 Location
               </span>
             </div>
@@ -201,7 +201,7 @@ export function CTASection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   title={app.label}
-                  className={`flex items-center justify-center w-7 h-7 ${app.bg} ${app.text} text-[11px] font-bold hover:opacity-80 transition-opacity cursor-pointer`}
+                  className={`flex items-center justify-center w-7 h-7 ${app.bg} ${app.text} text-caption font-bold hover:opacity-80 transition-opacity cursor-pointer`}
                 >
                   {app.icon}
                 </a>
@@ -238,10 +238,10 @@ function ContactItem({
     <div className="flex items-start gap-3">
       <div className="mt-0.5 shrink-0">{icon}</div>
       <div>
-        <span className="block font-mono text-[9px] font-bold text-teal/60 tracking-[0.18em] uppercase mb-1">
+        <span className="block font-mono text-label font-bold text-teal/60 tracking-label uppercase mb-1">
           {label}
         </span>
-        <span className="text-[14px] text-white/70 leading-[1.7]">
+        <span className="text-body text-white/70 leading-prose">
           {children}
         </span>
       </div>

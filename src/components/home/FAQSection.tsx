@@ -51,17 +51,17 @@ export function FAQSection() {
           viewport={{ once: true, margin: "-40px" }}
           className="lg:sticky lg:top-24"
         >
-          <div className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase mb-5">
+          <div className="font-mono text-label font-bold text-teal tracking-label uppercase mb-5">
             FAQ / 04
           </div>
-          <h2 className="font-serif text-[clamp(36px,4vw,52px)] font-black tracking-[-0.04em] leading-[1.05] mb-6">
+          <h2 className="font-serif text-fluid-h1 font-black tracking-heading leading-heading mb-6">
             자주
             <br />
             묻는
             <br />
             질문
           </h2>
-          <p className="text-[14px] leading-[1.9] text-muted font-light mb-9">
+          <p className="text-body leading-prose text-muted font-light mb-9">
             더 궁금한 점은 카카오 채널로 바로 문의해 주세요.<br />
             원장님이 직접 답변드립니다.
           </p>
@@ -69,9 +69,9 @@ export function FAQSection() {
             href={CONTACT.kakaoChannel}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 bg-[#FEE500] text-[#191919] text-[13px] font-bold px-5 py-3 hover:opacity-85 transition-opacity"
+            className="inline-flex items-center gap-2.5 bg-[#FEE500] text-[#191919] text-secondary font-bold px-5 py-3 hover:opacity-85 transition-opacity"
           >
-            <span className="w-[18px] h-[18px] bg-[#191919] flex items-center justify-center text-[10px] text-[#FEE500]" style={{ borderRadius: '50%' }}>
+            <span className="w-[18px] h-[18px] bg-[#191919] flex items-center justify-center text-label text-[#FEE500]" style={{ borderRadius: '50%' }}>
               K
             </span>
             카카오 채널 문의하기
@@ -121,7 +121,7 @@ function FAQItem({
         aria-expanded={isOpen}
         className="w-full py-7 flex justify-between items-center text-left gap-6"
       >
-        <span className="font-serif text-[17px] font-bold text-ink tracking-[-0.01em] leading-[1.4]">
+        <span className="font-serif text-subhead font-bold text-ink tracking-heading leading-ui">
           {question}
         </span>
         <span
@@ -142,7 +142,7 @@ function FAQItem({
             className="overflow-hidden"
           >
             <p
-              className="pb-7 text-[14px] leading-[1.9] text-[#555] font-light [&_strong]:text-ink [&_strong]:font-medium"
+              className="pb-7 text-body leading-prose text-[#555] font-light [&_strong]:text-ink [&_strong]:font-medium"
               dangerouslySetInnerHTML={{ __html: answer }}
             />
           </motion.div>
