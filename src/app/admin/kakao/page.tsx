@@ -97,7 +97,11 @@ export default function AdminKakaoPage() {
       return allTargets.filter((t) => t.isParent);
     }
     if (targetType === "selected") {
-      return allTargets.filter((t) => selectedIds.includes(t.userId));
+      // 선택된 학생의 본인 연락처만 (학부모 포함 체크 시 학부모도)
+      const selected = allTargets.filter(
+        (t) => selectedIds.includes(t.userId) && (includeParents || !t.isParent)
+      );
+      return selected;
     }
     // all
     if (includeParents) {
@@ -248,8 +252,8 @@ export default function AdminKakaoPage() {
             </label>
           </div>
 
-          {/* 학부모 포함 (전체 선택 시) */}
-          {targetType === "all" && (
+          {/* 학부모 포함 (전체/선택 시) */}
+          {(targetType === "all" || targetType === "selected") && (
             <label className="flex items-center gap-2 cursor-pointer mb-4 pl-6">
               <input
                 type="checkbox"
@@ -300,16 +304,16 @@ export default function AdminKakaoPage() {
                   {studentTargets.map((target) => (
                     <label
                       key={target.userId}
-                      className="flex items-center gap-2 px-3 py-2 hover:bg-stone cursor-pointer border-b border-rule last:border-b-0 transition-colors duration-200"
+                      className="flex items-center gap-3 px-3 py-2.5 hover:bg-stone cursor-pointer border-b border-rule last:border-b-0 transition-colors duration-200"
                     >
                       <input
                         type="checkbox"
                         checked={selectedIds.includes(target.userId)}
                         onChange={() => toggleSelect(target.userId)}
-                        className="w-4 h-4 accent-navy"
+                        className="w-4 h-4 accent-navy flex-shrink-0"
                       />
-                      <span className="text-secondary">{target.name}</span>
-                      <span className="text-caption text-muted ml-auto">
+                      <span className="text-body font-medium text-ink">{target.name}</span>
+                      <span className="text-small text-muted ml-auto">
                         {target.phone}
                       </span>
                     </label>

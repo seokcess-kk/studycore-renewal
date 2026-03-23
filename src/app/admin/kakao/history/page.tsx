@@ -235,7 +235,7 @@ export default function AdminKakaoHistoryPage() {
                       setTypeFilter(e.target.value as TypeFilter);
                       setPage(1);
                     }}
-                    className="px-3 py-1.5 border border-rule text-secondary focus:outline-none focus:border-navy min-w-[100px]"
+                    className="px-3 py-1.5 border border-rule text-body text-ink focus:outline-none focus:border-navy min-w-[100px]"
                   >
                     <option value="">전체</option>
                     <option value="sms">SMS</option>
@@ -254,7 +254,7 @@ export default function AdminKakaoHistoryPage() {
                       setStatusFilter(e.target.value as StatusFilter);
                       setPage(1);
                     }}
-                    className="px-3 py-1.5 border border-rule text-secondary focus:outline-none focus:border-navy min-w-[100px]"
+                    className="px-3 py-1.5 border border-rule text-body text-ink focus:outline-none focus:border-navy min-w-[100px]"
                   >
                     <option value="">전체</option>
                     <option value="sent">성공</option>
@@ -275,7 +275,7 @@ export default function AdminKakaoHistoryPage() {
                       setStartDate(e.target.value);
                       setPage(1);
                     }}
-                    className="px-3 py-1.5 border border-rule text-secondary focus:outline-none focus:border-navy"
+                    className="px-3 py-1.5 border border-rule text-body text-ink focus:outline-none focus:border-navy"
                   />
                 </div>
 
@@ -291,7 +291,7 @@ export default function AdminKakaoHistoryPage() {
                       setEndDate(e.target.value);
                       setPage(1);
                     }}
-                    className="px-3 py-1.5 border border-rule text-secondary focus:outline-none focus:border-navy"
+                    className="px-3 py-1.5 border border-rule text-body text-ink focus:outline-none focus:border-navy"
                   />
                 </div>
 
