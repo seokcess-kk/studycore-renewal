@@ -251,7 +251,7 @@ export function GuidePageLayout({
                                 }`}
                               >
                                 <Icon size={14} className="flex-shrink-0" />
-                                <span className="text-secondary truncate">
+                                <span className="text-body truncate">
                                   {section.title}
                                 </span>
                               </button>
