@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Search, UserPlus } from "lucide-react";
+import { Skeleton } from "@/components/common";
 import { Button } from "@/components/common/Button";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { RoleBadge } from "@/components/admin/RoleBadge";
@@ -137,11 +138,19 @@ export default function AdminMembersPage() {
           </thead>
           <tbody className="divide-y divide-rule">
             {isLoading ? (
-              <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-muted">
-                  로딩 중...
-                </td>
-              </tr>
+              <>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i}>
+                    <td className="px-4 py-3"><Skeleton className="h-4 w-20" /></td>
+                    <td className="px-4 py-3"><Skeleton className="h-4 w-24" /></td>
+                    <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
+                    <td className="px-4 py-3"><Skeleton className="h-4 w-16" /></td>
+                    <td className="px-4 py-3"><Skeleton className="h-4 w-16" /></td>
+                    <td className="px-4 py-3"><Skeleton className="h-4 w-20" /></td>
+                    <td className="px-4 py-3"><Skeleton className="h-4 w-12" /></td>
+                  </tr>
+                ))}
+              </>
             ) : members.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-4 py-12 text-center text-muted">

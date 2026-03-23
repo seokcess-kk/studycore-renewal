@@ -312,6 +312,26 @@
   }
 }
 
+/* 격자 배경 유틸리티 (teal 톤) */
+.bg-grid-teal {
+  background-image:
+    linear-gradient(rgba(87,173,177,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(87,173,177,0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+.bg-grid-teal-sm {
+  background-image:
+    linear-gradient(rgba(87,173,177,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(87,173,177,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.bg-grid-teal-lg {
+  background-image:
+    linear-gradient(rgba(87,173,177,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(87,173,177,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
 /* SpaceSlider 프로그레스 바 */
 @keyframes progress-fill {
   from { width: 0%; }

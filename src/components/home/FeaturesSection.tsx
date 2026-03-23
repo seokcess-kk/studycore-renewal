@@ -153,7 +153,7 @@ export function FeaturesSection() {
           transition={{ duration: 0.5 }}
           className="mt-16 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-t-[1.5px] border-ink pt-10"
         >
-          <p className="text-body text-[#555] font-light leading-prose">
+          <p className="text-body text-ink/70 font-light leading-prose">
             직접 경험해 보세요 — 무료 상담으로 시작할 수 있습니다.
           </p>
           <Link
@@ -207,7 +207,7 @@ function FeatureRow({
           {feature.title}
         </h3>
         <p
-          className="text-body leading-prose text-[#555] font-light max-w-[640px] mb-4 [&_strong]:text-navy [&_strong]:font-bold"
+          className="text-body leading-prose text-ink/70 font-light max-w-[640px] mb-4 [&_strong]:text-navy [&_strong]:font-bold"
           dangerouslySetInnerHTML={{ __html: feature.description }}
         />
         <div className="flex gap-1.5 flex-wrap">

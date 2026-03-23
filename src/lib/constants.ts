@@ -169,6 +169,13 @@ export const LOCATION = {
   address: "광주광역시 광산구 임방울대로 330 애플타워 10층",
 } as const;
 
+/**
+ * 외부 브랜드 컬러 (Tailwind 리터럴 필수)
+ * - 카카오: bg-[#FEE500] text-[#191919]
+ * - 네이버: bg-[#03C75A] text-white
+ * - 구글:   bg-[#4285F4] text-white
+ */
+
 // 세션 설정
 export const SESSION = {
   WARNING_BEFORE_EXPIRY: 10 * 60 * 1000, // 만료 10분 전 경고

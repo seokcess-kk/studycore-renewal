@@ -43,16 +43,7 @@ export function HeroSection() {
   return (
     <section className="min-h-screen bg-navy-dark relative overflow-hidden flex flex-col">
       {/* 격자 배경 */}
-      <div
-        className="absolute inset-0 pointer-events-none z-[1]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(87,173,177,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(87,173,177,0.04) 1px, transparent 1px)
-          `,
-          backgroundSize: "72px 72px",
-        }}
-      />
+      <div className="absolute inset-0 pointer-events-none z-[1] bg-grid-teal" />
 
       {/* 워터마크 */}
       <div className="absolute right-[-40px] bottom-[-60px] font-mono text-[40vw] font-bold text-teal/[0.03] leading-none z-[1] pointer-events-none select-none">
@@ -112,10 +103,7 @@ export function HeroSection() {
             <span className="text-teal" style={{ textShadow: "0 0 40px rgba(87,173,177,0.15)" }}>
               스터디코어
             </span>
-            <span
-              className="text-transparent ml-2 md:ml-4"
-              style={{ WebkitTextStroke: "2px rgba(255,255,255,0.18)" }}
-            >
+            <span className="text-white/20 ml-2 md:ml-4">
               1.0
             </span>
           </motion.h1>

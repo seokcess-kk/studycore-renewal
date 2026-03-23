@@ -44,16 +44,7 @@ export function CTASection() {
   return (
     <section className="bg-navy section-lg px-6 md:px-13 relative overflow-hidden">
       {/* 격자 배경 */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(87,173,177,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(87,173,177,0.04) 1px, transparent 1px)
-          `,
-          backgroundSize: "80px 80px",
-        }}
-      />
+      <div className="absolute inset-0 pointer-events-none bg-grid-teal-lg" />
 
       <div className="relative z-[2] grid grid-cols-1 lg:grid-cols-2 gap-0">
         {/* ── 좌측: 타이틀 + 연락처 + CTA + QR ── */}

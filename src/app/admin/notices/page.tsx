@@ -193,7 +193,7 @@ export default function AdminNoticesPage() {
                       <button
                         onClick={() => handleMove(idx, "up")}
                         disabled={idx === 0 || isReordering}
-                        className="p-1 text-muted hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                        className="p-1.5 text-muted hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
                         title="위로"
                       >
                         <ChevronUp className="h-4 w-4" />
@@ -201,7 +201,7 @@ export default function AdminNoticesPage() {
                       <button
                         onClick={() => handleMove(idx, "down")}
                         disabled={idx === notices.length - 1 || isReordering}
-                        className="p-1 text-muted hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                        className="p-1.5 text-muted hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors"
                         title="아래로"
                       >
                         <ChevronDown className="h-4 w-4" />

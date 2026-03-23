@@ -266,7 +266,7 @@ export default function BlogPage() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="w-10 h-10 flex items-center justify-center border border-rule text-ink hover:border-navy disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  className="w-11 h-11 flex items-center justify-center border border-rule text-ink hover:border-navy disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
                   <ChevronLeft size={18} />
                 </button>
@@ -274,7 +274,7 @@ export default function BlogPage() {
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-10 h-10 text-body font-medium border transition-colors cursor-pointer ${
+                    className={`w-11 h-11 text-body font-medium border transition-colors cursor-pointer ${
                       page === i + 1
                         ? "bg-navy border-navy text-white"
                         : "border-rule text-ink hover:border-navy"
@@ -286,7 +286,7 @@ export default function BlogPage() {
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="w-10 h-10 flex items-center justify-center border border-rule text-ink hover:border-navy disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  className="w-11 h-11 flex items-center justify-center border border-rule text-ink hover:border-navy disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
                 >
                   <ChevronRight size={18} />
                 </button>

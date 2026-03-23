@@ -90,16 +90,7 @@ export function ProgramsSection() {
   return (
     <section className="bg-navy-dark section-lg relative overflow-hidden">
       {/* 격자 배경 */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(87,173,177,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(87,173,177,0.04) 1px, transparent 1px)
-          `,
-          backgroundSize: "72px 72px",
-        }}
-      />
+      <div className="absolute inset-0 pointer-events-none bg-grid-teal" />
 
       <div className="relative z-[2] section-container">
         {/* 섹션 헤더 */}

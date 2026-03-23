@@ -71,6 +71,7 @@ export function FAQSection() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2.5 bg-[#FEE500] text-[#191919] text-secondary font-bold px-5 py-3 hover:opacity-85 transition-opacity"
           >
+            {/* 원형 아이콘 예외: 글로벌 border-radius:0 override */}
             <span className="w-[18px] h-[18px] bg-[#191919] flex items-center justify-center text-label text-[#FEE500]" style={{ borderRadius: '50%' }}>
               K
             </span>
@@ -125,7 +126,7 @@ function FAQItem({
           {question}
         </span>
         <span
-          className={`w-7 h-7 border-[1.5px] border-rule flex-shrink-0 flex items-center justify-center text-muted transition-all duration-300 ${isOpen ? "bg-navy border-navy text-white rotate-45" : ""
+          className={`w-9 h-9 border-[1.5px] border-rule flex-shrink-0 flex items-center justify-center text-muted transition-all duration-300 ${isOpen ? "bg-navy border-navy text-white rotate-45" : ""
             }`}
         >
           <Plus size={16} />
@@ -142,7 +143,7 @@ function FAQItem({
             className="overflow-hidden"
           >
             <p
-              className="pb-7 text-body leading-prose text-[#555] font-light [&_strong]:text-ink [&_strong]:font-medium"
+              className="pb-7 text-body leading-prose text-ink/70 font-light [&_strong]:text-ink [&_strong]:font-medium"
               dangerouslySetInnerHTML={{ __html: answer }}
             />
           </motion.div>

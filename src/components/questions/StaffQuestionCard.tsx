@@ -183,6 +183,7 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                           key={url}
                           src={url}
                           alt={`첨부 ${i + 1}`}
+                          loading="lazy"
                           className="w-20 h-20 object-cover border border-rule"
                         />
                       ))}
@@ -214,6 +215,7 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                                 key={`answer-img-${answer.id}-${i}`}
                                 src={url}
                                 alt={`답변 첨부 ${i + 1}`}
+                                loading="lazy"
                                 className="w-20 h-20 object-cover border border-teal/20 cursor-pointer hover:opacity-80 transition-opacity"
                                 onClick={(e) => {
                                   e.stopPropagation();
