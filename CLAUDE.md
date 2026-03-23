@@ -84,12 +84,29 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 - 로그아웃: `signOut()` → `logout()` → `window.location.href = "/"`
 
 ### 권한
-| 역할 | 접근 | 체크 함수 |
-|------|------|----------|
-| student | 공개 + 재원생 | `isStudent()` |
-| assistant | + /admin/guide | `isStaffRole()` |
-| mentor | + /admin/* | `hasAdminAccess()` |
-| admin | 전체 | `hasAdminAccess()` |
+| 역할 | 접근 | 체크 함수 | 비고 |
+|------|------|----------|------|
+| student | 공개 + 재원생 페이지 | `isStudent()` | status=active 필수 |
+| assistant | + /admin/guide 만 | `isStaffRole()` | 사이드바에 "조교 온보딩"만 표시 |
+| mentor | + /admin/* 전체 | `hasAdminAccess()` | admin과 동일 권한 |
+| admin | /admin/* 전체 | `hasAdminAccess()` | mentor와 동일 권한 |
+
+**권한 레이어 (3단계)**:
+1. **middleware.ts** — 서버 사이드 라우트 보호 (SSoT)
+   - `PROTECTED_ROUTES`: 로그인 필수 (`/guide`, `/manual`, `/notices`, `/questions`, `/meal`, `/my`, `/reviews/write`)
+   - `ADMIN_ROUTES`: admin/mentor 필수 (`/admin`)
+   - `ASSISTANT_ROUTES`: staff 필수 (`/admin/guide`)
+   - 재원생 전용 라우트: `/meal`, `/reviews/write`, `/questions/new` — 스태프 접근 차단
+   - 스태프 전용 라우트: `/guide` — 학생 접근 차단
+   - student status 체크 (pending→안내, inactive→안내)
+2. **admin/layout.tsx** — 클라이언트 사이드 이중 체크
+   - `/admin/guide`: `isStaff` 체크 (assistant 허용)
+   - 그 외 `/admin/*`: `canAccessAdmin` 체크 (admin+mentor만)
+3. **AdminSidebar.tsx** — 역할별 메뉴 필터링
+   - assistant: `assistantVisible: true`인 메뉴만 표시
+   - admin/mentor: 전체 메뉴 표시
+
+**질문 관리 권한**: 질문 답변/고정은 `canAccessAdmin`(admin+mentor)만 가능. assistant는 불가.
 
 ### 상태 관리
 - `useUserStore` (Zustand + sessionStorage persist). `isLoading`은 persist 제외
@@ -153,4 +170,5 @@ phase{N}-{name}-tasks.md    ← 작업 목록, 완료 기록
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-03-23: 전체 권한 검토 — 재원생/스태프 전용 라우트 분리, assistant 권한 제한, 질문 답변/고정 canAccessAdmin 적용
 - 2026-03-19: CLAUDE.md 재설계 — 모듈 분리, 검증 루프 추가, 도메인 용어 정의, 중복 제거

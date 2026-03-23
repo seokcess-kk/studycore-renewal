@@ -138,7 +138,7 @@ export default function LunchPage() {
       <main className="page-body bg-stone">
         {/* 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
-          <div className="container-content">
+          <div className="max-w-3xl mx-auto">
             <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-3">
               Meal / 도시락 신청
             </span>
@@ -151,7 +151,7 @@ export default function LunchPage() {
           </div>
         </section>
 
-        <div className="container-content px-6 py-8">
+        <div className="max-w-3xl mx-auto px-6 py-8">
 
           {isLoading ? (
             <div className="space-y-4">
@@ -298,7 +298,7 @@ export default function LunchPage() {
       {/* Sticky 하단 제출 바 */}
       {period && !isLoading && !error && (
         <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-rule px-6 py-3">
-          <div className="container-content flex items-center justify-between">
+          <div className="max-w-3xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-body text-muted">선택</span>
               <span className="text-[18px] font-bold text-ink">

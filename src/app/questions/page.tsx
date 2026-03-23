@@ -88,7 +88,7 @@ export default function QuestionsPage() {
         {isStaff ? (
           /* ========== 스태프 컴팩트 헤더 ========== */
           <section className="bg-navy py-6 px-6 md:px-13">
-            <div className="container-wide flex items-center justify-between">
+            <div className="max-w-4xl mx-auto flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <h1 className="font-serif text-xl font-bold text-white">
                   질문 관리
@@ -102,7 +102,7 @@ export default function QuestionsPage() {
             </div>
 
             {/* 필터 — 헤더 내 통합 */}
-            <div className="container-wide mt-4 flex gap-2">
+            <div className="max-w-4xl mx-auto mt-4 flex gap-2">
               <StaffFilterButton
                 active={statusFilter === "pending"}
                 onClick={() => setStatusFilter("pending")}
@@ -128,7 +128,7 @@ export default function QuestionsPage() {
           /* ========== 재원생 Hero 헤더 ========== */
           <>
             <section className="bg-navy section-sm px-6 md:px-13">
-              <div className="container-wide flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+              <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6">
                 <div>
                   <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
                     Questions / 수학 질문방
@@ -182,7 +182,7 @@ export default function QuestionsPage() {
 
         {/* 질문 목록 */}
         <section className="px-6 md:px-13 py-8">
-          <div className="container-wide">
+          <div className="max-w-4xl mx-auto">
             {isLoading ? (
               <div className="space-y-4">
                 {Array.from({ length: 3 }).map((_, i) => (

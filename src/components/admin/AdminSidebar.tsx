@@ -24,63 +24,20 @@ import { useUserStore } from "@/stores/useUserStore";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { signOut } from "@/domains/user/service";
 import { useUnansweredCount } from "@/hooks/useUnansweredCount";
+import { isAssistant } from "@/lib/constants";
 
 const navItems = [
-  {
-    label: "대시보드",
-    href: "/admin",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "회원 관리",
-    href: "/admin/members",
-    icon: Users,
-  },
-  {
-    label: "공지 관리",
-    href: "/admin/notices",
-    icon: Bell,
-  },
-  {
-    label: "질문 관리",
-    href: "/admin/questions",
-    icon: MessageSquare,
-  },
-  {
-    label: "상담 관리",
-    href: "/admin/consultations",
-    icon: Phone,
-  },
-  {
-    label: "팝업 관리",
-    href: "/admin/popups",
-    icon: Layers,
-  },
-  {
-    label: "프로그램 관리",
-    href: "/admin/programs",
-    icon: GraduationCap,
-  },
-  {
-    label: "블로그 관리",
-    href: "/admin/blog",
-    icon: FileText,
-  },
-  {
-    label: "도시락 관리",
-    href: "/admin/meal",
-    icon: UtensilsCrossed,
-  },
-  {
-    label: "조교 온보딩",
-    href: "/admin/guide",
-    icon: BookOpen,
-  },
-  {
-    label: "설정",
-    href: "/admin/settings",
-    icon: Settings,
-  },
+  { label: "대시보드", href: "/admin", icon: LayoutDashboard },
+  { label: "회원 관리", href: "/admin/members", icon: Users },
+  { label: "공지 관리", href: "/admin/notices", icon: Bell },
+  { label: "질문 관리", href: "/admin/questions", icon: MessageSquare },
+  { label: "상담 관리", href: "/admin/consultations", icon: Phone },
+  { label: "팝업 관리", href: "/admin/popups", icon: Layers },
+  { label: "프로그램 관리", href: "/admin/programs", icon: GraduationCap },
+  { label: "블로그 관리", href: "/admin/blog", icon: FileText },
+  { label: "도시락 관리", href: "/admin/meal", icon: UtensilsCrossed },
+  { label: "조교 온보딩", href: "/admin/guide", icon: BookOpen, assistantVisible: true },
+  { label: "설정", href: "/admin/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {
@@ -145,7 +102,14 @@ export function AdminSidebar() {
 
       {/* 네비게이션 */}
       <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
-        {navItems.map((item) => {
+        {navItems.filter((item) => {
+          const role = profile?.role;
+          // assistant는 가이드 메뉴만 표시
+          if (isAssistant(role)) {
+            return item.assistantVisible === true;
+          }
+          return true;
+        }).map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
 

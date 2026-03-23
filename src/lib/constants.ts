@@ -146,13 +146,14 @@ export const PROTECTED_ROUTES = [
   "/questions",
   "/meal",
   "/my",
+  "/reviews/write",
 ] as const;
 
 // 어드민 라우트 (admin 역할 필요)
 export const ADMIN_ROUTES = ["/admin"] as const;
 
 // 조교 온보딩 라우트 (assistant 또는 admin 역할 필요)
-export const ASSISTANT_ROUTES = [] as const;
+export const ASSISTANT_ROUTES = ["/admin/guide"] as const;
 
 // 카카오 API
 export const KAKAO = {

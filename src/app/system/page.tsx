@@ -14,7 +14,7 @@ export default function SystemPage() {
       <main className="page-body">
         {/* 헤더 */}
         <section className="bg-navy-dark py-20 px-6 md:px-13">
-          <div className="container-wide">
+          <div className="max-w-4xl mx-auto">
             <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
               System / 운영 시스템
             </span>
@@ -30,7 +30,7 @@ export default function SystemPage() {
 
         {/* 교시제 시스템 */}
         <section className="section-sm px-6 md:px-13 border-b border-rule">
-          <div className="container-wide">
+          <div className="max-w-4xl mx-auto">
             <div className="flex items-baseline gap-4 mb-8">
               <span className="font-mono text-[48px] font-bold text-navy/10">
                 01
@@ -75,7 +75,7 @@ export default function SystemPage() {
 
         {/* 생활 규정 */}
         <section className="section-sm px-6 md:px-13 border-b border-rule">
-          <div className="container-wide">
+          <div className="max-w-4xl mx-auto">
             <div className="flex items-baseline gap-4 mb-8">
               <span className="font-mono text-[48px] font-bold text-navy/10">
                 02
@@ -107,7 +107,7 @@ export default function SystemPage() {
 
         {/* 벌점 제도 */}
         <section className="section-sm px-6 md:px-13">
-          <div className="container-wide">
+          <div className="max-w-4xl mx-auto">
             <div className="flex items-baseline gap-4 mb-8">
               <span className="font-mono text-[48px] font-bold text-navy/10">
                 03

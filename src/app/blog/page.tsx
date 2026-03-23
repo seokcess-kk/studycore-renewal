@@ -63,7 +63,7 @@ export default function BlogPage() {
       <main className="page-body">
         {/* 헤더 */}
         <section className="bg-navy section-sm px-6 md:px-13">
-          <div className="container-full flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
                 Blog
@@ -90,7 +90,7 @@ export default function BlogPage() {
         {/* 태그 필터 */}
         {allTags.length > 0 && (
           <section className="border-b border-rule">
-            <div className="container-full px-6 md:px-13 py-4 flex gap-2 overflow-x-auto">
+            <div className="max-w-6xl mx-auto px-6 md:px-13 py-4 flex gap-2 overflow-x-auto">
               <button
                 onClick={() => {
                   setSelectedTag(undefined);
@@ -126,7 +126,7 @@ export default function BlogPage() {
 
         {/* 블로그 목록 */}
         <section className="px-6 md:px-13 py-12">
-          <div className="container-full">
+          <div className="max-w-6xl mx-auto">
             {isLoading ? (
               <BlogSkeleton />
             ) : posts.length === 0 ? (

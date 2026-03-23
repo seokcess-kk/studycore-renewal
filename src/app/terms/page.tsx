@@ -17,7 +17,7 @@ export default function TermsPage() {
       <main className="page-body">
         {/* 헤더 */}
         <section className="bg-stone section-sm px-6 md:px-13 border-b border-rule">
-          <div className="container-content">
+          <div className="max-w-3xl mx-auto">
             <h1 className="font-serif text-3xl font-bold text-ink mb-4">
               이용약관
             </h1>
@@ -29,7 +29,7 @@ export default function TermsPage() {
 
         {/* 본문 */}
         <section className="py-12 px-6 md:px-13">
-          <div className="container-content prose prose-sm">
+          <div className="max-w-3xl mx-auto prose prose-sm">
             <TermsSection title="제1조 (목적)">
               <p>
                 이 약관은 스터디코어 1.0(이하 &quot;회사&quot;)이 제공하는

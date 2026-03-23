@@ -49,7 +49,7 @@ export default function NoticesPage() {
       <main className="page-body">
         {/* 헤더 */}
         <section className="bg-navy section-sm px-6 md:px-13">
-          <div className="container-wide">
+          <div className="max-w-4xl mx-auto">
             <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
               Notices / 공지사항
             </span>
@@ -91,7 +91,7 @@ export default function NoticesPage() {
 
         {/* 공지사항 목록 */}
         <section className="px-6 md:px-13 py-8">
-          <div className="container-wide">
+          <div className="max-w-4xl mx-auto">
             {isLoading ? (
               <div className="space-y-4">
                 {Array.from({ length: 5 }).map((_, i) => (

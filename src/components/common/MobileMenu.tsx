@@ -200,6 +200,16 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     </Link>
                   </motion.div>
                 )}
+                {isStaff && !canAccessAdmin && (
+                  <motion.div variants={itemVariants}>
+                    <Link
+                      href={ROUTES.ADMIN_GUIDE}
+                      className={linkClass(pathname.startsWith("/admin/guide"))}
+                    >
+                      조교 관리
+                    </Link>
+                  </motion.div>
+                )}
 
                 <motion.div variants={itemVariants} className="border-t border-white/10 mt-6 pt-6">
                   <button

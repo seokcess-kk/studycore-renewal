@@ -101,9 +101,17 @@ export async function middleware(request: NextRequest) {
     }
 
     // 재원생 전용 라우트: staff가 직접 접근 시 차단
-    if (pathname.startsWith("/meal") && isStaffRole(profile.role)) {
+    const studentOnlyRoutes = ["/meal", "/reviews/write", "/questions/new"];
+    if (studentOnlyRoutes.some((r) => pathname.startsWith(r)) && isStaffRole(profile.role)) {
       const url = request.nextUrl.clone();
       url.pathname = hasAdminAccess(profile.role) ? ROUTES.ADMIN : ROUTES.HOME;
+      return NextResponse.redirect(url);
+    }
+
+    // 스태프 전용 라우트: 학생 접근 시 차단
+    if (pathname.startsWith("/guide") && isStudent(profile.role)) {
+      const url = request.nextUrl.clone();
+      url.pathname = ROUTES.HOME;
       return NextResponse.redirect(url);
     }
 

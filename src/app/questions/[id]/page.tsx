@@ -30,7 +30,7 @@ export default function QuestionDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { showToast } = useToast();
-  const { user, isActive, isAuthenticated, isStaff } = useUserStore();
+  const { user, isActive, isAuthenticated, isStaff, canAccessAdmin } = useUserStore();
 
   const [question, setQuestion] = useState<QuestionWithAnswers | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,10 +78,10 @@ export default function QuestionDetailPage() {
   const isOwner = user?.id === question?.author_id;
   const canDelete = isOwner && question?.status === "pending";
   const isAnswered = question?.status === "answered";
-  const canAnswer = isStaff && !isOwner; // 멘토/관리자가 답변 가능 (본인 질문 제외)
+  const canAnswer = canAccessAdmin && !isOwner; // 멘토/관리자만 답변 가능 (본인 질문 제외)
 
-  // 비활성 사용자 안내
-  if (!isActive && isAuthenticated) {
+  // 비활성 사용자 안내 (스태프 제외)
+  if (!isStaff && !isActive && isAuthenticated) {
     return (
       <>
         <Nav />
@@ -109,13 +109,13 @@ export default function QuestionDetailPage() {
         <Nav />
         <main className="page-body min-h-screen">
           <section className="bg-navy py-12 px-6 md:px-13">
-            <div className="container-wide">
+            <div className="max-w-4xl mx-auto">
               <Skeleton className="h-4 w-24 bg-white/20 mb-4" />
               <Skeleton className="h-8 w-3/4 bg-white/20" />
             </div>
           </section>
           <section className="px-6 md:px-13 py-8">
-            <div className="container-wide space-y-4">
+            <div className="max-w-4xl mx-auto space-y-4">
               <Skeleton className="h-40 w-full" />
               <Skeleton className="h-24 w-full" />
             </div>
@@ -136,7 +136,7 @@ export default function QuestionDetailPage() {
       <main className="page-body min-h-screen">
         {/* 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
-          <div className="container-wide">
+          <div className="max-w-4xl mx-auto">
             <Link
               href={ROUTES.QUESTIONS}
               className="inline-flex items-center gap-2 text-white/60 hover:text-white text-secondary mb-4 transition-colors"
@@ -194,7 +194,7 @@ export default function QuestionDetailPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {isStaff && (
+                {canAccessAdmin && (
                   <Button
                     variant="ghost"
                     onClick={async () => {
@@ -226,7 +226,7 @@ export default function QuestionDetailPage() {
 
         {/* 질문 내용 */}
         <section className="px-6 md:px-13 py-8">
-          <div className="container-wide">
+          <div className="max-w-4xl mx-auto">
             {/* 본문 */}
             <div className="bg-white border border-rule p-6 mb-6">
               <p className="text-reading text-ink whitespace-pre-wrap leading-relaxed">

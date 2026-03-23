@@ -83,7 +83,7 @@ export default function NewQuestionPage() {
       <main className="page-body min-h-screen bg-stone">
         {/* 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
-          <div className="container-wide">
+          <div className="max-w-4xl mx-auto">
             <Link
               href={ROUTES.QUESTIONS}
               className="inline-flex items-center gap-2 text-white/60 hover:text-white text-secondary mb-4 transition-colors"

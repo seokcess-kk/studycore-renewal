@@ -53,7 +53,7 @@ export default function BlogPostPage() {
       <>
         <Nav />
         <main className="page-body">
-          <article className="container-content px-6 md:px-13">
+          <article className="max-w-3xl mx-auto px-6 md:px-13">
             <Skeleton className="h-8 w-3/4 mb-4" />
             <Skeleton className="h-4 w-1/4 mb-8" />
             <Skeleton className="aspect-[16/9] w-full mb-8" />
@@ -87,7 +87,7 @@ export default function BlogPostPage() {
       <main className="page-body">
         {/* 헤더 */}
         <header className="bg-navy section-sm px-6 md:px-13">
-          <div className="container-content">
+          <div className="max-w-3xl mx-auto">
             {/* 태그 */}
             {post.tags.length > 0 && (
               <div className="flex gap-2 mb-4 flex-wrap">
@@ -127,7 +127,7 @@ export default function BlogPostPage() {
 
         {/* 썸네일 */}
         {post.thumbnail_url && (
-          <div className="container-wide px-6 md:px-13 -mt-8">
+          <div className="max-w-4xl mx-auto px-6 md:px-13 -mt-8">
             <div className="aspect-[16/9] relative bg-stone overflow-hidden border border-rule">
               <Image
                 src={post.thumbnail_url}
@@ -141,7 +141,7 @@ export default function BlogPostPage() {
         )}
 
         {/* 본문 */}
-        <article className="container-content px-6 md:px-13 py-12">
+        <article className="max-w-3xl mx-auto px-6 md:px-13 py-12">
           <div className="prose prose-lg max-w-none">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
@@ -246,7 +246,7 @@ export default function BlogPostPage() {
 
         {/* 이전/다음 포스트 */}
         {(adjacentPosts.prev || adjacentPosts.next) && (
-          <nav className="container-content px-6 md:px-13 py-8 border-t border-rule">
+          <nav className="max-w-3xl mx-auto px-6 md:px-13 py-8 border-t border-rule">
             <div className="flex justify-between gap-4">
               {adjacentPosts.prev ? (
                 <Link
@@ -296,7 +296,7 @@ export default function BlogPostPage() {
         )}
 
         {/* 목록으로 */}
-        <div className="container-content px-6 md:px-13 py-8">
+        <div className="max-w-3xl mx-auto px-6 md:px-13 py-8">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-body text-muted hover:text-navy transition-colors"

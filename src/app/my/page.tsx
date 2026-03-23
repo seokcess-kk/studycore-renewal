@@ -127,18 +127,20 @@ export default function MyPage() {
               <User size={16} />
               내 정보
             </button>
-            <button
-              onClick={() => setActiveTab("questions")}
-              disabled={!isActive}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 text-body font-medium border-b-2 transition-colors ${
-                activeTab === "questions"
-                  ? "border-navy text-navy"
-                  : "border-transparent text-muted hover:text-ink"
-              } ${!isActive ? "opacity-50 cursor-not-allowed" : ""}`}
-            >
-              <MessageCircle size={16} />
-              내 질문
-            </button>
+            {!isStaff && (
+              <button
+                onClick={() => setActiveTab("questions")}
+                disabled={!isActive}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 text-body font-medium border-b-2 transition-colors ${
+                  activeTab === "questions"
+                    ? "border-navy text-navy"
+                    : "border-transparent text-muted hover:text-ink"
+                } ${!isActive ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                <MessageCircle size={16} />
+                내 질문
+              </button>
+            )}
           </div>
 
           {/* 탭 컨텐츠 */}

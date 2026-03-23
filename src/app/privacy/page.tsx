@@ -17,7 +17,7 @@ export default function PrivacyPage() {
       <main className="page-body">
         {/* 헤더 */}
         <section className="bg-stone section-sm px-6 md:px-13 border-b border-rule">
-          <div className="container-content">
+          <div className="max-w-3xl mx-auto">
             <h1 className="font-serif text-3xl font-bold text-ink mb-4">
               개인정보처리방침
             </h1>
@@ -29,7 +29,7 @@ export default function PrivacyPage() {
 
         {/* 본문 */}
         <section className="py-12 px-6 md:px-13">
-          <div className="container-content">
+          <div className="max-w-3xl mx-auto">
             <PrivacySection title="1. 개인정보의 수집 및 이용 목적">
               <p>
                 스터디코어 1.0(이하 &quot;회사&quot;)은 다음의 목적을 위하여

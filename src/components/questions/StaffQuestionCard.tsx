@@ -207,6 +207,22 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                         <p className="text-secondary text-ink whitespace-pre-wrap">
                           {answer.content}
                         </p>
+                        {answer.image_urls && answer.image_urls.length > 0 && (
+                          <div className="mt-2 flex gap-2 flex-wrap">
+                            {answer.image_urls.map((url, i) => (
+                              <img
+                                key={`answer-img-${answer.id}-${i}`}
+                                src={url}
+                                alt={`답변 첨부 ${i + 1}`}
+                                className="w-20 h-20 object-cover border border-teal/20 cursor-pointer hover:opacity-80 transition-opacity"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(url, "_blank");
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

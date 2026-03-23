@@ -151,6 +151,11 @@ export function Nav() {
                   관리자
                 </Link>
               )}
+              {isStaff && !canAccessAdmin && (
+                <Link href={ROUTES.ADMIN_GUIDE} className={linkStyle(pathname.startsWith("/admin/guide"))}>
+                  조교 관리
+                </Link>
+              )}
               <button
                 type="button"
                 onClick={handleLogout}
