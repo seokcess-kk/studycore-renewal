@@ -45,8 +45,7 @@ function LoginContent() {
     setIsLoading(true);
     try {
       const supabase = createClient();
-      const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-      const callbackUrl = new URL("/auth/callback", siteOrigin);
+      const callbackUrl = new URL("/auth/callback", "https://www.studycore.kr");
       callbackUrl.searchParams.set("next", redirectTo);
 
       const { error } = await supabase.auth.signInWithOAuth({
