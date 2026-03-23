@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { ToastProvider, SessionWarning } from "@/components/common";
+import { useEffect, useRef, Suspense } from "react";
+import { useSearchParams, usePathname } from "next/navigation";
+import { ToastProvider, SessionWarning, useToast } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/stores/useUserStore";
 import { logger } from "@/lib/logger";
@@ -117,11 +118,42 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+/**
+ * 인증 후 URL 파라미터 기반 토스트 알림
+ * - ?signup=complete → 가입 신청 완료 알림
+ * - ?complete-profile=true → 프로필 완성 안내
+ */
+function AuthToastHandler() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { success, info } = useToast();
+  const handled = useRef(false);
+
+  useEffect(() => {
+    if (handled.current) return;
+
+    if (searchParams.get("signup") === "complete" && pathname === "/") {
+      handled.current = true;
+      success("가입 신청이 완료되었습니다. 관리자 승인을 기다려 주세요.");
+      window.history.replaceState({}, "", "/");
+    }
+
+    if (searchParams.get("complete-profile") === "true" && pathname === "/my") {
+      handled.current = true;
+      info("연락처, 학교/학년 정보를 입력해 주세요.");
+      window.history.replaceState({}, "", "/my");
+    }
+  }, [searchParams, pathname, success, info]);
+
+  return null;
+}
+
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ToastProvider>
       <AuthInitializer>
         {children}
+        <Suspense><AuthToastHandler /></Suspense>
         <SessionWarning />
       </AuthInitializer>
     </ToastProvider>

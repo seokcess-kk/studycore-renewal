@@ -24,13 +24,13 @@ export function getPostAuthDestination(
   profile: { role?: string; status?: string; phone?: string | null } | null,
   fallbackNext = "/"
 ): string {
-  if (!profile) return "/pending-approval";
+  if (!profile) return "/?signup=complete";
   if (profile.role === "student" && profile.status === "pending")
-    return "/pending-approval";
+    return "/?signup=complete";
   if (profile.role === "student" && profile.status === "inactive")
     return "/account-inactive";
   // 승인된 학생인데 필수 정보 미입력 → 마이페이지로 이동
   if (profile.role === "student" && profile.status === "active" && !profile.phone)
-    return "/my";
+    return "/my?complete-profile=true";
   return fallbackNext;
 }
