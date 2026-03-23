@@ -11,15 +11,15 @@ interface RoleBadgeProps {
 const roleConfig: Record<UserRoleType, { label: string; className: string }> = {
   student: {
     label: "재원생",
-    className: "bg-blue-100 text-blue-800 border-blue-200",
+    className: "bg-teal/10 text-teal-dark border-teal/20",
   },
   assistant: {
     label: "조교",
-    className: "bg-purple-100 text-purple-800 border-purple-200",
+    className: "bg-navy/10 text-navy border-navy/20",
   },
   mentor: {
     label: "멘토",
-    className: "bg-teal-100 text-teal-800 border-teal-200",
+    className: "bg-teal text-white border-teal",
   },
   admin: {
     label: "관리자",

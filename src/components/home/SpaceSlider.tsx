@@ -152,7 +152,7 @@ export function SpaceSlider() {
                   <h3 className="font-serif text-[28px] font-bold text-white mb-2 tracking-[-0.02em]">
                     {slide.title}
                   </h3>
-                  <p className="text-[13.5px] text-white/60 font-light leading-[1.7] max-w-[440px]">
+                  <p className="text-[14px] text-white/60 font-light leading-[1.7] max-w-[440px]">
                     {slide.description}
                   </p>
                 </motion.div>

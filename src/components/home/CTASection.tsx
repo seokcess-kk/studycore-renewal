@@ -126,7 +126,7 @@ export function CTASection() {
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   href={ROUTES.CONSULT}
-                  className="cta-fill cta-fill-teal group inline-flex items-center justify-center gap-3 px-10 py-4 text-navy text-[13.5px] font-bold tracking-[0.05em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300 cursor-pointer"
+                  className="cta-fill cta-fill-teal group inline-flex items-center justify-center gap-3 px-10 py-4 text-navy text-[14px] font-bold tracking-[0.05em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300 cursor-pointer"
                 >
                   상담 신청하기
                   <ArrowRight
@@ -137,7 +137,7 @@ export function CTASection() {
 
                 <a
                   href={`tel:${CONTACT.phone.replace(/-/g, "")}`}
-                  className="group inline-flex items-center justify-center gap-2 px-6 py-4 text-white/60 text-[13.5px] font-medium tracking-[0.02em] border-[1.5px] border-white/[0.12] hover:border-white/30 hover:text-white transition-all duration-300 cursor-pointer"
+                  className="group inline-flex items-center justify-center gap-2 px-6 py-4 text-white/60 text-[14px] font-medium tracking-[0.02em] border-[1.5px] border-white/[0.12] hover:border-white/30 hover:text-white transition-all duration-300 cursor-pointer"
                 >
                   <Phone size={14} />
                   전화 문의

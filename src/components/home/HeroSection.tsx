@@ -201,7 +201,7 @@ export function HeroSection() {
             </p>
             <Link
               href={ROUTES.CONSULT}
-              className="cursor-pointer cta-fill cta-fill-teal inline-block px-13 py-4 text-navy-dark text-[13.5px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
+              className="cursor-pointer cta-fill cta-fill-teal inline-block px-13 py-4 text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300"
             >
               상담 신청하기
             </Link>

@@ -205,7 +205,7 @@ function FeatureRow({
           {feature.title}
         </h3>
         <p
-          className="text-[13.5px] leading-[2] text-[#555] font-light max-w-[640px] mb-4 [&_strong]:text-navy [&_strong]:font-bold"
+          className="text-[14px] leading-[2] text-[#555] font-light max-w-[640px] mb-4 [&_strong]:text-navy [&_strong]:font-bold"
           dangerouslySetInnerHTML={{ __html: feature.description }}
         />
         <div className="flex gap-1.5 flex-wrap">
