@@ -21,13 +21,16 @@ export function sanitizeRedirectPath(
  * OAuth 콜백과 middleware에서 동일한 규칙을 사용
  */
 export function getPostAuthDestination(
-  profile: { role?: string; status?: string } | null,
+  profile: { role?: string; status?: string; phone?: string | null } | null,
   fallbackNext = "/"
 ): string {
-  if (!profile) return "/register";
+  if (!profile) return "/pending-approval";
   if (profile.role === "student" && profile.status === "pending")
     return "/pending-approval";
   if (profile.role === "student" && profile.status === "inactive")
     return "/account-inactive";
+  // 승인된 학생인데 필수 정보 미입력 → 프로필 완성 페이지
+  if (profile.role === "student" && profile.status === "active" && !profile.phone)
+    return "/register";
   return fallbackNext;
 }
