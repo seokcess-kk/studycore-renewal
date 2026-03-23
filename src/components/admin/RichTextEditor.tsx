@@ -14,26 +14,32 @@ import {
   Quote,
   Minus,
   Link as LinkIcon,
-  Image as ImageIcon,
+  ImagePlus,
   Unlink,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 interface RichTextEditorProps {
   content: string;
   onChange: (html: string) => void;
   placeholder?: string;
+  /** 이미지 업로드용 Storage 버킷 (기본: editor-images) */
+  bucket?: string;
 }
 
 function ToolbarButton({
   onClick,
   isActive = false,
+  disabled = false,
   children,
   title,
 }: {
   onClick: () => void;
   isActive?: boolean;
+  disabled?: boolean;
   children: React.ReactNode;
   title: string;
 }) {
@@ -41,9 +47,10 @@ function ToolbarButton({
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       title={title}
       className={cn(
-        "p-1.5 transition-colors",
+        "p-1.5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
         isActive
           ? "text-ink bg-white"
           : "text-muted hover:text-ink hover:bg-white"
@@ -58,13 +65,22 @@ export function RichTextEditor({
   content,
   onChange,
   placeholder,
+  bucket = "editor-images",
 }: RichTextEditorProps) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
         heading: { levels: [2, 3] },
       }),
-      Image.configure({ inline: false }),
+      Image.configure({
+        inline: false,
+        HTMLAttributes: {
+          class: "max-w-full h-auto",
+        },
+      }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: { class: "text-teal underline" },
@@ -77,7 +93,8 @@ export function RichTextEditor({
           "min-h-[300px] p-4 prose prose-sm max-w-none focus:outline-none " +
           "prose-headings:font-serif prose-h2:text-xl prose-h2:font-bold prose-h3:text-lg prose-h3:font-bold " +
           "prose-blockquote:border-l-2 prose-blockquote:border-teal prose-blockquote:pl-4 prose-blockquote:text-muted " +
-          "prose-a:text-teal prose-a:underline",
+          "prose-a:text-teal prose-a:underline " +
+          "prose-img:mx-auto prose-img:my-6",
       },
     },
     onUpdate: ({ editor }) => {
@@ -85,9 +102,6 @@ export function RichTextEditor({
     },
   });
 
-  // 수정 페이지: 초기 content가 비동기로 로드될 때 에디터에 반영
-  // onUpdate → onChange → setValue → content 변경 루프 방지를 위해
-  // 에디터가 비어있을 때만 외부 content를 설정
   useEffect(() => {
     if (editor && editor.isEmpty && content) {
       editor.commands.setContent(content);
@@ -105,15 +119,59 @@ export function RichTextEditor({
     }
   };
 
-  const addImage = () => {
-    const url = window.prompt("이미지 URL 입력 (https://...):");
-    if (url && isSafeUrl(url)) {
-      editor.chain().focus().setImage({ src: url }).run();
+  const handleImageUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > 10 * 1024 * 1024) {
+      alert("이미지 크기는 10MB 이하만 가능합니다.");
+      return;
     }
+
+    setIsUploading(true);
+    try {
+      const supabase = createClient();
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+      const { error } = await supabase.storage
+        .from(bucket)
+        .upload(path, file, { contentType: file.type });
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(path);
+
+      if (urlData?.publicUrl) {
+        editor.chain().focus().setImage({ src: urlData.publicUrl }).run();
+      }
+    } catch (err) {
+      console.error("이미지 업로드 실패:", err);
+      alert("이미지 업로드에 실패했습니다.");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
   };
 
   return (
     <div>
+      {/* 숨겨진 파일 입력 */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleImageUpload(file);
+        }}
+      />
+
       {/* 툴바 */}
       <div className="border border-rule bg-stone p-2 flex flex-wrap gap-1">
         <ToolbarButton
@@ -195,8 +253,8 @@ export function RichTextEditor({
             <Unlink size={16} />
           </ToolbarButton>
         )}
-        <ToolbarButton onClick={addImage} title="이미지">
-          <ImageIcon size={16} />
+        <ToolbarButton onClick={handleImageClick} disabled={isUploading} title="이미지 업로드">
+          {isUploading ? <Loader2 size={16} className="animate-spin" /> : <ImagePlus size={16} />}
         </ToolbarButton>
       </div>
 

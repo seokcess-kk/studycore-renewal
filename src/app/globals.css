@@ -180,6 +180,14 @@
     flex: 1 0 auto;
   }
 
+  /* prose 내 이미지 스타일 */
+  .prose img {
+    max-width: 100%;
+    height: auto;
+    margin: 1.5rem auto;
+    display: block;
+  }
+
   html {
     @apply font-sans;
     scroll-behavior: smooth;
