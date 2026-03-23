@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
   const next = sanitizeRedirectPath(searchParams.get("next"), "/");
 
   if (!code) {
+    console.error("[auth/callback] code 없음");
     return NextResponse.redirect(`${origin}/login`);
   }
 
@@ -22,23 +23,57 @@ export async function GET(request: NextRequest) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    console.error("OAuth callback error:", error.message);
+    console.error("[auth/callback] 세션 교환 실패:", error.message);
     return NextResponse.redirect(`${origin}/login`);
   }
 
-  // 프로필 확인 → 상태별 목적지 결정
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
+    console.error("[auth/callback] user 없음");
     return NextResponse.redirect(`${origin}/login`);
   }
 
-  const { data: profile } = await supabase
+  console.log("[auth/callback] user:", user.id, user.email);
+
+  // 프로필 조회
+  let { data: profile } = await supabase
     .from("profiles")
     .select("id, role, status, phone")
     .eq("id", user.id)
     .maybeSingle();
 
+  console.log("[auth/callback] profile:", profile);
+
+  // 프로필 없음 → 직접 생성 (트리거 미발동 케이스 대응)
+  if (!profile) {
+    const userName =
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      "미입력";
+
+    console.log("[auth/callback] 프로필 생성 시도:", userName);
+
+    const { data: newProfile, error: insertError } = await supabase
+      .from("profiles")
+      .insert({
+        id: user.id,
+        name: userName,
+        role: "student",
+        status: "pending",
+      })
+      .select("id, role, status, phone")
+      .maybeSingle();
+
+    if (insertError) {
+      console.error("[auth/callback] 프로필 생성 실패:", insertError.message);
+    } else {
+      profile = newProfile;
+      console.log("[auth/callback] 프로필 생성 완료:", newProfile);
+    }
+  }
+
   const destination = getPostAuthDestination(profile, next);
+  console.log("[auth/callback] 리다이렉트:", destination);
   return NextResponse.redirect(`${origin}${destination}`);
 }
