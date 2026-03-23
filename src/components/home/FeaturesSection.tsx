@@ -89,7 +89,8 @@ export function FeaturesSection() {
   };
 
   return (
-    <section id="features" className="bg-stone section-lg section-container">
+    <section id="features" className="bg-stone section-lg">
+      <div className="section-container">
       {/* 헤더 */}
       <motion.div
         variants={{
@@ -166,6 +167,7 @@ export function FeaturesSection() {
           />
         </Link>
       </motion.div>
+      </div>
     </section>
   );
 }
