@@ -6,8 +6,9 @@ import { CONTACT } from "@/lib/constants";
 export function PendingBanner() {
   const profile = useUserStore((state) => state.profile);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  const isLoading = useUserStore((state) => state.isLoading);
 
-  if (!isAuthenticated || !profile || profile.status !== "pending") return null;
+  if (isLoading || !isAuthenticated || !profile || profile.status !== "pending") return null;
 
   return (
     <div className="bg-navy text-white px-6 py-3 text-center text-secondary">

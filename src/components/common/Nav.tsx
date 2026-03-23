@@ -28,6 +28,7 @@ export function Nav() {
   useEffect(() => { setIsMounted(true); }, []);
 
   // 인증 상태 (sessionStorage persist → hydrate 후 즉시 사용 가능)
+  const isLoading = useUserStore((state) => state.isLoading);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const canAccessAdmin = useUserStore((state) => state.canAccessAdmin);
   const isStaff = useUserStore((state) => state.isStaff);
@@ -113,7 +114,7 @@ export function Nav() {
 
         {/* 데스크톱 네비게이션 링크 */}
         <div className="flex items-center gap-6 md:gap-9">
-          {isMounted && isAuthenticated ? (
+          {isMounted && !isLoading && isAuthenticated ? (
             <>
               <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>
                 공지사항
