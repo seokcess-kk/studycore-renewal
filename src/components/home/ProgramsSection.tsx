@@ -109,14 +109,14 @@ export function ProgramsSection() {
           viewport={{ once: true, margin: "-40px" }}
           className="mb-0 flex flex-col md:flex-row md:items-baseline gap-5 border-b border-white/[0.08] pb-10"
         >
-          <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase whitespace-nowrap">
+          <span className="font-mono text-label font-bold text-teal tracking-label uppercase whitespace-nowrap">
             Programs / 02
           </span>
-          <h2 className="font-serif text-[clamp(32px,5vw,52px)] font-black tracking-[-0.03em] text-white leading-none">
+          <h2 className="font-serif text-fluid-h1 font-black tracking-heading text-white leading-none">
             프로그램 안내
           </h2>
           <div className="flex-1" />
-          <p className="text-[13px] text-white/60 font-light max-w-[260px] md:text-right leading-[1.8]">
+          <p className="text-secondary text-white/60 font-light max-w-[260px] md:text-right leading-prose">
             스터디코어의 운영 프로그램을 확인하세요.
           </p>
         </motion.div>
@@ -141,18 +141,18 @@ export function ProgramsSection() {
                     {/* 좌측: 정보 */}
                     <div>
                       <div className="flex items-center gap-3 mb-6">
-                        <span className="bg-teal px-2.5 py-1 text-[11px] font-bold text-white tracking-wider">
+                        <span className="bg-teal px-2.5 py-1 text-caption font-bold text-white tracking-wider">
                           모집중
                         </span>
                         {program.start_date && (
-                          <span className="flex items-center gap-1.5 font-mono text-[11px] text-white/60">
+                          <span className="flex items-center gap-1.5 font-mono text-caption text-white/60">
                             <Calendar size={12} />
                             {formatDate(program.start_date)}~
                           </span>
                         )}
                       </div>
 
-                      <h3 className="font-serif text-[clamp(24px,3vw,36px)] font-black text-white tracking-[-0.02em] mb-6 leading-tight">
+                      <h3 className="font-serif text-fluid-h2 font-black text-white tracking-heading mb-6 leading-tight">
                         {program.title}
                       </h3>
 
@@ -165,13 +165,13 @@ export function ProgramsSection() {
                               className="flex items-start gap-3"
                             >
                               <span className="mt-1.5 w-1.5 h-1.5 bg-teal flex-shrink-0" />
-                              <span className="text-[14px] text-white/60 leading-relaxed">
+                              <span className="text-body text-white/60 leading-relaxed">
                                 {bullet}
                               </span>
                             </div>
                           ))}
                           {bullets.length > 4 && (
-                            <span className="text-[12px] text-teal/60 font-mono ml-4.5">
+                            <span className="text-small text-teal/60 font-mono ml-4.5">
                               +{bullets.length - 4}개 더 보기
                             </span>
                           )}
@@ -183,7 +183,7 @@ export function ProgramsSection() {
                         <Link
                           href={ROUTES.CONSULT}
                           onClick={(e) => e.stopPropagation()}
-                          className="cta-fill cta-fill-teal group inline-flex items-center gap-3 px-8 py-4 text-navy-dark text-[14px] font-bold tracking-[0.04em] border-[1.5px] border-teal hover:text-teal transition-colors duration-300 cursor-pointer"
+                          className="cta-fill cta-fill-teal group inline-flex items-center gap-3 px-8 py-4 text-navy-dark text-body font-bold tracking-cta border-[1.5px] border-teal hover:text-teal transition-colors duration-300 cursor-pointer"
                         >
                           상담 신청하기
                           <ArrowRight
@@ -196,7 +196,7 @@ export function ProgramsSection() {
                             e.stopPropagation();
                             setSelectedProgram(program);
                           }}
-                          className="text-[13px] text-white/60 hover:text-teal border-b border-white/30 hover:border-teal pb-0.5 transition-colors duration-200 cursor-pointer"
+                          className="text-secondary text-white/60 hover:text-teal border-b border-white/30 hover:border-teal pb-0.5 transition-colors duration-200 cursor-pointer"
                         >
                           상세 보기
                         </button>
@@ -226,7 +226,7 @@ export function ProgramsSection() {
                             <p className="font-mono text-[80px] font-bold text-teal/[0.08] leading-none">
                               SC
                             </p>
-                            <p className="font-mono text-[10px] text-white/50 tracking-[0.3em] uppercase mt-2">
+                            <p className="font-mono text-label text-white/50 tracking-label uppercase mt-2">
                               Studycore 1.0
                             </p>
                           </div>
@@ -249,7 +249,7 @@ export function ProgramsSection() {
             className="mt-12"
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-mono text-[11px] font-bold text-white/50 tracking-[0.2em] uppercase">
+              <h3 className="font-mono text-caption font-bold text-white/50 tracking-label uppercase">
                 지난 프로그램
               </h3>
               {/* 슬라이드 컨트롤 */}
@@ -298,16 +298,16 @@ export function ProgramsSection() {
                   )}
 
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="bg-white/10 px-2 py-0.5 text-[10px] font-bold text-white/50">
+                    <span className="bg-white/10 px-2 py-0.5 text-label font-bold text-white/50">
                       종료
                     </span>
-                    <span className="font-mono text-[10px] text-white/50">
+                    <span className="font-mono text-label text-white/50">
                       {formatDate(program.start_date)}
                       {program.end_date && ` — ${formatDate(program.end_date)}`}
                     </span>
                   </div>
 
-                  <h4 className="font-serif text-[16px] font-bold text-white/60 group-hover:text-white/80 transition-colors leading-snug">
+                  <h4 className="font-serif text-subhead font-bold text-white/60 group-hover:text-white/80 transition-colors leading-snug">
                     {program.title}
                   </h4>
 
@@ -319,7 +319,7 @@ export function ProgramsSection() {
                           {bullets.slice(0, 2).map((b, i) => (
                             <div key={i} className="flex items-start gap-2">
                               <span className="mt-1.5 w-1 h-1 bg-teal/40 flex-shrink-0" />
-                              <span className="text-[12px] text-white/55 leading-relaxed">
+                              <span className="text-small text-white/55 leading-relaxed">
                                 {b}
                               </span>
                             </div>
@@ -328,13 +328,13 @@ export function ProgramsSection() {
                       );
                     }
                     return (
-                      <p className="mt-2 text-[13px] text-white/50 leading-relaxed line-clamp-2">
+                      <p className="mt-2 text-secondary text-white/50 leading-relaxed line-clamp-2">
                         {program.description.replace(/\n/g, " ")}
                       </p>
                     );
                   })()}
 
-                  <span className="inline-block mt-3 text-[11px] text-teal/50 group-hover:text-teal/80 transition-colors font-mono">
+                  <span className="inline-block mt-3 text-caption text-teal/50 group-hover:text-teal/80 transition-colors font-mono">
                     상세 보기 →
                   </span>
                 </div>

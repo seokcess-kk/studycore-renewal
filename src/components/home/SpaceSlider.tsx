@@ -79,14 +79,14 @@ export function SpaceSlider() {
         viewport={{ once: true, margin: "-40px" }}
         className="px-6 md:px-13 mb-12 flex flex-col md:flex-row md:items-baseline gap-5 border-b-[1.5px] border-ink pb-10"
       >
-        <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase">
+        <span className="font-mono text-label font-bold text-teal tracking-label uppercase">
           Space / 03
         </span>
-        <h2 className="font-serif text-[clamp(32px,5vw,56px)] font-black tracking-[-0.03em] text-ink">
+        <h2 className="font-serif text-fluid-h1 font-black tracking-heading text-ink">
           공간 소개
         </h2>
         <div className="flex-1" />
-        <p className="text-[13px] text-muted font-light max-w-[220px] md:text-right leading-[1.7]">
+        <p className="text-secondary text-muted font-light max-w-[220px] md:text-right leading-prose">
           애플타워 10층 쾌적한 학습공간
         </p>
       </motion.div>
@@ -146,13 +146,13 @@ export function SpaceSlider() {
                   animate={{ opacity: index === current ? 1 : 0, y: index === current ? 0 : 8 }}
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <span className="font-mono text-[10px] font-bold text-teal tracking-[0.24em] uppercase block mb-2.5">
+                  <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-2.5">
                     {slide.label}
                   </span>
-                  <h3 className="font-serif text-[28px] font-bold text-white mb-2 tracking-[-0.02em]">
+                  <h3 className="font-serif text-fluid-h2 font-bold text-white mb-2 tracking-heading">
                     {slide.title}
                   </h3>
-                  <p className="text-[14px] text-white/60 font-light leading-[1.7] max-w-[440px]">
+                  <p className="text-body text-white/60 font-light leading-prose max-w-[440px]">
                     {slide.description}
                   </p>
                 </motion.div>
@@ -187,7 +187,7 @@ export function SpaceSlider() {
         </div>
 
         {/* 카운터 */}
-        <span className="font-mono text-[12px] text-muted tracking-[0.1em]">
+        <span className="font-mono text-small text-muted tracking-cta">
           {String(current + 1).padStart(2, "0")} /{" "}
           {String(slides.length).padStart(2, "0")}
         </span>

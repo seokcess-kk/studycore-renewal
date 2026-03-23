@@ -61,7 +61,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const getAnchorHref = (anchor: string) => (isHome ? anchor : `/${anchor}`);
 
   const linkClass = (isActive = false) =>
-    `block py-3 text-[16px] font-medium transition-colors ${
+    `block py-3 text-subhead font-medium transition-colors ${
       isActive ? "text-teal" : "text-white/80 hover:text-white"
     }`;
 
@@ -138,7 +138,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   >
                     질문방
                     {canAccessAdmin && unansweredCount > 0 && (
-                      <span className="min-w-[20px] h-[20px] flex items-center justify-center bg-teal text-white text-[11px] font-bold px-1.5">
+                      <span className="min-w-[20px] h-[20px] flex items-center justify-center bg-teal text-white text-caption font-bold px-1.5">
                         {unansweredCount > 99 ? "99+" : unansweredCount}
                       </span>
                     )}
@@ -205,7 +205,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="text-[14px] text-white/60 hover:text-white/80 transition-colors"
+                    className="text-body text-white/60 hover:text-white/80 transition-colors"
                   >
                     로그아웃
                   </button>
@@ -217,7 +217,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <motion.div variants={itemVariants} className="mb-6">
                   <Link
                     href={ROUTES.CONSULT}
-                    className="block text-center py-3.5 bg-teal text-navy-dark border-[1.5px] border-teal text-[15px] font-bold"
+                    className="block text-center py-3.5 bg-teal text-navy-dark border-[1.5px] border-teal text-reading font-bold"
                   >
                     무료 상담 신청
                   </Link>
@@ -255,7 +255,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <motion.div variants={itemVariants} className="border-t border-white/10 mt-6 pt-6">
                   <Link
                     href={ROUTES.LOGIN}
-                    className="block text-[14px] text-white/60 hover:text-white transition-colors"
+                    className="block text-body text-white/60 hover:text-white transition-colors"
                   >
                     로그인
                   </Link>

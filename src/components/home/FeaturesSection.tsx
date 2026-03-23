@@ -101,14 +101,14 @@ export function FeaturesSection() {
         viewport={{ once: true, margin: "-40px" }}
         className="mb-0 flex flex-col md:flex-row md:items-baseline gap-5 border-b-[1.5px] border-ink pb-10"
       >
-        <span className="font-mono text-[10px] font-bold text-teal tracking-[0.28em] uppercase whitespace-nowrap">
+        <span className="font-mono text-label font-bold text-teal tracking-label uppercase whitespace-nowrap">
           Why Studycore / 01
         </span>
-        <h2 className="font-serif text-[clamp(32px,5vw,60px)] font-black tracking-[-0.03em] text-ink leading-none">
+        <h2 className="font-serif text-fluid-h1 font-black tracking-heading text-ink leading-none">
           6가지 차별점
         </h2>
         <div className="flex-1" />
-        <p className="text-[13px] text-muted font-light max-w-[240px] md:text-right leading-[1.8]">
+        <p className="text-secondary text-muted font-light max-w-[240px] md:text-right leading-prose">
           스터디코어에서 경험할 수 있는 것들입니다.
         </p>
       </motion.div>
@@ -134,7 +134,7 @@ export function FeaturesSection() {
                 className="py-12 md:py-16 px-6 md:px-16 border-b border-ink/[0.06] flex items-center gap-6 md:gap-10"
               >
                 <span className="block w-10 h-[1.5px] bg-teal flex-shrink-0" />
-                <p className="font-serif text-[clamp(16px,2vw,20px)] font-bold text-ink/60 leading-[1.6] tracking-[-0.01em]">
+                <p className="font-serif text-fluid-h3 font-bold text-ink/60 leading-ui tracking-heading">
                   "공부를 <em className="text-teal not-italic">구조</em>로
                   뒷받침하면, 의지만으로 안 되던 것도 됩니다."
                 </p>
@@ -152,12 +152,12 @@ export function FeaturesSection() {
         transition={{ duration: 0.5 }}
         className="mt-16 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-t-[1.5px] border-ink pt-10"
       >
-        <p className="text-[14px] text-[#555] font-light leading-[1.8]">
+        <p className="text-body text-[#555] font-light leading-prose">
           직접 경험해 보세요 — 무료 상담으로 시작할 수 있습니다.
         </p>
         <Link
           href={ROUTES.CONSULT}
-          className="cta-fill cta-fill-navy group inline-flex items-center gap-2.5 px-8 py-3.5 text-white text-[13px] font-bold tracking-[0.04em] border-[1.5px] border-navy hover:text-navy transition-colors duration-300 flex-shrink-0"
+          className="cta-fill cta-fill-navy group inline-flex items-center gap-2.5 px-8 py-3.5 text-white text-secondary font-bold tracking-cta border-[1.5px] border-navy hover:text-navy transition-colors duration-300 flex-shrink-0"
         >
           상담 신청하기
           <ArrowRight
@@ -194,25 +194,25 @@ function FeatureRow({
         <span className="font-mono text-[clamp(48px,6vw,72px)] font-bold text-navy/[0.07] group-hover:text-teal/20 leading-none transition-[color,transform] duration-300 ease-out group-hover:scale-110 origin-left">
           {feature.number}
         </span>
-        <span className="font-mono text-[9px] font-bold text-teal tracking-[0.22em] uppercase opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-[opacity,transform] duration-300 ease-out">
+        <span className="font-mono text-label font-bold text-teal tracking-label uppercase opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-[opacity,transform] duration-300 ease-out">
           {feature.keyword}
         </span>
       </div>
 
       {/* 우측: 제목 + 설명 + 태그 */}
       <div className="py-11 pl-6 md:pl-12 relative">
-        <h3 className="font-serif text-[clamp(18px,2vw,24px)] font-black tracking-[-0.02em] text-ink group-hover:text-teal mb-3.5 leading-tight transition-colors duration-300 ease-out">
+        <h3 className="font-serif text-fluid-h3 font-black tracking-heading text-ink group-hover:text-teal mb-3.5 leading-tight transition-colors duration-300 ease-out">
           {feature.title}
         </h3>
         <p
-          className="text-[14px] leading-[2] text-[#555] font-light max-w-[640px] mb-4 [&_strong]:text-navy [&_strong]:font-bold"
+          className="text-body leading-prose text-[#555] font-light max-w-[640px] mb-4 [&_strong]:text-navy [&_strong]:font-bold"
           dangerouslySetInnerHTML={{ __html: feature.description }}
         />
         <div className="flex gap-1.5 flex-wrap">
           {feature.tags.map((tag) => (
             <span
               key={tag.label}
-              className={`text-[10.5px] font-medium px-2.5 py-0.5 border ${tag.primary
+              className={`text-caption font-medium px-2.5 py-0.5 border ${tag.primary
                 ? "border-teal text-teal bg-teal/[0.06]"
                 : "border-rule text-muted"
                 }`}
