@@ -111,7 +111,7 @@ export default function MyPage() {
               </p>
             </div>
           )}
-          {isActive && (!profile?.phone || !profile?.school) && (
+          {isActive && (!profile?.phone || !profile?.school || !profile?.grade) && (
             <div className="max-w-lg mx-auto mt-4 p-3 bg-teal/20 border border-teal/30">
               <p className="text-secondary text-white font-medium">
                 연락처, 학교/학년 정보를 입력해 주세요. 아래 프로필에서 수정할 수 있습니다.

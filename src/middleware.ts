@@ -68,17 +68,17 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // 유저 프로필 조회 (역할, 상태)
+    // 유저 프로필 조회 (역할, 상태, 연락처)
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role, status")
+      .select("role, status, phone")
       .eq("id", user.id)
       .maybeSingle();
 
     if (!profile) {
-      // 프로필이 없으면 회원가입 페이지로 (신규 카카오 가입)
+      // 프로필이 없으면 승인 대기 페이지로 (callback에서 생성 예정)
       const url = request.nextUrl.clone();
-      url.pathname = "/register";
+      url.pathname = "/pending-approval";
       return NextResponse.redirect(url);
     }
 
@@ -118,15 +118,19 @@ export async function middleware(request: NextRequest) {
     // 재원생 기능 페이지 접근 시 상태 확인
     if (isProtectedRoute && isStudent(profile.role)) {
       if (profile.status === USER_STATUS.PENDING) {
-        // 승인 대기 상태면 안내 페이지로
         const url = request.nextUrl.clone();
         url.pathname = "/pending-approval";
         return NextResponse.redirect(url);
       }
       if (profile.status === USER_STATUS.INACTIVE) {
-        // 비활성 상태면 안내 페이지로
         const url = request.nextUrl.clone();
         url.pathname = "/account-inactive";
+        return NextResponse.redirect(url);
+      }
+      // 필수 정보 미입력 시 마이페이지로 (마이페이지 자체는 허용)
+      if (!profile.phone && pathname !== "/my") {
+        const url = request.nextUrl.clone();
+        url.pathname = "/my";
         return NextResponse.redirect(url);
       }
     }

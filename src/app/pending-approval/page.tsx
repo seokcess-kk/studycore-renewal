@@ -11,6 +11,13 @@ export default function PendingApprovalPage() {
   const { success } = useToast();
   const toastShown = useRef(false);
 
+  // 승인 완료된 사용자가 접근 시 홈으로 리다이렉트
+  useEffect(() => {
+    if (profile && profile.status !== "pending") {
+      window.location.href = "/";
+    }
+  }, [profile]);
+
   useEffect(() => {
     if (!toastShown.current) {
       toastShown.current = true;

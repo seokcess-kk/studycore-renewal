@@ -239,12 +239,15 @@ export async function authenticateStaff(
     return null;
   }
 
-  const result = data as { success: boolean; error?: string; unlock_at?: string; profile?: Profile };
+  const result = data as Record<string, unknown> | null;
+  if (!result || typeof result.success !== "boolean") {
+    return { success: false, error: "RPC 응답 형식 오류" };
+  }
   return {
     success: result.success,
-    error: result.error,
-    unlockAt: result.unlock_at,
-    profile: result.profile ?? undefined,
+    error: typeof result.error === "string" ? result.error : undefined,
+    unlockAt: typeof result.unlock_at === "string" ? result.unlock_at : undefined,
+    profile: result.profile as Profile | undefined,
   };
 }
 

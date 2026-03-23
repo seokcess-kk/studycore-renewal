@@ -57,7 +57,12 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
         // 세션 있음 — persist된 store에 동일 유저가 있으면 검증 완료
         const state = useUserStore.getState();
-        if (state.isAuthenticated && state.user?.id === user.id && state.profile?.role) {
+        if (
+          state.isAuthenticated &&
+          state.user?.id === user.id &&
+          state.user?.email === (user.email || "") &&
+          state.profile?.role
+        ) {
           setLoading(false);
           return;
         }
