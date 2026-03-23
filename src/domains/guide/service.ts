@@ -156,6 +156,7 @@ export async function updateSection(
 
 /**
  * 섹션 삭제
+ * 첨부파일이 있으면 Storage에서도 함께 삭제
  */
 export async function deleteSection(
   supabase: SupabaseClient,
@@ -171,7 +172,22 @@ export async function deleteSection(
       };
     }
 
-    // 2. 삭제
+    // 2. 첨부파일 Storage 정리
+    const attachments = existingSection.attachments || [];
+    if (attachments.length > 0) {
+      const paths = attachments
+        .map((a) => {
+          const parts = a.url.split("guide-attachments/");
+          return parts[1] || null;
+        })
+        .filter((p): p is string => p !== null);
+
+      if (paths.length > 0) {
+        await supabase.storage.from("guide-attachments").remove(paths);
+      }
+    }
+
+    // 3. DB 레코드 삭제
     await guideRepo.deleteSection(supabase, id);
 
     return { success: true };

@@ -26,10 +26,12 @@ import {
   Calendar,
   MapPin,
   Phone,
+  Paperclip,
 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { FileAttachmentManager } from "@/components/admin/FileAttachmentManager";
 import { useToast } from "@/components/common/Toast";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/stores/useUserStore";
@@ -42,6 +44,7 @@ import {
 import {
   type CreateGuideSectionInput,
   type GuideSection,
+  type GuideAttachment,
   type GuideSectionType,
 } from "@/domains/guide/model";
 
@@ -76,6 +79,7 @@ function getIconComponent(name: string) {
 // RHF 폼 데이터 (카테고리 직접입력 지원)
 interface GuideSectionFormValues extends CreateGuideSectionInput {
   customCategory: string;
+  attachments: GuideAttachment[];
 }
 
 const FORM_DEFAULTS: GuideSectionFormValues = {
@@ -86,6 +90,7 @@ const FORM_DEFAULTS: GuideSectionFormValues = {
   customCategory: "",
   icon: "FileText",
   is_visible: true,
+  attachments: [],
 };
 
 export default function AdminGuidePage() {
@@ -116,6 +121,7 @@ export default function AdminGuidePage() {
   const watchIcon = watch("icon");
   const watchIsVisible = watch("is_visible");
   const watchContentHtml = watch("content_html");
+  const watchAttachments = watch("attachments");
 
   // 섹션 목록 조회
   const fetchSections = async () => {
@@ -159,6 +165,7 @@ export default function AdminGuidePage() {
       category: resolveCategory(data),
       icon: data.icon,
       content_html: data.content_html || null,
+      attachments: data.attachments || [],
     });
 
     if (result.success) {
@@ -183,6 +190,7 @@ export default function AdminGuidePage() {
       customCategory: isCustom ? (section.category || "") : "",
       icon: section.icon || "FileText",
       is_visible: section.is_visible,
+      attachments: section.attachments || [],
     });
   };
 
@@ -197,6 +205,7 @@ export default function AdminGuidePage() {
       icon: data.icon,
       content_html: data.content_html || null,
       is_visible: data.is_visible,
+      attachments: data.attachments || [],
     });
 
     if (result.success) {
@@ -359,6 +368,17 @@ export default function AdminGuidePage() {
         />
       </div>
 
+      {/* 첨부파일 */}
+      <div>
+        <label className="mb-1 block text-sm font-medium text-muted">첨부파일</label>
+        <FileAttachmentManager
+          sectionId={editingId || undefined}
+          value={watchAttachments || []}
+          onChange={(attachments) => setValue("attachments", attachments)}
+          disabled={isSubmitting}
+        />
+      </div>
+
       {/* 액션 버튼 */}
       <div className="flex gap-3">
         <Button type="button" variant="ghost" onClick={handleCancel} disabled={isSubmitting}>
@@ -474,6 +494,12 @@ export default function AdminGuidePage() {
                       {!section.is_visible && (
                         <span className="text-xs bg-stone text-muted px-1.5 py-0.5">
                           숨김
+                        </span>
+                      )}
+                      {section.attachments && section.attachments.length > 0 && (
+                        <span className="flex items-center gap-1 text-xs bg-navy/5 text-navy px-1.5 py-0.5">
+                          <Paperclip size={10} />
+                          {section.attachments.length}
                         </span>
                       )}
                     </div>

@@ -12,6 +12,17 @@ import { z } from "zod";
 // Zod 스키마
 // ─────────────────────────────────────────────
 
+// 첨부파일 스키마
+export const guideAttachmentSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.enum(["image", "pdf", "document", "file"]),
+  size: z.number(),
+  url: z.string(),
+});
+
+export type GuideAttachment = z.infer<typeof guideAttachmentSchema>;
+
 // 가이드 섹션 스키마
 export const guideSectionTypeEnum = z.enum(["onboarding", "manual"]);
 export type GuideSectionType = z.infer<typeof guideSectionTypeEnum>;
@@ -26,6 +37,7 @@ export const guideSectionSchema = z.object({
   category: z.string().default("일반"),
   icon: z.string().default("FileText"),
   content_html: z.string().nullable().optional(),
+  attachments: z.array(guideAttachmentSchema).default([]),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -42,6 +54,7 @@ export const createGuideSectionSchema = z.object({
   category: z.string().optional(),
   icon: z.string().optional(),
   content_html: z.string().nullable().optional(),
+  attachments: z.array(guideAttachmentSchema).optional(),
 });
 
 export type CreateGuideSectionInput = z.infer<typeof createGuideSectionSchema>;
@@ -55,6 +68,7 @@ export const updateGuideSectionSchema = z.object({
   category: z.string().optional(),
   icon: z.string().optional(),
   content_html: z.string().nullable().optional(),
+  attachments: z.array(guideAttachmentSchema).optional(),
 });
 
 export type UpdateGuideSectionInput = z.infer<typeof updateGuideSectionSchema>;

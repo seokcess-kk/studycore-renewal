@@ -26,7 +26,13 @@ import {
   Calendar,
   MapPin,
   Phone,
+  Download,
+  FileImage,
+  FileSpreadsheet,
+  File,
+  Paperclip,
 } from "lucide-react";
+import type { GuideAttachment } from "@/domains/guide/model";
 
 // Lucide 아이콘 매핑
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -286,6 +292,14 @@ export function GuidePageLayout({
                           )}
                         </div>
 
+                        {/* 첨부파일 */}
+                        {activeSection.attachments &&
+                          activeSection.attachments.length > 0 && (
+                            <GuideAttachmentList
+                              attachments={activeSection.attachments}
+                            />
+                          )}
+
                         {/* 이전/다음 네비게이션 */}
                         <div className="p-6 md:p-8 border-t border-rule flex items-center justify-between gap-4">
                           {prevSection ? (
@@ -326,5 +340,111 @@ export function GuidePageLayout({
       </main>
       <Footer />
     </>
+  );
+}
+
+// ─────────────────────────────────────────────
+// 첨부파일 표시 컴포넌트
+// ─────────────────────────────────────────────
+
+function getAttachmentIcon(type: GuideAttachment["type"]) {
+  switch (type) {
+    case "image":
+      return FileImage;
+    case "pdf":
+      return FileText;
+    case "document":
+      return FileSpreadsheet;
+    default:
+      return File;
+  }
+}
+
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes}B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
+}
+
+function GuideAttachmentList({
+  attachments,
+}: {
+  attachments: GuideAttachment[];
+}) {
+  const images = attachments.filter((a) => a.type === "image");
+  const files = attachments.filter((a) => a.type !== "image");
+
+  return (
+    <div className="px-6 md:px-8 pb-6 md:pb-8">
+      <div className="border-t border-rule pt-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Paperclip size={16} className="text-muted" />
+          <h3 className="font-serif font-bold text-ink text-body">
+            첨부파일 ({attachments.length})
+          </h3>
+        </div>
+
+        {/* 이미지 갤러리 */}
+        {images.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+            {images.map((img) => (
+              <a
+                key={img.id}
+                href={img.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block border border-rule overflow-hidden hover:border-teal transition-colors duration-200"
+              >
+                <div className="aspect-video bg-stone">
+                  <img
+                    src={img.url}
+                    alt={img.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="p-2">
+                  <p className="text-small text-ink truncate group-hover:text-teal transition-colors duration-200">
+                    {img.name}
+                  </p>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {/* 파일 목록 */}
+        {files.length > 0 && (
+          <div className="space-y-2">
+            {files.map((file) => {
+              const Icon = getAttachmentIcon(file.type);
+              return (
+                <a
+                  key={file.id}
+                  href={file.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 border border-rule hover:border-teal transition-colors duration-200 group"
+                >
+                  <div className="w-9 h-9 flex items-center justify-center bg-stone border border-rule flex-shrink-0">
+                    <Icon size={16} className="text-muted group-hover:text-teal transition-colors duration-200" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-body text-ink truncate group-hover:text-teal transition-colors duration-200">
+                      {file.name}
+                    </p>
+                    <p className="text-small text-muted">{formatSize(file.size)}</p>
+                  </div>
+                  <Download
+                    size={16}
+                    className="text-muted group-hover:text-teal flex-shrink-0 transition-colors duration-200"
+                  />
+                </a>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

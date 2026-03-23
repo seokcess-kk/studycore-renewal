@@ -119,6 +119,7 @@ export async function createSection(
       category: input.category ?? "일반",
       icon: input.icon ?? "FileText",
       content_html: input.content_html ?? null,
+      attachments: input.attachments ?? [],
     })
     .select()
     .single();
