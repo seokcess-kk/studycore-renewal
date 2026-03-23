@@ -14,3 +14,4 @@ export { ImageUploader } from "./ImageUploader";
 export { AvatarUploader } from "./AvatarUploader";
 export { SessionWarning } from "./SessionWarning";
 export { OrganizationJsonLd, FAQJsonLd, WebSiteJsonLd } from "./JsonLd";
+export { PendingBanner } from "./PendingBanner";

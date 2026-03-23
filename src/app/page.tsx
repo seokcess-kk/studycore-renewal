@@ -1,4 +1,4 @@
-import { Nav, Footer } from "@/components/common";
+import { Nav, Footer, PendingBanner } from "@/components/common";
 import { OrganizationJsonLd, FAQJsonLd, WebSiteJsonLd } from "@/components/common/JsonLd";
 import {
   HeroSection,
@@ -17,6 +17,7 @@ export default function Home() {
       <FAQJsonLd />
       <WebSiteJsonLd />
       <Nav />
+      <PendingBanner />
       <main>
         <HeroSection />
         {/* navy → stone 전환 */}

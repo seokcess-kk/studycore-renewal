@@ -295,7 +295,8 @@ function formatPhone(phone: string | null | undefined): string {
 function ContactInfoSection() {
   const { profile, setProfile, isStaff } = useUserStore();
   const { success: showSuccess, error: showError } = useToast();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(!profile?.phone || !profile?.school || !profile?.grade);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   const {
     register,
@@ -324,9 +325,13 @@ function ContactInfoSection() {
     });
 
     if (result.success && result.profile) {
+      const wasFirstFill = !profile?.phone && data.phone;
       setProfile(result.profile);
       showSuccess("내 정보가 수정되었습니다.");
       setIsEditing(false);
+      if (wasFirstFill) {
+        setShowWelcome(true);
+      }
     } else {
       showError(result.error || "정보 수정에 실패했습니다.");
     }
@@ -470,6 +475,32 @@ function ContactInfoSection() {
           )
         )}
       </div>
+
+      {showWelcome && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50" onClick={() => setShowWelcome(false)}>
+          <div className="bg-white border border-rule p-8 max-w-sm mx-4 text-center" onClick={(e) => e.stopPropagation()}>
+            <div className="w-16 h-16 bg-teal/10 flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="square" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="font-serif text-xl font-bold text-ink mb-2">
+              환영합니다, {profile?.name || ""}님!
+            </h2>
+            <p className="text-secondary text-muted mb-6 leading-relaxed">
+              스터디코어 1.0의 재원생 서비스를<br />이용하실 수 있습니다.
+            </p>
+            <div className="flex gap-3">
+              <a href="/notices" className="flex-1 py-3 bg-stone text-ink text-secondary font-medium text-center hover:bg-rule transition-colors duration-200 cursor-pointer">
+                공지사항 보기
+              </a>
+              <a href="/" className="flex-1 py-3 bg-navy text-white text-secondary font-medium text-center hover:bg-navy-dark transition-colors duration-200 cursor-pointer">
+                홈으로
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -31,6 +31,7 @@ export function Nav() {
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const canAccessAdmin = useUserStore((state) => state.canAccessAdmin);
   const isStaff = useUserStore((state) => state.isStaff);
+  const isPending = useUserStore((state) => state.profile?.status === "pending");
   const logout = useUserStore((state) => state.logout);
   const unansweredCount = useUnansweredCount();
   const hasActiveMealPeriod = useActiveMealPeriod();
@@ -156,12 +157,17 @@ export function Nav() {
                   조교 관리
                 </Link>
               )}
+              {isPending && (
+                <span className="hidden md:inline-flex items-center px-2.5 py-1 bg-stone text-muted text-caption font-medium">
+                  승인 대기
+                </span>
+              )}
               <button
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
                 className={`hidden md:block text-small transition-colors duration-150 ${isDarkText ? "text-muted hover:text-ink" : "text-white/50 hover:text-white/80"
-                  } disabled:opacity-50`}
+                  } disabled:opacity-50 cursor-pointer`}
               >
                 {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
               </button>
