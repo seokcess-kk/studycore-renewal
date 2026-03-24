@@ -24,13 +24,12 @@ import {
   User,
   MessageSquare,
   Image as ImageIcon,
-  FileText,
   Send,
   Pin,
   PinOff,
   Trash2,
 } from "lucide-react";
-import { AttachmentModal, isPdfUrl } from "@/components/common";
+import { AttachmentModal, AttachmentList } from "@/components/common";
 
 // 폼 스키마 (question_id 제외 - 페이지에서 주입)
 const answerFormSchema = z.object({
@@ -239,28 +238,7 @@ export default function AdminQuestionDetailPage() {
               <ImageIcon size={14} />
               첨부 파일 ({question.image_urls.length})
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {question.image_urls.map((url, index) => (
-                <button
-                  key={`question-img-${index}`}
-                  onClick={() => setSelectedImage(url)}
-                  className="aspect-square bg-stone border border-rule overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
-                >
-                  {isPdfUrl(url) ? (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                      <FileText size={28} className="text-muted" />
-                      <span className="text-caption text-muted">PDF</span>
-                    </div>
-                  ) : (
-                    <img
-                      src={url}
-                      alt={`첨부 파일 ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
+            <AttachmentList urls={question.image_urls} onSelect={setSelectedImage} />
           </div>
         )}
       </div>
@@ -434,28 +412,7 @@ function AnswerCard({
       {/* 첨부 파일 */}
       {answer.image_urls && answer.image_urls.length > 0 && (
         <div className="mt-4 pt-4 border-t border-teal/20">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {answer.image_urls.map((url, index) => (
-              <button
-                key={`answer-img-${index}`}
-                onClick={() => onImageClick(url)}
-                className="aspect-square bg-white border border-teal/20 overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
-              >
-                {isPdfUrl(url) ? (
-                  <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                    <FileText size={28} className="text-muted" />
-                    <span className="text-caption text-muted">PDF</span>
-                  </div>
-                ) : (
-                  <img
-                    src={url}
-                    alt={`답변 파일 ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </button>
-            ))}
-          </div>
+          <AttachmentList urls={answer.image_urls} onSelect={onImageClick} variant="answer" />
         </div>
       )}
     </div>

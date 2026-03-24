@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Nav, Footer, Button, Skeleton, useToast, AttachmentModal, isPdfUrl } from "@/components/common";
+import { Nav, Footer, Button, Skeleton, useToast, AttachmentModal, AttachmentList } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getQuestionDetail, deleteQuestion, togglePinQuestion } from "@/domains/question/service";
 import { type QuestionWithAnswers, type AnswerWithAuthor } from "@/domains/question/model";
@@ -18,7 +18,6 @@ import {
   User,
   MessageSquare,
   Image as ImageIcon,
-  FileText,
   Globe,
   Lock,
   Pin,
@@ -256,28 +255,7 @@ export default function QuestionDetailPage() {
                     <ImageIcon size={14} />
                     첨부 파일 ({question.image_urls.length})
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    {question.image_urls.map((url, index) => (
-                      <button
-                        key={url}
-                        onClick={() => setSelectedImage(url)}
-                        className="aspect-square bg-stone border border-rule overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
-                      >
-                        {isPdfUrl(url) ? (
-                          <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                            <FileText size={28} className="text-muted" />
-                            <span className="text-caption text-muted">PDF</span>
-                          </div>
-                        ) : (
-                          <img
-                            src={url}
-                            alt={`첨부 파일 ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                      </button>
-                    ))}
-                  </div>
+                  <AttachmentList urls={question.image_urls} onSelect={setSelectedImage} />
                 </div>
               )}
             </div>
@@ -368,28 +346,7 @@ function AnswerCard({ answer, onImageClick }: { answer: AnswerWithAuthor; onImag
       {/* 첨부 파일 */}
       {answer.image_urls && answer.image_urls.length > 0 && (
         <div className="mt-4 pt-4 border-t border-teal/20">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {answer.image_urls.map((url, index) => (
-              <button
-                key={url}
-                onClick={() => onImageClick(url)}
-                className="aspect-square bg-white border border-teal/20 overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
-              >
-                {isPdfUrl(url) ? (
-                  <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                    <FileText size={28} className="text-muted" />
-                    <span className="text-caption text-muted">PDF</span>
-                  </div>
-                ) : (
-                  <img
-                    src={url}
-                    alt={`답변 파일 ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </button>
-            ))}
-          </div>
+          <AttachmentList urls={answer.image_urls} onSelect={onImageClick} variant="answer" />
         </div>
       )}
     </div>

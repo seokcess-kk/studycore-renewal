@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Calendar, ArrowRight, FileText, Download } from "lucide-react";
+import { X, Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 import type { Program, ProgramAttachment } from "@/domains/program/model";
 import { getProgramAttachments } from "@/domains/program/service";
+import { MetaAttachmentList } from "@/components/common";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
@@ -171,61 +172,14 @@ export function ProgramDetailModal({
               )}
 
               {/* 첨부파일 */}
-              {attachments.length > 0 && (() => {
-                const imageAtts = attachments.filter((a) => a.file_type?.startsWith("image/"));
-                const fileAtts = attachments.filter((a) => !a.file_type?.startsWith("image/"));
-                return (
-                  <div className="border-t border-rule pt-6 mb-8">
-                    <h3 className="text-sm font-medium text-muted mb-3">
-                      첨부파일 ({attachments.length})
-                    </h3>
-                    {imageAtts.length > 0 && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-                        {imageAtts.map((att) => (
-                          <a
-                            key={att.id}
-                            href={att.file_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block border border-rule overflow-hidden hover:border-teal transition-colors duration-200 group"
-                          >
-                            <div className="aspect-video bg-stone">
-                              <img src={att.file_url} alt={att.file_name} className="w-full h-full object-cover" loading="lazy" />
-                            </div>
-                            <div className="p-2">
-                              <p className="text-small text-ink truncate group-hover:text-teal transition-colors duration-200">{att.file_name}</p>
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                    {fileAtts.length > 0 && (
-                      <div className="space-y-2">
-                        {fileAtts.map((att) => (
-                          <a
-                            key={att.id}
-                            href={att.file_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 border border-rule px-4 py-2.5 hover:border-teal transition-colors duration-200 group"
-                          >
-                            <FileText className="h-4 w-4 text-muted group-hover:text-teal" />
-                            <span className="flex-1 truncate text-sm text-ink">{att.file_name}</span>
-                            {att.file_size && (
-                              <span className="text-xs text-muted">
-                                {att.file_size > 1024 * 1024
-                                  ? `${(att.file_size / 1024 / 1024).toFixed(1)}MB`
-                                  : `${(att.file_size / 1024).toFixed(0)}KB`}
-                              </span>
-                            )}
-                            <Download className="h-4 w-4 text-muted group-hover:text-teal" />
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
+              {attachments.length > 0 && (
+                <div className="border-t border-rule pt-6 mb-8">
+                  <h3 className="text-sm font-medium text-muted mb-3">
+                    첨부파일 ({attachments.length})
+                  </h3>
+                  <MetaAttachmentList attachments={attachments} />
+                </div>
+              )}
 
               {/* CTA — 진행중 프로그램만 */}
               {isActive && (

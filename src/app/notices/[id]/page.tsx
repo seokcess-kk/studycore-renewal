@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Nav, Footer, Skeleton, SkeletonText } from "@/components/common";
+import { Nav, Footer, Skeleton, SkeletonText, MetaAttachmentList } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getNoticeDetail, getNoticeAttachments } from "@/domains/notice/service";
 import type { NoticeAttachment } from "@/domains/notice/model";
@@ -13,7 +13,7 @@ import {
   type NoticeCategoryType,
 } from "@/domains/notice/model";
 import { ROUTES } from "@/lib/constants";
-import { ArrowLeft, Calendar, User, Eye, FileText, Download } from "lucide-react";
+import { ArrowLeft, Calendar, User, Eye } from "lucide-react";
 
 export default function NoticeDetailPage({
   params,
@@ -155,80 +155,16 @@ export default function NoticeDetailPage({
         </section>
 
         {/* 첨부파일 */}
-        {attachments.length > 0 && (() => {
-          const imageAtts = attachments.filter((a) =>
-            a.file_type?.startsWith("image/")
-          );
-          const fileAtts = attachments.filter(
-            (a) => !a.file_type?.startsWith("image/")
-          );
-          return (
-            <section className="px-6 md:px-13">
-              <div className="max-w-3xl mx-auto border-t border-rule pt-6 pb-6">
-                <h3 className="text-sm font-medium text-muted mb-3">
-                  첨부파일 ({attachments.length})
-                </h3>
-
-                {/* 이미지 미리보기 */}
-                {imageAtts.length > 0 && (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-                    {imageAtts.map((att) => (
-                      <a
-                        key={att.id}
-                        href={att.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block border border-rule overflow-hidden hover:border-teal transition-colors duration-200 group"
-                      >
-                        <div className="aspect-video bg-stone">
-                          <img
-                            src={att.file_url}
-                            alt={att.file_name}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                        </div>
-                        <div className="p-2">
-                          <p className="text-small text-ink truncate group-hover:text-teal transition-colors duration-200">
-                            {att.file_name}
-                          </p>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                )}
-
-                {/* 파일 다운로드 */}
-                {fileAtts.length > 0 && (
-                  <div className="space-y-2">
-                    {fileAtts.map((att) => (
-                      <a
-                        key={att.id}
-                        href={att.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 border border-rule px-4 py-2.5 hover:border-teal transition-colors duration-200 group"
-                      >
-                        <FileText className="h-4 w-4 text-muted group-hover:text-teal" />
-                        <span className="flex-1 truncate text-sm text-ink">
-                          {att.file_name}
-                        </span>
-                        {att.file_size && (
-                          <span className="text-xs text-muted">
-                            {att.file_size > 1024 * 1024
-                              ? `${(att.file_size / 1024 / 1024).toFixed(1)}MB`
-                              : `${(att.file_size / 1024).toFixed(0)}KB`}
-                          </span>
-                        )}
-                        <Download className="h-4 w-4 text-muted group-hover:text-teal" />
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </section>
-          );
-        })()}
+        {attachments.length > 0 && (
+          <section className="px-6 md:px-13">
+            <div className="max-w-3xl mx-auto border-t border-rule pt-6 pb-6">
+              <h3 className="text-sm font-medium text-muted mb-3">
+                첨부파일 ({attachments.length})
+              </h3>
+              <MetaAttachmentList attachments={attachments} />
+            </div>
+          </section>
+        )}
 
         {/* 하단 네비게이션 */}
         <section className="px-6 md:px-13">

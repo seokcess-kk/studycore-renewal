@@ -95,4 +95,148 @@ export function isImageUrl(url: string): boolean {
   return !isPdfUrl(url);
 }
 
+/** URL에서 파일명 추출 */
+function getFileName(url: string): string {
+  try {
+    const pathname = new URL(url).pathname;
+    const segments = pathname.split("/");
+    const last = segments[segments.length - 1];
+    // UUID prefix 제거 (timestamp-random.ext → 파일명)
+    return decodeURIComponent(last);
+  } catch {
+    return "파일";
+  }
+}
+
+/**
+ * 첨부파일 인라인 목록 — 이미지는 작은 썸네일, 파일은 한 줄 리스트
+ * 질문/답변 등에서 공통 사용
+ */
+interface AttachmentListProps {
+  urls: string[];
+  onSelect: (url: string) => void;
+  /** 테두리 색상 변형 (답변 카드용) */
+  variant?: "default" | "answer";
+}
+
+export function AttachmentList({ urls, onSelect, variant = "default" }: AttachmentListProps) {
+  const imageUrls = urls.filter(isImageUrl);
+  const fileUrls = urls.filter(isPdfUrl);
+  const borderClass = variant === "answer" ? "border-teal/20" : "border-rule";
+
+  return (
+    <div className="space-y-2">
+      {/* 이미지 썸네일 — 작은 가로 나열 */}
+      {imageUrls.length > 0 && (
+        <div className="flex gap-2 flex-wrap">
+          {imageUrls.map((url) => (
+            <button
+              key={url}
+              type="button"
+              onClick={() => onSelect(url)}
+              className={`w-16 h-16 overflow-hidden border ${borderClass} bg-stone hover:opacity-80 transition-opacity cursor-pointer`}
+            >
+              <img
+                src={url}
+                alt="첨부 이미지"
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* 파일(PDF 등) — 한 줄 리스트 */}
+      {fileUrls.length > 0 && (
+        <div className="space-y-1">
+          {fileUrls.map((url) => (
+            <button
+              key={url}
+              type="button"
+              onClick={() => onSelect(url)}
+              className={`flex items-center gap-2 w-full text-left px-3 py-1.5 border ${borderClass} bg-stone/50 hover:border-navy transition-colors cursor-pointer`}
+            >
+              <FileText size={14} className="text-muted flex-shrink-0" />
+              <span className="text-small text-ink truncate">{getFileName(url)}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * 메타데이터 기반 첨부파일 목록 — 공지사항, 프로그램 등 (file_name, file_url, file_type, file_size)
+ */
+interface MetaAttachment {
+  id: string;
+  file_name: string;
+  file_url: string;
+  file_type: string | null;
+  file_size: number | null;
+}
+
+interface MetaAttachmentListProps {
+  attachments: MetaAttachment[];
+  /** 첨부파일 클릭 시 새 탭으로 열기 (기본) */
+}
+
+export function MetaAttachmentList({ attachments }: MetaAttachmentListProps) {
+  const imageAtts = attachments.filter((a) => a.file_type?.startsWith("image/"));
+  const fileAtts = attachments.filter((a) => !a.file_type?.startsWith("image/"));
+
+  return (
+    <div className="space-y-2">
+      {/* 이미지 — 작은 썸네일 가로 나열 */}
+      {imageAtts.length > 0 && (
+        <div className="flex gap-2 flex-wrap">
+          {imageAtts.map((att) => (
+            <a
+              key={att.id}
+              href={att.file_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-16 h-16 overflow-hidden border border-rule bg-stone hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              <img
+                src={att.file_url}
+                alt={att.file_name}
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
+            </a>
+          ))}
+        </div>
+      )}
+
+      {/* 파일(PDF 등) — 한 줄 리스트 */}
+      {fileAtts.length > 0 && (
+        <div className="space-y-1">
+          {fileAtts.map((att) => (
+            <a
+              key={att.id}
+              href={att.file_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 border border-rule px-3 py-1.5 hover:border-teal transition-colors duration-200 group cursor-pointer"
+            >
+              <FileText size={14} className="text-muted group-hover:text-teal flex-shrink-0" />
+              <span className="flex-1 truncate text-small text-ink">{att.file_name}</span>
+              {att.file_size && (
+                <span className="text-caption text-muted flex-shrink-0">
+                  {att.file_size > 1024 * 1024
+                    ? `${(att.file_size / 1024 / 1024).toFixed(1)}MB`
+                    : `${(att.file_size / 1024).toFixed(0)}KB`}
+                </span>
+              )}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export { isPdfUrl };

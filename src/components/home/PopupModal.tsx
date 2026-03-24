@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, FileText, Download } from "lucide-react";
+import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { getActivePopups } from "@/domains/popup/service";
 import { getNoticeAttachments } from "@/domains/notice/service";
 import type { Popup } from "@/domains/popup/model";
+import { MetaAttachmentList } from "@/components/common";
 import type { NoticeAttachment } from "@/domains/notice/model";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
@@ -112,27 +113,11 @@ export function PopupModal() {
                 </p>
               )}
               {/* 공지 첨부파일 */}
-              {attachments.length > 0 && (() => {
-                const fileAtts = attachments.filter((a) => !a.file_type?.startsWith("image/"));
-                if (fileAtts.length === 0) return null;
-                return (
-                  <div className="mb-4 space-y-1.5">
-                    {fileAtts.map((att) => (
-                      <a
-                        key={att.id}
-                        href={att.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 border border-rule px-3 py-2 hover:border-teal transition-colors duration-200 group"
-                      >
-                        <FileText className="h-3.5 w-3.5 text-muted group-hover:text-teal" />
-                        <span className="flex-1 truncate text-small text-ink">{att.file_name}</span>
-                        <Download className="h-3.5 w-3.5 text-muted group-hover:text-teal" />
-                      </a>
-                    ))}
-                  </div>
-                );
-              })()}
+              {attachments.length > 0 && (
+                <div className="mb-4">
+                  <MetaAttachmentList attachments={attachments} />
+                </div>
+              )}
 
               {linkUrl && (
                 <a

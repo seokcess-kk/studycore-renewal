@@ -12,11 +12,9 @@ import {
   ChevronDown,
   ChevronUp,
   User,
-  Image as ImageIcon,
-  FileText,
   ExternalLink,
 } from "lucide-react";
-import { AttachmentModal, isPdfUrl } from "@/components/common";
+import { AttachmentModal, AttachmentList } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { togglePinQuestion, getQuestionDetail } from "@/domains/question/service";
 import type { QuestionWithAuthor, QuestionWithAnswers, AnswerWithAuthor } from "@/domains/question/model";
@@ -180,32 +178,8 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                     {question.content}
                   </p>
                   {question.image_urls && question.image_urls.length > 0 && (
-                    <div className="mt-3 flex gap-2 flex-wrap">
-                      {question.image_urls.map((url, i) => (
-                        <button
-                          key={url}
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedImage(url);
-                          }}
-                          className="w-20 h-20 overflow-hidden border border-rule hover:opacity-80 transition-opacity cursor-pointer"
-                        >
-                          {isPdfUrl(url) ? (
-                            <div className="w-full h-full flex flex-col items-center justify-center gap-1 bg-stone">
-                              <FileText size={20} className="text-muted" />
-                              <span className="text-label text-muted">PDF</span>
-                            </div>
-                          ) : (
-                            <img
-                              src={url}
-                              alt={`첨부 ${i + 1}`}
-                              loading="lazy"
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        </button>
-                      ))}
+                    <div className="mt-3">
+                      <AttachmentList urls={question.image_urls} onSelect={setSelectedImage} />
                     </div>
                   )}
                 </div>
@@ -228,32 +202,8 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                           {answer.content}
                         </p>
                         {answer.image_urls && answer.image_urls.length > 0 && (
-                          <div className="mt-2 flex gap-2 flex-wrap">
-                            {answer.image_urls.map((url, i) => (
-                              <button
-                                key={`answer-img-${answer.id}-${i}`}
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedImage(url);
-                                }}
-                                className="w-20 h-20 overflow-hidden border border-teal/20 hover:opacity-80 transition-opacity cursor-pointer"
-                              >
-                                {isPdfUrl(url) ? (
-                                  <div className="w-full h-full flex flex-col items-center justify-center gap-1 bg-stone">
-                                    <FileText size={20} className="text-muted" />
-                                    <span className="text-label text-muted">PDF</span>
-                                  </div>
-                                ) : (
-                                  <img
-                                    src={url}
-                                    alt={`답변 첨부 ${i + 1}`}
-                                    loading="lazy"
-                                    className="w-full h-full object-cover"
-                                  />
-                                )}
-                              </button>
-                            ))}
+                          <div className="mt-2">
+                            <AttachmentList urls={answer.image_urls} onSelect={setSelectedImage} variant="answer" />
                           </div>
                         )}
                       </div>
