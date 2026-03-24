@@ -103,12 +103,17 @@
 | 컴포넌트 | 데이터 | 용도 | 인터랙션 |
 |----------|--------|------|----------|
 | `AttachmentList` | URL 배열 (`string[]`) | 질문/답변 (`image_urls`) | `onSelect` → 모달 |
-| `MetaAttachmentList` | 메타데이터 배열 (`{id, file_name, file_url, file_type, file_size}`) | 공지/프로그램 첨부 | 새 탭 열기 |
+| `MetaAttachmentList` | 메타데이터 배열 (`{id, file_name, file_url, file_type, file_size}`) | 공지/프로그램 첨부 | 새 탭 열기 + 원본 파일명 다운로드 |
 
 표시 규칙:
 - 이미지: `w-16 h-16` (64px) 작은 썸네일 가로 나열
 - 파일(PDF 등): 아이콘 + 파일명 한 줄 리스트
 - `aspect-square` / `aspect-video` 큰 그리드 사용 금지
+
+다운로드 규칙:
+- 원본 파일명 다운로드: `downloadWithName(url, fileName)` 유틸 사용 (blob fetch 방식, cross-origin 대응)
+- Storage 경로는 랜덤 ID 사용 (`${timestamp}-${random}.${ext}`), 원본 파일명은 메타데이터에 보존
+- fallback: fetch 실패 시 새 탭 열기
 
 ## 홈페이지 섹션 (src/components/home/)
 `src/app/page.tsx`에서 순서대로:

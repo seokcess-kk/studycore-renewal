@@ -14,6 +14,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import type { GuideAttachment } from "@/domains/guide/model";
+import { downloadWithName } from "@/components/common/AttachmentModal";
 
 interface FileAttachmentManagerProps {
   sectionId?: string;
@@ -409,16 +410,15 @@ export function FileAttachmentManager({
 
                 {/* 액션 */}
                 {!disabled && (
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <a
-                      href={attachment.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                  <div className="flex items-center gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                    <button
+                      type="button"
+                      onClick={() => downloadWithName(attachment.url, attachment.name)}
                       className="text-muted hover:text-teal cursor-pointer transition-colors duration-200"
                       title="다운로드"
                     >
                       <Download size={14} />
-                    </a>
+                    </button>
                     <button
                       type="button"
                       onClick={() => handleRemove(attachment)}

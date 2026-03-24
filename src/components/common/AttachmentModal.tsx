@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { X, ExternalLink, FileText } from "lucide-react";
+import { X, ExternalLink, FileText, Download } from "lucide-react";
 
 interface AttachmentModalProps {
   url: string;
@@ -101,10 +101,29 @@ function getFileName(url: string): string {
     const pathname = new URL(url).pathname;
     const segments = pathname.split("/");
     const last = segments[segments.length - 1];
-    // UUID prefix 제거 (timestamp-random.ext → 파일명)
     return decodeURIComponent(last);
   } catch {
     return "파일";
+  }
+}
+
+/** Blob fetch → 원본 파일명으로 다운로드 */
+async function downloadWithName(url: string, fileName: string) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("download failed");
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
+  } catch {
+    // fallback: 새 탭에서 열기
+    window.open(url, "_blank", "noopener,noreferrer");
   }
 }
 
@@ -215,15 +234,19 @@ export function MetaAttachmentList({ attachments }: MetaAttachmentListProps) {
       {fileAtts.length > 0 && (
         <div className="space-y-1">
           {fileAtts.map((att) => (
-            <a
+            <div
               key={att.id}
-              href={att.file_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 border border-rule px-3 py-1.5 hover:border-teal transition-colors duration-200 group cursor-pointer"
+              className="flex items-center gap-2 border border-rule px-3 py-1.5 group"
             >
-              <FileText size={14} className="text-muted group-hover:text-teal flex-shrink-0" />
-              <span className="flex-1 truncate text-small text-ink">{att.file_name}</span>
+              <FileText size={14} className="text-muted flex-shrink-0" />
+              <a
+                href={att.file_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 truncate text-small text-ink hover:text-teal transition-colors duration-200 cursor-pointer"
+              >
+                {att.file_name}
+              </a>
               {att.file_size && (
                 <span className="text-caption text-muted flex-shrink-0">
                   {att.file_size > 1024 * 1024
@@ -231,7 +254,15 @@ export function MetaAttachmentList({ attachments }: MetaAttachmentListProps) {
                     : `${(att.file_size / 1024).toFixed(0)}KB`}
                 </span>
               )}
-            </a>
+              <button
+                type="button"
+                onClick={() => downloadWithName(att.file_url, att.file_name)}
+                className="text-muted hover:text-teal transition-colors duration-200 cursor-pointer flex-shrink-0"
+                title="다운로드"
+              >
+                <Download size={14} />
+              </button>
+            </div>
           ))}
         </div>
       )}
@@ -239,4 +270,4 @@ export function MetaAttachmentList({ attachments }: MetaAttachmentListProps) {
   );
 }
 
-export { isPdfUrl };
+export { isPdfUrl, downloadWithName };
