@@ -115,7 +115,7 @@ function LoginContent() {
             type="button"
             onClick={handleKakaoLogin}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 bg-[#FEE500] text-[#191919] text-reading font-bold py-4 hover:brightness-95 transition-all duration-200 disabled:opacity-50 cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 bg-kakao text-kakao-dark text-reading font-bold py-4 hover:brightness-95 transition-all duration-200 disabled:opacity-50 cursor-pointer"
           >
             <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
               <path

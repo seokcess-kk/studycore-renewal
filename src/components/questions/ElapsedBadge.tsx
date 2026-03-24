@@ -39,7 +39,7 @@ export function ElapsedBadge({ createdAt, isPending }: ElapsedBadgeProps) {
   const style = isPending ? urgencyStyles[urgency] : "text-muted";
 
   return (
-    <span className={`inline-flex items-center gap-1 text-[12px] ${style}`}>
+    <span className={`inline-flex items-center gap-1 text-small ${style}`}>
       {isPending && urgency === "urgent" ? (
         <AlertTriangle size={11} />
       ) : (

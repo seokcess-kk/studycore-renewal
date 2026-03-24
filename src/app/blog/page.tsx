@@ -177,7 +177,7 @@ export default function BlogPage() {
                               ))}
                             </div>
                           )}
-                          <h2 className="text-[22px] md:text-[26px] font-bold text-ink leading-snug line-clamp-2 group-hover:text-navy transition-colors font-serif">
+                          <h2 className="text-fluid-h3 font-bold text-ink leading-snug line-clamp-2 group-hover:text-navy transition-colors font-serif">
                             {featured.title}
                           </h2>
                           {featured.excerpt && (

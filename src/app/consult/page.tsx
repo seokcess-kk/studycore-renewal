@@ -83,7 +83,7 @@ export default function ConsultPage() {
               <Link
                 href={CONTACT.kakaoChannel}
                 target="_blank"
-                className="inline-flex items-center justify-center gap-2 bg-[#FEE500] text-[#191919] text-body font-bold px-6 py-3"
+                className="inline-flex items-center justify-center gap-2 bg-kakao text-kakao-dark text-body font-bold px-6 py-3"
               >
                 카카오 채널 바로가기
               </Link>

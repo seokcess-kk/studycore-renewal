@@ -200,8 +200,8 @@ export default function AdminProgramNewPage() {
 
           {attachments.length > 0 && (
             <div className="mt-4 space-y-2">
-              {attachments.map((att, idx) => (
-                <div key={idx} className="flex items-center justify-between border border-rule px-3 py-2">
+              {attachments.map((att) => (
+                <div key={att.url} className="flex items-center justify-between border border-rule px-3 py-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <FileText className="h-4 w-4 flex-shrink-0 text-muted" />
                     <span className="truncate text-sm text-ink">{att.name}</span>

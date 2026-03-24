@@ -182,7 +182,7 @@ export function AvatarUploader({
               style={{ borderRadius: "50%" }}
             >
               <Loader2 size={20} className="animate-spin text-white" />
-              <span className="text-[10px] text-white mt-1">{progress}%</span>
+              <span className="text-label text-white mt-1">{progress}%</span>
             </div>
           )}
         </div>
@@ -222,10 +222,10 @@ export function AvatarUploader({
       </div>
 
       {/* 에러 메시지 */}
-      {error && <p className="text-[12px] text-red-500 text-center">{error}</p>}
+      {error && <p className="text-small text-red-500 text-center">{error}</p>}
 
       {/* 안내 문구 */}
-      <p className="text-[11px] text-muted text-center">
+      <p className="text-caption text-muted text-center">
         JPG, PNG, WebP (최대 2MB)
       </p>
     </div>

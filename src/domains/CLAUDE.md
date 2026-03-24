@@ -33,8 +33,8 @@ service.ts    → 비즈니스 로직
 | guide | GuideSection | onboarding/manual |
 | notification | Notification | 알림 이력 |
 | settings | SiteSettings | 사이트 설정 |
-| popup | Popup | 프로모션 팝업 |
-| program | Program | 프로그램 관리 |
+| popup | Popup | 프로모션 팝업 (notice_id 연결 시 공지 첨부파일 표시) |
+| program | Program, ProgramAttachment | 프로그램 관리 + 첨부파일 |
 | search | — | 통합 검색 |
 
 ## 새 도메인 추가 시

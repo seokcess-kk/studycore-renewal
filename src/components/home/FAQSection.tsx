@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 import { CONTACT } from "@/lib/constants";
 
@@ -69,10 +69,10 @@ export function FAQSection() {
             href={CONTACT.kakaoChannel}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 bg-[#FEE500] text-[#191919] text-secondary font-bold px-5 py-3 hover:opacity-85 transition-opacity"
+            className="inline-flex items-center gap-2.5 bg-kakao text-kakao-dark text-secondary font-bold px-5 py-3 hover:opacity-85 transition-opacity"
           >
             {/* 원형 아이콘 예외: 글로벌 border-radius:0 override */}
-            <span className="w-[18px] h-[18px] bg-[#191919] flex items-center justify-center text-label text-[#FEE500]" style={{ borderRadius: '50%' }}>
+            <span className="w-[18px] h-[18px] bg-kakao-dark flex items-center justify-center text-label text-kakao" style={{ borderRadius: '50%' }}>
               K
             </span>
             카카오 채널 문의하기
@@ -133,22 +133,17 @@ function FAQItem({
         </span>
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: "auto" }}
-            exit={{ height: 0 }}
-            transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-            className="overflow-hidden"
-          >
-            <p
-              className="pb-7 text-body leading-prose text-ink/70 font-light [&_strong]:text-ink [&_strong]:font-medium"
-              dangerouslySetInnerHTML={{ __html: answer }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        className="grid transition-[grid-template-rows] duration-350 ease-[cubic-bezier(0.4,0,0.2,1)]"
+        style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <p
+            className="pb-7 text-body leading-prose text-ink/70 font-light [&_strong]:text-ink [&_strong]:font-medium"
+            dangerouslySetInnerHTML={{ __html: answer }}
+          />
+        </div>
+      </div>
     </div>
   );
 }

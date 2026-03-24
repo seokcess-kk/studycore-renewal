@@ -354,6 +354,7 @@ export function ImageUploader({
             onChange={handleInputChange}
             disabled={disabled}
             className="hidden"
+            aria-label={allowsPdf ? "이미지 또는 PDF 파일 선택" : "이미지 파일 선택"}
           />
 
           <Upload size={24} className="mx-auto text-muted mb-2" />
@@ -374,7 +375,7 @@ export function ImageUploader({
 
       {/* 업로드 중 (미리보기 포함) */}
       {uploading.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        <div role="status" aria-live="polite" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {uploading.map((file) => (
             <div
               key={file.id}

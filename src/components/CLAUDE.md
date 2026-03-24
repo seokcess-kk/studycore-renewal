@@ -10,7 +10,17 @@
 --ink:    #111111   /* 본문 텍스트 */
 --muted:  #888888   /* 보조 텍스트 */
 --rule:   #E3E0DA   /* 구분선 */
+
+/* 외부 브랜드 컬러 */
+--kakao:      #FEE500   /* 카카오 노랑 */
+--kakao-dark: #191919   /* 카카오 텍스트 */
+--naver:      #03C75A   /* 네이버 그린 */
+--google:     #4285F4   /* 구글 블루 */
 ```
+
+### 예외: 원형 UI 요소
+아바타, 아이콘 뱃지 등 원형이 필요한 UI는 `style={{ borderRadius: "50%" }}`를 사용합니다.
+`border-radius: 0 !important` 글로벌 오버라이드가 Tailwind `rounded-*`를 차단하므로, 원형 요소는 인라인 스타일로 처리합니다.
 
 ## 타이포그래피
 - 헤드라인: Noto Serif KR (next/font/google)

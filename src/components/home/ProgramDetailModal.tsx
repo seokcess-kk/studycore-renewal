@@ -139,7 +139,7 @@ export function ProgramDetailModal({
               {/* 상태 + 날짜 */}
               <div className="flex items-center gap-3 mb-4">
                 <span
-                  className={`px-2.5 py-1 text-[11px] font-bold tracking-wider ${
+                  className={`px-2.5 py-1 text-caption font-bold tracking-wider ${
                     isActive
                       ? "bg-teal text-white"
                       : "bg-stone text-muted border border-rule"
@@ -148,7 +148,7 @@ export function ProgramDetailModal({
                   {isActive ? "모집중" : "종료"}
                 </span>
                 {(program.start_date || program.end_date) && (
-                  <span className="flex items-center gap-1.5 font-mono text-[11px] text-muted">
+                  <span className="flex items-center gap-1.5 font-mono text-caption text-muted">
                     <Calendar size={12} />
                     {formatDate(program.start_date)}
                     {program.end_date && ` — ${formatDate(program.end_date)}`}

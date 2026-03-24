@@ -21,21 +21,21 @@ const MAP_APPS = [
     label: "카카오맵",
     href: `https://map.kakao.com/?q=${MAP_QUERY}`,
     icon: "K",
-    bg: "bg-[#FEE500]",
-    text: "text-[#191919]",
+    bg: "bg-kakao",
+    text: "text-kakao-dark",
   },
   {
     label: "네이버지도",
     href: `https://map.naver.com/p/search/${MAP_QUERY}`,
     icon: "N",
-    bg: "bg-[#03C75A]",
+    bg: "bg-naver",
     text: "text-white",
   },
   {
     label: "구글맵",
     href: `https://maps.google.com/maps?q=${MAP_QUERY}`,
     icon: "G",
-    bg: "bg-[#4285F4]",
+    bg: "bg-google",
     text: "text-white",
   },
 ];
@@ -153,7 +153,7 @@ export function CTASection() {
                   />
                 </a>
                 <div>
-                  <span className="flex items-center gap-1.5 text-[#FEE500] text-small font-bold tracking-cta mb-1.5">
+                  <span className="flex items-center gap-1.5 text-kakao text-small font-bold tracking-cta mb-1.5">
                     <MessageCircle size={13} />
                     카카오톡 문의
                   </span>

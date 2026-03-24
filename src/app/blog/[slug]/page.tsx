@@ -147,17 +147,17 @@ export default function BlogPostPage() {
               remarkPlugins={[remarkGfm]}
               components={{
                 h1: ({ children }) => (
-                  <h1 className="font-serif text-[28px] font-bold text-ink mt-10 mb-4">
+                  <h1 className="font-serif text-fluid-h2 font-bold text-ink mt-10 mb-4">
                     {children}
                   </h1>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="font-serif text-[24px] font-bold text-ink mt-8 mb-3">
+                  <h2 className="font-serif text-fluid-h3 font-bold text-ink mt-8 mb-3">
                     {children}
                   </h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="font-serif text-[20px] font-bold text-ink mt-6 mb-2">
+                  <h3 className="font-serif text-subhead font-bold text-ink mt-6 mb-2">
                     {children}
                   </h3>
                 ),

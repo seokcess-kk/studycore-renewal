@@ -137,7 +137,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 onChange={(e) => handleInputChange(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="공지사항, 블로그 검색..."
-                className="flex-1 text-[15px] text-ink placeholder:text-muted/50 outline-none"
+                className="flex-1 text-reading text-ink placeholder:text-muted/50 outline-none"
               />
               <button
                 type="button"
@@ -150,13 +150,13 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
             </div>
 
             {/* 결과 */}
-            <div className="max-h-[50vh] overflow-y-auto">
+            <div className="max-h-[50vh] overflow-y-auto" role="status" aria-live="polite">
               {isSearching ? (
-                <div className="p-6 text-center text-muted text-[14px]">
+                <div className="p-6 text-center text-muted text-body">
                   검색 중...
                 </div>
               ) : query && results.length === 0 ? (
-                <div className="p-6 text-center text-muted text-[14px]">
+                <div className="p-6 text-center text-muted text-body">
                   검색 결과가 없습니다.
                 </div>
               ) : (
@@ -173,19 +173,19 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     >
                       <div className="flex items-center gap-2 mb-1">
                         <span
-                          className={`text-[11px] font-medium px-1.5 py-0.5 ${badge.className}`}
+                          className={`text-caption font-medium px-1.5 py-0.5 ${badge.className}`}
                         >
                           {badge.label}
                         </span>
-                        <span className="text-[12px] text-muted">
+                        <span className="text-small text-muted">
                           {new Date(result.date).toLocaleDateString("ko-KR")}
                         </span>
                       </div>
-                      <p className="text-[14px] font-medium text-ink truncate">
+                      <p className="text-body font-medium text-ink truncate">
                         {result.title}
                       </p>
                       {result.excerpt && (
-                        <p className="text-[12px] text-muted truncate mt-0.5">
+                        <p className="text-small text-muted truncate mt-0.5">
                           {result.excerpt}
                         </p>
                       )}
@@ -196,7 +196,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
             </div>
 
             {/* 하단 힌트 */}
-            <div className="px-4 py-2 border-t border-rule bg-stone/50 flex items-center gap-4 text-[11px] text-muted">
+            <div className="px-4 py-2 border-t border-rule bg-stone/50 flex items-center gap-4 text-caption text-muted">
               <span>↑↓ 이동</span>
               <span>Enter 열기</span>
               <span>ESC 닫기</span>
