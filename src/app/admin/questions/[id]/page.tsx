@@ -313,7 +313,10 @@ export default function AdminQuestionDetailPage() {
               maxSizeMB={1}
               accept="image/*,.pdf"
               value={imageUrls}
-              onChange={setImageUrls}
+              onChange={(urls) => {
+                setImageUrls(urls);
+                setAttachmentsMeta((prev) => prev.filter((m) => urls.includes(m.url)));
+              }}
               onFileUploaded={(meta: UploadedFileMeta) =>
                 setAttachmentsMeta((prev) => [...prev, meta])
               }
