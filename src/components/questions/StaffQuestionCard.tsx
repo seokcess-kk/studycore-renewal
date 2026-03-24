@@ -196,7 +196,19 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                         key={answer.id}
                         answer={answer}
                         questionId={question.id}
-                        onDeleted={handleAnswered}
+                        onDeleted={async () => {
+                          // detail만 새로고침 (펼침 상태 유지)
+                          const supabase = createClient();
+                          const result = await getQuestionDetail(supabase, question.id);
+                          if (result.success && result.question) {
+                            const updated = result.question as QuestionWithAnswers;
+                            setDetail(updated);
+                            // 상태 변경(answered→pending) 시에만 목록 갱신
+                            if (updated.status !== question.status) {
+                              onUpdated();
+                            }
+                          }
+                        }}
                         onImageSelect={setSelectedImage}
                       />
                     ))}
