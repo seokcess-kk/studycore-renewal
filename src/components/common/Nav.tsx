@@ -135,11 +135,6 @@ export function Nav() {
               <Link href={ROUTES.MANUAL} className={linkStyle(pathname === "/manual")}>
                 매뉴얼
               </Link>
-              {isStaff && (
-                <Link href={ROUTES.GUIDE} className={linkStyle(pathname === "/guide")}>
-                  온보딩
-                </Link>
-              )}
               {menuVisibility.blog && (
                 <Link href={ROUTES.BLOG} className={linkStyle(pathname.startsWith("/blog"))}>
                   블로그
@@ -151,11 +146,6 @@ export function Nav() {
               {canAccessAdmin && (
                 <Link href={ROUTES.ADMIN} className={linkStyle(pathname.startsWith("/admin"))}>
                   관리자
-                </Link>
-              )}
-              {isStaff && !canAccessAdmin && (
-                <Link href={ROUTES.ADMIN_GUIDE} className={linkStyle(pathname.startsWith("/admin/guide"))}>
-                  조교 관리
                 </Link>
               )}
               {isPending && (

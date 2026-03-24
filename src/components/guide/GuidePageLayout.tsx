@@ -58,12 +58,19 @@ function getIcon(name: string) {
   return ICON_MAP[name] || FileText;
 }
 
+interface TabConfig {
+  items: { value: GuideSectionType; label: string }[];
+  active: GuideSectionType;
+  onChange: (value: GuideSectionType) => void;
+}
+
 interface GuidePageLayoutProps {
   type: GuideSectionType;
   title: string;
   subtitle: string;
   label: string;
   emptyMessage: string;
+  tabs?: TabConfig;
 }
 
 export function GuidePageLayout({
@@ -72,6 +79,7 @@ export function GuidePageLayout({
   subtitle,
   label,
   emptyMessage,
+  tabs,
 }: GuidePageLayoutProps) {
   const [sections, setSections] = useState<GuideSection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -145,6 +153,26 @@ export function GuidePageLayout({
               {title}
             </h1>
             <p className="mt-4 text-white/70 text-reading">{subtitle}</p>
+
+            {/* 탭 (스태프 전용) */}
+            {tabs && (
+              <div className="mt-6 flex border-b border-white/20">
+                {tabs.items.map((item) => (
+                  <button
+                    key={item.value}
+                    type="button"
+                    onClick={() => tabs.onChange(item.value)}
+                    className={`px-5 py-2.5 text-secondary font-medium transition-colors duration-200 cursor-pointer -mb-px ${
+                      tabs.active === item.value
+                        ? "text-white border-b-2 border-teal"
+                        : "text-white/50 hover:text-white/80"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* 검색바 */}
             <div className="mt-8 relative max-w-md">

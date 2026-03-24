@@ -162,16 +162,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     매뉴얼
                   </Link>
                 </motion.div>
-                {isStaff && (
-                  <motion.div variants={itemVariants}>
-                    <Link
-                      href={ROUTES.GUIDE}
-                      className={linkClass(pathname === "/guide")}
-                    >
-                      온보딩
-                    </Link>
-                  </motion.div>
-                )}
                 {menuVisibility.blog && (
                   <motion.div variants={itemVariants}>
                     <Link
@@ -197,16 +187,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                       className={linkClass(pathname.startsWith("/admin"))}
                     >
                       관리자
-                    </Link>
-                  </motion.div>
-                )}
-                {isStaff && !canAccessAdmin && (
-                  <motion.div variants={itemVariants}>
-                    <Link
-                      href={ROUTES.ADMIN_GUIDE}
-                      className={linkClass(pathname.startsWith("/admin/guide"))}
-                    >
-                      조교 관리
                     </Link>
                   </motion.div>
                 )}
