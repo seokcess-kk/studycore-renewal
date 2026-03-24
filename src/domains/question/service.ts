@@ -15,6 +15,7 @@ import {
   type QuestionServiceResult,
   type QuestionListResult,
   type AnswerServiceResult,
+  type QuestionAttachment,
 } from "./model";
 import * as questionRepo from "./repository";
 
@@ -525,7 +526,7 @@ export async function createAnswer(
 export async function updateAnswer(
   supabase: SupabaseClient,
   answerId: string,
-  input: { content?: string; image_urls?: string[] }
+  input: { content?: string; image_urls?: string[]; attachments?: QuestionAttachment[] }
 ): Promise<AnswerServiceResult> {
   try {
     const answer = await questionRepo.updateAnswer(supabase, answerId, input);

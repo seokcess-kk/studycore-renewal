@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Nav, Footer, Button, ImageUploader, useToast } from "@/components/common";
+import type { UploadedFileMeta } from "@/components/common/ImageUploader";
 import { createClient } from "@/lib/supabase/client";
 import { createQuestion } from "@/domains/question/service";
-import { createQuestionSchema, type CreateQuestionInput } from "@/domains/question/model";
+import { createQuestionSchema, type CreateQuestionInput, type QuestionAttachment } from "@/domains/question/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES } from "@/lib/constants";
 import { ArrowLeft, Send, Clock, Globe } from "lucide-react";
@@ -19,6 +20,7 @@ export default function NewQuestionPage() {
   const { user, isActive, isAuthenticated } = useUserStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [attachmentsMeta, setAttachmentsMeta] = useState<QuestionAttachment[]>([]);
 
   const {
     register,
@@ -38,6 +40,7 @@ export default function NewQuestionPage() {
       const result = await createQuestion(supabase, {
         ...data,
         image_urls: imageUrls.length > 0 ? imageUrls : undefined,
+        attachments: attachmentsMeta.length > 0 ? attachmentsMeta : undefined,
         is_public: data.is_public ?? false,
       });
 
@@ -165,6 +168,9 @@ export default function NewQuestionPage() {
                   accept="image/*,.pdf"
                   value={imageUrls}
                   onChange={setImageUrls}
+                  onFileUploaded={(meta: UploadedFileMeta) =>
+                    setAttachmentsMeta((prev) => [...prev, meta])
+                  }
                 />
               </div>
 

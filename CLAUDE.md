@@ -171,6 +171,8 @@ phase{N}-{name}-tasks.md    ← 작업 목록, 완료 기록
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-03-24: 질문/답변 첨부파일 메타데이터 전환 — image_urls TEXT[] → attachments JSONB (원본 파일명 보존), ImageUploader에 onFileUploaded 콜백 추가, MetaAttachmentList로 표시 통일
+- 2026-03-24: 첨부파일 다운로드 시 원본 파일명 유지 — downloadWithName blob fetch 방식 도입
 - 2026-03-24: 답변 삭제 기능 UI 추가 — 재원생 상세(canAccessAdmin 조건부) + 어드민 상세/스태프 카드(항상 표시)
 - 2026-03-24: 첨부파일 컴팩트 UI 통일 — AttachmentList/MetaAttachmentList 공통 컴포넌트 추출, 이미지 64px 썸네일 + 파일 한 줄 리스트 (질문방·공지·프로그램·팝업 전체 적용)
 - 2026-03-24: 첨부파일 PDF 지원 + 프로그램 첨부파일 + 팝업 공지 첨부표시 + 감사 이슈 일괄 수정 (외부 브랜드 컬러 토큰화, text-[Npx] 토큰 교체, 접근성 aria-live/aria-label 보강, FAQ 애니메이션 CSS grid-rows 전환)

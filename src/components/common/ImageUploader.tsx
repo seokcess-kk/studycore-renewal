@@ -6,6 +6,13 @@ import { createClient } from "@/lib/supabase/client";
 import { Upload, X, Image as ImageIcon, FileText, Loader2, RotateCcw, Paperclip } from "lucide-react";
 import { isPdfUrl } from "./AttachmentModal";
 
+export interface UploadedFileMeta {
+  url: string;
+  original_name: string;
+  size: number;
+  type: string;
+}
+
 interface ImageUploaderProps {
   bucket: string;
   folder: string;
@@ -15,6 +22,8 @@ interface ImageUploaderProps {
   accept?: string;
   value?: string[];
   onChange: (urls: string[]) => void;
+  /** 업로드 성공 시 메타데이터 콜백 (원본 파일명 보존용) */
+  onFileUploaded?: (meta: UploadedFileMeta) => void;
   disabled?: boolean;
 }
 
@@ -43,6 +52,7 @@ export function ImageUploader({
   accept = "image/*",
   value = [],
   onChange,
+  onFileUploaded,
   disabled = false,
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState<UploadingFile[]>([]);
@@ -136,6 +146,16 @@ export function ImageUploader({
           URL.revokeObjectURL(previewUrl);
         }
 
+        // 메타데이터 콜백 (원본 파일명 보존)
+        if (onFileUploaded) {
+          onFileUploaded({
+            url: data.publicUrl,
+            original_name: file.name,
+            size: file.size,
+            type: file.type || "application/octet-stream",
+          });
+        }
+
         return data.publicUrl;
       } catch (err) {
         console.error("Upload error:", err);
@@ -154,7 +174,7 @@ export function ImageUploader({
         return null;
       }
     },
-    [bucket, folder, compressImage]
+    [bucket, folder, compressImage, onFileUploaded]
   );
 
   // 실패한 파일 수동 재시도

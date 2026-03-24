@@ -11,8 +11,10 @@ import { getQuestionDetail, createAnswer, deleteAnswer, togglePinQuestion, delet
 import {
   type QuestionWithAnswers,
   type AnswerWithAuthor,
+  type QuestionAttachment,
+  toMetaAttachments,
 } from "@/domains/question/model";
-import { ImageUploader } from "@/components/common/ImageUploader";
+import { ImageUploader, type UploadedFileMeta } from "@/components/common/ImageUploader";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/components/common/Toast";
 import { formatDistanceToNow } from "@/lib/utils";
@@ -29,7 +31,7 @@ import {
   PinOff,
   Trash2,
 } from "lucide-react";
-import { AttachmentModal, AttachmentList } from "@/components/common";
+import { AttachmentModal, AttachmentList, MetaAttachmentList } from "@/components/common";
 
 // 폼 스키마 (question_id 제외 - 페이지에서 주입)
 const answerFormSchema = z.object({
@@ -50,6 +52,7 @@ export default function AdminQuestionDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [attachmentsMeta, setAttachmentsMeta] = useState<QuestionAttachment[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -107,12 +110,14 @@ export default function AdminQuestionDetailPage() {
       question_id: question.id,
       content: data.content,
       image_urls: imageUrls.length > 0 ? imageUrls : undefined,
+      attachments: attachmentsMeta.length > 0 ? attachmentsMeta : undefined,
     });
 
     if (result.success) {
       showToast("답변이 등록되었습니다.", "success");
       reset();
       setImageUrls([]);
+      setAttachmentsMeta([]);
       // 목록 새로고침
       await fetchQuestion();
     } else {
@@ -232,13 +237,18 @@ export default function AdminQuestionDetailPage() {
         </p>
 
         {/* 첨부 파일 */}
-        {question.image_urls && question.image_urls.length > 0 && (
+        {((question.attachments && question.attachments.length > 0) ||
+          (question.image_urls && question.image_urls.length > 0)) && (
           <div className="mt-6 pt-6 border-t border-rule">
             <div className="flex items-center gap-2 text-sm text-muted mb-3">
               <ImageIcon size={14} />
-              첨부 파일 ({question.image_urls.length})
+              첨부 파일 ({(question.attachments || question.image_urls)!.length})
             </div>
-            <AttachmentList urls={question.image_urls} onSelect={setSelectedImage} />
+            {question.attachments && question.attachments.length > 0 ? (
+              <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} />
+            ) : (
+              <AttachmentList urls={question.image_urls!} onSelect={setSelectedImage} />
+            )}
           </div>
         )}
       </div>
@@ -304,6 +314,9 @@ export default function AdminQuestionDetailPage() {
               accept="image/*,.pdf"
               value={imageUrls}
               onChange={setImageUrls}
+              onFileUploaded={(meta: UploadedFileMeta) =>
+                setAttachmentsMeta((prev) => [...prev, meta])
+              }
               disabled={isSubmitting}
             />
           </div>
@@ -442,9 +455,14 @@ function AnswerCard({
       </p>
 
       {/* 첨부 파일 */}
-      {answer.image_urls && answer.image_urls.length > 0 && (
+      {((answer.attachments && answer.attachments.length > 0) ||
+        (answer.image_urls && answer.image_urls.length > 0)) && (
         <div className="mt-4 pt-4 border-t border-teal/20">
-          <AttachmentList urls={answer.image_urls} onSelect={onImageClick} variant="answer" />
+          {answer.attachments && answer.attachments.length > 0 ? (
+            <MetaAttachmentList attachments={toMetaAttachments(answer.attachments)} />
+          ) : (
+            <AttachmentList urls={answer.image_urls!} onSelect={onImageClick} variant="answer" />
+          )}
         </div>
       )}
     </div>

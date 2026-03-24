@@ -6,9 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Send } from "lucide-react";
 import { Button, useToast } from "@/components/common";
-import { ImageUploader } from "@/components/common/ImageUploader";
+import { ImageUploader, type UploadedFileMeta } from "@/components/common/ImageUploader";
 import { createClient } from "@/lib/supabase/client";
 import { createAnswer } from "@/domains/question/service";
+import type { QuestionAttachment } from "@/domains/question/model";
 import { useUserStore } from "@/stores/useUserStore";
 
 const answerFormSchema = z.object({
@@ -25,6 +26,7 @@ interface AnswerFormProps {
 
 export function AnswerForm({ questionId, onSuccess, compact }: AnswerFormProps) {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [attachmentsMeta, setAttachmentsMeta] = useState<QuestionAttachment[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { success, error: showError } = useToast();
   const { user } = useUserStore();
@@ -47,6 +49,7 @@ export function AnswerForm({ questionId, onSuccess, compact }: AnswerFormProps) 
       question_id: questionId,
       content: data.content,
       image_urls: imageUrls.length > 0 ? imageUrls : undefined,
+      attachments: attachmentsMeta.length > 0 ? attachmentsMeta : undefined,
     });
 
     setIsSubmitting(false);
@@ -55,6 +58,7 @@ export function AnswerForm({ questionId, onSuccess, compact }: AnswerFormProps) 
       success("답변이 등록되었습니다.");
       reset();
       setImageUrls([]);
+      setAttachmentsMeta([]);
       onSuccess();
     } else {
       showError(result.error || "답변 등록에 실패했습니다.");
@@ -81,6 +85,9 @@ export function AnswerForm({ questionId, onSuccess, compact }: AnswerFormProps) 
         accept="image/*,.pdf"
         value={imageUrls}
         onChange={setImageUrls}
+        onFileUploaded={(meta: UploadedFileMeta) =>
+          setAttachmentsMeta((prev) => [...prev, meta])
+        }
       />
 
       <div className="flex justify-end">

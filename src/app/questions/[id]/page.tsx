@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Nav, Footer, Button, Skeleton, useToast, AttachmentModal, AttachmentList } from "@/components/common";
+import { Nav, Footer, Button, Skeleton, useToast, AttachmentModal, AttachmentList, MetaAttachmentList } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getQuestionDetail, deleteQuestion, deleteAnswer, togglePinQuestion } from "@/domains/question/service";
-import { type QuestionWithAnswers, type AnswerWithAuthor } from "@/domains/question/model";
+import { type QuestionWithAnswers, type AnswerWithAuthor, toMetaAttachments } from "@/domains/question/model";
 import { AnswerForm } from "@/components/questions/AnswerForm";
 import { useUserStore } from "@/stores/useUserStore"
 import { ROUTES } from "@/lib/constants";
@@ -249,13 +249,18 @@ export default function QuestionDetailPage() {
               </p>
 
               {/* 첨부 파일 */}
-              {question.image_urls && question.image_urls.length > 0 && (
+              {((question.attachments && question.attachments.length > 0) ||
+                (question.image_urls && question.image_urls.length > 0)) && (
                 <div className="mt-6 pt-6 border-t border-rule">
                   <div className="flex items-center gap-2 text-secondary text-muted mb-3">
                     <ImageIcon size={14} />
-                    첨부 파일 ({question.image_urls.length})
+                    첨부 파일 ({(question.attachments || question.image_urls)!.length})
                   </div>
-                  <AttachmentList urls={question.image_urls} onSelect={setSelectedImage} />
+                  {question.attachments && question.attachments.length > 0 ? (
+                    <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} />
+                  ) : (
+                    <AttachmentList urls={question.image_urls!} onSelect={setSelectedImage} />
+                  )}
                 </div>
               )}
             </div>
@@ -398,9 +403,14 @@ function AnswerCard({
       </p>
 
       {/* 첨부 파일 */}
-      {answer.image_urls && answer.image_urls.length > 0 && (
+      {((answer.attachments && answer.attachments.length > 0) ||
+        (answer.image_urls && answer.image_urls.length > 0)) && (
         <div className="mt-4 pt-4 border-t border-teal/20">
-          <AttachmentList urls={answer.image_urls} onSelect={onImageClick} variant="answer" />
+          {answer.attachments && answer.attachments.length > 0 ? (
+            <MetaAttachmentList attachments={toMetaAttachments(answer.attachments)} />
+          ) : (
+            <AttachmentList urls={answer.image_urls!} onSelect={onImageClick} variant="answer" />
+          )}
         </div>
       )}
     </div>

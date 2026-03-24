@@ -21,6 +21,19 @@ export type QuestionStatusType =
   (typeof QuestionStatus)[keyof typeof QuestionStatus];
 
 // ─────────────────────────────────────────────
+// 첨부파일 메타데이터
+// ─────────────────────────────────────────────
+
+export const questionAttachmentSchema = z.object({
+  url: z.string(),
+  original_name: z.string(),
+  size: z.number().nullable(),
+  type: z.string().nullable(),
+});
+
+export type QuestionAttachment = z.infer<typeof questionAttachmentSchema>;
+
+// ─────────────────────────────────────────────
 // Zod 스키마
 // ─────────────────────────────────────────────
 
@@ -30,6 +43,7 @@ export const questionSchema = z.object({
   title: z.string(),
   content: z.string(),
   image_urls: z.array(z.string()).nullable(),
+  attachments: z.array(questionAttachmentSchema).nullable(),
   status: z.enum(["pending", "answered"]),
   is_public: z.boolean(),
   is_pinned: z.boolean().optional().default(false),
@@ -57,6 +71,7 @@ export const answerSchema = z.object({
   question_id: z.string().uuid(),
   content: z.string(),
   image_urls: z.array(z.string()).nullable(),
+  attachments: z.array(questionAttachmentSchema).nullable(),
   author_id: z.string().uuid(),
   created_at: z.string(),
   updated_at: z.string(),
@@ -87,6 +102,7 @@ export const createQuestionSchema = z.object({
   title: z.string().min(5, "제목은 5자 이상 입력해주세요").max(100),
   content: z.string().min(10, "내용은 10자 이상 입력해주세요"),
   image_urls: z.array(z.string().url()).max(5, "이미지는 최대 5개까지 첨부 가능합니다").optional(),
+  attachments: z.array(questionAttachmentSchema).max(5, "파일은 최대 5개까지 첨부 가능합니다").optional(),
   is_public: z.boolean().optional(),
 });
 
@@ -97,6 +113,7 @@ export const createAnswerSchema = z.object({
   question_id: z.string().uuid(),
   content: z.string().min(10, "답변은 10자 이상 입력해주세요"),
   image_urls: z.array(z.string().url()).max(5).optional(),
+  attachments: z.array(questionAttachmentSchema).max(5).optional(),
 });
 
 export type CreateAnswerInput = z.infer<typeof createAnswerSchema>;
@@ -124,4 +141,22 @@ export interface AnswerServiceResult {
   success: boolean;
   answer?: Answer | AnswerWithAuthor;
   error?: string;
+}
+
+// ─────────────────────────────────────────────
+// 어댑터
+// ─────────────────────────────────────────────
+
+/** QuestionAttachment[] → MetaAttachmentList에서 사용하는 형태로 변환 */
+export function toMetaAttachments(
+  attachments: QuestionAttachment[] | null | undefined
+): { id: string; file_name: string; file_url: string; file_type: string | null; file_size: number | null }[] {
+  if (!attachments || attachments.length === 0) return [];
+  return attachments.map((a, i) => ({
+    id: `${i}`,
+    file_name: a.original_name,
+    file_url: a.url,
+    file_type: a.type,
+    file_size: a.size,
+  }));
 }

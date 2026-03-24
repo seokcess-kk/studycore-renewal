@@ -15,10 +15,11 @@ import {
   ExternalLink,
   Trash2,
 } from "lucide-react";
-import { AttachmentModal, AttachmentList, useToast } from "@/components/common";
+import { AttachmentModal, AttachmentList, MetaAttachmentList, useToast } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { togglePinQuestion, getQuestionDetail, deleteAnswer } from "@/domains/question/service";
 import type { QuestionWithAuthor, QuestionWithAnswers, AnswerWithAuthor } from "@/domains/question/model";
+import { toMetaAttachments } from "@/domains/question/model";
 import { ROUTES } from "@/lib/constants";
 import { ElapsedBadge, getUrgencyBorderClass } from "./ElapsedBadge";
 import { AnswerForm } from "./AnswerForm";
@@ -178,9 +179,14 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                   <p className="text-body text-ink whitespace-pre-wrap leading-relaxed">
                     {question.content}
                   </p>
-                  {question.image_urls && question.image_urls.length > 0 && (
+                  {((question.attachments && question.attachments.length > 0) ||
+                    (question.image_urls && question.image_urls.length > 0)) && (
                     <div className="mt-3">
-                      <AttachmentList urls={question.image_urls} onSelect={setSelectedImage} />
+                      {question.attachments && question.attachments.length > 0 ? (
+                        <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} />
+                      ) : (
+                        <AttachmentList urls={question.image_urls!} onSelect={setSelectedImage} />
+                      )}
                     </div>
                   )}
                 </div>
@@ -287,9 +293,14 @@ function StaffAnswerItem({
       <p className="text-secondary text-ink whitespace-pre-wrap">
         {answer.content}
       </p>
-      {answer.image_urls && answer.image_urls.length > 0 && (
+      {((answer.attachments && answer.attachments.length > 0) ||
+        (answer.image_urls && answer.image_urls.length > 0)) && (
         <div className="mt-2">
-          <AttachmentList urls={answer.image_urls} onSelect={onImageSelect} variant="answer" />
+          {answer.attachments && answer.attachments.length > 0 ? (
+            <MetaAttachmentList attachments={toMetaAttachments(answer.attachments)} />
+          ) : (
+            <AttachmentList urls={answer.image_urls!} onSelect={onImageSelect} variant="answer" />
+          )}
         </div>
       )}
     </div>

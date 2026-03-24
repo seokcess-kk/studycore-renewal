@@ -15,6 +15,7 @@ import type {
   AnswerWithAuthor,
   CreateQuestionInput,
   CreateAnswerInput,
+  QuestionAttachment,
 } from "./model";
 
 /**
@@ -260,6 +261,7 @@ export async function createQuestion(
       title: data.title,
       content: data.content,
       image_urls: data.image_urls || null,
+      attachments: data.attachments || null,
       is_public: data.is_public ?? false,
       author_id: data.author_id,
       status: "pending",
@@ -286,6 +288,7 @@ export async function updateQuestion(
   if (data.title) updateData.title = data.title;
   if (data.content) updateData.content = data.content;
   if (data.image_urls !== undefined) updateData.image_urls = data.image_urls;
+  if (data.attachments !== undefined) updateData.attachments = data.attachments;
   if (data.is_public !== undefined) updateData.is_public = data.is_public;
 
   const { data: question, error } = await supabase
@@ -354,6 +357,7 @@ export async function createAnswer(
       question_id: data.question_id,
       content: data.content,
       image_urls: data.image_urls || null,
+      attachments: data.attachments || null,
       author_id: data.author_id,
     })
     .select()
@@ -372,7 +376,7 @@ export async function createAnswer(
 export async function updateAnswer(
   supabase: SupabaseClient,
   answerId: string,
-  data: { content?: string; image_urls?: string[] }
+  data: { content?: string; image_urls?: string[]; attachments?: QuestionAttachment[] }
 ): Promise<Answer> {
   const { data: answer, error } = await supabase
     .from("question_answers")
