@@ -78,6 +78,7 @@ export function AnswerForm({ questionId, onSuccess, compact }: AnswerFormProps) 
         folder="answers"
         maxFiles={5}
         maxSizeMB={1}
+        accept="image/*,.pdf"
         value={imageUrls}
         onChange={setImageUrls}
       />

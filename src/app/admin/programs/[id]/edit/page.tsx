@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Paperclip, FileText, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/common/Button";
@@ -13,8 +13,22 @@ import { useToast } from "@/components/common/Toast";
 import {
   createProgramSchema,
   type CreateProgramInput,
+  type ProgramAttachment,
 } from "@/domains/program/model";
-import { getProgramDetail, updateProgram } from "@/domains/program/service";
+import {
+  getProgramDetail,
+  updateProgram,
+  getProgramAttachments,
+  addProgramAttachment,
+  deleteProgramAttachment,
+} from "@/domains/program/service";
+
+interface AttachmentFile {
+  name: string;
+  url: string;
+  size: number;
+  type: string;
+}
 
 export default function AdminProgramEditPage() {
   const router = useRouter();
@@ -23,6 +37,9 @@ export default function AdminProgramEditPage() {
   const supabase = createBrowserClient();
   const { toast } = useToast();
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [existingAttachments, setExistingAttachments] = useState<ProgramAttachment[]>([]);
+  const [newAttachments, setNewAttachments] = useState<AttachmentFile[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
   const {
@@ -48,6 +65,9 @@ export default function AdminProgramEditPage() {
           sort_order: p.sort_order,
         });
         if (p.image_url) setImageUrls([p.image_url]);
+        // 기존 첨부파일 로드
+        const atts = await getProgramAttachments(supabase, id);
+        setExistingAttachments(atts);
       } else {
         toast({ variant: "error", description: "프로그램을 찾을 수 없습니다." });
         router.push("/admin/programs");
@@ -66,11 +86,76 @@ export default function AdminProgramEditPage() {
     });
 
     if (result.success) {
+      // 새 첨부파일 연결
+      for (const att of newAttachments) {
+        await addProgramAttachment(supabase, {
+          program_id: id,
+          file_name: att.name,
+          file_url: att.url,
+          file_size: att.size,
+          file_type: att.type,
+        });
+      }
       toast({ variant: "success", description: "프로그램이 수정되었습니다." });
       router.push("/admin/programs");
     } else {
       toast({ variant: "error", description: result.error || "수정 실패" });
     }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setIsUploading(true);
+    try {
+      for (const file of Array.from(files)) {
+        if (file.size > 10 * 1024 * 1024) {
+          toast({ variant: "error", description: `${file.name}: 10MB 이하만 업로드 가능합니다.` });
+          continue;
+        }
+        const fileId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        const ext = file.name.split(".").pop() || "bin";
+        const path = `attachments/${fileId}.${ext}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("program-attachments")
+          .upload(path, file, { contentType: file.type });
+
+        if (uploadError) {
+          toast({ variant: "error", description: `${file.name} 업로드 실패` });
+          continue;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from("program-attachments")
+          .getPublicUrl(path);
+
+        setNewAttachments((prev) => [
+          ...prev,
+          { name: file.name, url: urlData.publicUrl, size: file.size, type: file.type },
+        ]);
+      }
+    } finally {
+      setIsUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleDeleteExisting = async (att: ProgramAttachment) => {
+    const path = att.file_url.split("program-attachments/")[1];
+    if (path) {
+      await supabase.storage.from("program-attachments").remove([path]);
+    }
+    await deleteProgramAttachment(supabase, att.id);
+    setExistingAttachments((prev) => prev.filter((a) => a.id !== att.id));
+  };
+
+  const handleRemoveNew = async (url: string) => {
+    const path = url.split("program-attachments/")[1];
+    if (path) {
+      await supabase.storage.from("program-attachments").remove([path]);
+    }
+    setNewAttachments((prev) => prev.filter((a) => a.url !== url));
   };
 
   if (isLoadingData) {
@@ -141,6 +226,71 @@ export default function AdminProgramEditPage() {
               onChange={setImageUrls}
             />
           </div>
+        </div>
+
+        {/* 첨부파일 */}
+        <div className="border border-rule bg-white p-6">
+          <h3 className="mb-4 font-medium text-ink">첨부파일</h3>
+          <label className="inline-flex cursor-pointer items-center gap-2 border border-rule px-4 py-2 text-sm text-muted hover:border-navy hover:text-ink transition-colors">
+            <Paperclip className="h-4 w-4" />
+            {isUploading ? "업로드 중..." : "파일 첨부"}
+            <input
+              type="file"
+              multiple
+              disabled={isUploading}
+              className="hidden"
+              onChange={handleFileUpload}
+            />
+          </label>
+          <p className="mt-2 text-xs text-muted">10MB 이하, 이미지·PDF 등</p>
+
+          {(existingAttachments.length > 0 || newAttachments.length > 0) && (
+            <div className="mt-4 space-y-2">
+              {existingAttachments.map((att) => (
+                <div key={att.id} className="flex items-center justify-between border border-rule px-3 py-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText className="h-4 w-4 flex-shrink-0 text-muted" />
+                    <span className="truncate text-sm text-ink">{att.file_name}</span>
+                    {att.file_size && (
+                      <span className="flex-shrink-0 text-xs text-muted">
+                        ({att.file_size > 1024 * 1024
+                          ? `${(att.file_size / 1024 / 1024).toFixed(1)}MB`
+                          : `${(att.file_size / 1024).toFixed(0)}KB`})
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteExisting(att)}
+                    className="text-muted hover:text-red-500 transition-colors cursor-pointer"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+              {newAttachments.map((att, idx) => (
+                <div key={`new-${idx}`} className="flex items-center justify-between border border-teal/30 bg-teal/5 px-3 py-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText className="h-4 w-4 flex-shrink-0 text-teal" />
+                    <span className="truncate text-sm text-ink">{att.name}</span>
+                    <span className="flex-shrink-0 text-xs text-muted">
+                      ({att.size > 1024 * 1024
+                        ? `${(att.size / 1024 / 1024).toFixed(1)}MB`
+                        : `${(att.size / 1024).toFixed(0)}KB`})
+                    </span>
+                    <span className="text-xs text-teal font-medium">NEW</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveNew(att.url)}
+                    className="text-muted hover:text-red-500 transition-colors cursor-pointer"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="border border-rule bg-white p-6 space-y-4">

@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, FileText, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { getActivePopups } from "@/domains/popup/service";
+import { getNoticeAttachments } from "@/domains/notice/service";
 import type { Popup } from "@/domains/popup/model";
+import type { NoticeAttachment } from "@/domains/notice/model";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 function isDismissedToday(popupId: string): boolean {
@@ -25,17 +27,22 @@ function dismissToday(popupId: string) {
 export function PopupModal() {
   const [popup, setPopup] = useState<Popup | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [attachments, setAttachments] = useState<NoticeAttachment[]>([]);
   const focusTrapRef = useFocusTrap(isOpen);
 
   useEffect(() => {
     async function loadPopup() {
       const supabase = createBrowserClient();
       const popups = await getActivePopups(supabase);
-      // 가장 최신 1개, 오늘 안 보기 처리된 것은 제외
       const visible = popups.find((p) => !isDismissedToday(p.id));
       if (visible) {
         setPopup(visible);
         setIsOpen(true);
+        // 공지 연결 시 첨부파일 로드
+        if (visible.notice_id) {
+          const atts = await getNoticeAttachments(supabase, visible.notice_id);
+          setAttachments(atts);
+        }
       }
     }
     loadPopup();
@@ -104,6 +111,29 @@ export function PopupModal() {
                   {popup.content}
                 </p>
               )}
+              {/* 공지 첨부파일 */}
+              {attachments.length > 0 && (() => {
+                const fileAtts = attachments.filter((a) => !a.file_type?.startsWith("image/"));
+                if (fileAtts.length === 0) return null;
+                return (
+                  <div className="mb-4 space-y-1.5">
+                    {fileAtts.map((att) => (
+                      <a
+                        key={att.id}
+                        href={att.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 border border-rule px-3 py-2 hover:border-teal transition-colors duration-200 group"
+                      >
+                        <FileText className="h-3.5 w-3.5 text-muted group-hover:text-teal" />
+                        <span className="flex-1 truncate text-small text-ink">{att.file_name}</span>
+                        <Download className="h-3.5 w-3.5 text-muted group-hover:text-teal" />
+                      </a>
+                    ))}
+                  </div>
+                );
+              })()}
+
               {linkUrl && (
                 <a
                   href={linkUrl}

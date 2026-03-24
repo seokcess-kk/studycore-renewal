@@ -10,6 +10,7 @@ import {
   type UpdateProgramInput,
   type ProgramServiceResult,
   type Program,
+  type ProgramAttachment,
 } from "./model";
 import * as programRepo from "./repository";
 
@@ -106,6 +107,56 @@ export async function deleteProgram(
     return {
       success: false,
       error: error instanceof Error ? error.message : "프로그램 삭제 실패",
+    };
+  }
+}
+
+// ─── 첨부파일 ───
+
+export async function getProgramAttachments(
+  supabase: SupabaseClient,
+  programId: string
+): Promise<ProgramAttachment[]> {
+  try {
+    return await programRepo.getProgramAttachments(supabase, programId);
+  } catch (error) {
+    console.error("첨부파일 조회 실패:", error);
+    return [];
+  }
+}
+
+export async function addProgramAttachment(
+  supabase: SupabaseClient,
+  data: {
+    program_id: string;
+    file_name: string;
+    file_url: string;
+    file_size?: number;
+    file_type?: string;
+  }
+): Promise<{ success: boolean; attachment?: ProgramAttachment; error?: string }> {
+  try {
+    const attachment = await programRepo.addProgramAttachment(supabase, data);
+    return { success: true, attachment };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "첨부파일 추가 실패",
+    };
+  }
+}
+
+export async function deleteProgramAttachment(
+  supabase: SupabaseClient,
+  attachmentId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await programRepo.deleteProgramAttachment(supabase, attachmentId);
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "첨부파일 삭제 실패",
     };
   }
 }

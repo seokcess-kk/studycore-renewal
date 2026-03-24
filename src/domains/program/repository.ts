@@ -3,7 +3,7 @@
  */
 
 import { SupabaseClient } from "@supabase/supabase-js";
-import type { Program, CreateProgramInput, UpdateProgramInput } from "./model";
+import type { Program, ProgramAttachment, CreateProgramInput, UpdateProgramInput } from "./model";
 
 export async function getActivePrograms(
   supabase: SupabaseClient
@@ -91,4 +91,52 @@ export async function deleteProgram(
 ): Promise<void> {
   const { error } = await supabase.from("programs").delete().eq("id", id);
   if (error) throw new Error(`프로그램 삭제 실패: ${error.message}`);
+}
+
+// ─── 첨부파일 ───
+
+export async function getProgramAttachments(
+  supabase: SupabaseClient,
+  programId: string
+): Promise<ProgramAttachment[]> {
+  const { data, error } = await supabase
+    .from("program_attachments")
+    .select("*")
+    .eq("program_id", programId)
+    .order("created_at", { ascending: true });
+
+  if (error) throw new Error(`첨부파일 조회 실패: ${error.message}`);
+  return data || [];
+}
+
+export async function addProgramAttachment(
+  supabase: SupabaseClient,
+  data: {
+    program_id: string;
+    file_name: string;
+    file_url: string;
+    file_size?: number;
+    file_type?: string;
+  }
+): Promise<ProgramAttachment> {
+  const { data: attachment, error } = await supabase
+    .from("program_attachments")
+    .insert(data)
+    .select()
+    .single();
+
+  if (error) throw new Error(`첨부파일 추가 실패: ${error.message}`);
+  return attachment;
+}
+
+export async function deleteProgramAttachment(
+  supabase: SupabaseClient,
+  attachmentId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from("program_attachments")
+    .delete()
+    .eq("id", attachmentId);
+
+  if (error) throw new Error(`첨부파일 삭제 실패: ${error.message}`);
 }

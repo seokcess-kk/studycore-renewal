@@ -149,19 +149,20 @@ export default function NewQuestionPage() {
                 )}
               </div>
 
-              {/* 이미지 첨부 */}
+              {/* 파일 첨부 */}
               <div>
                 <label className="block text-secondary font-medium text-ink mb-2">
-                  이미지 첨부 (선택)
+                  파일 첨부 (선택)
                 </label>
                 <p className="text-small text-muted mb-3">
-                  문제 사진이나 풀이 과정을 첨부하면 더 정확한 답변을 받을 수 있습니다.
+                  문제 사진이나 풀이 과정을 첨부하면 더 정확한 답변을 받을 수 있습니다. (이미지, PDF)
                 </p>
                 <ImageUploader
                   bucket="question-images"
                   folder={user?.id || "anonymous"}
                   maxFiles={5}
                   maxSizeMB={1}
+                  accept="image/*,.pdf"
                   value={imageUrls}
                   onChange={setImageUrls}
                 />

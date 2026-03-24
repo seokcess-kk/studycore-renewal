@@ -34,6 +34,19 @@ export type CreateProgramInput = z.infer<typeof createProgramSchema>;
 export const updateProgramSchema = createProgramSchema.partial();
 export type UpdateProgramInput = z.infer<typeof updateProgramSchema>;
 
+// 첨부파일 스키마
+export const programAttachmentSchema = z.object({
+  id: z.string().uuid(),
+  program_id: z.string().uuid(),
+  file_name: z.string(),
+  file_url: z.string(),
+  file_size: z.number().nullable(),
+  file_type: z.string().nullable(),
+  created_at: z.string(),
+});
+
+export type ProgramAttachment = z.infer<typeof programAttachmentSchema>;
+
 export interface ProgramServiceResult {
   success: boolean;
   program?: Program;

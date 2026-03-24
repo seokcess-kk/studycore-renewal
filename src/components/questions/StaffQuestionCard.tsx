@@ -13,9 +13,10 @@ import {
   ChevronUp,
   User,
   Image as ImageIcon,
+  FileText,
   ExternalLink,
-  X,
 } from "lucide-react";
+import { AttachmentModal, isPdfUrl } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { togglePinQuestion, getQuestionDetail } from "@/domains/question/service";
 import type { QuestionWithAuthor, QuestionWithAnswers, AnswerWithAuthor } from "@/domains/question/model";
@@ -190,12 +191,19 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                           }}
                           className="w-20 h-20 overflow-hidden border border-rule hover:opacity-80 transition-opacity cursor-pointer"
                         >
-                          <img
-                            src={url}
-                            alt={`첨부 ${i + 1}`}
-                            loading="lazy"
-                            className="w-full h-full object-cover"
-                          />
+                          {isPdfUrl(url) ? (
+                            <div className="w-full h-full flex flex-col items-center justify-center gap-1 bg-stone">
+                              <FileText size={20} className="text-muted" />
+                              <span className="text-label text-muted">PDF</span>
+                            </div>
+                          ) : (
+                            <img
+                              src={url}
+                              alt={`첨부 ${i + 1}`}
+                              loading="lazy"
+                              className="w-full h-full object-cover"
+                            />
+                          )}
                         </button>
                       ))}
                     </div>
@@ -231,12 +239,19 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                                 }}
                                 className="w-20 h-20 overflow-hidden border border-teal/20 hover:opacity-80 transition-opacity cursor-pointer"
                               >
-                                <img
-                                  src={url}
-                                  alt={`답변 첨부 ${i + 1}`}
-                                  loading="lazy"
-                                  className="w-full h-full object-cover"
-                                />
+                                {isPdfUrl(url) ? (
+                                  <div className="w-full h-full flex flex-col items-center justify-center gap-1 bg-stone">
+                                    <FileText size={20} className="text-muted" />
+                                    <span className="text-label text-muted">PDF</span>
+                                  </div>
+                                ) : (
+                                  <img
+                                    src={url}
+                                    alt={`답변 첨부 ${i + 1}`}
+                                    loading="lazy"
+                                    className="w-full h-full object-cover"
+                                  />
+                                )}
                               </button>
                             ))}
                           </div>
@@ -260,26 +275,9 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
           </div>
         </div>
       )}
-      {/* 이미지 모달 */}
+      {/* 첨부파일 모달 */}
       {selectedImage && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <button
-            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors cursor-pointer"
-            onClick={() => setSelectedImage(null)}
-            aria-label="닫기"
-          >
-            <X size={20} />
-          </button>
-          <img
-            src={selectedImage}
-            alt="확대 이미지"
-            className="max-w-full max-h-full object-contain"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+        <AttachmentModal url={selectedImage} onClose={() => setSelectedImage(null)} />
       )}
     </div>
   );

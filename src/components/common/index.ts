@@ -11,6 +11,7 @@ export {
   SkeletonListItem,
 } from "./Skeleton";
 export { ImageUploader } from "./ImageUploader";
+export { AttachmentModal, isPdfUrl, isImageUrl } from "./AttachmentModal";
 export { AvatarUploader } from "./AvatarUploader";
 export { SessionWarning } from "./SessionWarning";
 export { OrganizationJsonLd, FAQJsonLd, WebSiteJsonLd } from "./JsonLd";

@@ -3,13 +3,16 @@
 import { useState, useCallback, useRef } from "react";
 import imageCompression from "browser-image-compression";
 import { createClient } from "@/lib/supabase/client";
-import { Upload, X, Image as ImageIcon, Loader2, RotateCcw } from "lucide-react";
+import { Upload, X, Image as ImageIcon, FileText, Loader2, RotateCcw, Paperclip } from "lucide-react";
+import { isPdfUrl } from "./AttachmentModal";
 
 interface ImageUploaderProps {
   bucket: string;
   folder: string;
   maxFiles?: number;
   maxSizeMB?: number;
+  /** 허용 파일 타입. 기본 "image/*". PDF 포함 시 "image/*,.pdf" */
+  accept?: string;
   value?: string[];
   onChange: (urls: string[]) => void;
   disabled?: boolean;
@@ -19,19 +22,25 @@ interface UploadingFile {
   id: string;
   name: string;
   progress: number;
-  previewUrl: string; // 로컬 blob URL
+  previewUrl: string; // 로컬 blob URL (이미지) 또는 빈 문자열 (PDF)
   status: "uploading" | "success" | "error";
   retryCount: number;
   file: File; // 재시도용 원본 파일
+  isImage: boolean;
 }
 
 const MAX_RETRY_COUNT = 3;
+
+function isImageFile(file: File): boolean {
+  return file.type.startsWith("image/");
+}
 
 export function ImageUploader({
   bucket,
   folder,
   maxFiles = 5,
   maxSizeMB = 1,
+  accept = "image/*",
   value = [],
   onChange,
   disabled = false,
@@ -40,6 +49,8 @@ export function ImageUploader({
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const allowsPdf = accept.includes(".pdf");
 
   const compressImage = useCallback(
     async (file: File): Promise<File> => {
@@ -91,17 +102,22 @@ export function ImageUploader({
       try {
         updateProgress(10);
 
-        // 이미지 압축
-        const compressedFile = await compressImage(file);
+        // 이미지만 압축, PDF는 원본 그대로 업로드
+        const fileToUpload = isImageFile(file) ? await compressImage(file) : file;
         updateProgress(40);
+
+        // contentType 결정
+        const contentType = isImageFile(file)
+          ? fileToUpload.type || `image/${fileExt === "jpg" ? "jpeg" : fileExt}`
+          : file.type || "application/octet-stream";
 
         // 업로드
         const { error: uploadError } = await supabase.storage
           .from(bucket)
-          .upload(fileName, compressedFile, {
+          .upload(fileName, fileToUpload, {
             cacheControl: "3600",
             upsert: false,
-            contentType: compressedFile.type || `image/${fileExt === "jpg" ? "jpeg" : fileExt}`,
+            contentType,
           });
 
         if (uploadError) {
@@ -116,7 +132,9 @@ export function ImageUploader({
         updateProgress(100, "success");
 
         // blob URL 해제
-        URL.revokeObjectURL(previewUrl);
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+        }
 
         return data.publicUrl;
       } catch (err) {
@@ -181,12 +199,16 @@ export function ImageUploader({
       }
 
       const filesToUpload = fileArray.slice(0, remainingSlots);
-      const invalidFiles = filesToUpload.filter(
-        (file) => !file.type.startsWith("image/")
-      );
+
+      // 허용 타입 검증
+      const allowedTypes = allowsPdf
+        ? (file: File) => isImageFile(file) || file.type === "application/pdf"
+        : (file: File) => isImageFile(file);
+
+      const invalidFiles = filesToUpload.filter((file) => !allowedTypes(file));
 
       if (invalidFiles.length > 0) {
-        setError("이미지 파일만 업로드 가능합니다.");
+        setError(allowsPdf ? "이미지 또는 PDF 파일만 업로드 가능합니다." : "이미지 파일만 업로드 가능합니다.");
         return;
       }
 
@@ -204,10 +226,11 @@ export function ImageUploader({
         id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
         name: file.name,
         progress: 0,
-        previewUrl: URL.createObjectURL(file),
+        previewUrl: isImageFile(file) ? URL.createObjectURL(file) : "",
         status: "uploading" as const,
         retryCount: 0,
         file,
+        isImage: isImageFile(file),
       }));
 
       setUploading((prev) => [...prev, ...newUploadingFiles]);
@@ -244,7 +267,7 @@ export function ImageUploader({
         setError(`${failedIds.length}개 파일 업로드 실패. 재시도 버튼을 눌러주세요.`);
       }
     },
-    [maxFiles, value, uploading, uploadFile, onChange]
+    [maxFiles, value, uploading, uploadFile, onChange, allowsPdf]
   );
 
   const handleDrop = useCallback(
@@ -298,7 +321,7 @@ export function ImageUploader({
 
   const handleCancelUpload = (fileId: string) => {
     const file = uploading.find((f) => f.id === fileId);
-    if (file) {
+    if (file && file.previewUrl) {
       URL.revokeObjectURL(file.previewUrl);
     }
     setUploading((prev) => prev.filter((f) => f.id !== fileId));
@@ -326,7 +349,7 @@ export function ImageUploader({
           <input
             ref={inputRef}
             type="file"
-            accept="image/*"
+            accept={accept}
             multiple
             onChange={handleInputChange}
             disabled={disabled}
@@ -335,10 +358,13 @@ export function ImageUploader({
 
           <Upload size={24} className="mx-auto text-muted mb-2" />
           <p className="text-body text-ink">
-            클릭하거나 이미지를 드래그하세요
+            {allowsPdf ? "클릭하거나 파일을 드래그하세요" : "클릭하거나 이미지를 드래그하세요"}
           </p>
           <p className="text-small text-muted mt-1">
-            최대 {maxFiles}개, 각 {maxSizeMB}MB 이하
+            최대 {maxFiles}개
+            {allowsPdf
+              ? ` (이미지 ${maxSizeMB}MB·PDF 10MB 이하)`
+              : `, 각 ${maxSizeMB}MB 이하`}
           </p>
         </div>
       )}
@@ -354,14 +380,25 @@ export function ImageUploader({
               key={file.id}
               className="relative aspect-square bg-stone border border-rule overflow-hidden"
             >
-              {/* 로컬 미리보기 이미지 */}
-              <img
-                src={file.previewUrl}
-                alt={file.name}
-                className={`w-full h-full object-cover ${
+              {/* 미리보기: 이미지 또는 PDF 아이콘 */}
+              {file.isImage ? (
+                <img
+                  src={file.previewUrl}
+                  alt={file.name}
+                  className={`w-full h-full object-cover ${
+                    file.status === "error" ? "opacity-50" : ""
+                  }`}
+                />
+              ) : (
+                <div className={`w-full h-full flex flex-col items-center justify-center gap-2 ${
                   file.status === "error" ? "opacity-50" : ""
-                }`}
-              />
+                }`}>
+                  <FileText size={32} className="text-muted" />
+                  <span className="text-caption text-muted px-2 text-center truncate w-full">
+                    {file.name}
+                  </span>
+                </div>
+              )}
 
               {/* 진행률 오버레이 */}
               {file.status === "uploading" && (
@@ -407,7 +444,7 @@ export function ImageUploader({
         </div>
       )}
 
-      {/* 업로드된 이미지 목록 */}
+      {/* 업로드된 파일 목록 */}
       {value.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {value.map((url, index) => (
@@ -415,12 +452,19 @@ export function ImageUploader({
               key={url}
               className="relative group aspect-square bg-stone border border-rule overflow-hidden"
             >
-              {/* 이미지 */}
-              <img
-                src={url}
-                alt={`업로드 이미지 ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
+              {/* 이미지 또는 PDF 아이콘 */}
+              {isPdfUrl(url) ? (
+                <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                  <FileText size={32} className="text-muted" />
+                  <span className="text-caption text-muted">PDF</span>
+                </div>
+              ) : (
+                <img
+                  src={url}
+                  alt={`업로드 파일 ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              )}
 
               {/* 삭제 버튼 */}
               {!disabled && (
@@ -448,7 +492,7 @@ export function ImageUploader({
               disabled={disabled}
               className="aspect-square border-2 border-dashed border-rule flex flex-col items-center justify-center text-muted hover:border-navy hover:text-navy transition-colors disabled:opacity-50"
             >
-              <ImageIcon size={20} />
+              {allowsPdf ? <Paperclip size={20} /> : <ImageIcon size={20} />}
               <span className="text-caption mt-1">추가</span>
             </button>
           )}

@@ -24,11 +24,13 @@ import {
   User,
   MessageSquare,
   Image as ImageIcon,
+  FileText,
   Send,
   Pin,
   PinOff,
   Trash2,
 } from "lucide-react";
+import { AttachmentModal, isPdfUrl } from "@/components/common";
 
 // 폼 스키마 (question_id 제외 - 페이지에서 주입)
 const answerFormSchema = z.object({
@@ -230,12 +232,12 @@ export default function AdminQuestionDetailPage() {
           {question.content}
         </p>
 
-        {/* 첨부 이미지 */}
+        {/* 첨부 파일 */}
         {question.image_urls && question.image_urls.length > 0 && (
           <div className="mt-6 pt-6 border-t border-rule">
             <div className="flex items-center gap-2 text-sm text-muted mb-3">
               <ImageIcon size={14} />
-              첨부 이미지 ({question.image_urls.length})
+              첨부 파일 ({question.image_urls.length})
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {question.image_urls.map((url, index) => (
@@ -244,11 +246,18 @@ export default function AdminQuestionDetailPage() {
                   onClick={() => setSelectedImage(url)}
                   className="aspect-square bg-stone border border-rule overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
                 >
-                  <img
-                    src={url}
-                    alt={`첨부 이미지 ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
+                  {isPdfUrl(url) ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                      <FileText size={28} className="text-muted" />
+                      <span className="text-caption text-muted">PDF</span>
+                    </div>
+                  ) : (
+                    <img
+                      src={url}
+                      alt={`첨부 파일 ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </button>
               ))}
             </div>
@@ -305,13 +314,14 @@ export default function AdminQuestionDetailPage() {
 
           <div>
             <label className="block text-sm font-medium text-muted mb-2">
-              이미지 첨부 (선택)
+              파일 첨부 (선택)
             </label>
             <ImageUploader
               bucket="question-images"
               folder="answers"
               maxFiles={5}
               maxSizeMB={1}
+              accept="image/*,.pdf"
               value={imageUrls}
               onChange={setImageUrls}
               disabled={isSubmitting}
@@ -332,25 +342,9 @@ export default function AdminQuestionDetailPage() {
         </form>
       </div>
 
-      {/* 이미지 모달 */}
+      {/* 첨부파일 모달 */}
       {selectedImage && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <button
-            className="absolute top-4 right-4 text-white/60 hover:text-white text-2xl cursor-pointer"
-            onClick={() => setSelectedImage(null)}
-          >
-            &times;
-          </button>
-          <img
-            src={selectedImage}
-            alt="확대 이미지"
-            className="max-w-full max-h-full object-contain"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+        <AttachmentModal url={selectedImage} onClose={() => setSelectedImage(null)} />
       )}
 
       {/* 삭제 확인 모달 */}
@@ -437,7 +431,7 @@ function AnswerCard({
         {answer.content}
       </p>
 
-      {/* 첨부 이미지 */}
+      {/* 첨부 파일 */}
       {answer.image_urls && answer.image_urls.length > 0 && (
         <div className="mt-4 pt-4 border-t border-teal/20">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -447,11 +441,18 @@ function AnswerCard({
                 onClick={() => onImageClick(url)}
                 className="aspect-square bg-white border border-teal/20 overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
               >
-                <img
-                  src={url}
-                  alt={`답변 이미지 ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
+                {isPdfUrl(url) ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                    <FileText size={28} className="text-muted" />
+                    <span className="text-caption text-muted">PDF</span>
+                  </div>
+                ) : (
+                  <img
+                    src={url}
+                    alt={`답변 파일 ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </button>
             ))}
           </div>
