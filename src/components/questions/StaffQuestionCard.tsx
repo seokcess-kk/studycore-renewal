@@ -14,6 +14,7 @@ import {
   User,
   Image as ImageIcon,
   ExternalLink,
+  X,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { togglePinQuestion, getQuestionDetail } from "@/domains/question/service";
@@ -31,6 +32,7 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
   const [isExpanded, setIsExpanded] = useState(false);
   const [detail, setDetail] = useState<QuestionWithAnswers | null>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const isAnswered = question.status === "answered";
   const isPending = question.status === "pending";
@@ -179,13 +181,22 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                   {question.image_urls && question.image_urls.length > 0 && (
                     <div className="mt-3 flex gap-2 flex-wrap">
                       {question.image_urls.map((url, i) => (
-                        <img
+                        <button
                           key={url}
-                          src={url}
-                          alt={`첨부 ${i + 1}`}
-                          loading="lazy"
-                          className="w-20 h-20 object-cover border border-rule"
-                        />
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedImage(url);
+                          }}
+                          className="w-20 h-20 overflow-hidden border border-rule hover:opacity-80 transition-opacity cursor-pointer"
+                        >
+                          <img
+                            src={url}
+                            alt={`첨부 ${i + 1}`}
+                            loading="lazy"
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
                       ))}
                     </div>
                   )}
@@ -211,17 +222,22 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                         {answer.image_urls && answer.image_urls.length > 0 && (
                           <div className="mt-2 flex gap-2 flex-wrap">
                             {answer.image_urls.map((url, i) => (
-                              <img
+                              <button
                                 key={`answer-img-${answer.id}-${i}`}
-                                src={url}
-                                alt={`답변 첨부 ${i + 1}`}
-                                loading="lazy"
-                                className="w-20 h-20 object-cover border border-teal/20 cursor-pointer hover:opacity-80 transition-opacity"
+                                type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  window.open(url, "_blank");
+                                  setSelectedImage(url);
                                 }}
-                              />
+                                className="w-20 h-20 overflow-hidden border border-teal/20 hover:opacity-80 transition-opacity cursor-pointer"
+                              >
+                                <img
+                                  src={url}
+                                  alt={`답변 첨부 ${i + 1}`}
+                                  loading="lazy"
+                                  className="w-full h-full object-cover"
+                                />
+                              </button>
                             ))}
                           </div>
                         )}
@@ -242,6 +258,27 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
               </>
             )}
           </div>
+        </div>
+      )}
+      {/* 이미지 모달 */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors cursor-pointer"
+            onClick={() => setSelectedImage(null)}
+            aria-label="닫기"
+          >
+            <X size={20} />
+          </button>
+          <img
+            src={selectedImage}
+            alt="확대 이미지"
+            className="max-w-full max-h-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
     </div>
