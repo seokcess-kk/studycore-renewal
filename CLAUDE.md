@@ -97,7 +97,8 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
    - `ADMIN_ROUTES`: admin/mentor 필수 (`/admin`)
    - `ASSISTANT_ROUTES`: staff 필수 (`/admin/guide`)
    - 재원생 전용 라우트: `/meal`, `/reviews/write`, `/questions/new` — 스태프 접근 차단
-   - 스태프 전용 라우트: `/guide` — 학생 접근 차단
+   - 스태프 전용 라우트: `/guide` — 학생 접근 차단 (스태프는 `/manual?tab=onboarding`으로 리다이렉트)
+   - `/manual` 페이지에서 스태프 전용 온보딩 탭 제공 (`?tab=onboarding`), 학생에게는 탭 미노출
    - student status 체크 (pending→안내, inactive→안내)
 2. **admin/layout.tsx** — 클라이언트 사이드 이중 체크
    - `/admin/guide`: `isStaff` 체크 (assistant 허용)
@@ -170,5 +171,6 @@ phase{N}-{name}-tasks.md    ← 작업 목록, 완료 기록
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-03-24: 매뉴얼/온보딩 Nav 통합 — `/manual` 페이지 내 스태프 전용 탭으로 변경, `/guide`→리다이렉트, Nav에서 온보딩·조교 관리 링크 제거
 - 2026-03-23: 전체 권한 검토 — 재원생/스태프 전용 라우트 분리, assistant 권한 제한, 질문 답변/고정 canAccessAdmin 적용
 - 2026-03-19: CLAUDE.md 재설계 — 모듈 분리, 검증 루프 추가, 도메인 용어 정의, 중복 제거
