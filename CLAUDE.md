@@ -107,7 +107,7 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
    - assistant: `assistantVisible: true`인 메뉴만 표시
    - admin/mentor: 전체 메뉴 표시
 
-**질문 관리 권한**: 질문 답변/고정은 `canAccessAdmin`(admin+mentor)만 가능. assistant는 불가.
+**질문 관리 권한**: 질문 답변/고정/답변 삭제는 `canAccessAdmin`(admin+mentor)만 가능. assistant는 불가. 마지막 답변 삭제 시 질문 상태가 `pending`으로 자동 복원.
 
 ### 상태 관리
 - `useUserStore` (Zustand + sessionStorage persist). `isLoading`은 persist 제외
@@ -171,6 +171,7 @@ phase{N}-{name}-tasks.md    ← 작업 목록, 완료 기록
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-03-24: 답변 삭제 기능 UI 추가 — 재원생 상세(canAccessAdmin 조건부) + 어드민 상세/스태프 카드(항상 표시)
 - 2026-03-24: 첨부파일 컴팩트 UI 통일 — AttachmentList/MetaAttachmentList 공통 컴포넌트 추출, 이미지 64px 썸네일 + 파일 한 줄 리스트 (질문방·공지·프로그램·팝업 전체 적용)
 - 2026-03-24: 첨부파일 PDF 지원 + 프로그램 첨부파일 + 팝업 공지 첨부표시 + 감사 이슈 일괄 수정 (외부 브랜드 컬러 토큰화, text-[Npx] 토큰 교체, 접근성 aria-live/aria-label 보강, FAQ 애니메이션 CSS grid-rows 전환)
 - 2026-03-24: 매뉴얼/온보딩 Nav 통합 — `/manual` 페이지 내 스태프 전용 탭으로 변경, `/guide`→리다이렉트, Nav에서 온보딩·조교 관리 링크 제거

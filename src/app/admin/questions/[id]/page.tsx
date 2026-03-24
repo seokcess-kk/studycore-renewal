@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createBrowserClient } from "@/lib/supabase/client";
-import { getQuestionDetail, createAnswer, togglePinQuestion, deleteQuestion } from "@/domains/question/service";
+import { getQuestionDetail, createAnswer, deleteAnswer, togglePinQuestion, deleteQuestion } from "@/domains/question/service";
 import {
   type QuestionWithAnswers,
   type AnswerWithAuthor,
@@ -257,7 +257,9 @@ export default function AdminQuestionDetailPage() {
             <AnswerCard
               key={answer.id}
               answer={answer}
+              questionId={question.id}
               onImageClick={setSelectedImage}
+              onDeleted={fetchQuestion}
             />
           ))
         ) : (
@@ -353,11 +355,32 @@ export default function AdminQuestionDetailPage() {
 
 function AnswerCard({
   answer,
+  questionId,
   onImageClick,
+  onDeleted,
 }: {
   answer: AnswerWithAuthor;
+  questionId: string;
   onImageClick: (url: string) => void;
+  onDeleted: () => void;
 }) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { showToast } = useToast();
+
+  const handleDelete = async () => {
+    if (!confirm("이 답변을 삭제하시겠습니까?")) return;
+    setIsDeleting(true);
+    const supabase = createBrowserClient();
+    const result = await deleteAnswer(supabase, answer.id, questionId);
+    if (result.success) {
+      showToast("답변이 삭제되었습니다.", "success");
+      onDeleted();
+    } else {
+      showToast(result.error || "삭제에 실패했습니다.", "error");
+    }
+    setIsDeleting(false);
+  };
+
   // 역할 뱃지 텍스트
   const getRoleBadge = (role?: string) => {
     switch (role) {
@@ -402,6 +425,15 @@ function AnswerCard({
             })}
           </p>
         </div>
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="text-muted hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50"
+          aria-label="답변 삭제"
+        >
+          <Trash2 size={15} />
+        </button>
       </div>
 
       {/* 답변 내용 */}

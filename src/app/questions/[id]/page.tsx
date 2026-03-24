@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Nav, Footer, Button, Skeleton, useToast, AttachmentModal, AttachmentList } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
-import { getQuestionDetail, deleteQuestion, togglePinQuestion } from "@/domains/question/service";
+import { getQuestionDetail, deleteQuestion, deleteAnswer, togglePinQuestion } from "@/domains/question/service";
 import { type QuestionWithAnswers, type AnswerWithAuthor } from "@/domains/question/model";
 import { AnswerForm } from "@/components/questions/AnswerForm";
 import { useUserStore } from "@/stores/useUserStore"
@@ -271,7 +271,21 @@ export default function QuestionDetailPage() {
 
               {question.answers && question.answers.length > 0 ? (
                 question.answers.map((answer) => (
-                  <AnswerCard key={answer.id} answer={answer} onImageClick={setSelectedImage} />
+                  <AnswerCard
+                    key={answer.id}
+                    answer={answer}
+                    questionId={question.id}
+                    canDelete={canAccessAdmin}
+                    onImageClick={setSelectedImage}
+                    onDeleted={() => {
+                      const supabase = createClient();
+                      getQuestionDetail(supabase, questionId).then((result) => {
+                        if (result.success && result.question) {
+                          setQuestion(result.question as QuestionWithAnswers);
+                        }
+                      });
+                    }}
+                  />
                 ))
               ) : (
                 <div className="bg-stone border border-rule p-8 text-center">
@@ -314,7 +328,36 @@ export default function QuestionDetailPage() {
   );
 }
 
-function AnswerCard({ answer, onImageClick }: { answer: AnswerWithAuthor; onImageClick: (url: string) => void }) {
+function AnswerCard({
+  answer,
+  questionId,
+  canDelete,
+  onImageClick,
+  onDeleted,
+}: {
+  answer: AnswerWithAuthor;
+  questionId: string;
+  canDelete: boolean;
+  onImageClick: (url: string) => void;
+  onDeleted: () => void;
+}) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { showToast } = useToast();
+
+  const handleDelete = async () => {
+    if (!confirm("이 답변을 삭제하시겠습니까?")) return;
+    setIsDeleting(true);
+    const supabase = createClient();
+    const result = await deleteAnswer(supabase, answer.id, questionId);
+    if (result.success) {
+      showToast("답변이 삭제되었습니다.", "success");
+      onDeleted();
+    } else {
+      showToast(result.error || "삭제에 실패했습니다.", "error");
+    }
+    setIsDeleting(false);
+  };
+
   return (
     <div className="bg-teal/5 border border-teal/20 p-6">
       {/* 답변자 정보 */}
@@ -322,7 +365,7 @@ function AnswerCard({ answer, onImageClick }: { answer: AnswerWithAuthor; onImag
         <div className="w-10 h-10 bg-teal/20 flex items-center justify-center">
           <CheckCircle size={18} className="text-teal" />
         </div>
-        <div>
+        <div className="flex-1">
           <p className="text-body font-medium text-ink">
             {answer.author?.name || "멘토"}
           </p>
@@ -336,6 +379,17 @@ function AnswerCard({ answer, onImageClick }: { answer: AnswerWithAuthor; onImag
             })}
           </p>
         </div>
+        {canDelete && (
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="text-muted hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50"
+            aria-label="답변 삭제"
+          >
+            <Trash2 size={15} />
+          </button>
+        )}
       </div>
 
       {/* 답변 내용 */}

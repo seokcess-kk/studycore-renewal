@@ -13,10 +13,11 @@ import {
   ChevronUp,
   User,
   ExternalLink,
+  Trash2,
 } from "lucide-react";
-import { AttachmentModal, AttachmentList } from "@/components/common";
+import { AttachmentModal, AttachmentList, useToast } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
-import { togglePinQuestion, getQuestionDetail } from "@/domains/question/service";
+import { togglePinQuestion, getQuestionDetail, deleteAnswer } from "@/domains/question/service";
 import type { QuestionWithAuthor, QuestionWithAnswers, AnswerWithAuthor } from "@/domains/question/model";
 import { ROUTES } from "@/lib/constants";
 import { ElapsedBadge, getUrgencyBorderClass } from "./ElapsedBadge";
@@ -191,22 +192,13 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                       답변 {detail.answers.length}개
                     </p>
                     {detail.answers.map((answer: AnswerWithAuthor) => (
-                      <div key={answer.id} className="bg-teal/5 border border-teal/20 p-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-small font-medium text-ink">
-                            {answer.author?.name || "멘토"}
-                          </span>
-                          <ElapsedBadge createdAt={answer.created_at} />
-                        </div>
-                        <p className="text-secondary text-ink whitespace-pre-wrap">
-                          {answer.content}
-                        </p>
-                        {answer.image_urls && answer.image_urls.length > 0 && (
-                          <div className="mt-2">
-                            <AttachmentList urls={answer.image_urls} onSelect={setSelectedImage} variant="answer" />
-                          </div>
-                        )}
-                      </div>
+                      <StaffAnswerItem
+                        key={answer.id}
+                        answer={answer}
+                        questionId={question.id}
+                        onDeleted={handleAnswered}
+                        onImageSelect={setSelectedImage}
+                      />
                     ))}
                   </div>
                 )}
@@ -228,6 +220,65 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
       {/* 첨부파일 모달 */}
       {selectedImage && (
         <AttachmentModal url={selectedImage} onClose={() => setSelectedImage(null)} />
+      )}
+    </div>
+  );
+}
+
+function StaffAnswerItem({
+  answer,
+  questionId,
+  onDeleted,
+  onImageSelect,
+}: {
+  answer: AnswerWithAuthor;
+  questionId: string;
+  onDeleted: () => void;
+  onImageSelect: (url: string) => void;
+}) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { showToast } = useToast();
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm("이 답변을 삭제하시겠습니까?")) return;
+    setIsDeleting(true);
+    const supabase = createClient();
+    const result = await deleteAnswer(supabase, answer.id, questionId);
+    if (result.success) {
+      showToast("답변이 삭제되었습니다.", "success");
+      onDeleted();
+    } else {
+      showToast(result.error || "삭제에 실패했습니다.", "error");
+    }
+    setIsDeleting(false);
+  };
+
+  return (
+    <div className="bg-teal/5 border border-teal/20 p-3">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-small font-medium text-ink">
+          {answer.author?.name || "멘토"}
+        </span>
+        <ElapsedBadge createdAt={answer.created_at} />
+        <div className="flex-1" />
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="text-muted hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50"
+          aria-label="답변 삭제"
+        >
+          <Trash2 size={13} />
+        </button>
+      </div>
+      <p className="text-secondary text-ink whitespace-pre-wrap">
+        {answer.content}
+      </p>
+      {answer.image_urls && answer.image_urls.length > 0 && (
+        <div className="mt-2">
+          <AttachmentList urls={answer.image_urls} onSelect={onImageSelect} variant="answer" />
+        </div>
       )}
     </div>
   );
