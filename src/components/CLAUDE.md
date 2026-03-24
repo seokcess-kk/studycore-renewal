@@ -95,7 +95,20 @@
 - ESC 닫기 + 오버레이 클릭 닫기 + `document.body.style.overflow` 스크롤 방지
 - Framer Motion `AnimatePresence`
 - `fixed inset-0 z-50` 오버레이 + `relative z-10` 본체
-- 참고 구현: `ConfirmModal`, `SearchModal`, `ProgramDetailModal`, `PopupModal`
+- 참고 구현: `ConfirmModal`, `SearchModal`, `ProgramDetailModal`, `PopupModal`, `AttachmentModal`
+
+## 첨부파일 표시 패턴
+첨부파일 목록은 공통 컴포넌트를 사용할 것 (인라인 구현 금지):
+
+| 컴포넌트 | 데이터 | 용도 | 인터랙션 |
+|----------|--------|------|----------|
+| `AttachmentList` | URL 배열 (`string[]`) | 질문/답변 (`image_urls`) | `onSelect` → 모달 |
+| `MetaAttachmentList` | 메타데이터 배열 (`{id, file_name, file_url, file_type, file_size}`) | 공지/프로그램 첨부 | 새 탭 열기 |
+
+표시 규칙:
+- 이미지: `w-16 h-16` (64px) 작은 썸네일 가로 나열
+- 파일(PDF 등): 아이콘 + 파일명 한 줄 리스트
+- `aspect-square` / `aspect-video` 큰 그리드 사용 금지
 
 ## 홈페이지 섹션 (src/components/home/)
 `src/app/page.tsx`에서 순서대로:
