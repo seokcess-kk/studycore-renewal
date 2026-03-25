@@ -60,57 +60,56 @@ export default function AdminMembersPage() {
   return (
     <div className="space-y-6">
       {/* 상단 액션 */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          {/* 검색 */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
-            <input
-              type="text"
-              placeholder="이름, 전화번호 검색"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="h-10 w-64 border border-rule bg-white pl-10 pr-4 text-body focus:border-navy focus:outline-none"
-            />
-          </div>
-
-          {/* 역할 필터 */}
-          <select
-            value={filterRole}
-            onChange={(e) => setFilterRole(e.target.value as FilterRole)}
-            className="h-10 border border-rule bg-white px-3 text-body focus:border-navy focus:outline-none"
-          >
-            <option value="all">모든 역할</option>
-            <option value="student">재원생</option>
-            <option value="assistant">조교</option>
-            <option value="mentor">멘토</option>
-            <option value="admin">관리자</option>
-          </select>
-
-          {/* 상태 필터 */}
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as FilterStatus)}
-            className="h-10 border border-rule bg-white px-3 text-body focus:border-navy focus:outline-none"
-          >
-            <option value="all">모든 상태</option>
-            <option value="pending">승인 대기</option>
-            <option value="active">활성</option>
-            <option value="inactive">비활성</option>
-          </select>
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
+        {/* 검색 */}
+        <div className="relative w-full sm:w-auto">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+          <input
+            type="text"
+            placeholder="이름, 전화번호 검색"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-9 md:h-10 w-full sm:w-56 md:w-64 border border-rule bg-white pl-10 pr-4 text-body focus:border-navy focus:outline-none"
+          />
         </div>
 
-        <Link href="/admin/members/new">
+        {/* 역할 필터 */}
+        <select
+          value={filterRole}
+          onChange={(e) => setFilterRole(e.target.value as FilterRole)}
+          className="h-9 md:h-10 border border-rule bg-white px-3 text-body focus:border-navy focus:outline-none cursor-pointer"
+        >
+          <option value="all">모든 역할</option>
+          <option value="student">재원생</option>
+          <option value="assistant">조교</option>
+          <option value="mentor">멘토</option>
+          <option value="admin">관리자</option>
+        </select>
+
+        {/* 상태 필터 */}
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value as FilterStatus)}
+          className="h-9 md:h-10 border border-rule bg-white px-3 text-body focus:border-navy focus:outline-none cursor-pointer"
+        >
+          <option value="all">모든 상태</option>
+          <option value="pending">승인 대기</option>
+          <option value="active">활성</option>
+          <option value="inactive">비활성</option>
+        </select>
+
+        <Link href="/admin/members/new" className="ml-auto">
           <Button variant="primary">
             <UserPlus className="mr-2 h-4 w-4" />
-            스태프 계정 생성
+            <span className="hidden sm:inline">스태프 계정 생성</span>
+            <span className="sm:hidden">스태프 생성</span>
           </Button>
         </Link>
       </div>
 
       {/* 회원 테이블 */}
-      <div className="border border-rule bg-white">
-        <table className="w-full">
+      <div className="border border-rule bg-white overflow-x-auto">
+        <table className="w-full min-w-[700px]">
           <thead>
             <tr className="border-b border-rule bg-stone">
               <th className="px-4 py-3 text-left text-body font-medium text-ink">

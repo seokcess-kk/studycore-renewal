@@ -145,7 +145,7 @@ export default function ReviewsPage() {
           )}
 
           {/* 필터 + 작성 버튼 */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div className="flex gap-2">
               <button
                 onClick={() => {

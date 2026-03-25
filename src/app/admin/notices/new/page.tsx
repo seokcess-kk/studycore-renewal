@@ -169,7 +169,7 @@ export default function AdminNoticeNewPage() {
   return (
     <div className="max-w-3xl space-y-6">
       {/* 상단 */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/admin/notices"
           className="flex items-center gap-2 text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
@@ -178,13 +178,13 @@ export default function AdminNoticeNewPage() {
           목록으로
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           <Button
             variant="ghost"
             onClick={handleSubmit((data) => onSubmit(data, false))}
             disabled={isSubmitting}
           >
-            <Save className="mr-2 h-4 w-4" />
+            <Save className="mr-1.5 h-4 w-4" />
             임시저장
           </Button>
           <Button
@@ -192,7 +192,7 @@ export default function AdminNoticeNewPage() {
             onClick={handleSubmit((data) => onSubmit(data, true))}
             disabled={isSubmitting}
           >
-            <Send className="mr-2 h-4 w-4" />
+            <Send className="mr-1.5 h-4 w-4" />
             {isSubmitting ? "저장 중..." : "발행"}
           </Button>
         </div>
@@ -200,7 +200,7 @@ export default function AdminNoticeNewPage() {
 
       {/* 폼 */}
       <form className="space-y-6">
-        <div className="border border-rule bg-white p-6">
+        <div className="border border-rule bg-white p-4 md:p-6">
           <div className="space-y-4">
             {/* 카테고리 + 고정 */}
             <div className="flex items-center gap-4">
@@ -266,7 +266,7 @@ export default function AdminNoticeNewPage() {
         </div>
 
         {/* 첨부파일 */}
-        <div className="border border-rule bg-white p-6">
+        <div className="border border-rule bg-white p-4 md:p-6">
           <h3 className="mb-4 font-medium text-ink">첨부파일</h3>
 
           {/* 업로드 버튼 */}

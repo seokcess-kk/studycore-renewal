@@ -159,7 +159,7 @@ export default function AdminNoticeEditPage() {
   return (
     <div className="max-w-3xl space-y-6">
       {/* 상단 */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/admin/notices"
           className="flex items-center gap-2 text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
@@ -168,14 +168,14 @@ export default function AdminNoticeEditPage() {
           목록으로
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           {notice.is_published ? (
             <Button
               variant="ghost"
               onClick={handleSubmit((data) => onSubmit(data, false))}
               disabled={isSubmitting}
             >
-              비공개로 전환
+              비공개
             </Button>
           ) : (
             <Button
@@ -183,7 +183,7 @@ export default function AdminNoticeEditPage() {
               onClick={handleSubmit((data) => onSubmit(data))}
               disabled={isSubmitting}
             >
-              <Save className="mr-2 h-4 w-4" />
+              <Save className="mr-1.5 h-4 w-4" />
               임시저장
             </Button>
           )}
@@ -192,7 +192,7 @@ export default function AdminNoticeEditPage() {
             onClick={handleSubmit((data) => onSubmit(data, true))}
             disabled={isSubmitting}
           >
-            <Send className="mr-2 h-4 w-4" />
+            <Send className="mr-1.5 h-4 w-4" />
             {isSubmitting ? "저장 중..." : notice.is_published ? "저장" : "발행"}
           </Button>
         </div>
@@ -200,7 +200,7 @@ export default function AdminNoticeEditPage() {
 
       {/* 폼 */}
       <form className="space-y-6">
-        <div className="border border-rule bg-white p-6">
+        <div className="border border-rule bg-white p-4 md:p-6">
           <div className="space-y-4">
             {/* 카테고리 + 고정 */}
             <div className="flex items-center gap-4">
@@ -266,7 +266,7 @@ export default function AdminNoticeEditPage() {
         </div>
 
         {/* 첨부파일 */}
-        <div className="border border-rule bg-white p-6">
+        <div className="border border-rule bg-white p-4 md:p-6">
           <h3 className="mb-4 font-medium text-ink">첨부파일</h3>
 
           <label className="inline-flex cursor-pointer items-center gap-2 border border-rule px-4 py-2 text-body text-muted hover:border-navy hover:text-ink transition-colors duration-200">
@@ -371,7 +371,7 @@ export default function AdminNoticeEditPage() {
         </div>
 
         {/* 공지 정보 */}
-        <div className="border border-rule bg-white p-6">
+        <div className="border border-rule bg-white p-4 md:p-6">
           <h3 className="mb-4 font-medium text-ink">공지 정보</h3>
           <dl className="grid gap-4 text-body sm:grid-cols-2">
             <div>

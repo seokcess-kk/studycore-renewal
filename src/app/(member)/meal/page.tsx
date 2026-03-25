@@ -206,7 +206,7 @@ export default function LunchPage() {
 
               {/* 기간 정보 */}
               <div className="bg-white border border-rule p-4 md:p-6 mb-6">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <h2 className="text-subhead font-bold text-ink mb-1">
                       {period.title}

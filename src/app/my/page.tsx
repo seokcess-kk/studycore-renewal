@@ -225,7 +225,7 @@ function InfoRow({
   return (
     <div className="flex items-center gap-4 px-4 py-3">
       <span className="text-muted">{icon}</span>
-      <span className="text-secondary text-muted w-24">{label}</span>
+      <span className="text-secondary text-muted w-20 md:w-24 shrink-0">{label}</span>
       <span className="text-body text-ink flex-1">{value}</span>
     </div>
   );
@@ -402,7 +402,7 @@ function ContactInfoSection() {
           <div className="px-4 py-3">
             <div className="flex items-center gap-4">
               <span className="text-muted"><Phone size={18} /></span>
-              <span className="text-secondary text-muted w-24">연락처 <span className="text-red-500">*</span></span>
+              <span className="text-secondary text-muted w-20 md:w-24 shrink-0">연락처 <span className="text-red-500">*</span></span>
               <input
                 type="tel"
                 {...register("phone")}
@@ -411,7 +411,7 @@ function ContactInfoSection() {
                 className={cn("input-base flex-1", errors.phone && "border-red-500")}
               />
             </div>
-            <FormError message={errors.phone?.message} className="ml-[calc(18px+16px+96px)]" />
+            <FormError message={errors.phone?.message} className="ml-[calc(18px+16px+80px)] md:ml-[calc(18px+16px+96px)]" />
           </div>
         ) : (
           <InfoRow icon={<Phone size={18} />} label="연락처" value={formatPhone(profile?.phone) || "-"} />
@@ -423,7 +423,7 @@ function ContactInfoSection() {
               <div className="px-4 py-3">
                 <div className="flex items-center gap-4">
                   <span className="text-muted"><School size={18} /></span>
-                  <span className="text-secondary text-muted w-24">학교 <span className="text-red-500">*</span></span>
+                  <span className="text-secondary text-muted w-20 md:w-24 shrink-0">학교 <span className="text-red-500">*</span></span>
                   <input
                     type="text"
                     {...register("school")}
@@ -431,12 +431,12 @@ function ContactInfoSection() {
                     className={cn("input-base flex-1", errors.school && "border-red-500")}
                   />
                 </div>
-                <FormError message={errors.school?.message} className="ml-[calc(18px+16px+96px)]" />
+                <FormError message={errors.school?.message} className="ml-[calc(18px+16px+80px)] md:ml-[calc(18px+16px+96px)]" />
               </div>
               <div className="px-4 py-3">
                 <div className="flex items-center gap-4">
                   <span className="text-muted"><GraduationCap size={18} /></span>
-                  <span className="text-secondary text-muted w-24">학년 <span className="text-red-500">*</span></span>
+                  <span className="text-secondary text-muted w-20 md:w-24 shrink-0">학년 <span className="text-red-500">*</span></span>
                   <select
                     {...register("grade")}
                     className={cn("input-base flex-1 cursor-pointer", errors.grade && "border-red-500")}
@@ -447,7 +447,7 @@ function ContactInfoSection() {
                     <option value="3">3학년</option>
                   </select>
                 </div>
-                <FormError message={errors.grade?.message} className="ml-[calc(18px+16px+96px)]" />
+                <FormError message={errors.grade?.message} className="ml-[calc(18px+16px+80px)] md:ml-[calc(18px+16px+96px)]" />
               </div>
             </>
           ) : (
@@ -464,7 +464,7 @@ function ContactInfoSection() {
             <div className="px-4 py-3">
               <div className="flex items-center gap-4">
                 <span className="text-muted"><Phone size={18} /></span>
-                <span className="text-secondary text-muted w-24">학부모 연락처</span>
+                <span className="text-secondary text-muted w-20 md:w-24 shrink-0">학부모 연락처</span>
                 <input
                   type="tel"
                   {...register("parent_phone")}
@@ -473,7 +473,7 @@ function ContactInfoSection() {
                   className={cn("input-base flex-1", errors.parent_phone && "border-red-500")}
                 />
               </div>
-              <FormError message={errors.parent_phone?.message} className="ml-[calc(18px+16px+96px)]" />
+              <FormError message={errors.parent_phone?.message} className="ml-[calc(18px+16px+80px)] md:ml-[calc(18px+16px+96px)]" />
             </div>
           ) : (
             <InfoRow icon={<Phone size={18} />} label="학부모 연락처" value={formatPhone(profile?.parent_phone) || "-"} />

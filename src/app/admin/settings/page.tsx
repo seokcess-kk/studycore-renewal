@@ -125,7 +125,7 @@ export default function AdminSettingsPage() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-6">
       {/* 메뉴 노출 설정 */}
-      <div className="border border-rule bg-white p-6">
+      <div className="border border-rule bg-white p-4 md:p-6">
         <h2 className="mb-4 font-serif text-subhead font-bold text-ink">
           메뉴 노출 설정
         </h2>
@@ -168,7 +168,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* SMS 템플릿 */}
-      <div className="border border-rule bg-white p-6">
+      <div className="border border-rule bg-white p-4 md:p-6">
         <h2 className="mb-4 font-serif text-subhead font-bold text-ink">
           상담 신청 SMS 템플릿
         </h2>

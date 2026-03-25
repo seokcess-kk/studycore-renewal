@@ -165,7 +165,7 @@ export default function AdminProgramEditPage() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/admin/programs"
           className="flex items-center gap-2 text-muted hover:text-ink"
@@ -184,7 +184,7 @@ export default function AdminProgramEditPage() {
       </div>
 
       <form className="space-y-6">
-        <div className="border border-rule bg-white p-6 space-y-4">
+        <div className="border border-rule bg-white p-4 md:p-6 space-y-4">
           <div>
             <label className="mb-1 block text-body font-medium text-muted">
               프로그램명 *
@@ -228,7 +228,7 @@ export default function AdminProgramEditPage() {
         </div>
 
         {/* 첨부파일 */}
-        <div className="border border-rule bg-white p-6">
+        <div className="border border-rule bg-white p-4 md:p-6">
           <h3 className="mb-4 font-medium text-ink">첨부파일</h3>
           <label className="inline-flex cursor-pointer items-center gap-2 border border-rule px-4 py-2 text-body text-muted hover:border-navy hover:text-ink transition-colors">
             <Paperclip className="h-4 w-4" />
@@ -292,9 +292,9 @@ export default function AdminProgramEditPage() {
           )}
         </div>
 
-        <div className="border border-rule bg-white p-6 space-y-4">
+        <div className="border border-rule bg-white p-4 md:p-6 space-y-4">
           <h3 className="font-medium text-ink">기간 및 설정</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-body font-medium text-muted">
                 시작일

@@ -167,7 +167,7 @@ export default function AdminBlogEditPage() {
         ]}
       />
 
-      <div className="p-6 max-w-4xl">
+      <div className="p-4 md:p-6 max-w-4xl">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* 상태 표시 */}
           {post && (
@@ -338,11 +338,11 @@ export default function AdminBlogEditPage() {
           </div>
 
           {/* 액션 버튼 */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-wrap gap-2 md:gap-3 pt-4">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-3 bg-navy text-white text-body font-medium hover:bg-navy-d transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-navy text-white text-body font-medium hover:bg-navy-d transition-colors disabled:opacity-50 cursor-pointer"
             >
               <Save size={16} />
               저장
@@ -352,7 +352,7 @@ export default function AdminBlogEditPage() {
               <button
                 type="button"
                 onClick={handleCopyForNaver}
-                className="flex items-center gap-2 px-6 py-3 border border-rule text-ink text-body font-medium hover:border-navy transition-colors"
+                className="flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 border border-rule text-ink text-body font-medium hover:border-navy transition-colors cursor-pointer"
               >
                 <Copy size={16} />
                 네이버 복사
@@ -364,7 +364,7 @@ export default function AdminBlogEditPage() {
               onClick={() => {
                 setValue("is_published", !isPublished);
               }}
-              className="flex items-center gap-2 px-6 py-3 border border-rule text-ink text-body font-medium hover:border-navy transition-colors"
+              className="flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 border border-rule text-ink text-body font-medium hover:border-navy transition-colors cursor-pointer"
             >
               {isPublished ? <EyeOff size={16} /> : <Eye size={16} />}
               {isPublished ? "발행 취소" : "발행하기"}
@@ -373,7 +373,7 @@ export default function AdminBlogEditPage() {
             <button
               type="button"
               onClick={() => router.push("/admin/blog")}
-              className="px-6 py-3 text-muted text-body hover:text-ink transition-colors"
+              className="px-4 md:px-6 py-2.5 md:py-3 text-muted text-body hover:text-ink transition-colors cursor-pointer"
             >
               목록
             </button>

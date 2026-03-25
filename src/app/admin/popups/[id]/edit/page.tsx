@@ -113,7 +113,7 @@ export default function AdminPopupEditPage() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/admin/popups"
           className="flex items-center gap-2 text-muted hover:text-ink"
@@ -132,7 +132,7 @@ export default function AdminPopupEditPage() {
       </div>
 
       <form className="space-y-6">
-        <div className="border border-rule bg-white p-6">
+        <div className="border border-rule bg-white p-4 md:p-6">
           <h3 className="mb-4 font-medium text-ink">공지사항 연결 (선택)</h3>
           <select
             value={noticeId || ""}
@@ -148,7 +148,7 @@ export default function AdminPopupEditPage() {
           </select>
         </div>
 
-        <div className="border border-rule bg-white p-6 space-y-4">
+        <div className="border border-rule bg-white p-4 md:p-6 space-y-4">
           <div>
             <label className="mb-1 block text-body font-medium text-muted">
               제목 *
@@ -188,7 +188,7 @@ export default function AdminPopupEditPage() {
         </div>
 
         {!noticeId && (
-          <div className="border border-rule bg-white p-6 space-y-4">
+          <div className="border border-rule bg-white p-4 md:p-6 space-y-4">
             <h3 className="font-medium text-ink">링크 설정</h3>
             <div>
               <label className="mb-1 block text-body font-medium text-muted">
@@ -214,9 +214,9 @@ export default function AdminPopupEditPage() {
           </div>
         )}
 
-        <div className="border border-rule bg-white p-6 space-y-4">
+        <div className="border border-rule bg-white p-4 md:p-6 space-y-4">
           <h3 className="font-medium text-ink">노출 설정</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-body font-medium text-muted">
                 시작일 *

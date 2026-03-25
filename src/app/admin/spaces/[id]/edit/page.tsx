@@ -77,7 +77,7 @@ export default function AdminSpaceEditPage() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/admin/spaces"
           className="flex items-center gap-2 text-muted hover:text-ink"
@@ -96,7 +96,7 @@ export default function AdminSpaceEditPage() {
       </div>
 
       <form className="space-y-6">
-        <div className="border border-rule bg-white p-6 space-y-4">
+        <div className="border border-rule bg-white p-4 md:p-6 space-y-4">
           <div>
             <label className="mb-1 block text-body font-medium text-muted">
               라벨 (영문) *
@@ -156,7 +156,7 @@ export default function AdminSpaceEditPage() {
           </div>
         </div>
 
-        <div className="border border-rule bg-white p-6 space-y-4">
+        <div className="border border-rule bg-white p-4 md:p-6 space-y-4">
           <h3 className="font-medium text-ink">설정</h3>
           <div className="flex items-center gap-2">
             <input

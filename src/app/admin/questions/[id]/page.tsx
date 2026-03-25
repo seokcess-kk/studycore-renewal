@@ -161,7 +161,7 @@ export default function AdminQuestionDetailPage() {
   return (
     <div className="space-y-6">
       {/* 상단 */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
           href="/admin/questions"
           className="inline-flex items-center gap-2 text-muted hover:text-ink text-body transition-colors duration-200 cursor-pointer"
@@ -169,7 +169,7 @@ export default function AdminQuestionDetailPage() {
           <ArrowLeft size={16} />
           목록으로
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           <span
             className={`text-caption font-medium px-2 py-1 ${
               isAnswered
@@ -190,9 +190,9 @@ export default function AdminQuestionDetailPage() {
       </div>
 
       {/* 질문 정보 */}
-      <div className="border border-rule bg-white p-6">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <h1 className="font-serif text-fluid-h2 font-bold text-ink">
+      <div className="border border-rule bg-white p-4 md:p-6">
+        <div className="mb-4">
+          <h1 className="font-serif text-fluid-h2 font-bold text-ink mb-3">
             {question.is_pinned && (
               <span className="text-teal mr-2">[고정]</span>
             )}
@@ -243,22 +243,6 @@ export default function AdminQuestionDetailPage() {
             <p className="text-reading text-ink whitespace-pre-wrap leading-prose">
               {question.content}
             </p>
-
-            {/* 첨부 파일 */}
-            {((question.attachments && question.attachments.length > 0) ||
-              (question.image_urls && question.image_urls.length > 0)) && (
-              <div className="mt-6 pt-6 border-t border-rule">
-                <div className="flex items-center gap-2 text-body text-muted mb-3">
-                  <ImageIcon size={14} />
-                  첨부 파일 ({(question.attachments || question.image_urls)!.length})
-                </div>
-                {question.attachments && question.attachments.length > 0 ? (
-                  <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} onSelect={setSelectedImage} />
-                ) : (
-                  <AttachmentList urls={question.image_urls!} onSelect={setSelectedImage} />
-                )}
-              </div>
-            )}
           </div>
 
           {/* 그라데이션 + 펼치기 버튼 */}
@@ -283,6 +267,22 @@ export default function AdminQuestionDetailPage() {
             <ChevronDown size={14} className="rotate-180" />
             접기
           </button>
+        )}
+
+        {/* 첨부 파일 — 접기 영역 바깥에 항상 표시 */}
+        {((question.attachments && question.attachments.length > 0) ||
+          (question.image_urls && question.image_urls.length > 0)) && (
+          <div className="mt-6 pt-6 border-t border-rule">
+            <div className="flex items-center gap-2 text-body text-muted mb-3">
+              <ImageIcon size={14} />
+              첨부 파일 ({(question.attachments || question.image_urls)!.length})
+            </div>
+            {question.attachments && question.attachments.length > 0 ? (
+              <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} onSelect={setSelectedImage} />
+            ) : (
+              <AttachmentList urls={question.image_urls!} onSelect={setSelectedImage} />
+            )}
+          </div>
         )}
       </div>
 
@@ -315,7 +315,7 @@ export default function AdminQuestionDetailPage() {
       </div>
 
       {/* 답변 작성 폼 */}
-      <div className="border border-rule bg-white p-6">
+      <div className="border border-rule bg-white p-4 md:p-6">
         <h3 className="font-serif text-subhead font-bold text-ink mb-4">
           답변 작성
         </h3>
@@ -458,14 +458,14 @@ function AnswerCard({
     <div className="border border-teal/20 bg-teal/5">
       {/* 답변 헤더 (클릭으로 펼침/접기) */}
       <div
-        className="flex items-center gap-3 px-6 py-4 cursor-pointer hover:bg-teal/10 transition-colors duration-200"
+        className="flex items-start gap-3 px-4 py-3 md:px-6 md:py-4 cursor-pointer hover:bg-teal/10 transition-colors duration-200"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="w-8 h-8 bg-teal/20 flex items-center justify-center flex-shrink-0">
-          <CheckCircle size={16} className="text-teal" />
+        <div className="w-7 h-7 md:w-8 md:h-8 bg-teal/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <CheckCircle size={14} className="text-teal md:w-4 md:h-4" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <p className="text-body font-medium text-ink">
               {answer.author?.name || "스태프"}
             </p>
@@ -489,7 +489,7 @@ function AnswerCard({
             </p>
           )}
         </div>
-        <div className="flex items-center gap-1.5 flex-shrink-0">
+        <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); handleDelete(); }}
@@ -511,7 +511,7 @@ function AnswerCard({
 
       {/* 답변 내용 (펼침 시) */}
       {isExpanded && (
-        <div className="px-6 pb-5 pt-1 border-t border-teal/20">
+        <div className="px-4 md:px-6 pb-5 pt-1 border-t border-teal/20">
           <p className="text-reading text-ink whitespace-pre-wrap leading-prose">
             {answer.content}
           </p>
