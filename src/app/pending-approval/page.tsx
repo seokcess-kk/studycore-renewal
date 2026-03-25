@@ -30,7 +30,7 @@ export default function PendingApprovalPage() {
       <Nav />
       <main className="page-body min-h-screen bg-stone">
         <div className="max-w-md mx-auto px-6 py-12">
-          <div className="bg-white border border-rule p-8 text-center">
+          <div className="bg-white border border-rule card-lg text-center">
             {/* 아이콘 */}
             <div className="w-16 h-16 mx-auto mb-6 bg-teal/10 flex items-center justify-center">
               <svg
@@ -49,12 +49,12 @@ export default function PendingApprovalPage() {
             </div>
 
             {/* 제목 */}
-            <h1 className="font-serif text-2xl font-bold text-ink mb-4">
+            <h1 className="font-serif text-fluid-h2 font-bold text-ink mb-4">
               승인 대기 중
             </h1>
 
             {/* 설명 */}
-            <p className="text-muted text-body leading-relaxed mb-6">
+            <p className="text-muted text-body leading-prose mb-6">
               재원생 등록 신청이 접수되었습니다.
               <br />
               관리자 승인 후 서비스 이용이 가능합니다.

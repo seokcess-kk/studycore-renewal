@@ -156,7 +156,7 @@ export function ProgramsSection() {
                               className="flex items-start gap-3"
                             >
                               <span className="mt-1.5 w-1.5 h-1.5 bg-teal flex-shrink-0" />
-                              <span className="text-body text-white/60 leading-relaxed">
+                              <span className="text-body text-on-dark-muted leading-prose">
                                 {bullet}
                               </span>
                             </div>
@@ -240,7 +240,7 @@ export function ProgramsSection() {
             className="mt-12"
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-mono text-caption font-bold text-white/50 tracking-label uppercase">
+              <h3 className="font-mono text-caption font-bold text-on-dark-muted tracking-label uppercase">
                 지난 프로그램
               </h3>
               {/* 슬라이드 컨트롤 */}
@@ -249,14 +249,14 @@ export function ProgramsSection() {
                   <button
                     onClick={() => scroll("left")}
                     disabled={!canScrollLeft}
-                    className="w-9 h-9 border border-white/[0.1] flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                    className="w-9 h-9 border border-white/20 flex items-center justify-center text-on-dark-muted hover:text-white hover:border-white/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                   >
                     <ChevronLeft size={16} />
                   </button>
                   <button
                     onClick={() => scroll("right")}
                     disabled={!canScrollRight}
-                    className="w-9 h-9 border border-white/[0.1] flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                    className="w-9 h-9 border border-white/20 flex items-center justify-center text-on-dark-muted hover:text-white hover:border-white/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                   >
                     <ChevronRight size={16} />
                   </button>
@@ -310,7 +310,7 @@ export function ProgramsSection() {
                           {bullets.slice(0, 2).map((b, i) => (
                             <div key={i} className="flex items-start gap-2">
                               <span className="mt-1.5 w-1 h-1 bg-teal/40 flex-shrink-0" />
-                              <span className="text-small text-white/55 leading-relaxed">
+                              <span className="text-small text-on-dark-muted leading-prose">
                                 {b}
                               </span>
                             </div>
@@ -319,7 +319,7 @@ export function ProgramsSection() {
                       );
                     }
                     return (
-                      <p className="mt-2 text-secondary text-white/50 leading-relaxed line-clamp-2">
+                      <p className="mt-2 text-secondary text-on-dark-muted leading-prose line-clamp-2">
                         {program.description.replace(/\n/g, " ")}
                       </p>
                     );

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Nav, Footer, Button, useToast, ImageUploader } from "@/components/common";
+import { Nav, Footer, Button, useToast, ImageUploader, FormError } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { createReview } from "@/domains/review/service";
 import { z } from "zod";
@@ -126,9 +126,7 @@ export default function WriteReviewPage() {
                   )
                 )}
               </div>
-              {errors.category && (
-                <p className="text-small text-red-500 mt-1">{errors.category.message}</p>
-              )}
+              <FormError message={errors.category?.message} />
             </div>
 
             {/* 별점 */}
@@ -160,9 +158,7 @@ export default function WriteReviewPage() {
                   {rating}점
                 </span>
               </div>
-              {errors.rating && (
-                <p className="text-small text-red-500 mt-1">{errors.rating.message}</p>
-              )}
+              <FormError message={errors.rating?.message} />
             </div>
 
             {/* 내용 */}
@@ -175,7 +171,7 @@ export default function WriteReviewPage() {
                 placeholder="스터디코어에서의 경험을 자유롭게 작성해주세요."
                 rows={8}
                 maxLength={1000}
-                className="w-full px-3 py-2 border border-rule text-body resize-none focus:outline-none focus:border-navy"
+                className="input-base resize-none"
               />
               <div className="flex justify-between mt-1">
                 <span className={`text-caption ${errors.content ? "text-red-500" : "text-muted"}`}>

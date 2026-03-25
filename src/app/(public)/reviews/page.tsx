@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Nav, Footer, Button, Skeleton } from "@/components/common";
+import { Nav, Footer, Button, Skeleton, Pagination } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getReviews, getReviewStats } from "@/domains/review/service";
 import {
@@ -15,8 +15,6 @@ import {
 import { useUserStore } from "@/stores/useUserStore";
 import {
   Star,
-  ChevronLeft,
-  ChevronRight,
   MessageSquare,
   PenLine,
 } from "lucide-react";
@@ -102,7 +100,7 @@ export default function ReviewsPage() {
 
           {/* 통계 */}
           {stats && stats.total > 0 && (
-            <div className="bg-white border border-rule p-6 mb-6">
+            <div className="bg-white border border-rule card-md mb-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="text-center">
@@ -211,7 +209,7 @@ export default function ReviewsPage() {
               {reviews.map((review) => (
                 <div
                   key={review.id}
-                  className="bg-white border border-rule p-6"
+                  className="bg-white border border-rule card-md"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
@@ -239,7 +237,7 @@ export default function ReviewsPage() {
                     )}
                   </div>
 
-                  <p className="text-body text-ink leading-relaxed whitespace-pre-wrap">
+                  <p className="text-body text-ink leading-prose whitespace-pre-wrap">
                     {review.content}
                   </p>
 
@@ -272,25 +270,7 @@ export default function ReviewsPage() {
 
           {/* 페이지네이션 */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-8">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="p-2 border border-rule bg-white hover:bg-stone disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              <span className="px-4 text-secondary">
-                {page} / {totalPages}
-              </span>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="p-2 border border-rule bg-white hover:bg-stone disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
+            <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} variant="simple" className="mt-8" />
           )}
         </div>
       </main>

@@ -92,7 +92,7 @@ export default function QuestionDetailPage() {
             <h1 className="font-serif text-2xl font-bold text-ink mb-4">
               승인 대기 중
             </h1>
-            <p className="text-muted text-reading leading-relaxed">
+            <p className="text-muted text-reading leading-prose">
               질문방은 관리자 승인 후 이용 가능합니다.
             </p>
           </div>
@@ -154,7 +154,7 @@ export default function QuestionDetailPage() {
           <div className="max-w-4xl mx-auto">
             <Link
               href={ROUTES.QUESTIONS}
-              className="inline-flex items-center gap-2 text-white/60 hover:text-white text-secondary mb-4 transition-colors"
+              className="inline-flex items-center gap-2 text-on-dark-muted hover:text-white text-secondary mb-4 transition-colors"
             >
               <ArrowLeft size={14} />
               질문 목록으로
@@ -166,7 +166,7 @@ export default function QuestionDetailPage() {
                     className={`text-caption font-medium px-2 py-0.5 ${
                       isAnswered
                         ? "bg-teal/20 text-teal"
-                        : "bg-white/10 text-white/60"
+                        : "bg-white/10 text-on-dark-muted"
                     }`}
                   >
                     {isAnswered ? "답변 완료" : "답변 대기"}
@@ -191,10 +191,10 @@ export default function QuestionDetailPage() {
                     )}
                   </span>
                 </div>
-                <h1 className="font-serif text-[clamp(20px,3vw,28px)] font-bold text-white">
+                <h1 className="font-serif text-fluid-h3 font-bold text-white">
                   {question.title}
                 </h1>
-                <div className="flex items-center gap-4 mt-3 text-secondary text-white/70">
+                <div className="flex items-center gap-4 mt-3 text-secondary text-on-dark-muted">
                   <span className="flex items-center gap-1">
                     <User size={12} />
                     {question.author?.name || "익명"}
@@ -243,8 +243,8 @@ export default function QuestionDetailPage() {
         <section className="px-6 md:px-13 py-8">
           <div className="max-w-4xl mx-auto">
             {/* 본문 */}
-            <div className="bg-white border border-rule p-6 mb-6">
-              <p className="text-reading text-ink whitespace-pre-wrap leading-relaxed">
+            <div className="bg-white border border-rule card-md mb-6">
+              <p className="text-reading text-ink whitespace-pre-wrap leading-prose">
                 {question.content}
               </p>
 
@@ -303,7 +303,7 @@ export default function QuestionDetailPage() {
 
               {/* 답변 작성 폼 (멘토/관리자용) */}
               {canAnswer && (
-                <div className="bg-white border border-rule p-6">
+                <div className="bg-white border border-rule card-md">
                   <h3 className="font-medium text-ink mb-4">답변 작성</h3>
                   <AnswerForm
                     questionId={question.id}
@@ -364,7 +364,7 @@ function AnswerCard({
   };
 
   return (
-    <div className="bg-teal/5 border border-teal/20 p-6">
+    <div className="bg-teal/5 border border-teal/20 card-md">
       {/* 답변자 정보 */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 bg-teal/20 flex items-center justify-center">
@@ -398,7 +398,7 @@ function AnswerCard({
       </div>
 
       {/* 답변 내용 */}
-      <p className="text-reading text-ink whitespace-pre-wrap leading-relaxed">
+      <p className="text-reading text-ink whitespace-pre-wrap leading-prose">
         {answer.content}
       </p>
 

@@ -14,7 +14,7 @@ export default function AccountInactivePage() {
       <Nav />
       <main className="page-body min-h-screen bg-stone">
         <div className="max-w-md mx-auto px-6 py-12">
-          <div className="bg-white border border-rule p-8 text-center">
+          <div className="bg-white border border-rule card-lg text-center">
             {/* 아이콘 */}
             <div className="w-16 h-16 mx-auto mb-6 bg-muted/10 flex items-center justify-center">
               <svg
@@ -33,12 +33,12 @@ export default function AccountInactivePage() {
             </div>
 
             {/* 제목 */}
-            <h1 className="font-serif text-2xl font-bold text-ink mb-4">
+            <h1 className="font-serif text-fluid-h2 font-bold text-ink mb-4">
               계정 비활성화
             </h1>
 
             {/* 설명 */}
-            <p className="text-muted text-body leading-relaxed mb-6">
+            <p className="text-muted text-body leading-prose mb-6">
               현재 계정이 비활성화 상태입니다.
               <br />
               서비스 이용을 원하시면 관리자에게 문의해 주세요.

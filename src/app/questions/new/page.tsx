@@ -4,13 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Nav, Footer, Button, ImageUploader, useToast } from "@/components/common";
+import { Nav, Footer, Button, ImageUploader, useToast, FormError } from "@/components/common";
 import type { UploadedFileMeta } from "@/components/common/ImageUploader";
 import { createClient } from "@/lib/supabase/client";
 import { createQuestion } from "@/domains/question/service";
 import { createQuestionSchema, type CreateQuestionInput, type QuestionAttachment } from "@/domains/question/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { ArrowLeft, Send, Clock, Globe } from "lucide-react";
 import Link from "next/link";
 
@@ -70,7 +71,7 @@ export default function NewQuestionPage() {
             <h1 className="font-serif text-2xl font-bold text-ink mb-4">
               승인 대기 중
             </h1>
-            <p className="text-muted text-reading leading-relaxed">
+            <p className="text-muted text-reading leading-prose">
               질문방은 관리자 승인 후 이용 가능합니다.
             </p>
           </div>
@@ -116,16 +117,10 @@ export default function NewQuestionPage() {
                   id="title"
                   type="text"
                   placeholder="질문 제목을 입력하세요"
-                  className={`w-full px-4 py-3 border bg-white text-reading focus:outline-none focus:border-navy ${
-                    errors.title ? "border-red-500" : "border-rule"
-                  }`}
+                  className={cn("input-base", errors.title && "border-red-500")}
                   {...register("title")}
                 />
-                {errors.title && (
-                  <p className="mt-1 text-small text-red-500">
-                    {errors.title.message}
-                  </p>
-                )}
+                <FormError message={errors.title?.message} />
               </div>
 
               {/* 내용 */}
@@ -140,16 +135,10 @@ export default function NewQuestionPage() {
                   id="content"
                   rows={8}
                   placeholder="질문 내용을 상세히 작성해주세요. 문제 번호, 교재명 등을 포함하면 더 정확한 답변을 받을 수 있습니다."
-                  className={`w-full px-4 py-3 border bg-white text-reading resize-none focus:outline-none focus:border-navy ${
-                    errors.content ? "border-red-500" : "border-rule"
-                  }`}
+                  className={cn("input-base resize-none", errors.content && "border-red-500")}
                   {...register("content")}
                 />
-                {errors.content && (
-                  <p className="mt-1 text-small text-red-500">
-                    {errors.content.message}
-                  </p>
-                )}
+                <FormError message={errors.content?.message} />
               </div>
 
               {/* 파일 첨부 */}

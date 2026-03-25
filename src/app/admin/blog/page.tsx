@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
-import { Skeleton } from "@/components/common";
+import { Skeleton, Pagination } from "@/components/common";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getBlogList, deleteBlog, publishBlog, unpublishBlog } from "@/domains/blog/service";
@@ -286,21 +286,7 @@ export default function AdminBlogPage() {
 
         {/* 페이지네이션 */}
         {totalPages > 1 && (
-          <div className="flex justify-center gap-2 mt-6">
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setPage(i + 1)}
-                className={`w-10 h-10 text-body font-medium border transition-colors ${
-                  page === i + 1
-                    ? "bg-navy border-navy text-white"
-                    : "border-rule text-ink hover:border-navy"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-6" />
         )}
       </div>
 

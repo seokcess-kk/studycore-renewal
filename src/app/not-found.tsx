@@ -9,17 +9,17 @@ export default function NotFound() {
       <main className="page-body min-h-screen flex items-center justify-center bg-stone">
         <div className="text-center px-6 max-w-md">
           {/* 404 숫자 */}
-          <div className="font-mono text-[120px] font-bold text-navy/10 leading-none mb-4">
+          <div className="font-mono text-fluid-display font-bold text-navy/10 leading-none mb-4">
             404
           </div>
 
           {/* 제목 */}
-          <h1 className="font-serif text-2xl font-bold text-ink mb-4">
+          <h1 className="font-serif text-fluid-h2 font-bold text-ink mb-4">
             페이지를 찾을 수 없습니다
           </h1>
 
           {/* 설명 */}
-          <p className="text-muted text-reading leading-relaxed mb-8">
+          <p className="text-muted text-reading leading-prose mb-8">
             요청하신 페이지가 존재하지 않거나
             <br />
             주소가 변경되었을 수 있습니다.

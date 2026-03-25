@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
-import { Button, useToast } from "@/components/common";
+import { Button, useToast, FormError } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { changePassword } from "@/domains/user/service";
 import { changePasswordSchema, type ChangePasswordInput } from "@/domains/user/model";
@@ -67,7 +67,7 @@ export function PasswordChangeForm() {
                 id="pw-current"
                 type={showCurrent ? "text" : "password"}
                 {...register("currentPassword")}
-                className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-body focus:border-navy focus:outline-none pr-10"
+                className="input-base pr-10"
               />
               <button
                 type="button"
@@ -78,11 +78,7 @@ export function PasswordChangeForm() {
                 {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            {errors.currentPassword && (
-              <p className="mt-1 text-small text-red-500">
-                {errors.currentPassword.message}
-              </p>
-            )}
+            <FormError message={errors.currentPassword?.message} />
           </div>
 
           {/* 새 비밀번호 */}
@@ -95,7 +91,7 @@ export function PasswordChangeForm() {
                 id="pw-new"
                 type={showNew ? "text" : "password"}
                 {...register("newPassword")}
-                className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-body focus:border-navy focus:outline-none pr-10"
+                className="input-base pr-10"
               />
               <button
                 type="button"
@@ -106,11 +102,7 @@ export function PasswordChangeForm() {
                 {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            {errors.newPassword && (
-              <p className="mt-1 text-small text-red-500">
-                {errors.newPassword.message}
-              </p>
-            )}
+            <FormError message={errors.newPassword?.message} />
           </div>
 
           {/* 비밀번호 확인 */}
@@ -122,13 +114,9 @@ export function PasswordChangeForm() {
               id="pw-confirm"
               type="password"
               {...register("confirmPassword")}
-              className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-body focus:border-navy focus:outline-none"
+              className="input-base"
             />
-            {errors.confirmPassword && (
-              <p className="mt-1 text-small text-red-500">
-                {errors.confirmPassword.message}
-              </p>
-            )}
+            <FormError message={errors.confirmPassword?.message} />
           </div>
 
           <Button

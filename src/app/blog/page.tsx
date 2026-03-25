@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Nav, Footer, Skeleton } from "@/components/common";
+import { Nav, Footer, Skeleton, SectionHeader, Pagination } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getPublishedBlogList } from "@/domains/blog/service";
 import type { BlogPostWithAuthor } from "@/domains/blog/model";
-import { Calendar, Tag, ChevronLeft, ChevronRight, PenLine } from "lucide-react";
+import { Calendar, Tag, PenLine } from "lucide-react";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES } from "@/lib/constants";
 
@@ -63,27 +63,25 @@ export default function BlogPage() {
       <main className="page-body">
         {/* 헤더 */}
         <section className="bg-navy section-sm px-6 md:px-13">
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <div>
-              <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
-                Blog
-              </span>
-              <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
-                스터디코어 블로그
-              </h1>
-              <p className="mt-3 text-white/60 text-reading max-w-md">
-                입시 정보, 학습 팁, 스터디코어 소식을 전해드립니다.
-              </p>
-            </div>
-            {canAccessAdmin && (
-              <Link
-                href={`${ROUTES.ADMIN_BLOG}/new`}
-                className="inline-flex items-center gap-2 px-5 py-2.5 border-[1.5px] border-teal text-teal text-secondary font-bold tracking-cta hover:bg-teal hover:text-navy-dark transition-colors duration-200 cursor-pointer self-start md:self-auto"
-              >
-                <PenLine size={14} />
-                글쓰기
-              </Link>
-            )}
+          <div className="max-w-6xl mx-auto">
+            <SectionHeader
+              label="Blog"
+              title="스터디코어 블로그"
+              description="입시 정보, 학습 팁, 스터디코어 소식을 전해드립니다."
+              theme="dark"
+              as="h1"
+              actions={
+                canAccessAdmin ? (
+                  <Link
+                    href={`${ROUTES.ADMIN_BLOG}/new`}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 border-[1.5px] border-teal text-teal text-secondary font-bold tracking-cta hover:bg-teal hover:text-navy-dark transition-colors duration-200 cursor-pointer"
+                  >
+                    <PenLine size={14} />
+                    글쓰기
+                  </Link>
+                ) : undefined
+              }
+            />
           </div>
         </section>
 
@@ -125,7 +123,7 @@ export default function BlogPage() {
         )}
 
         {/* 블로그 목록 */}
-        <section className="px-6 md:px-13 py-12">
+        <section className="px-6 md:px-13 section-md">
           <div className="max-w-6xl mx-auto">
             {isLoading ? (
               <BlogSkeleton />
@@ -214,7 +212,7 @@ export default function BlogPage() {
                                 />
                               ) : (
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                  <span className="font-mono text-[48px] font-bold text-rule">
+                                  <span className="font-mono text-fluid-h1 font-bold text-rule">
                                     {String(i + 2).padStart(2, "0")}
                                   </span>
                                 </div>
@@ -262,35 +260,7 @@ export default function BlogPage() {
 
             {/* 페이지네이션 */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-12">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="w-11 h-11 flex items-center justify-center border border-rule text-ink hover:border-navy disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                {Array.from({ length: totalPages }).map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setPage(i + 1)}
-                    className={`w-11 h-11 text-body font-medium border transition-colors cursor-pointer ${
-                      page === i + 1
-                        ? "bg-navy border-navy text-white"
-                        : "border-rule text-ink hover:border-navy"
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="w-11 h-11 flex items-center justify-center border border-rule text-ink hover:border-navy disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-                >
-                  <ChevronRight size={18} />
-                </button>
-              </div>
+              <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-12" />
             )}
           </div>
         </section>
@@ -315,7 +285,7 @@ function CompactCard({ post }: { post: BlogPostWithAuthor }) {
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-stone">
-              <span className="font-mono text-[32px] font-bold text-rule">
+              <span className="font-mono text-fluid-h2 font-bold text-rule">
                 {post.title.charAt(0)}
               </span>
             </div>

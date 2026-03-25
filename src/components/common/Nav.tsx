@@ -116,6 +116,9 @@ export function Nav() {
         <div className="flex items-center gap-6 md:gap-9">
           {isMounted && !isLoading && isAuthenticated ? (
             <>
+              <Link href={ROUTES.SYSTEM} className={linkStyle(pathname === "/system")}>
+                시스템
+              </Link>
               <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>
                 공지사항
               </Link>
@@ -165,7 +168,7 @@ export function Nav() {
             </>
           ) : (
             <>
-              <Link href={getAnchorHref("#features")} className={linkStyle()}>
+              <Link href={ROUTES.SYSTEM} className={linkStyle(pathname === "/system")}>
                 시스템
               </Link>
               <Link href={getAnchorHref("#space")} className={linkStyle()}>

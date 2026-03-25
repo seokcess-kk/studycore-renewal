@@ -232,7 +232,7 @@ export default function AdminQuestionDetailPage() {
           <span>{formatDistanceToNow(question.created_at)}</span>
         </div>
 
-        <p className="text-reading text-ink whitespace-pre-wrap leading-relaxed">
+        <p className="text-reading text-ink whitespace-pre-wrap leading-prose">
           {question.content}
         </p>
 
@@ -453,7 +453,7 @@ function AnswerCard({
       </div>
 
       {/* 답변 내용 */}
-      <p className="text-reading text-ink whitespace-pre-wrap leading-relaxed">
+      <p className="text-reading text-ink whitespace-pre-wrap leading-prose">
         {answer.content}
       </p>
 

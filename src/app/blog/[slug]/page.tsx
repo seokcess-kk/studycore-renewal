@@ -110,7 +110,7 @@ export default function BlogPostPage() {
             </h1>
 
             {/* 메타 정보 */}
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-secondary text-white/60">
+            <div className="mt-6 flex flex-wrap items-center gap-4 text-secondary text-on-dark-muted">
               <div className="flex items-center gap-2">
                 <Calendar size={14} />
                 <span>{formattedDate}</span>

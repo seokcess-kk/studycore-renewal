@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Nav, Footer, Button, Skeleton, useToast } from "@/components/common";
+import { Nav, Footer, Button, Skeleton, useToast, SectionHeader } from "@/components/common";
 import { WeekdaySelector, DateSelector } from "@/components/meal";
 import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/stores/useUserStore";
@@ -139,15 +139,14 @@ export default function LunchPage() {
         {/* 헤더 */}
         <section className="bg-navy py-12 px-6 md:px-13">
           <div className="max-w-3xl mx-auto">
-            <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-3">
-              Meal / 도시락 신청
-            </span>
-            <h1 className="font-serif text-[clamp(24px,4vw,36px)] font-bold text-white">
-              도시락 신청
-            </h1>
-            <p className="mt-3 text-white/70 text-reading">
-              원하는 요일과 식사를 선택해주세요.
-            </p>
+            <SectionHeader
+              label="Meal / 도시락 신청"
+              title="도시락 신청"
+              description="원하는 요일과 식사를 선택해주세요."
+              theme="dark"
+              as="h1"
+              titleSize="h2"
+            />
           </div>
         </section>
 

@@ -101,7 +101,7 @@ export default function NoticeDetailPage({
           <div className="max-w-3xl mx-auto">
             <Link
               href={ROUTES.NOTICES}
-              className="inline-flex items-center gap-2 text-secondary text-white/60 hover:text-white mb-6 transition-colors"
+              className="inline-flex items-center gap-2 text-secondary text-on-dark-muted hover:text-white mb-6 transition-colors"
             >
               <ArrowLeft size={14} />
               목록으로
@@ -112,7 +112,7 @@ export default function NoticeDetailPage({
                 className={`inline-block text-caption font-medium px-2 py-0.5 ${
                   notice.category === "urgent"
                     ? "bg-red-500/20 text-red-300"
-                    : "bg-white/10 text-white/60"
+                    : "bg-white/10 text-on-dark-muted"
                 }`}
               >
                 {categoryLabel}
@@ -123,7 +123,7 @@ export default function NoticeDetailPage({
               {notice.title}
             </h1>
 
-            <div className="flex flex-wrap gap-4 mt-4 text-secondary text-white/70">
+            <div className="flex flex-wrap gap-4 mt-4 text-secondary text-on-dark-muted">
               <span className="flex items-center gap-1.5">
                 <User size={14} />
                 {notice.author?.name || "관리자"}
@@ -148,7 +148,7 @@ export default function NoticeDetailPage({
         <section className="py-12 px-6 md:px-13">
           <div className="max-w-3xl mx-auto">
             <div
-              className="prose prose-sm max-w-none text-reading leading-relaxed text-ink/80"
+              className="prose prose-sm max-w-none text-reading leading-prose text-ink/80"
               dangerouslySetInnerHTML={{ __html: notice.content }}
             />
           </div>

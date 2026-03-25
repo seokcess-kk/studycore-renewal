@@ -108,7 +108,7 @@ export function PopupModal() {
                 {popup.title}
               </h3>
               {popup.content && (
-                <p className="mb-4 whitespace-pre-wrap text-sm text-ink leading-relaxed">
+                <p className="mb-4 whitespace-pre-wrap text-body text-ink leading-prose">
                   {popup.content}
                 </p>
               )}

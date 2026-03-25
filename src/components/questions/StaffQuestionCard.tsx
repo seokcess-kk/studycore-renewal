@@ -176,7 +176,7 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
               <>
                 {/* 질문 전문 */}
                 <div>
-                  <p className="text-body text-ink whitespace-pre-wrap leading-relaxed">
+                  <p className="text-body text-ink whitespace-pre-wrap leading-prose">
                     {question.content}
                   </p>
                   {((question.attachments && question.attachments.length > 0) ||

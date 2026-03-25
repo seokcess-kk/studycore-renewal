@@ -12,6 +12,7 @@ import {
 } from "@/domains/blog/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { useToast } from "@/components/common/Toast";
+import { FormError } from "@/components/common";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Eye, Tag, X } from "lucide-react";
@@ -124,13 +125,9 @@ export default function AdminBlogNewPage() {
               {...register("title")}
               onChange={handleTitleChange}
               placeholder="포스트 제목을 입력하세요"
-              className="w-full px-4 py-3 border border-rule text-reading focus:border-navy focus:outline-none"
+              className="input-admin"
             />
-            {errors.title && (
-              <p className="mt-1 text-secondary text-red-500">
-                {errors.title.message}
-              </p>
-            )}
+            <FormError message={errors.title?.message} />
           </div>
 
           {/* 슬러그 */}
@@ -144,14 +141,10 @@ export default function AdminBlogNewPage() {
                 type="text"
                 {...register("slug")}
                 placeholder="post-slug"
-                className="flex-1 px-4 py-3 border border-rule text-reading focus:border-navy focus:outline-none font-mono"
+                className="input-admin flex-1 font-mono"
               />
             </div>
-            {errors.slug && (
-              <p className="mt-1 text-secondary text-red-500">
-                {errors.slug.message}
-              </p>
-            )}
+            <FormError message={errors.slug?.message} />
             <p className="mt-1 text-small text-muted">
               영문 소문자, 숫자, 하이픈만 사용 가능합니다.
             </p>
@@ -166,7 +159,7 @@ export default function AdminBlogNewPage() {
               {...register("excerpt")}
               rows={2}
               placeholder="포스트 요약 (목록에 표시됩니다)"
-              className="w-full px-4 py-3 border border-rule text-reading focus:border-navy focus:outline-none resize-none"
+              className="input-admin resize-none"
             />
           </div>
 
@@ -179,13 +172,9 @@ export default function AdminBlogNewPage() {
               type="text"
               {...register("thumbnail_url")}
               placeholder="https://example.com/image.jpg"
-              className="w-full px-4 py-3 border border-rule text-reading focus:border-navy focus:outline-none"
+              className="input-admin"
             />
-            {errors.thumbnail_url && (
-              <p className="mt-1 text-secondary text-red-500">
-                {errors.thumbnail_url.message}
-              </p>
-            )}
+            <FormError message={errors.thumbnail_url?.message} />
           </div>
 
           {/* 태그 */}
@@ -210,7 +199,7 @@ export default function AdminBlogNewPage() {
                     }
                   }}
                   placeholder="태그 입력 후 Enter"
-                  className="w-full pl-10 pr-4 py-2 border border-rule text-body focus:border-navy focus:outline-none"
+                  className="input-admin pl-10"
                 />
               </div>
               <button
@@ -251,13 +240,9 @@ export default function AdminBlogNewPage() {
               {...register("content")}
               rows={20}
               placeholder="Markdown 형식으로 작성하세요..."
-              className="w-full px-4 py-3 border border-rule text-reading font-mono focus:border-navy focus:outline-none resize-y"
+              className="input-admin font-mono resize-y"
             />
-            {errors.content && (
-              <p className="mt-1 text-secondary text-red-500">
-                {errors.content.message}
-              </p>
-            )}
+            <FormError message={errors.content?.message} />
           </div>
 
           {/* 액션 버튼 */}

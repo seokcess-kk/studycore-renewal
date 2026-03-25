@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Nav, Footer, Button } from "@/components/common";
+import { Nav, Footer, Button, SectionHeader } from "@/components/common";
 import { useToast } from "@/components/common";
 import {
   consultationFormSchema,
@@ -13,6 +13,7 @@ import {
   type ConsultationApiResponse,
 } from "@/domains/consultation/model";
 import { CONTACT, CONSULT_TYPES, ROUTES } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { CheckCircle } from "lucide-react";
 import { usePhoneFormat } from "@/hooks/usePhoneFormat";
 
@@ -71,10 +72,10 @@ export default function ConsultPage() {
             <div className="w-16 h-16 bg-teal/10 flex items-center justify-center mx-auto mb-6">
               <CheckCircle size={32} className="text-teal" />
             </div>
-            <h1 className="font-serif text-2xl font-bold text-ink mb-4">
+            <h1 className="font-serif text-fluid-h2 font-bold text-ink mb-4">
               상담 신청이 완료되었습니다
             </h1>
-            <p className="text-muted text-reading leading-relaxed mb-8">
+            <p className="text-muted text-reading leading-prose mb-8">
               원장님이 확인 후 빠른 시일 내에 연락드리겠습니다.
               <br />
               카카오 채널을 통해 더 빠르게 문의하실 수 있습니다.
@@ -118,18 +119,13 @@ export default function ConsultPage() {
             }}
           />
           <div className="relative z-10 max-w-2xl">
-            <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
-              Consultation / 상담 신청
-            </span>
-            <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight tracking-heading">
-              무료 상담 신청
-            </h1>
-            <p className="mt-4 text-white/60 text-reading leading-relaxed">
-              등록 상담, 시설 견학, 프로그램 문의 등 무엇이든 편하게
-              문의해 주세요.
-              <br />
-              원장님이 직접 확인하고 연락드립니다.
-            </p>
+            <SectionHeader
+              label="Consultation / 상담 신청"
+              title="무료 상담 신청"
+              description="등록 상담, 시설 견학, 프로그램 문의 등 무엇이든 편하게 문의해 주세요. 원장님이 직접 확인하고 연락드립니다."
+              theme="dark"
+              as="h1"
+            />
           </div>
         </section>
 
@@ -149,8 +145,7 @@ export default function ConsultPage() {
                   type="text"
                   placeholder="홍길동"
                   {...register("name")}
-                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors ${errors.name ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
-                    }`}
+                  className={cn("input-base", errors.name && "border-red-500")}
                 />
               </FormField>
 
@@ -167,8 +162,7 @@ export default function ConsultPage() {
                   placeholder="010-0000-0000"
                   {...register("phone")}
                   onChange={(e) => handlePhoneChange("phone", e)}
-                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors ${errors.phone ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
-                    }`}
+                  className={cn("input-base", errors.phone && "border-red-500")}
                 />
               </FormField>
 
@@ -183,8 +177,7 @@ export default function ConsultPage() {
                   type="text"
                   placeholder="예: 광주고 2학년"
                   {...register("school")}
-                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors ${errors.school ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
-                    }`}
+                  className={cn("input-base", errors.school && "border-red-500")}
                 />
               </FormField>
 
@@ -198,8 +191,7 @@ export default function ConsultPage() {
                 <select
                   id="consult-type"
                   {...register("consultType")}
-                  className={`w-full px-4 py-3 border bg-white text-ink text-reading focus:outline-none transition-colors appearance-none ${errors.consultType ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
-                    }`}
+                  className={cn("input-base appearance-none", errors.consultType && "border-red-500")}
                   defaultValue=""
                 >
                   <option value="" disabled>
@@ -220,8 +212,7 @@ export default function ConsultPage() {
                   placeholder="궁금하신 점을 자유롭게 적어주세요."
                   rows={4}
                   {...register("message")}
-                  className={`w-full px-4 py-3 border bg-white text-ink text-reading placeholder:text-muted/50 focus:outline-none transition-colors resize-none ${errors.message ? "border-red-500 focus:border-red-500" : "border-rule focus:border-navy"
-                    }`}
+                  className={cn("input-base resize-none", errors.message && "border-red-500")}
                 />
               </FormField>
 
@@ -247,8 +238,8 @@ export default function ConsultPage() {
             </form>
 
             {/* 연락처 정보 */}
-            <div className="mt-12 p-6 bg-stone">
-              <h3 className="font-bold text-ink mb-4">
+            <div className="mt-12 card-md bg-stone">
+              <h3 className="font-bold text-ink text-subhead mb-4">
                 더 빠른 상담을 원하시나요?
               </h3>
               <div className="space-y-2 text-body text-ink/70">

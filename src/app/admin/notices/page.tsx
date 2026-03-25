@@ -9,6 +9,7 @@ import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { formatDate } from "@/lib/utils";
 import { useToast } from "@/components/common/Toast";
+import { Badge } from "@/components/common";
 import { NOTICE_CATEGORY_LABELS } from "@/domains/notice/model";
 import type { NoticeWithAuthor, NoticeCategory } from "@/domains/notice/model";
 import { updateNoticeOrders } from "@/domains/notice/service";
@@ -109,18 +110,17 @@ export default function AdminNoticesPage() {
     setIsReordering(false);
   };
 
-  const getCategoryBadgeClass = (category: NoticeCategory) => {
+  const getCategoryBadgeVariant = (category: NoticeCategory): "error" | "info" | "success" | "neutral" => {
     switch (category) {
       case "urgent":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "error";
       case "material":
-        return "bg-blue-100 text-blue-800 border-blue-200";
       case "schedule":
-        return "bg-purple-100 text-purple-800 border-purple-200";
+        return "info";
       case "event":
-        return "bg-teal-100 text-teal-800 border-teal-200";
+        return "success";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "neutral";
     }
   };
 
@@ -209,13 +209,9 @@ export default function AdminNoticesPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center border px-2 py-0.5 text-xs font-medium ${getCategoryBadgeClass(
-                        notice.category
-                      )}`}
-                    >
+                    <Badge variant={getCategoryBadgeVariant(notice.category)}>
                       {NOTICE_CATEGORY_LABELS[notice.category]}
-                    </span>
+                    </Badge>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
@@ -234,15 +230,9 @@ export default function AdminNoticesPage() {
                     {notice.view_count}
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center border px-2 py-0.5 text-xs font-medium ${
-                        notice.is_published
-                          ? "border-green-200 bg-green-100 text-green-800"
-                          : "border-gray-200 bg-gray-100 text-gray-800"
-                      }`}
-                    >
+                    <Badge variant={notice.is_published ? "success" : "neutral"}>
                       {notice.is_published ? "발행됨" : "임시저장"}
-                    </span>
+                    </Badge>
                   </td>
                   <td className="px-4 py-3 text-sm text-muted">
                     {formatDate(notice.created_at)}

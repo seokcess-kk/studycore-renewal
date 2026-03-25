@@ -10,6 +10,7 @@ import { Button } from "@/components/common/Button";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
+import { FormError } from "@/components/common";
 import { useUserStore } from "@/stores/useUserStore";
 import {
   createNoticeSchema,
@@ -206,7 +207,7 @@ export default function AdminNoticeNewPage() {
                 </label>
                 <select
                   {...register("category")}
-                  className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                  className="input-admin"
                 >
                   {Object.entries(NOTICE_CATEGORY_LABELS).map(
                     ([value, label]) => (
@@ -241,13 +242,9 @@ export default function AdminNoticeNewPage() {
                 type="text"
                 {...register("title")}
                 placeholder="공지사항 제목을 입력하세요"
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               />
-              {errors.title && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.title.message}
-                </p>
-              )}
+              <FormError message={errors.title?.message} />
             </div>
 
             {/* 내용 */}
@@ -260,11 +257,7 @@ export default function AdminNoticeNewPage() {
                 onChange={(html) => setValue("content", html, { shouldValidate: true })}
                 placeholder="공지사항 내용을 입력하세요"
               />
-              {errors.content && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.content.message}
-                </p>
-              )}
+              <FormError message={errors.content?.message} />
             </div>
           </div>
         </div>
@@ -386,7 +379,7 @@ export default function AdminNoticeNewPage() {
                     type="date"
                     value={popupStartDate}
                     onChange={(e) => setPopupStartDate(e.target.value)}
-                    className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                    className="input-admin"
                   />
                 </div>
                 <div>
@@ -396,7 +389,7 @@ export default function AdminNoticeNewPage() {
                     value={popupEndDate}
                     min={popupStartDate}
                     onChange={(e) => setPopupEndDate(e.target.value)}
-                    className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                    className="input-admin"
                   />
                 </div>
               </div>

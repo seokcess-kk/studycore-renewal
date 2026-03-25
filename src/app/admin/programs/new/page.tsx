@@ -10,6 +10,7 @@ import { Button } from "@/components/common/Button";
 import { ImageUploader } from "@/components/common/ImageUploader";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
+import { FormError } from "@/components/common";
 import {
   createProgramSchema,
   type CreateProgramInput,
@@ -145,11 +146,9 @@ export default function AdminProgramNewPage() {
               type="text"
               {...register("title")}
               placeholder="프로그램 제목"
-              className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+              className="input-admin"
             />
-            {errors.title && (
-              <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>
-            )}
+            <FormError message={errors.title?.message} />
           </div>
 
           <div>
@@ -160,7 +159,7 @@ export default function AdminProgramNewPage() {
               {...register("description")}
               rows={8}
               placeholder={"- 대표원장 직접 운영·관리\n- 메디컬 재학 최상위권 조교 배치\n- 턴게이트 기반 출결 시스템\n\n위처럼 '- '로 시작하는 줄은 홈 카드에 불릿으로 표시됩니다.\n나머지 텍스트는 상세 보기 팝업에서만 표시됩니다."}
-              className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none resize-none"
+              className="input-admin resize-none"
             />
             <p className="mt-1 text-xs text-muted">
               &apos;- &apos;로 시작하는 줄 → 홈 카드 불릿 (최대 4개) · 나머지 → 상세 팝업에서만 표시
@@ -234,7 +233,7 @@ export default function AdminProgramNewPage() {
               <input
                 type="date"
                 {...register("start_date")}
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               />
             </div>
             <div>
@@ -244,7 +243,7 @@ export default function AdminProgramNewPage() {
               <input
                 type="date"
                 {...register("end_date")}
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               />
             </div>
           </div>
@@ -266,7 +265,7 @@ export default function AdminProgramNewPage() {
             <input
               type="number"
               {...register("sort_order", { valueAsNumber: true })}
-              className="w-32 border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+              className="input-admin w-32"
             />
             <p className="mt-1 text-xs text-muted">
               숫자가 작을수록 먼저 표시됩니다.

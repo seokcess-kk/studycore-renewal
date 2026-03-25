@@ -314,7 +314,7 @@ export function GuidePageLayout({
                               }}
                             />
                           ) : (
-                            <div className="text-body text-ink leading-relaxed whitespace-pre-wrap">
+                            <div className="text-body text-ink leading-prose whitespace-pre-wrap">
                               {activeSection.content}
                             </div>
                           )}

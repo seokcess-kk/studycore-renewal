@@ -83,6 +83,48 @@
 |--------|------|-----------|
 | `page-body` | `padding-top: 6rem; padding-bottom: 5rem` | `pt-24 pb-20` |
 
+### 카드 패딩
+| 클래스 | 값 | 용도 |
+|--------|-----|------|
+| `card-sm` | 16px (p-4) | 컴팩트 목록, 어드민 행 |
+| `card-md` | 24px (p-6) | 기본 카드, 폼 섹션 |
+| `card-lg` | 32px (p-8) | 히어로 카드, 상태 페이지 |
+
+### 다크 배경 텍스트
+| 클래스 | 투명도 | 용도 |
+|--------|--------|------|
+| `text-on-dark` | 90% | 다크 배경 위 제목·본문 |
+| `text-on-dark-muted` | 60% | 다크 배경 위 설명·보조 텍스트 |
+
+## 폼 입력 유틸리티
+| 클래스 | 용도 | 스타일 요약 |
+|--------|------|-------------|
+| `input-base` | 공개 페이지 폼 | px-4 py-3, text-reading, border-rule → focus:border-navy |
+| `input-admin` | 어드민 페이지 폼 | px-3 py-2, text-body, border-rule → focus:border-navy |
+
+에러 상태: `className={cn("input-base", errors.field && "border-red-500")}`
+추가 스타일: `className="input-admin resize-none h-32"`
+
+## 상태 색상 토큰
+| 시맨틱 | CSS 변수 접두사 | 용도 |
+|--------|----------------|------|
+| success | `--color-status-success-*` | 활성, 완료, 발행 |
+| warning | `--color-status-warning-*` | 신규, 주의 |
+| error | `--color-status-error-*` | 긴급, 에러 |
+| info | `--color-status-info-*` | 정보, 연락함 |
+
+각 시맨틱에 `-bg`, `-border` 변형 존재. `Badge` 컴포넌트가 이 토큰을 사용.
+
+## 공통 컴포넌트 (src/components/common/)
+
+| 컴포넌트 | 용도 | 주요 Props |
+|----------|------|-----------|
+| `SectionHeader` | 라벨+제목+설명 통일 | theme, align, titleSize, actions |
+| `FormError` | 폼 에러 메시지 통일 | message, className |
+| `Badge` | 범용 배지 (7 variant) | variant, size |
+| `Pagination` | 페이지네이션 (numbered/simple) | currentPage, totalPages, onPageChange, variant |
+| `BaseModal` | 모달 래퍼 (ESC, 포커스트랩, 애니메이션) | isOpen, onClose, maxWidth |
+
 ## CTA 버튼
 `globals.css`의 `cta-fill` 클래스 사용:
 ```html
@@ -91,11 +133,15 @@
 ```
 
 ## 모달 패턴
-새 모달 작성 시 아래 구조를 따를 것:
-- ESC 닫기 + 오버레이 클릭 닫기 + `document.body.style.overflow` 스크롤 방지
-- Framer Motion `AnimatePresence`
-- `fixed inset-0 z-50` 오버레이 + `relative z-10` 본체
-- 참고 구현: `ConfirmModal`, `SearchModal`, `ProgramDetailModal`, `PopupModal`, `AttachmentModal`
+새 모달 작성 시 `BaseModal` 컴포넌트를 사용할 것:
+```tsx
+<BaseModal isOpen={open} onClose={close} maxWidth="md" ariaLabel="모달 제목">
+  <div className="card-md">콘텐츠</div>
+</BaseModal>
+```
+BaseModal이 제공: ESC 닫기, 오버레이 클릭, 스크롤 잠금, 포커스 트랩, Framer Motion 애니메이션, z-50
+- 적용 완료: `ConfirmModal`, WelcomeModal (my/page.tsx)
+- 미적용 (복잡한 내부 구조): `SearchModal`, `AttachmentModal`, `PopupModal`, `ProgramDetailModal`
 
 ## 첨부파일 표시 패턴
 첨부파일 목록은 공통 컴포넌트를 사용할 것 (인라인 구현 금지):

@@ -21,16 +21,16 @@ export default function Error({
       <div className="text-center max-w-md">
         {/* 에러 아이콘 */}
         <div className="w-16 h-16 bg-navy/10 flex items-center justify-center mx-auto mb-6">
-          <span className="font-mono text-2xl font-bold text-navy">!</span>
+          <span className="font-mono text-fluid-h3 font-bold text-navy">!</span>
         </div>
 
         {/* 제목 */}
-        <h1 className="font-serif text-2xl font-bold text-ink mb-4">
+        <h1 className="font-serif text-fluid-h2 font-bold text-ink mb-4">
           문제가 발생했습니다
         </h1>
 
         {/* 설명 */}
-        <p className="text-muted text-reading leading-relaxed mb-8">
+        <p className="text-muted text-reading leading-prose mb-8">
           일시적인 오류가 발생했습니다.
           <br />
           잠시 후 다시 시도해 주세요.

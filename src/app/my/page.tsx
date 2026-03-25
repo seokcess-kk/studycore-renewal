@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Nav, Footer, Button, useToast, Skeleton, AvatarUploader } from "@/components/common";
+import { Nav, Footer, Button, useToast, Skeleton, AvatarUploader, FormError, BaseModal } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { signOut, updateAvatar, updateUserProfile } from "@/domains/user/service";
 import { updateContactSchema, type UpdateContactInput } from "@/domains/user/model";
 import { useUserStore } from "@/stores/useUserStore";
 import { ROUTES, CONTACT } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import {
   User,
   Phone,
@@ -407,14 +408,10 @@ function ContactInfoSection() {
                 {...register("phone")}
                 onChange={(e) => handlePhoneChange("phone", e)}
                 placeholder="010-0000-0000"
-                className={`flex-1 border px-3 py-1.5 text-body focus:outline-none ${
-                  errors.phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
-                }`}
+                className={cn("input-base flex-1", errors.phone && "border-red-500")}
               />
             </div>
-            {errors.phone && (
-              <p className="text-caption text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.phone.message}</p>
-            )}
+            <FormError message={errors.phone?.message} className="ml-[calc(18px+16px+96px)]" />
           </div>
         ) : (
           <InfoRow icon={<Phone size={18} />} label="연락처" value={formatPhone(profile?.phone) || "-"} />
@@ -431,14 +428,10 @@ function ContactInfoSection() {
                     type="text"
                     {...register("school")}
                     placeholder="OO고등학교"
-                    className={`flex-1 border px-3 py-1.5 text-body focus:outline-none ${
-                      errors.school ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
-                    }`}
+                    className={cn("input-base flex-1", errors.school && "border-red-500")}
                   />
                 </div>
-                {errors.school && (
-                  <p className="text-caption text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.school.message}</p>
-                )}
+                <FormError message={errors.school?.message} className="ml-[calc(18px+16px+96px)]" />
               </div>
               <div className="px-4 py-3">
                 <div className="flex items-center gap-4">
@@ -446,9 +439,7 @@ function ContactInfoSection() {
                   <span className="text-secondary text-muted w-24">학년 <span className="text-red-500">*</span></span>
                   <select
                     {...register("grade")}
-                    className={`flex-1 border px-3 py-1.5 text-body focus:outline-none bg-white cursor-pointer ${
-                      errors.grade ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
-                    }`}
+                    className={cn("input-base flex-1 cursor-pointer", errors.grade && "border-red-500")}
                   >
                     <option value="">선택</option>
                     <option value="1">1학년</option>
@@ -456,9 +447,7 @@ function ContactInfoSection() {
                     <option value="3">3학년</option>
                   </select>
                 </div>
-                {errors.grade && (
-                  <p className="text-caption text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.grade.message}</p>
-                )}
+                <FormError message={errors.grade?.message} className="ml-[calc(18px+16px+96px)]" />
               </div>
             </>
           ) : (
@@ -481,14 +470,10 @@ function ContactInfoSection() {
                   {...register("parent_phone")}
                   onChange={(e) => handlePhoneChange("parent_phone", e)}
                   placeholder="010-0000-0000"
-                  className={`flex-1 border px-3 py-1.5 text-body focus:outline-none ${
-                    errors.parent_phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
-                  }`}
+                  className={cn("input-base flex-1", errors.parent_phone && "border-red-500")}
                 />
               </div>
-              {errors.parent_phone && (
-                <p className="text-caption text-red-500 mt-1 ml-[calc(18px+16px+96px)]">{errors.parent_phone.message}</p>
-              )}
+              <FormError message={errors.parent_phone?.message} className="ml-[calc(18px+16px+96px)]" />
             </div>
           ) : (
             <InfoRow icon={<Phone size={18} />} label="학부모 연락처" value={formatPhone(profile?.parent_phone) || "-"} />
@@ -505,26 +490,15 @@ function ContactInfoSection() {
 
 // 환영 모달 (프로필 최초 완성 시)
 function WelcomeModal({ name, onClose }: { name: string; onClose: () => void }) {
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.body.style.overflow = "";
-      document.removeEventListener("keydown", handleKey);
-    };
-  }, [onClose]);
-
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50"
-      onClick={onClose}
+    <BaseModal
+      isOpen={true}
+      onClose={onClose}
+      maxWidth="sm"
+      ariaLabel="환영 모달"
+      className="border border-rule p-8"
     >
-      <div className="bg-white border border-rule p-8 max-w-sm mx-4 text-center" onClick={(e) => e.stopPropagation()}>
+      <div className="text-center">
         <div className="w-16 h-16 bg-teal/10 flex items-center justify-center mx-auto mb-6">
           <svg className="w-8 h-8 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="square" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -533,7 +507,7 @@ function WelcomeModal({ name, onClose }: { name: string; onClose: () => void }) 
         <h2 className="font-serif text-xl font-bold text-ink mb-2">
           환영합니다, {name}님!
         </h2>
-        <p className="text-secondary text-muted mb-6 leading-relaxed">
+        <p className="text-secondary text-muted mb-6 leading-prose">
           스터디코어 1.0의 재원생 서비스를<br />이용하실 수 있습니다.
         </p>
         <div className="flex gap-3">
@@ -545,7 +519,7 @@ function WelcomeModal({ name, onClose }: { name: string; onClose: () => void }) 
           </a>
         </div>
       </div>
-    </div>
+    </BaseModal>
   );
 }
 

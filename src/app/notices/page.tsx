@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Nav, Footer, Skeleton } from "@/components/common";
+import { Nav, Footer, Skeleton, SectionHeader, Pagination } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getNoticeList } from "@/domains/notice/service";
 import {
@@ -50,15 +50,13 @@ export default function NoticesPage() {
         {/* 헤더 */}
         <section className="bg-navy section-sm px-6 md:px-13">
           <div className="max-w-4xl mx-auto">
-            <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
-              Notices / 공지사항
-            </span>
-            <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
-              공지사항
-            </h1>
-            <p className="mt-4 text-white/70 text-reading">
-              스터디코어 1.0의 중요한 소식과 안내사항입니다.
-            </p>
+            <SectionHeader
+              label="Notices / 공지사항"
+              title="공지사항"
+              description="스터디코어 1.0의 중요한 소식과 안내사항입니다."
+              theme="dark"
+              as="h1"
+            />
           </div>
         </section>
 
@@ -115,21 +113,7 @@ export default function NoticesPage() {
 
             {/* 페이지네이션 */}
             {totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-8">
-                {Array.from({ length: totalPages }).map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setPage(i + 1)}
-                    className={`w-10 h-10 text-body font-medium border transition-colors ${
-                      page === i + 1
-                        ? "bg-navy border-navy text-white"
-                        : "border-rule text-ink hover:border-navy"
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-              </div>
+              <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-8" />
             )}
           </div>
         </section>

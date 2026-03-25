@@ -125,6 +125,14 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <>
                 <motion.div variants={itemVariants}>
                   <Link
+                    href={ROUTES.SYSTEM}
+                    className={linkClass(pathname === "/system")}
+                  >
+                    시스템
+                  </Link>
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  <Link
                     href={ROUTES.NOTICES}
                     className={linkClass(pathname.startsWith("/notices"))}
                   >
@@ -215,8 +223,8 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
                 <motion.div variants={itemVariants}>
                   <Link
-                    href={getAnchorHref("#features")}
-                    className={linkClass()}
+                    href={ROUTES.SYSTEM}
+                    className={linkClass(pathname === "/system")}
                   >
                     시스템
                   </Link>

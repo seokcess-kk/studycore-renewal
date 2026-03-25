@@ -5,6 +5,7 @@ import imageCompression from "browser-image-compression";
 import { createClient } from "@/lib/supabase/client";
 import { Upload, X, Image as ImageIcon, FileText, Loader2, RotateCcw, Paperclip } from "lucide-react";
 import { isPdfUrl } from "./AttachmentModal";
+import { FormError } from "./FormError";
 
 export interface UploadedFileMeta {
   url: string;
@@ -391,7 +392,7 @@ export function ImageUploader({
       )}
 
       {/* 에러 메시지 */}
-      {error && <p className="text-secondary text-red-600">{error}</p>}
+      <FormError message={error ?? undefined} />
 
       {/* 업로드 중 (미리보기 포함) */}
       {uploading.length > 0 && (

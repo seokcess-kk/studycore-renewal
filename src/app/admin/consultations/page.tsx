@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { ChevronDown, ChevronUp, Phone, Trash2 } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
+import { Badge, Pagination } from "@/components/common";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import {
   getConsultationList,
@@ -22,10 +23,10 @@ const STATUS_LABELS: Record<string, string> = {
   done: "완료",
 };
 
-const STATUS_COLORS: Record<string, string> = {
-  new: "bg-orange-100 text-orange-700 border-orange-200",
-  contacted: "bg-blue-100 text-blue-700 border-blue-200",
-  done: "bg-green-100 text-green-700 border-green-200",
+const STATUS_BADGE_VARIANT: Record<string, "warning" | "info" | "success"> = {
+  new: "warning",
+  contacted: "info",
+  done: "success",
 };
 
 const CONSULT_TYPE_LABELS: Record<string, string> = {
@@ -171,11 +172,9 @@ export default function AdminConsultationsPage() {
                 </span>
 
                 {/* 상태 */}
-                <span
-                  className={`inline-flex w-fit items-center border px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[c.status]}`}
-                >
+                <Badge variant={STATUS_BADGE_VARIANT[c.status]}>
                   {STATUS_LABELS[c.status]}
-                </span>
+                </Badge>
 
                 {/* 날짜 */}
                 <span className="text-xs text-muted">
@@ -223,25 +222,7 @@ export default function AdminConsultationsPage() {
 
       {/* 페이지네이션 */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50 transition-colors duration-200"
-          >
-            이전
-          </button>
-          <span className="text-sm text-muted">
-            {page} / {totalPages}
-          </span>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50 transition-colors duration-200"
-          >
-            다음
-          </button>
-        </div>
+        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} variant="simple" />
       )}
       <ConfirmModal
         isOpen={!!deleteTargetId}

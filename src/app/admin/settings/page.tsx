@@ -180,7 +180,7 @@ export default function AdminSettingsPage() {
           value={smsTemplate}
           onChange={(e) => setValue("smsTemplate", e.target.value)}
           rows={6}
-          className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+          className="input-admin"
           placeholder="SMS 템플릿을 입력하세요"
         />
       </div>

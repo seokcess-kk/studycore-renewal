@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Nav, Footer } from "@/components/common";
+import { Nav, Footer, SectionHeader } from "@/components/common";
 import { CONTACT } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -18,17 +18,20 @@ export default function PrivacyPage() {
         {/* 헤더 */}
         <section className="bg-stone section-sm px-6 md:px-13 border-b border-rule">
           <div className="max-w-3xl mx-auto">
-            <h1 className="font-serif text-3xl font-bold text-ink mb-4">
-              개인정보처리방침
-            </h1>
-            <p className="text-muted text-body">
+            <SectionHeader
+              title="개인정보처리방침"
+              as="h1"
+              titleSize="h2"
+              align="center"
+            />
+            <p className="text-muted text-body text-center mt-4">
               최종 수정일: 2025년 1월 1일
             </p>
           </div>
         </section>
 
         {/* 본문 */}
-        <section className="py-12 px-6 md:px-13">
+        <section className="section-md px-6 md:px-13">
           <div className="max-w-3xl mx-auto">
             <PrivacySection title="1. 개인정보의 수집 및 이용 목적">
               <p>
@@ -144,8 +147,8 @@ function PrivacySection({
 }) {
   return (
     <div className="mb-10">
-      <h2 className="text-lg font-bold text-ink mb-4">{title}</h2>
-      <div className="text-reading text-ink/70 leading-relaxed space-y-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_li]:text-body">
+      <h2 className="text-subhead font-bold text-ink mb-4">{title}</h2>
+      <div className="text-reading text-ink/70 leading-prose space-y-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_li]:text-body">
         {children}
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Nav, Footer, Skeleton } from "@/components/common";
+import { Nav, Footer, Skeleton, SectionHeader } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getPublicQuestionList, getMyQuestions, getQuestionList } from "@/domains/question/service";
 import { type QuestionWithAuthor } from "@/domains/question/model";
@@ -71,7 +71,7 @@ export default function QuestionsPage() {
             <h1 className="font-serif text-2xl font-bold text-ink mb-4">
               승인 대기 중
             </h1>
-            <p className="text-muted text-reading leading-relaxed">
+            <p className="text-muted text-reading leading-prose">
               질문방은 관리자 승인 후 이용 가능합니다.
             </p>
           </div>
@@ -128,18 +128,14 @@ export default function QuestionsPage() {
           /* ========== 재원생 Hero 헤더 ========== */
           <>
             <section className="bg-navy section-sm px-6 md:px-13">
-              <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-                <div>
-                  <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
-                    Questions / 수학 질문방
-                  </span>
-                  <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-black text-white leading-tight">
-                    수학 질문방
-                  </h1>
-                  <p className="mt-4 text-white/70 text-reading">
-                    모르는 문제를 올리면 멘토가 직접 풀이해 드립니다.
-                  </p>
-                </div>
+              <div className="max-w-4xl mx-auto">
+                <SectionHeader
+                  label="Questions / 수학 질문방"
+                  title="수학 질문방"
+                  description="모르는 문제를 올리면 멘토가 직접 풀이해 드립니다."
+                  theme="dark"
+                  as="h1"
+                />
               </div>
             </section>
 

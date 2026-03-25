@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Nav, Footer } from "@/components/common";
+import { Nav, Footer, SectionHeader } from "@/components/common";
 
 export const metadata: Metadata = {
   title: "운영 시스템",
@@ -13,18 +13,15 @@ export default function SystemPage() {
       <Nav />
       <main className="page-body">
         {/* 헤더 */}
-        <section className="bg-navy-dark py-20 px-6 md:px-13">
+        <section className="bg-navy-dark section-lg px-6 md:px-13">
           <div className="max-w-4xl mx-auto">
-            <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-4">
-              System / 운영 시스템
-            </span>
-            <h1 className="font-serif text-[clamp(36px,5vw,56px)] font-black text-white leading-tight tracking-heading">
-              구조가 성적을 만든다
-            </h1>
-            <p className="mt-6 text-white/70 text-reading leading-relaxed max-w-xl">
-              스터디코어 1.0은 교시제 시스템을 기반으로 운영됩니다. 명확한
-              규칙과 일관된 관리가 학생의 집중력을 극대화합니다.
-            </p>
+            <SectionHeader
+              label="System / 운영 시스템"
+              title="구조가 성적을 만든다"
+              description="스터디코어 1.0은 교시제 시스템을 기반으로 운영됩니다. 명확한 규칙과 일관된 관리가 학생의 집중력을 극대화합니다."
+              theme="dark"
+              as="h1"
+            />
           </div>
         </section>
 
@@ -32,14 +29,14 @@ export default function SystemPage() {
         <section className="section-sm px-6 md:px-13 border-b border-rule">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-baseline gap-4 mb-8">
-              <span className="font-mono text-[48px] font-bold text-navy/10">
+              <span className="font-mono text-fluid-h1 font-bold text-navy/10">
                 01
               </span>
-              <h2 className="font-serif text-2xl font-bold text-ink">
+              <h2 className="font-serif text-fluid-h2 font-bold text-ink">
                 교시제 시스템
               </h2>
             </div>
-            <div className="space-y-6 text-reading text-ink/70 leading-relaxed">
+            <div className="space-y-6 text-reading text-ink/70 leading-prose">
               <p>
                 하루 일과는 <strong className="text-ink">교시 단위</strong>로
                 운영됩니다. 시작 종이 울리면 자리에 앉아 학습을 시작하고, 정해진
@@ -77,10 +74,10 @@ export default function SystemPage() {
         <section className="section-sm px-6 md:px-13 border-b border-rule">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-baseline gap-4 mb-8">
-              <span className="font-mono text-[48px] font-bold text-navy/10">
+              <span className="font-mono text-fluid-h1 font-bold text-navy/10">
                 02
               </span>
-              <h2 className="font-serif text-2xl font-bold text-ink">
+              <h2 className="font-serif text-fluid-h2 font-bold text-ink">
                 생활 규정
               </h2>
             </div>
@@ -109,14 +106,14 @@ export default function SystemPage() {
         <section className="section-sm px-6 md:px-13">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-baseline gap-4 mb-8">
-              <span className="font-mono text-[48px] font-bold text-navy/10">
+              <span className="font-mono text-fluid-h1 font-bold text-navy/10">
                 03
               </span>
-              <h2 className="font-serif text-2xl font-bold text-ink">
+              <h2 className="font-serif text-fluid-h2 font-bold text-ink">
                 벌점 제도
               </h2>
             </div>
-            <p className="text-reading text-ink/70 leading-relaxed mb-6">
+            <p className="text-reading text-ink/70 leading-prose mb-6">
               모든 재원생의 집중 환경을 위해 명확한 페널티 시스템을 운영합니다.
             </p>
             <div className="bg-stone p-6 space-y-4">

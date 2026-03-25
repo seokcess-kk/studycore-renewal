@@ -41,12 +41,12 @@ export function IntroSection() {
           <span className="text-teal text-secondary font-medium tracking-label uppercase">
             About STUDYCORE
           </span>
-          <h1 className="font-serif text-3xl md:text-4xl font-bold text-ink mt-3">
+          <h1 className="font-serif text-fluid-h1 font-bold text-ink mt-3">
             학생의 성장을 위한
             <br />
             <span className="text-teal">관리형 독서실</span>
           </h1>
-          <p className="text-muted text-reading mt-6 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted text-reading mt-6 max-w-2xl mx-auto leading-prose">
             스터디코어는 단순한 공부 공간이 아닙니다.
             <br />
             학생 개개인의 목표와 성장을 함께 고민하는 파트너입니다.
@@ -62,10 +62,10 @@ export function IntroSection() {
           className="bg-navy-d text-white p-8 md:p-12 mb-16"
         >
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="font-serif text-xl md:text-2xl font-bold mb-4">
+            <h2 className="font-serif text-fluid-h2 font-bold mb-4">
               Our Mission
             </h2>
-            <p className="text-white/80 text-reading leading-relaxed">
+            <p className="text-on-dark-muted text-reading leading-prose">
               &ldquo;모든 학생이 자신만의 속도로 성장할 수 있는 환경을 만듭니다.
               체계적인 관리와 따뜻한 관심으로 학생들이 스스로 공부하는 힘을 기르고,
               목표를 향해 나아갈 수 있도록 돕습니다.&rdquo;
@@ -88,7 +88,7 @@ export function IntroSection() {
               <h3 className="font-bold text-ink text-subhead mb-2">
                 {feature.title}
               </h3>
-              <p className="text-muted text-secondary leading-relaxed">
+              <p className="text-muted text-secondary leading-prose">
                 {feature.description}
               </p>
             </motion.div>

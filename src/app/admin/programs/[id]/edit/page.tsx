@@ -10,6 +10,7 @@ import { Button } from "@/components/common/Button";
 import { ImageUploader } from "@/components/common/ImageUploader";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
+import { FormError } from "@/components/common";
 import {
   createProgramSchema,
   type CreateProgramInput,
@@ -191,11 +192,9 @@ export default function AdminProgramEditPage() {
             <input
               type="text"
               {...register("title")}
-              className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+              className="input-admin"
             />
-            {errors.title && (
-              <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>
-            )}
+            <FormError message={errors.title?.message} />
           </div>
 
           <div>
@@ -206,7 +205,7 @@ export default function AdminProgramEditPage() {
               {...register("description")}
               rows={8}
               placeholder={"프로그램 상세 설명을 입력하세요.\n\n줄바꿈으로 내용을 구분하면 상세 보기에서 그대로 표시됩니다."}
-              className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none resize-none"
+              className="input-admin resize-none"
             />
             <p className="mt-1 text-xs text-muted">
               &apos;- &apos;로 시작하는 줄 → 홈 카드 불릿 (최대 4개) · 나머지 → 상세 팝업에서만 표시
@@ -303,7 +302,7 @@ export default function AdminProgramEditPage() {
               <input
                 type="date"
                 {...register("start_date")}
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               />
             </div>
             <div>
@@ -313,7 +312,7 @@ export default function AdminProgramEditPage() {
               <input
                 type="date"
                 {...register("end_date")}
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               />
             </div>
           </div>
@@ -335,7 +334,7 @@ export default function AdminProgramEditPage() {
             <input
               type="number"
               {...register("sort_order", { valueAsNumber: true })}
-              className="w-32 border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+              className="input-admin w-32"
             />
           </div>
         </div>

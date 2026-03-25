@@ -7,6 +7,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
+import { Badge, Pagination } from "@/components/common";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { getProgramList, deleteProgram } from "@/domains/program/service";
 import type { Program } from "@/domains/program/model";
@@ -89,15 +90,9 @@ export default function AdminProgramsPage() {
               onClick={() => router.push(`/admin/programs/${p.id}/edit`)}
             >
               <p className="truncate text-sm font-medium text-ink">{p.title}</p>
-              <span
-                className={`inline-flex w-fit items-center border px-2 py-0.5 text-xs font-medium ${
-                  p.is_active
-                    ? "border-green-200 bg-green-100 text-green-700"
-                    : "border-rule bg-stone text-muted"
-                }`}
-              >
+              <Badge variant={p.is_active ? "success" : "neutral"}>
                 {p.is_active ? "활성" : "비활성"}
-              </span>
+              </Badge>
               <span className="text-xs text-muted">
                 {p.start_date
                   ? new Date(p.start_date).toLocaleDateString("ko-KR")
@@ -120,25 +115,7 @@ export default function AdminProgramsPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50 transition-colors duration-200"
-          >
-            이전
-          </button>
-          <span className="text-sm text-muted">
-            {page} / {totalPages}
-          </span>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="border border-rule px-3 py-1.5 text-sm text-muted hover:text-ink disabled:opacity-50 transition-colors duration-200"
-          >
-            다음
-          </button>
-        </div>
+        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} variant="simple" />
       )}
       <ConfirmModal
         isOpen={!!deleteTargetId}

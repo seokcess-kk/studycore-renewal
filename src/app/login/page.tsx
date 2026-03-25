@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
-import { Nav, Footer, Button, useToast } from "@/components/common";
+import { Nav, Footer, Button, useToast, FormError } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { staffLoginSchema, type StaffLoginInput } from "@/domains/user/model";
 import { useUserStore } from "@/stores/useUserStore";
@@ -129,7 +129,7 @@ function LoginContent() {
           </button>
 
           {/* 안내 */}
-          <p className="text-center text-small text-muted mt-4 leading-relaxed">
+          <p className="text-center text-small text-muted mt-4 leading-prose">
             최초 로그인 시 관리자 승인이 필요합니다.
           </p>
 
@@ -187,11 +187,9 @@ function LoginContent() {
                     type="text"
                     placeholder="staff_id"
                     {...register("username")}
-                    className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-body placeholder:text-muted/40 focus:border-navy focus:outline-none"
+                    className="input-base"
                   />
-                  {errors.username && (
-                    <p className="mt-1 text-small text-red-500">{errors.username.message}</p>
-                  )}
+                  <FormError message={errors.username?.message} />
                 </div>
 
                 <div>
@@ -203,11 +201,9 @@ function LoginContent() {
                     type="password"
                     placeholder="••••••••"
                     {...register("password")}
-                    className="w-full px-3 py-2.5 border border-rule bg-white text-ink text-body placeholder:text-muted/40 focus:border-navy focus:outline-none"
+                    className="input-base"
                   />
-                  {errors.password && (
-                    <p className="mt-1 text-small text-red-500">{errors.password.message}</p>
-                  )}
+                  <FormError message={errors.password?.message} />
                 </div>
 
                 <Button

@@ -16,3 +16,8 @@ export { AvatarUploader } from "./AvatarUploader";
 export { SessionWarning } from "./SessionWarning";
 export { OrganizationJsonLd, FAQJsonLd, WebSiteJsonLd } from "./JsonLd";
 export { PendingBanner } from "./PendingBanner";
+export { FormError } from "./FormError";
+export { SectionHeader } from "./SectionHeader";
+export { Badge, type BadgeVariant } from "./Badge";
+export { Pagination } from "./Pagination";
+export { BaseModal } from "./BaseModal";

@@ -54,7 +54,7 @@ export function TeamSection() {
           <span className="text-teal text-secondary font-medium tracking-label uppercase">
             Our Team
           </span>
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-ink mt-3">
+          <h2 className="font-serif text-fluid-h2 font-bold text-ink mt-3">
             전문 멘토진
           </h2>
           <p className="text-muted text-body mt-4 max-w-xl mx-auto">
@@ -91,7 +91,7 @@ export function TeamSection() {
               <p className="text-teal text-secondary font-medium mt-1">
                 {member.subject} {member.role}
               </p>
-              <p className="text-muted text-small mt-3 leading-relaxed">
+              <p className="text-muted text-small mt-3 leading-prose">
                 {member.bio}
               </p>
             </motion.div>

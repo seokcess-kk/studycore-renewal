@@ -7,6 +7,7 @@ import { ArrowLeft, Save } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/common/Button";
+import { FormError } from "@/components/common";
 import { ImageUploader } from "@/components/common/ImageUploader";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/common/Toast";
@@ -138,7 +139,7 @@ export default function AdminPopupNewPage() {
           <select
             value={noticeId || ""}
             onChange={(e) => handleNoticeSelect(e.target.value)}
-            className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+            className="input-admin"
           >
             <option value="">직접 작성</option>
             {notices.map((n) => (
@@ -162,11 +163,9 @@ export default function AdminPopupNewPage() {
               type="text"
               {...register("title")}
               placeholder="팝업 제목"
-              className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+              className="input-admin"
             />
-            {errors.title && (
-              <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>
-            )}
+            <FormError message={errors.title?.message} />
           </div>
 
           <div>
@@ -177,7 +176,7 @@ export default function AdminPopupNewPage() {
               {...register("content")}
               rows={4}
               placeholder="팝업 내용 (선택)"
-              className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none resize-none"
+              className="input-admin resize-none"
             />
           </div>
 
@@ -208,13 +207,9 @@ export default function AdminPopupNewPage() {
                 type="text"
                 {...register("link_url")}
                 placeholder="https://..."
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               />
-              {errors.link_url && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.link_url.message}
-                </p>
-              )}
+              <FormError message={errors.link_url?.message} />
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-muted">
@@ -224,7 +219,7 @@ export default function AdminPopupNewPage() {
                 type="text"
                 {...register("link_text")}
                 placeholder="자세히 보기"
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               />
             </div>
           </div>
@@ -241,13 +236,9 @@ export default function AdminPopupNewPage() {
               <input
                 type="date"
                 {...register("start_date")}
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               />
-              {errors.start_date && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.start_date.message}
-                </p>
-              )}
+              <FormError message={errors.start_date?.message} />
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-muted">
@@ -256,13 +247,9 @@ export default function AdminPopupNewPage() {
               <input
                 type="date"
                 {...register("end_date")}
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               />
-              {errors.end_date && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.end_date.message}
-                </p>
-              )}
+              <FormError message={errors.end_date?.message} />
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -283,7 +270,7 @@ export default function AdminPopupNewPage() {
             <input
               type="number"
               {...register("sort_order", { valueAsNumber: true })}
-              className="w-32 border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+              className="input-admin w-32"
             />
           </div>
         </div>

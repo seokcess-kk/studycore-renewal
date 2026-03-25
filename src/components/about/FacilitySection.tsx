@@ -63,7 +63,7 @@ export function FacilitySection() {
           <span className="text-teal text-secondary font-medium tracking-label uppercase">
             Facilities
           </span>
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-ink mt-3">
+          <h2 className="font-serif text-fluid-h2 font-bold text-ink mt-3">
             학습에 최적화된 공간
           </h2>
         </motion.div>

@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/common/Button";
 import { useToast } from "@/components/common/Toast";
+import { FormError } from "@/components/common";
 
 const CreateStaffSchema = z.object({
   name: z.string().min(1, "이름을 입력해주세요"),
@@ -219,11 +220,9 @@ export default function AdminMemberNewPage() {
                 type="text"
                 {...register("name")}
                 placeholder="홍길동"
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               />
-              {errors.name && (
-                <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
-              )}
+              <FormError message={errors.name?.message} />
             </div>
 
             <div>
@@ -234,13 +233,9 @@ export default function AdminMemberNewPage() {
                 type="text"
                 {...register("username")}
                 placeholder="hong_gildong"
-                className="w-full border border-rule px-3 py-2 font-mono text-sm focus:border-navy focus:outline-none"
+                className="input-admin font-mono"
               />
-              {errors.username && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.username.message}
-                </p>
-              )}
+              <FormError message={errors.username?.message} />
               <p className="mt-1 text-xs text-muted">
                 영문 소문자, 숫자, 밑줄만 사용 가능
               </p>
@@ -252,7 +247,7 @@ export default function AdminMemberNewPage() {
               </label>
               <select
                 {...register("role")}
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="input-admin"
               >
                 <option value="assistant">조교</option>
                 <option value="mentor">멘토</option>

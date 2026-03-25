@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { GuideAttachment } from "@/domains/guide/model";
 import { downloadWithName } from "@/components/common/AttachmentModal";
+import { FormError } from "@/components/common";
 
 interface FileAttachmentManagerProps {
   sectionId?: string;
@@ -324,7 +325,7 @@ export function FileAttachmentManager({
       )}
 
       {/* 에러 */}
-      {error && <p className="text-secondary text-red-600">{error}</p>}
+      <FormError message={error ?? undefined} />
 
       {/* 업로드 중 */}
       {uploading.length > 0 && (

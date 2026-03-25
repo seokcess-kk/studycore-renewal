@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Send } from "lucide-react";
-import { Button, useToast } from "@/components/common";
+import { Button, useToast, FormError } from "@/components/common";
 import { ImageUploader, type UploadedFileMeta } from "@/components/common/ImageUploader";
 import { createClient } from "@/lib/supabase/client";
 import { createAnswer } from "@/domains/question/service";
@@ -71,11 +71,9 @@ export function AnswerForm({ questionId, onSuccess, compact }: AnswerFormProps) 
         {...register("content")}
         rows={compact ? 4 : 6}
         placeholder="답변을 입력해주세요 (10자 이상)"
-        className="w-full border border-rule px-4 py-3 text-body text-ink focus:border-navy focus:outline-none"
+        className="input-base"
       />
-      {errors.content && (
-        <p className="text-small text-red-500">{errors.content.message}</p>
-      )}
+      <FormError message={errors.content?.message} />
 
       <ImageUploader
         bucket="question-images"
