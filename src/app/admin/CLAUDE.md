@@ -5,8 +5,19 @@
 
 ## 레이아웃 구조
 - `layout.tsx` — 사이드바 + 헤더 래핑
-- `AdminSidebar` (src/components/admin/) — 역할별 메뉴 필터링
+- `AdminSidebar` (src/components/admin/) — 그룹별 메뉴 + 역할별 필터링
 - `AdminHeader` — 로그아웃, 프로필
+
+### AdminSidebar 메뉴 그룹
+| 그룹 | 메뉴 |
+|------|------|
+| *(없음)* | 대시보드 |
+| **관리** | 회원 관리, 상담 관리, 도시락 관리 |
+| **콘텐츠** | 공지 관리, 질문 관리, 블로그 관리 |
+| **홈페이지** | 프로그램 관리, 공간 관리, 팝업 관리 |
+| **운영** | 온보딩/매뉴얼, 설정 |
+
+새 메뉴 추가 시 `navGroups` 배열의 적절한 그룹에 배치. assistant는 `assistantVisible: true`인 항목만 표시.
 
 ## 스태프 계정 생성
 - API: `src/app/api/admin/create-staff/`
