@@ -3,59 +3,51 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-const slides = [
-  {
-    label: "Main Hall",
-    title: "메인 자습실",
-    description:
-      "개인 칸막이 책상과 최적화된 조명으로 설계된 넓고 조용한 자습 공간입니다. 교시 시작과 함께 집중 모드가 시작됩니다.",
-  },
-  {
-    label: "Lounge",
-    title: "휴게 공간",
-    description:
-      "쉬는 시간에 완전히 긴장을 풀고 돌아올 수 있는 별도 공간입니다. 자습실과 분리되어 집중과 휴식의 경계가 명확합니다.",
-  },
-  {
-    label: "Facility",
-    title: "편의 시설",
-    description:
-      "정수기, 개인 사물함, 충전 시설을 기본 제공합니다. 공부 외의 불편함이 없도록 필요한 것들은 이미 갖춰져 있습니다.",
-  },
-  {
-    label: "Location",
-    title: "애플타워 10층",
-    description:
-      "광주광역시 광산구 임방울대로 330, 애플타워 10층. 버스·지하철 모두 접근이 편리하며, 건물 내 주차도 가능합니다.",
-  },
-];
+import { createBrowserClient } from "@/lib/supabase/client";
+import { getActiveSpaces } from "@/domains/space/service";
+import type { Space } from "@/domains/space/model";
 
 const AUTO_PLAY_MS = 4000;
 
 export function SpaceSlider() {
+  const [spaces, setSpaces] = useState<Space[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [progressKey, setProgressKey] = useState(0);
 
-  const goTo = useCallback((index: number) => {
-    setCurrent((index + slides.length) % slides.length);
-    setProgressKey((k) => k + 1);
+  useEffect(() => {
+    async function load() {
+      const supabase = createBrowserClient();
+      const data = await getActiveSpaces(supabase);
+      setSpaces(data);
+      setIsLoading(false);
+    }
+    load();
   }, []);
+
+  const goTo = useCallback(
+    (index: number) => {
+      if (spaces.length === 0) return;
+      setCurrent((index + spaces.length) % spaces.length);
+      setProgressKey((k) => k + 1);
+    },
+    [spaces.length]
+  );
 
   const next = useCallback(() => goTo(current + 1), [current, goTo]);
   const prev = useCallback(() => goTo(current - 1), [current, goTo]);
 
   // 자동 재생
   useEffect(() => {
-    if (!isPaused) {
+    if (!isPaused && spaces.length > 1) {
       intervalRef.current = setInterval(next, AUTO_PLAY_MS);
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPaused, next]);
+  }, [isPaused, next, spaces.length]);
 
   // Framer Motion Drag 핸들러
   const handleDragEnd = (
@@ -69,6 +61,17 @@ export function SpaceSlider() {
       prev();
     }
   };
+
+  // 로딩 중이거나 데이터 없으면 렌더링하지 않음
+  if (isLoading) {
+    return (
+      <section id="space" className="bg-white section-lg">
+        <div className="h-[70vh] min-h-[480px] max-h-[600px] bg-stone animate-pulse" />
+      </section>
+    );
+  }
+
+  if (spaces.length === 0) return null;
 
   return (
     <section id="space" className="bg-white section-lg">
@@ -110,19 +113,31 @@ export function SpaceSlider() {
             setIsPaused(false);
           }}
         >
-          {slides.map((slide, index) => (
+          {spaces.map((space, index) => (
             <div
-              key={slide.label}
+              key={space.id}
               className="min-w-full h-[70vh] min-h-[480px] max-h-[600px] flex-shrink-0 relative overflow-hidden"
             >
-              {/* 배경 (플레이스홀더) — Ken Burns 줌인 효과 */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-navy-dark to-[#1a4070]"
-                animate={{
-                  scale: index === current ? 1.05 : 1,
-                }}
-                transition={{ duration: 4, ease: "linear" }}
-              />
+              {/* 배경: 이미지 또는 그라디언트 폴백 */}
+              {space.image_url ? (
+                <motion.img
+                  src={space.image_url}
+                  alt={space.title}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  animate={{
+                    scale: index === current ? 1.05 : 1,
+                  }}
+                  transition={{ duration: 4, ease: "linear" }}
+                />
+              ) : (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-br from-navy-dark to-[#1a4070]"
+                  animate={{
+                    scale: index === current ? 1.05 : 1,
+                  }}
+                  transition={{ duration: 4, ease: "linear" }}
+                />
+              )}
 
               {/* 격자 */}
               <div
@@ -147,13 +162,13 @@ export function SpaceSlider() {
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <span className="font-mono text-label font-bold text-teal tracking-label uppercase block mb-2.5">
-                    {slide.label}
+                    {space.label}
                   </span>
                   <h3 className="font-serif text-fluid-h2 font-bold text-white mb-2 tracking-heading">
-                    {slide.title}
+                    {space.title}
                   </h3>
                   <p className="text-body text-white/60 font-light leading-prose max-w-[440px]">
-                    {slide.description}
+                    {space.description}
                   </p>
                 </motion.div>
               </div>
@@ -164,9 +179,9 @@ export function SpaceSlider() {
 
       {/* 컨트롤 */}
       <div className="flex items-center justify-between px-6 md:px-13 pt-7">
-        {/* 프로그레스 바 — 인라인 style로 animation-play-state 제어 */}
+        {/* 프로그레스 바 */}
         <div className="flex gap-1.5 flex-1 max-w-[200px]">
-          {slides.map((_, index) => (
+          {spaces.map((_, index) => (
             <div
               key={index}
               className="relative h-[2px] flex-1 bg-rule/60 overflow-hidden cursor-pointer"
@@ -189,7 +204,7 @@ export function SpaceSlider() {
         {/* 카운터 */}
         <span className="font-mono text-small text-muted tracking-cta">
           {String(current + 1).padStart(2, "0")} /{" "}
-          {String(slides.length).padStart(2, "0")}
+          {String(spaces.length).padStart(2, "0")}
         </span>
 
         {/* 화살표 */}
@@ -197,14 +212,14 @@ export function SpaceSlider() {
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={prev}
-            className="w-11 h-11 border-[1.5px] border-rule flex items-center justify-center text-ink hover:bg-navy hover:border-navy hover:text-white transition-colors duration-200"
+            className="w-11 h-11 border-[1.5px] border-rule flex items-center justify-center text-ink hover:bg-navy hover:border-navy hover:text-white transition-colors duration-200 cursor-pointer"
           >
             <ChevronLeft size={16} />
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={next}
-            className="w-11 h-11 border-[1.5px] border-rule flex items-center justify-center text-ink hover:bg-navy hover:border-navy hover:text-white transition-colors duration-200"
+            className="w-11 h-11 border-[1.5px] border-rule flex items-center justify-center text-ink hover:bg-navy hover:border-navy hover:text-white transition-colors duration-200 cursor-pointer"
           >
             <ChevronRight size={16} />
           </motion.button>

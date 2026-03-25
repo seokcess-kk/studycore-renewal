@@ -203,6 +203,7 @@ e2e/
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-03-25: 공간 소개 어드민 동적 관리 — spaces 테이블 + space-images Storage + DDD 3파일(space 도메인) + 어드민 CRUD(/admin/spaces) + SpaceSlider 동적 데이터 전환
 - 2026-03-25: E2E 테스트 인프라 구축 — Playwright 4개 프로젝트(public/auth/admin/member), globalSetup 계정 잠금 해제+storageState, 38개 테스트 케이스
 - 2026-03-24: 질문/답변 첨부파일 메타데이터 전환 — image_urls TEXT[] → attachments JSONB (원본 파일명 보존), ImageUploader에 onFileUploaded 콜백 추가, MetaAttachmentList로 표시 통일
 - 2026-03-24: 첨부파일 다운로드 시 원본 파일명 유지 — downloadWithName blob fetch 방식 도입

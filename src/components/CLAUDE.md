@@ -168,3 +168,4 @@ HeroSection → TrustStrip → FeaturesSection → ProgramsSection
 → SpaceSlider → FAQSection → CTASection → PopupModal
 ```
 섹션 번호 라벨(01~05) 사용.
+SpaceSlider는 `spaces` 테이블에서 동적 데이터 fetch (어드민 `/admin/spaces`에서 관리).

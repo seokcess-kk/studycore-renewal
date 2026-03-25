@@ -18,6 +18,7 @@ import {
   FileText,
   Menu,
   X,
+  Image as ImageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
@@ -34,6 +35,7 @@ const navItems = [
   { label: "상담 관리", href: "/admin/consultations", icon: Phone },
   { label: "팝업 관리", href: "/admin/popups", icon: Layers },
   { label: "프로그램 관리", href: "/admin/programs", icon: GraduationCap },
+  { label: "공간 관리", href: "/admin/spaces", icon: ImageIcon },
   { label: "블로그 관리", href: "/admin/blog", icon: FileText },
   { label: "도시락 관리", href: "/admin/meal", icon: UtensilsCrossed },
   { label: "온보딩/매뉴얼", href: "/admin/guide", icon: BookOpen, assistantVisible: true },

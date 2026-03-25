@@ -19,7 +19,7 @@ service.ts    → 비즈니스 로직
 - Client 측: `createBrowserClient()` (lib/supabase/client.ts)
 - RLS 우회: `createAdminClient()` (lib/supabase/server.ts)
 
-## 도메인 목록 (14개)
+## 도메인 목록 (15개)
 | 도메인 | 핵심 엔티티 | 비고 |
 |--------|------------|------|
 | user | UserProfile, UserRole, UserStatus | 인증/권한 중심 |
@@ -35,6 +35,7 @@ service.ts    → 비즈니스 로직
 | settings | SiteSettings | 사이트 설정 |
 | popup | Popup | 프로모션 팝업 (notice_id 연결 시 공지 첨부파일 표시) |
 | program | Program, ProgramAttachment | 프로그램 관리 + 첨부파일 |
+| space | Space | 공간 소개 슬라이더 (어드민 동적 관리) |
 | search | — | 통합 검색 |
 
 ## 새 도메인 추가 시
