@@ -167,7 +167,7 @@ export default function AdminKakaoHistoryPage() {
                 >
                   <ArrowLeft size={18} className="text-muted" />
                 </button>
-                <h1 className="text-lg font-medium text-ink flex items-center gap-2">
+                <h1 className="text-subhead font-medium text-ink flex items-center gap-2">
                   <History size={20} />
                   발송 이력
                 </h1>

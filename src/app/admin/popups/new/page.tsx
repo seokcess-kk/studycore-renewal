@@ -148,7 +148,7 @@ export default function AdminPopupNewPage() {
               </option>
             ))}
           </select>
-          <p className="mt-2 text-xs text-muted">
+          <p className="mt-2 text-caption text-muted">
             공지사항을 선택하면 팝업 클릭 시 해당 공지로 이동합니다.
           </p>
         </div>
@@ -156,7 +156,7 @@ export default function AdminPopupNewPage() {
         {/* 기본 정보 */}
         <div className="border border-rule bg-white p-6 space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               제목 *
             </label>
             <input
@@ -169,7 +169,7 @@ export default function AdminPopupNewPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               내용
             </label>
             <textarea
@@ -181,7 +181,7 @@ export default function AdminPopupNewPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-muted">
+            <label className="mb-2 block text-body font-medium text-muted">
               이미지
             </label>
             <ImageUploader
@@ -200,7 +200,7 @@ export default function AdminPopupNewPage() {
           <div className="border border-rule bg-white p-6 space-y-4">
             <h3 className="font-medium text-ink">링크 설정</h3>
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 링크 URL
               </label>
               <input
@@ -212,7 +212,7 @@ export default function AdminPopupNewPage() {
               <FormError message={errors.link_url?.message} />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 링크 텍스트
               </label>
               <input
@@ -230,7 +230,7 @@ export default function AdminPopupNewPage() {
           <h3 className="font-medium text-ink">노출 설정</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 시작일 *
               </label>
               <input
@@ -241,7 +241,7 @@ export default function AdminPopupNewPage() {
               <FormError message={errors.start_date?.message} />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 종료일 *
               </label>
               <input
@@ -259,12 +259,12 @@ export default function AdminPopupNewPage() {
               {...register("is_active")}
               className="h-4 w-4 border-rule"
             />
-            <label htmlFor="is_active" className="text-sm text-ink">
+            <label htmlFor="is_active" className="text-body text-ink">
               활성화
             </label>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               정렬 순서
             </label>
             <input

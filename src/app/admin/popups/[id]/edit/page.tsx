@@ -150,7 +150,7 @@ export default function AdminPopupEditPage() {
 
         <div className="border border-rule bg-white p-6 space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               제목 *
             </label>
             <input
@@ -162,7 +162,7 @@ export default function AdminPopupEditPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               내용
             </label>
             <textarea
@@ -173,7 +173,7 @@ export default function AdminPopupEditPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-muted">
+            <label className="mb-2 block text-body font-medium text-muted">
               이미지
             </label>
             <ImageUploader
@@ -191,7 +191,7 @@ export default function AdminPopupEditPage() {
           <div className="border border-rule bg-white p-6 space-y-4">
             <h3 className="font-medium text-ink">링크 설정</h3>
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 링크 URL
               </label>
               <input
@@ -202,7 +202,7 @@ export default function AdminPopupEditPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 링크 텍스트
               </label>
               <input
@@ -218,7 +218,7 @@ export default function AdminPopupEditPage() {
           <h3 className="font-medium text-ink">노출 설정</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 시작일 *
               </label>
               <input
@@ -228,7 +228,7 @@ export default function AdminPopupEditPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 종료일 *
               </label>
               <input
@@ -245,12 +245,12 @@ export default function AdminPopupEditPage() {
               {...register("is_active")}
               className="h-4 w-4 border-rule"
             />
-            <label htmlFor="is_active" className="text-sm text-ink">
+            <label htmlFor="is_active" className="text-body text-ink">
               활성화
             </label>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               정렬 순서
             </label>
             <input

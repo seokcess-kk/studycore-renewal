@@ -199,10 +199,11 @@ interface MetaAttachment {
 
 interface MetaAttachmentListProps {
   attachments: MetaAttachment[];
-  /** 첨부파일 클릭 시 새 탭으로 열기 (기본) */
+  /** 이미지/파일 클릭 시 모달 오픈 콜백 (미전달 시 새 탭) */
+  onSelect?: (url: string) => void;
 }
 
-export function MetaAttachmentList({ attachments }: MetaAttachmentListProps) {
+export function MetaAttachmentList({ attachments, onSelect }: MetaAttachmentListProps) {
   const imageAtts = attachments.filter((a) => a.file_type?.startsWith("image/"));
   const fileAtts = attachments.filter((a) => !a.file_type?.startsWith("image/"));
 
@@ -211,22 +212,38 @@ export function MetaAttachmentList({ attachments }: MetaAttachmentListProps) {
       {/* 이미지 — 작은 썸네일 가로 나열 */}
       {imageAtts.length > 0 && (
         <div className="flex gap-2 flex-wrap">
-          {imageAtts.map((att) => (
-            <a
-              key={att.id}
-              href={att.file_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-16 h-16 overflow-hidden border border-rule bg-stone hover:opacity-80 transition-opacity cursor-pointer"
-            >
-              <img
-                src={att.file_url}
-                alt={att.file_name}
-                loading="lazy"
-                className="w-full h-full object-cover"
-              />
-            </a>
-          ))}
+          {imageAtts.map((att) =>
+            onSelect ? (
+              <button
+                key={att.id}
+                type="button"
+                onClick={() => onSelect(att.file_url)}
+                className="w-16 h-16 overflow-hidden border border-rule bg-stone hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+              >
+                <img
+                  src={att.file_url}
+                  alt={att.file_name}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ) : (
+              <a
+                key={att.id}
+                href={att.file_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-16 h-16 overflow-hidden border border-rule bg-stone hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+              >
+                <img
+                  src={att.file_url}
+                  alt={att.file_name}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </a>
+            )
+          )}
         </div>
       )}
 
@@ -239,14 +256,24 @@ export function MetaAttachmentList({ attachments }: MetaAttachmentListProps) {
               className="flex items-center gap-2 border border-rule px-3 py-1.5 group"
             >
               <FileText size={14} className="text-muted flex-shrink-0" />
-              <a
-                href={att.file_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 truncate text-small text-ink hover:text-teal transition-colors duration-200 cursor-pointer"
-              >
-                {att.file_name}
-              </a>
+              {onSelect ? (
+                <button
+                  type="button"
+                  onClick={() => onSelect(att.file_url)}
+                  className="flex-1 truncate text-small text-ink hover:text-teal transition-colors duration-200 cursor-pointer text-left"
+                >
+                  {att.file_name}
+                </button>
+              ) : (
+                <a
+                  href={att.file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 truncate text-small text-ink hover:text-teal transition-colors duration-200 cursor-pointer"
+                >
+                  {att.file_name}
+                </a>
+              )}
               {att.file_size && (
                 <span className="text-caption text-muted flex-shrink-0">
                   {att.file_size > 1024 * 1024

@@ -85,7 +85,7 @@ export default function MyPage() {
               size="sm"
             />
             <div className="flex-1">
-              <h1 className="font-serif text-xl font-bold text-white">
+              <h1 className="font-serif text-fluid-h2 font-bold text-white">
                 {profile?.name || "사용자"}
               </h1>
               <p className="text-secondary text-white/70 mt-1">
@@ -504,7 +504,7 @@ function WelcomeModal({ name, onClose }: { name: string; onClose: () => void }) 
             <path strokeLinecap="square" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="font-serif text-xl font-bold text-ink mb-2">
+        <h2 className="font-serif text-fluid-h2 font-bold text-ink mb-2">
           환영합니다, {name}님!
         </h2>
         <p className="text-secondary text-muted mb-6 leading-prose">

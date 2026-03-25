@@ -60,7 +60,7 @@ export default function AdminSpacesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted">총 {total}건</span>
+        <span className="text-body text-muted">총 {total}건</span>
         <Link href="/admin/spaces/new">
           <Button variant="primary" size="sm">
             <Plus className="mr-1.5 h-4 w-4" />
@@ -70,7 +70,7 @@ export default function AdminSpacesPage() {
       </div>
 
       <div className="border border-rule bg-white overflow-x-auto">
-        <div className="grid grid-cols-[60px_60px_120px_1fr_80px_60px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted bg-stone min-w-[560px]">
+        <div className="grid grid-cols-[60px_60px_120px_1fr_80px_60px] gap-4 border-b border-rule px-4 py-3 text-caption font-medium text-muted bg-stone min-w-[560px]">
           <span>순서</span>
           <span>이미지</span>
           <span>라벨</span>
@@ -90,7 +90,7 @@ export default function AdminSpacesPage() {
               className="grid grid-cols-[60px_60px_120px_1fr_80px_60px] items-center gap-4 border-b border-rule px-4 py-3 last:border-b-0 cursor-pointer hover:bg-stone/50 transition-colors duration-200 min-w-[560px]"
               onClick={() => router.push(`/admin/spaces/${s.id}/edit`)}
             >
-              <span className="text-xs text-muted font-mono">{s.sort_order}</span>
+              <span className="text-caption text-muted font-mono">{s.sort_order}</span>
               <div className="w-8 h-8 bg-stone border border-rule overflow-hidden flex-shrink-0">
                 {s.image_url ? (
                   <img src={s.image_url} alt={s.title} className="w-full h-full object-cover" />
@@ -98,8 +98,8 @@ export default function AdminSpacesPage() {
                   <div className="w-full h-full bg-navy/10" />
                 )}
               </div>
-              <span className="text-xs text-muted font-mono truncate">{s.label}</span>
-              <p className="truncate text-sm font-medium text-ink">{s.title}</p>
+              <span className="text-caption text-muted font-mono truncate">{s.label}</span>
+              <p className="truncate text-body font-medium text-ink">{s.title}</p>
               <Badge variant={s.is_active ? "success" : "neutral"}>
                 {s.is_active ? "활성" : "비활성"}
               </Badge>

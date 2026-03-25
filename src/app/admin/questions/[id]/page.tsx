@@ -30,7 +30,9 @@ import {
   Pin,
   PinOff,
   Trash2,
+  ChevronDown,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { AttachmentModal, AttachmentList, MetaAttachmentList } from "@/components/common";
 
 // 폼 스키마 (question_id 제외 - 페이지에서 주입)
@@ -55,6 +57,7 @@ export default function AdminQuestionDetailPage() {
   const [attachmentsMeta, setAttachmentsMeta] = useState<QuestionAttachment[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isQuestionExpanded, setIsQuestionExpanded] = useState(false);
 
   const questionId = Array.isArray(params.id) ? params.id[0] : params.id;
 
@@ -145,12 +148,12 @@ export default function AdminQuestionDetailPage() {
     return (
       <div className="py-12 text-center">
         <p className="text-muted">질문을 찾을 수 없습니다.</p>
-        <a
+        <Link
           href="/admin/questions"
-          className="mt-4 inline-block text-teal hover:underline transition-colors duration-200"
+          className="mt-4 inline-block text-teal hover:underline transition-colors duration-200 cursor-pointer"
         >
           목록으로 돌아가기
-        </a>
+        </Link>
       </div>
     );
   }
@@ -161,14 +164,14 @@ export default function AdminQuestionDetailPage() {
       <div className="flex items-center justify-between">
         <Link
           href="/admin/questions"
-          className="inline-flex items-center gap-2 text-muted hover:text-ink text-sm transition-colors"
+          className="inline-flex items-center gap-2 text-muted hover:text-ink text-body transition-colors duration-200 cursor-pointer"
         >
           <ArrowLeft size={16} />
           목록으로
         </Link>
         <div className="flex items-center gap-3">
           <span
-            className={`text-xs font-medium px-2 py-1 ${
+            className={`text-caption font-medium px-2 py-1 ${
               isAnswered
                 ? "bg-teal/10 text-teal"
                 : "bg-orange-100 text-orange-600"
@@ -178,7 +181,7 @@ export default function AdminQuestionDetailPage() {
           </span>
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-small text-muted hover:text-red-500 border border-rule hover:border-red-300 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-small text-muted hover:text-red-500 border border-rule hover:border-red-300 transition-colors duration-200 cursor-pointer"
           >
             <Trash2 size={14} />
             삭제
@@ -189,7 +192,7 @@ export default function AdminQuestionDetailPage() {
       {/* 질문 정보 */}
       <div className="border border-rule bg-white p-6">
         <div className="flex items-start justify-between gap-4 mb-4">
-          <h1 className="font-serif text-xl font-bold text-ink">
+          <h1 className="font-serif text-fluid-h2 font-bold text-ink">
             {question.is_pinned && (
               <span className="text-teal mr-2">[고정]</span>
             )}
@@ -208,7 +211,7 @@ export default function AdminQuestionDetailPage() {
                 setQuestion({ ...question, is_pinned: !question.is_pinned });
               }
             }}
-            className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-small border border-rule hover:bg-stone transition-colors cursor-pointer"
+            className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-small border border-rule hover:bg-stone transition-colors duration-200 cursor-pointer"
           >
             {question.is_pinned ? (
               <>
@@ -224,7 +227,7 @@ export default function AdminQuestionDetailPage() {
           </button>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-muted mb-6">
+        <div className="flex items-center gap-4 text-body text-muted mb-6">
           <span className="flex items-center gap-1">
             <User size={14} />
             {question.author?.name || "익명"}
@@ -232,24 +235,54 @@ export default function AdminQuestionDetailPage() {
           <span>{formatDistanceToNow(question.created_at)}</span>
         </div>
 
-        <p className="text-reading text-ink whitespace-pre-wrap leading-prose">
-          {question.content}
-        </p>
+        <div className="relative">
+          <div className={cn(
+            "overflow-hidden transition-all duration-200",
+            !isQuestionExpanded && "max-h-[120px]"
+          )}>
+            <p className="text-reading text-ink whitespace-pre-wrap leading-prose">
+              {question.content}
+            </p>
 
-        {/* 첨부 파일 */}
-        {((question.attachments && question.attachments.length > 0) ||
-          (question.image_urls && question.image_urls.length > 0)) && (
-          <div className="mt-6 pt-6 border-t border-rule">
-            <div className="flex items-center gap-2 text-sm text-muted mb-3">
-              <ImageIcon size={14} />
-              첨부 파일 ({(question.attachments || question.image_urls)!.length})
-            </div>
-            {question.attachments && question.attachments.length > 0 ? (
-              <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} />
-            ) : (
-              <AttachmentList urls={question.image_urls!} onSelect={setSelectedImage} />
+            {/* 첨부 파일 */}
+            {((question.attachments && question.attachments.length > 0) ||
+              (question.image_urls && question.image_urls.length > 0)) && (
+              <div className="mt-6 pt-6 border-t border-rule">
+                <div className="flex items-center gap-2 text-body text-muted mb-3">
+                  <ImageIcon size={14} />
+                  첨부 파일 ({(question.attachments || question.image_urls)!.length})
+                </div>
+                {question.attachments && question.attachments.length > 0 ? (
+                  <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} onSelect={setSelectedImage} />
+                ) : (
+                  <AttachmentList urls={question.image_urls!} onSelect={setSelectedImage} />
+                )}
+              </div>
             )}
           </div>
+
+          {/* 그라데이션 + 펼치기 버튼 */}
+          {!isQuestionExpanded && (question.content.length > 200 || question.content.split("\n").length > 4) && (
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white to-transparent pt-8">
+              <button
+                onClick={() => setIsQuestionExpanded(true)}
+                className="flex items-center gap-1 text-small text-teal hover:text-teal-d transition-colors duration-200 cursor-pointer"
+              >
+                <ChevronDown size={14} />
+                더 보기
+              </button>
+            </div>
+          )}
+        </div>
+
+        {isQuestionExpanded && (question.content.length > 200 || question.content.split("\n").length > 4) && (
+          <button
+            onClick={() => setIsQuestionExpanded(false)}
+            className="mt-3 flex items-center gap-1 text-small text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
+          >
+            <ChevronDown size={14} className="rotate-180" />
+            접기
+          </button>
         )}
       </div>
 
@@ -263,26 +296,27 @@ export default function AdminQuestionDetailPage() {
         </div>
 
         {question.answers && question.answers.length > 0 ? (
-          question.answers.map((answer) => (
+          question.answers.map((answer, idx) => (
             <AnswerCard
               key={answer.id}
               answer={answer}
               questionId={question.id}
               onImageClick={setSelectedImage}
               onDeleted={fetchQuestion}
+              defaultExpanded={idx === question.answers!.length - 1}
             />
           ))
         ) : (
           <div className="border border-rule bg-stone/50 p-8 text-center">
             <Clock size={32} className="mx-auto text-muted mb-3" />
-            <p className="text-muted text-sm">아직 답변이 없습니다.</p>
+            <p className="text-muted text-body">아직 답변이 없습니다.</p>
           </div>
         )}
       </div>
 
       {/* 답변 작성 폼 */}
       <div className="border border-rule bg-white p-6">
-        <h3 className="font-serif text-lg font-bold text-ink mb-4">
+        <h3 className="font-serif text-subhead font-bold text-ink mb-4">
           답변 작성
         </h3>
 
@@ -292,18 +326,18 @@ export default function AdminQuestionDetailPage() {
               {...register("content")}
               rows={6}
               placeholder="답변 내용을 입력하세요 (10자 이상)"
-              className="w-full border border-rule px-4 py-3 text-sm focus:border-navy focus:outline-none resize-none"
+              className="w-full border border-rule px-4 py-3 text-body focus:border-navy focus:outline-none resize-none"
               disabled={isSubmitting}
             />
             {errors.content && (
-              <p className="mt-1 text-sm text-red-500">
+              <p className="mt-1 text-small text-red-500">
                 {errors.content.message}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-muted mb-2">
+            <label className="block text-body font-medium text-muted mb-2">
               파일 첨부 (선택)
             </label>
             <ImageUploader
@@ -374,13 +408,16 @@ function AnswerCard({
   questionId,
   onImageClick,
   onDeleted,
+  defaultExpanded = false,
 }: {
   answer: AnswerWithAuthor;
   questionId: string;
   onImageClick: (url: string) => void;
   onDeleted: () => void;
+  defaultExpanded?: boolean;
 }) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const { showToast } = useToast();
 
   const handleDelete = async () => {
@@ -413,16 +450,23 @@ function AnswerCard({
 
   const badge = getRoleBadge(answer.author?.role);
 
+  const contentPreview = answer.content.length > 80
+    ? answer.content.slice(0, 80) + "…"
+    : answer.content;
+
   return (
-    <div className="border border-teal/20 bg-teal/5 p-6">
-      {/* 답변자 정보 */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 bg-teal/20 flex items-center justify-center">
-          <CheckCircle size={18} className="text-teal" />
+    <div className="border border-teal/20 bg-teal/5">
+      {/* 답변 헤더 (클릭으로 펼침/접기) */}
+      <div
+        className="flex items-center gap-3 px-6 py-4 cursor-pointer hover:bg-teal/10 transition-colors duration-200"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="w-8 h-8 bg-teal/20 flex items-center justify-center flex-shrink-0">
+          <CheckCircle size={16} className="text-teal" />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <p className="text-sm font-medium text-ink">
+            <p className="text-body font-medium text-ink">
               {answer.author?.name || "스태프"}
             </p>
             <span
@@ -430,41 +474,58 @@ function AnswerCard({
             >
               {badge.text}
             </span>
+            <span className="text-caption text-muted">
+              {new Date(answer.created_at).toLocaleDateString("ko-KR", {
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
           </div>
-          <p className="text-xs text-muted">
-            {new Date(answer.created_at).toLocaleDateString("ko-KR", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
+          {!isExpanded && (
+            <p className="text-small text-muted truncate mt-0.5">
+              {contentPreview}
+            </p>
+          )}
         </div>
-        <button
-          type="button"
-          onClick={handleDelete}
-          disabled={isDeleting}
-          className="text-muted hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50"
-          aria-label="답변 삭제"
-        >
-          <Trash2 size={15} />
-        </button>
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); handleDelete(); }}
+            disabled={isDeleting}
+            className="p-1 text-muted hover:text-red-500 transition-colors duration-200 cursor-pointer disabled:opacity-50"
+            aria-label="답변 삭제"
+          >
+            <Trash2 size={15} />
+          </button>
+          <ChevronDown
+            size={16}
+            className={cn(
+              "text-muted transition-transform duration-200",
+              isExpanded && "rotate-180"
+            )}
+          />
+        </div>
       </div>
 
-      {/* 답변 내용 */}
-      <p className="text-reading text-ink whitespace-pre-wrap leading-prose">
-        {answer.content}
-      </p>
+      {/* 답변 내용 (펼침 시) */}
+      {isExpanded && (
+        <div className="px-6 pb-5 pt-1 border-t border-teal/20">
+          <p className="text-reading text-ink whitespace-pre-wrap leading-prose">
+            {answer.content}
+          </p>
 
-      {/* 첨부 파일 */}
-      {((answer.attachments && answer.attachments.length > 0) ||
-        (answer.image_urls && answer.image_urls.length > 0)) && (
-        <div className="mt-4 pt-4 border-t border-teal/20">
-          {answer.attachments && answer.attachments.length > 0 ? (
-            <MetaAttachmentList attachments={toMetaAttachments(answer.attachments)} />
-          ) : (
-            <AttachmentList urls={answer.image_urls!} onSelect={onImageClick} variant="answer" />
+          {/* 첨부 파일 */}
+          {((answer.attachments && answer.attachments.length > 0) ||
+            (answer.image_urls && answer.image_urls.length > 0)) && (
+            <div className="mt-4 pt-4 border-t border-teal/20">
+              {answer.attachments && answer.attachments.length > 0 ? (
+                <MetaAttachmentList attachments={toMetaAttachments(answer.attachments)} onSelect={onImageClick} />
+              ) : (
+                <AttachmentList urls={answer.image_urls!} onSelect={onImageClick} variant="answer" />
+              )}
+            </div>
           )}
         </div>
       )}

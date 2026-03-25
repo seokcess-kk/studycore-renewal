@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save, Send, Paperclip, X, FileText, Layers } from "lucide-react";
+import { ArrowLeft, Save, Send, Paperclip, X, FileText, Layers, Bell, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/common/Button";
@@ -39,6 +40,8 @@ export default function AdminNoticeNewPage() {
   const [attachments, setAttachments] = useState<{ name: string; url: string; size: number; type: string }[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [alimtalkTarget, setAlimtalkTarget] = useState<"none" | "students" | "parents">("none");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isAlimtalkOpen, setIsAlimtalkOpen] = useState(false);
 
   const {
     register,
@@ -169,7 +172,7 @@ export default function AdminNoticeNewPage() {
       <div className="flex items-center justify-between">
         <Link
           href="/admin/notices"
-          className="flex items-center gap-2 text-muted hover:text-ink"
+          className="flex items-center gap-2 text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
           목록으로
@@ -202,7 +205,7 @@ export default function AdminNoticeNewPage() {
             {/* 카테고리 + 고정 */}
             <div className="flex items-center gap-4">
               <div className="flex-1">
-                <label className="mb-1 block text-sm font-medium text-muted">
+                <label className="mb-1 block text-body font-medium text-muted">
                   카테고리
                 </label>
                 <select
@@ -227,7 +230,7 @@ export default function AdminNoticeNewPage() {
                   onChange={(e) => setIsPinned(e.target.checked)}
                   className="h-4 w-4 border-rule"
                 />
-                <label htmlFor="isPinned" className="text-sm text-ink">
+                <label htmlFor="isPinned" className="text-body text-ink">
                   상단 고정
                 </label>
               </div>
@@ -235,7 +238,7 @@ export default function AdminNoticeNewPage() {
 
             {/* 제목 */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 제목
               </label>
               <input
@@ -249,7 +252,7 @@ export default function AdminNoticeNewPage() {
 
             {/* 내용 */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 내용
               </label>
               <RichTextEditor
@@ -267,7 +270,7 @@ export default function AdminNoticeNewPage() {
           <h3 className="mb-4 font-medium text-ink">첨부파일</h3>
 
           {/* 업로드 버튼 */}
-          <label className="inline-flex cursor-pointer items-center gap-2 border border-rule px-4 py-2 text-sm text-muted hover:border-navy hover:text-ink transition-colors">
+          <label className="inline-flex cursor-pointer items-center gap-2 border border-rule px-4 py-2 text-body text-muted hover:border-navy hover:text-ink transition-colors duration-200">
             <Paperclip className="h-4 w-4" />
             {isUploading ? "업로드 중..." : "파일 첨부"}
             <input
@@ -325,8 +328,8 @@ export default function AdminNoticeNewPage() {
                 >
                   <div className="flex items-center gap-2 min-w-0">
                     <FileText className="h-4 w-4 flex-shrink-0 text-muted" />
-                    <span className="truncate text-sm text-ink">{att.name}</span>
-                    <span className="flex-shrink-0 text-xs text-muted">
+                    <span className="truncate text-body text-ink">{att.name}</span>
+                    <span className="flex-shrink-0 text-caption text-muted">
                       ({(att.size / 1024).toFixed(0)}KB)
                     </span>
                   </div>
@@ -339,7 +342,7 @@ export default function AdminNoticeNewPage() {
                       }
                       setAttachments((prev) => prev.filter((_, i) => i !== idx));
                     }}
-                    className="flex-shrink-0 p-1 text-muted hover:text-red-500"
+                    className="flex-shrink-0 p-1 text-muted hover:text-red-500 transition-colors duration-200 cursor-pointer"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -348,99 +351,132 @@ export default function AdminNoticeNewPage() {
             </div>
           )}
 
-          <p className="mt-3 text-xs text-muted">
+          <p className="mt-3 text-caption text-muted">
             최대 10MB, 여러 파일 첨부 가능
           </p>
         </div>
 
-        {/* 팝업 등록 */}
-        <div className="border border-rule bg-white p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <Layers className="h-5 w-5 text-teal" />
-            <h3 className="font-medium text-ink">팝업 등록</h3>
-          </div>
-          <label className="flex items-center gap-2 mb-3">
-            <input
-              type="checkbox"
-              checked={registerAsPopup}
-              onChange={(e) => setRegisterAsPopup(e.target.checked)}
-              className="h-4 w-4 border-rule"
-            />
-            <span className="text-sm text-ink">
-              발행 시 홈페이지 팝업으로 함께 등록
-            </span>
-          </label>
-          {registerAsPopup && (
-            <div className="ml-6 space-y-3">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="mb-1 block text-sm text-muted">시작일</label>
-                  <input
-                    type="date"
-                    value={popupStartDate}
-                    onChange={(e) => setPopupStartDate(e.target.value)}
-                    className="input-admin"
-                  />
+        {/* 팝업 등록 (접기/펼치기) */}
+        <div className="border border-rule bg-white">
+          <button
+            type="button"
+            onClick={() => setIsPopupOpen(!isPopupOpen)}
+            className="flex w-full items-center justify-between px-6 py-4 hover:bg-stone/50 transition-colors duration-200 cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <Layers className="h-5 w-5 text-teal" />
+              <h3 className="font-medium text-ink">팝업 등록</h3>
+              {registerAsPopup && (
+                <span className="text-caption bg-teal/10 text-teal px-1.5 py-0.5">활성</span>
+              )}
+            </div>
+            <ChevronDown className={cn("h-4 w-4 text-muted transition-transform duration-200", isPopupOpen && "rotate-180")} />
+          </button>
+          {isPopupOpen && (
+            <div className="border-t border-rule px-6 pb-5 pt-4 space-y-3">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={registerAsPopup}
+                  onChange={(e) => setRegisterAsPopup(e.target.checked)}
+                  className="h-4 w-4 border-rule cursor-pointer"
+                />
+                <span className="text-body text-ink">
+                  발행 시 홈페이지 팝업으로 함께 등록
+                </span>
+              </label>
+              {registerAsPopup && (
+                <div className="ml-6 space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="mb-1 block text-body text-muted">시작일</label>
+                      <input
+                        type="date"
+                        value={popupStartDate}
+                        onChange={(e) => setPopupStartDate(e.target.value)}
+                        className="input-admin"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-body text-muted">종료일</label>
+                      <input
+                        type="date"
+                        value={popupEndDate}
+                        min={popupStartDate}
+                        onChange={(e) => setPopupEndDate(e.target.value)}
+                        className="input-admin"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-caption text-muted">
+                    첨부 이미지가 있으면 팝업 이미지로 자동 사용됩니다.
+                  </p>
                 </div>
-                <div>
-                  <label className="mb-1 block text-sm text-muted">종료일</label>
-                  <input
-                    type="date"
-                    value={popupEndDate}
-                    min={popupStartDate}
-                    onChange={(e) => setPopupEndDate(e.target.value)}
-                    className="input-admin"
-                  />
-                </div>
-              </div>
-              <p className="text-xs text-muted">
-                첨부 이미지가 있으면 팝업 이미지로 자동 사용됩니다.
-              </p>
+              )}
             </div>
           )}
         </div>
 
-        {/* 알림톡 발송 옵션 */}
-        <div className="border border-rule bg-white p-6">
-          <h3 className="mb-4 font-medium text-ink">알림톡 발송 (선택)</h3>
-          <div className="space-y-2 text-sm text-ink">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="alimtalk"
-                value="none"
-                checked={alimtalkTarget === "none"}
-                onChange={() => setAlimtalkTarget("none")}
-                className="w-4 h-4 accent-navy"
-              />
-              발송 안 함
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="alimtalk"
-                value="students"
-                checked={alimtalkTarget === "students"}
-                onChange={() => setAlimtalkTarget("students")}
-                className="w-4 h-4 accent-navy"
-              />
-              재원생 전체
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="alimtalk"
-                value="parents"
-                checked={alimtalkTarget === "parents"}
-                onChange={() => setAlimtalkTarget("parents")}
-                className="w-4 h-4 accent-navy"
-              />
-              재원생 + 학부모
-            </label>
-          </div>
-          <p className="mt-3 text-xs text-muted">
-            * 발행 시 선택한 대상에게 알림톡이 자동 발송됩니다.
-          </p>
+        {/* 알림톡 발송 옵션 (접기/펼치기) */}
+        <div className="border border-rule bg-white">
+          <button
+            type="button"
+            onClick={() => setIsAlimtalkOpen(!isAlimtalkOpen)}
+            className="flex w-full items-center justify-between px-6 py-4 hover:bg-stone/50 transition-colors duration-200 cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <Bell className="h-5 w-5 text-navy" />
+              <h3 className="font-medium text-ink">알림톡 발송</h3>
+              {alimtalkTarget !== "none" && (
+                <span className="text-caption bg-navy/10 text-navy px-1.5 py-0.5">
+                  {alimtalkTarget === "students" ? "재원생" : "재원생+학부모"}
+                </span>
+              )}
+            </div>
+            <ChevronDown className={cn("h-4 w-4 text-muted transition-transform duration-200", isAlimtalkOpen && "rotate-180")} />
+          </button>
+          {isAlimtalkOpen && (
+            <div className="border-t border-rule px-6 pb-5 pt-4">
+              <div className="space-y-2 text-body text-ink">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="alimtalk"
+                    value="none"
+                    checked={alimtalkTarget === "none"}
+                    onChange={() => setAlimtalkTarget("none")}
+                    className="w-4 h-4 accent-navy"
+                  />
+                  발송 안 함
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="alimtalk"
+                    value="students"
+                    checked={alimtalkTarget === "students"}
+                    onChange={() => setAlimtalkTarget("students")}
+                    className="w-4 h-4 accent-navy"
+                  />
+                  재원생 전체
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="alimtalk"
+                    value="parents"
+                    checked={alimtalkTarget === "parents"}
+                    onChange={() => setAlimtalkTarget("parents")}
+                    className="w-4 h-4 accent-navy"
+                  />
+                  재원생 + 학부모
+                </label>
+              </div>
+              <p className="mt-3 text-caption text-muted">
+                * 발행 시 선택한 대상에게 알림톡이 자동 발송됩니다.
+              </p>
+            </div>
+          )}
         </div>
       </form>
     </div>

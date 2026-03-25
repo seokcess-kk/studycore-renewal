@@ -183,7 +183,7 @@ export function StaffQuestionCard({ question, onUpdated }: StaffQuestionCardProp
                     (question.image_urls && question.image_urls.length > 0)) && (
                     <div className="mt-3">
                       {question.attachments && question.attachments.length > 0 ? (
-                        <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} />
+                        <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} onSelect={setSelectedImage} />
                       ) : (
                         <AttachmentList urls={question.image_urls!} onSelect={setSelectedImage} />
                       )}
@@ -297,7 +297,7 @@ function StaffAnswerItem({
         (answer.image_urls && answer.image_urls.length > 0)) && (
         <div className="mt-2">
           {answer.attachments && answer.attachments.length > 0 ? (
-            <MetaAttachmentList attachments={toMetaAttachments(answer.attachments)} />
+            <MetaAttachmentList attachments={toMetaAttachments(answer.attachments)} onSelect={onImageSelect} />
           ) : (
             <AttachmentList urls={answer.image_urls!} onSelect={onImageSelect} variant="answer" />
           )}

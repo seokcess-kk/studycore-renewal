@@ -257,7 +257,7 @@ export default function QuestionDetailPage() {
                     첨부 파일 ({(question.attachments || question.image_urls)!.length})
                   </div>
                   {question.attachments && question.attachments.length > 0 ? (
-                    <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} />
+                    <MetaAttachmentList attachments={toMetaAttachments(question.attachments)} onSelect={setSelectedImage} />
                   ) : (
                     <AttachmentList urls={question.image_urls!} onSelect={setSelectedImage} />
                   )}
@@ -407,7 +407,7 @@ function AnswerCard({
         (answer.image_urls && answer.image_urls.length > 0)) && (
         <div className="mt-4 pt-4 border-t border-teal/20">
           {answer.attachments && answer.attachments.length > 0 ? (
-            <MetaAttachmentList attachments={toMetaAttachments(answer.attachments)} />
+            <MetaAttachmentList attachments={toMetaAttachments(answer.attachments)} onSelect={onImageClick} />
           ) : (
             <AttachmentList urls={answer.image_urls!} onSelect={onImageClick} variant="answer" />
           )}

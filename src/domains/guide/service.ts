@@ -73,6 +73,31 @@ export async function getVisibleSectionList(
 }
 
 /**
+ * 섹션 상세 조회
+ */
+export async function getSectionDetail(
+  supabase: SupabaseClient,
+  id: string
+): Promise<GuideSectionServiceResult> {
+  try {
+    const section = await guideRepo.getSectionById(supabase, id);
+    if (!section) {
+      return { success: false, error: "섹션을 찾을 수 없습니다." };
+    }
+    return { success: true, section };
+  } catch (error) {
+    console.error("섹션 상세 조회 실패:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "섹션 조회 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+/**
  * 섹션 생성
  */
 export async function createSection(

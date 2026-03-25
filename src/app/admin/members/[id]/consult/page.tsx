@@ -131,7 +131,7 @@ export default function AdminMemberConsultPage() {
             회원 상세로
           </Link>
           {member && (
-            <span className="font-serif text-lg font-bold text-ink">
+            <span className="font-serif text-subhead font-bold text-ink">
               {member.name} 상담 기록
             </span>
           )}
@@ -146,7 +146,7 @@ export default function AdminMemberConsultPage() {
       {/* 상담 기록 작성 폼 */}
       {showForm && (
         <div className="border border-rule bg-white p-6">
-          <h3 className="mb-4 font-serif text-lg font-bold text-ink">
+          <h3 className="mb-4 font-serif text-subhead font-bold text-ink">
             새 상담 기록
           </h3>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -154,28 +154,28 @@ export default function AdminMemberConsultPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-muted">
+                <label className="mb-1 block text-body font-medium text-muted">
                   상담 일자
                 </label>
                 <input
                   type="date"
                   {...register("date")}
-                  className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                  className="w-full border border-rule px-3 py-2 text-body focus:border-navy focus:outline-none"
                 />
                 {errors.date && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p className="mt-1 text-caption text-red-500">
                     {errors.date.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-muted">
+                <label className="mb-1 block text-body font-medium text-muted">
                   상담 유형
                 </label>
                 <select
                   {...register("type")}
-                  className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                  className="w-full border border-rule px-3 py-2 text-body focus:border-navy focus:outline-none"
                 >
                   {Object.entries(COUNSELING_TYPE_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>
@@ -187,17 +187,17 @@ export default function AdminMemberConsultPage() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 상담 내용
               </label>
               <textarea
                 {...register("content")}
                 rows={5}
                 placeholder="상담 내용을 입력하세요"
-                className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                className="w-full border border-rule px-3 py-2 text-body focus:border-navy focus:outline-none"
               />
               {errors.content && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-caption text-red-500">
                   {errors.content.message}
                 </p>
               )}
@@ -205,13 +205,13 @@ export default function AdminMemberConsultPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-muted">
+                <label className="mb-1 block text-body font-medium text-muted">
                   다음 상담 예정일 (선택)
                 </label>
                 <input
                   type="date"
                   {...register("next_date")}
-                  className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                  className="w-full border border-rule px-3 py-2 text-body focus:border-navy focus:outline-none"
                 />
               </div>
             </div>
@@ -247,7 +247,7 @@ export default function AdminMemberConsultPage() {
               <div className="mb-4 flex items-start justify-between">
                 <div className="flex items-center gap-4">
                   <span
-                    className={`inline-flex items-center border px-2.5 py-1 text-sm font-medium ${
+                    className={`inline-flex items-center border px-2.5 py-1 text-body font-medium ${
                       record.type === "admission"
                         ? "border-blue-200 bg-blue-100 text-blue-800"
                         : record.type === "career"
@@ -257,12 +257,12 @@ export default function AdminMemberConsultPage() {
                   >
                     {COUNSELING_TYPE_LABELS[record.type as CounselingType]}
                   </span>
-                  <div className="flex items-center gap-1 text-sm text-muted">
+                  <div className="flex items-center gap-1 text-body text-muted">
                     <Calendar className="h-4 w-4" />
                     {formatDate(record.date)}
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-sm text-muted">
+                <div className="flex items-center gap-1 text-body text-muted">
                   <User className="h-4 w-4" />
                   {record.counselor?.name || "알 수 없음"}
                 </div>
@@ -271,7 +271,7 @@ export default function AdminMemberConsultPage() {
               <p className="whitespace-pre-wrap text-ink">{record.content}</p>
 
               {record.next_date && (
-                <p className="mt-4 text-sm text-teal">
+                <p className="mt-4 text-body text-teal">
                   다음 상담 예정: {formatDate(record.next_date)}
                 </p>
               )}

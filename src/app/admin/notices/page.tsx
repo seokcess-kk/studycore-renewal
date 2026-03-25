@@ -142,28 +142,28 @@ export default function AdminNoticesPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-rule bg-stone">
-              <th className="px-3 py-3 text-center text-sm font-medium text-ink w-20">
+              <th className="px-3 py-3 text-center text-body font-medium text-ink w-20">
                 순서
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 카테고리
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 제목
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 작성자
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 조회수
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 상태
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 작성일
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 관리
               </th>
             </tr>
@@ -216,17 +216,17 @@ export default function AdminNoticesPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       {notice.is_pinned && (
-                        <span className="text-xs text-teal">[고정]</span>
+                        <span className="text-caption text-teal">[고정]</span>
                       )}
                       <span className="font-medium text-ink">
                         {notice.title}
                       </span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted">
+                  <td className="px-4 py-3 text-body text-muted">
                     {notice.author?.name || "알 수 없음"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted">
+                  <td className="px-4 py-3 text-body text-muted">
                     {notice.view_count}
                   </td>
                   <td className="px-4 py-3">
@@ -234,7 +234,7 @@ export default function AdminNoticesPage() {
                       {notice.is_published ? "발행됨" : "임시저장"}
                     </Badge>
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted">
+                  <td className="px-4 py-3 text-body text-muted">
                     {formatDate(notice.created_at)}
                   </td>
                   <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>

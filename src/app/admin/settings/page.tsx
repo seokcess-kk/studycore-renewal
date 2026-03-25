@@ -126,10 +126,10 @@ export default function AdminSettingsPage() {
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-6">
       {/* 메뉴 노출 설정 */}
       <div className="border border-rule bg-white p-6">
-        <h2 className="mb-4 font-serif text-lg font-bold text-ink">
+        <h2 className="mb-4 font-serif text-subhead font-bold text-ink">
           메뉴 노출 설정
         </h2>
-        <p className="mb-4 text-sm text-muted">
+        <p className="mb-4 text-body text-muted">
           네비게이션 바에 표시할 메뉴를 선택하세요.
         </p>
 
@@ -141,7 +141,7 @@ export default function AdminSettingsPage() {
             >
               <div>
                 <span className="font-medium text-ink">{item.label}</span>
-                <p className="text-sm text-muted">{item.path}</p>
+                <p className="text-body text-muted">{item.path}</p>
               </div>
               <button
                 type="button"
@@ -169,10 +169,10 @@ export default function AdminSettingsPage() {
 
       {/* SMS 템플릿 */}
       <div className="border border-rule bg-white p-6">
-        <h2 className="mb-4 font-serif text-lg font-bold text-ink">
+        <h2 className="mb-4 font-serif text-subhead font-bold text-ink">
           상담 신청 SMS 템플릿
         </h2>
-        <p className="mb-4 text-sm text-muted">
+        <p className="mb-4 text-body text-muted">
           상담 신청 시 신청자에게 발송되는 SMS 내용입니다.
         </p>
 

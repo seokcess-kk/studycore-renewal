@@ -102,7 +102,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         >
           {/* 헤더 */}
           <div className="flex items-center justify-between h-16 px-6">
-            <span className="font-serif text-lg font-bold text-white">
+            <span className="font-serif text-subhead font-bold text-white">
               STUDYCORE
             </span>
             <button

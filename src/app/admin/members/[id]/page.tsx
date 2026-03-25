@@ -194,18 +194,18 @@ export default function AdminMemberDetailPage() {
         {/* 기본 정보 */}
         <div className="lg:col-span-2 space-y-6">
           <form onSubmit={handleSubmit(onSubmit)} className="border border-rule bg-white p-6">
-            <h2 className="mb-4 font-serif text-lg font-bold text-ink">
+            <h2 className="mb-4 font-serif text-subhead font-bold text-ink">
               기본 정보
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-muted">
+                <label className="mb-1 block text-body font-medium text-muted">
                   이름
                 </label>
                 <input
                   type="text"
                   {...register("name")}
-                  className={`w-full border px-3 py-2 text-sm focus:outline-none ${
+                  className={`w-full border px-3 py-2 text-body focus:outline-none ${
                     errors.name ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
                   }`}
                 />
@@ -214,7 +214,7 @@ export default function AdminMemberDetailPage() {
                 )}
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-muted">
+                <label className="mb-1 block text-body font-medium text-muted">
                   연락처
                 </label>
                 <input
@@ -222,7 +222,7 @@ export default function AdminMemberDetailPage() {
                   {...register("phone")}
                   onChange={(e) => handlePhoneChange("phone", e)}
                   placeholder="010-0000-0000"
-                  className={`w-full border px-3 py-2 text-sm focus:outline-none ${
+                  className={`w-full border px-3 py-2 text-body focus:outline-none ${
                     errors.phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
                   }`}
                 />
@@ -233,22 +233,22 @@ export default function AdminMemberDetailPage() {
               {member.role === "student" && (
                 <>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-muted">
+                    <label className="mb-1 block text-body font-medium text-muted">
                       학교
                     </label>
                     <input
                       type="text"
                       {...register("school")}
-                      className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                      className="w-full border border-rule px-3 py-2 text-body focus:border-navy focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-muted">
+                    <label className="mb-1 block text-body font-medium text-muted">
                       학년
                     </label>
                     <select
                       {...register("grade")}
-                      className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+                      className="w-full border border-rule px-3 py-2 text-body focus:border-navy focus:outline-none"
                     >
                       <option value="">선택</option>
                       <option value="1">1학년</option>
@@ -257,7 +257,7 @@ export default function AdminMemberDetailPage() {
                     </select>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="mb-1 block text-sm font-medium text-muted">
+                    <label className="mb-1 block text-body font-medium text-muted">
                       학부모 연락처
                     </label>
                     <input
@@ -265,7 +265,7 @@ export default function AdminMemberDetailPage() {
                       {...register("parent_phone")}
                       onChange={(e) => handlePhoneChange("parent_phone", e)}
                       placeholder="010-0000-0000"
-                      className={`w-full border px-3 py-2 text-sm focus:outline-none ${
+                      className={`w-full border px-3 py-2 text-body focus:outline-none ${
                         errors.parent_phone ? "border-red-400 focus:border-red-500" : "border-rule focus:border-navy"
                       }`}
                     />
@@ -283,7 +283,7 @@ export default function AdminMemberDetailPage() {
         <div className="space-y-6">
           {/* 계정 상태 */}
           <div className="border border-rule bg-white p-6">
-            <h2 className="mb-4 font-serif text-lg font-bold text-ink">
+            <h2 className="mb-4 font-serif text-subhead font-bold text-ink">
               계정 상태
             </h2>
             <div className="mb-4 flex items-center gap-3">
@@ -300,7 +300,7 @@ export default function AdminMemberDetailPage() {
                     </p>
                     <button
                       onClick={() => openStatusModal("active")}
-                      className="w-full bg-teal border border-teal px-3 py-2.5 text-sm font-medium text-white hover:bg-teal-d cursor-pointer transition-colors duration-200"
+                      className="w-full bg-teal border border-teal px-3 py-2.5 text-body font-medium text-white hover:bg-teal-d cursor-pointer transition-colors duration-200"
                     >
                       가입 승인
                     </button>
@@ -312,7 +312,7 @@ export default function AdminMemberDetailPage() {
                     {member.status === "active" && (
                       <button
                         onClick={() => openStatusModal("inactive")}
-                        className="w-full border border-rule px-3 py-2 text-sm text-muted hover:bg-stone cursor-pointer transition-colors duration-200"
+                        className="w-full border border-rule px-3 py-2 text-body text-muted hover:bg-stone cursor-pointer transition-colors duration-200"
                       >
                         계정 비활성화
                       </button>
@@ -320,7 +320,7 @@ export default function AdminMemberDetailPage() {
                     {member.status === "inactive" && (
                       <button
                         onClick={() => openStatusModal("active")}
-                        className="w-full border border-teal px-3 py-2 text-sm text-teal hover:bg-teal/5 cursor-pointer transition-colors duration-200"
+                        className="w-full border border-teal px-3 py-2 text-body text-teal hover:bg-teal/5 cursor-pointer transition-colors duration-200"
                       >
                         계정 재활성화
                       </button>
@@ -333,10 +333,10 @@ export default function AdminMemberDetailPage() {
 
           {/* 가입 정보 */}
           <div className="border border-rule bg-white p-6">
-            <h2 className="mb-4 font-serif text-lg font-bold text-ink">
+            <h2 className="mb-4 font-serif text-subhead font-bold text-ink">
               가입 정보
             </h2>
-            <dl className="space-y-3 text-sm">
+            <dl className="space-y-3 text-body">
               <div className="flex justify-between">
                 <dt className="text-muted">가입일</dt>
                 <dd className="text-ink">{formatDate(member.created_at)}</dd>

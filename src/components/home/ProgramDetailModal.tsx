@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 import type { Program, ProgramAttachment } from "@/domains/program/model";
 import { getProgramAttachments } from "@/domains/program/service";
-import { MetaAttachmentList } from "@/components/common";
+import { MetaAttachmentList, AttachmentModal } from "@/components/common";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
@@ -31,6 +31,7 @@ export function ProgramDetailModal({
 }: ProgramDetailModalProps) {
   const focusTrapRef = useFocusTrap(!!program);
   const [attachments, setAttachments] = useState<ProgramAttachment[]>([]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // 첨부파일 로드
   useEffect(() => {
@@ -67,6 +68,7 @@ export function ProgramDetailModal({
     program && (!program.end_date || new Date(program.end_date) >= new Date());
 
   return (
+    <>
     <AnimatePresence>
       {program && (
         <div
@@ -174,10 +176,10 @@ export function ProgramDetailModal({
               {/* 첨부파일 */}
               {attachments.length > 0 && (
                 <div className="border-t border-rule pt-6 mb-8">
-                  <h3 className="text-sm font-medium text-muted mb-3">
+                  <h3 className="text-body font-medium text-muted mb-3">
                     첨부파일 ({attachments.length})
                   </h3>
-                  <MetaAttachmentList attachments={attachments} />
+                  <MetaAttachmentList attachments={attachments} onSelect={setSelectedImage} />
                 </div>
               )}
 
@@ -200,5 +202,9 @@ export function ProgramDetailModal({
         </div>
       )}
     </AnimatePresence>
+    {selectedImage && (
+      <AttachmentModal url={selectedImage} onClose={() => setSelectedImage(null)} />
+    )}
+    </>
   );
 }

@@ -7,7 +7,7 @@ import { createBrowserClient } from "@/lib/supabase/client";
 import { getActivePopups } from "@/domains/popup/service";
 import { getNoticeAttachments } from "@/domains/notice/service";
 import type { Popup } from "@/domains/popup/model";
-import { MetaAttachmentList } from "@/components/common";
+import { MetaAttachmentList, AttachmentModal } from "@/components/common";
 import type { NoticeAttachment } from "@/domains/notice/model";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
@@ -29,6 +29,7 @@ export function PopupModal() {
   const [popup, setPopup] = useState<Popup | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [attachments, setAttachments] = useState<NoticeAttachment[]>([]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const focusTrapRef = useFocusTrap(isOpen);
 
   useEffect(() => {
@@ -61,6 +62,7 @@ export function PopupModal() {
     : popup?.link_url || null;
 
   return (
+    <>
     <AnimatePresence>
       {isOpen && popup && (
         <motion.div
@@ -104,7 +106,7 @@ export function PopupModal() {
 
             {/* 콘텐츠 */}
             <div className="p-6">
-              <h3 id="popup-modal-title" className="mb-2 font-serif text-lg font-bold text-navy">
+              <h3 id="popup-modal-title" className="mb-2 font-serif text-subhead font-bold text-navy">
                 {popup.title}
               </h3>
               {popup.content && (
@@ -115,7 +117,7 @@ export function PopupModal() {
               {/* 공지 첨부파일 */}
               {attachments.length > 0 && (
                 <div className="mb-4">
-                  <MetaAttachmentList attachments={attachments} />
+                  <MetaAttachmentList attachments={attachments} onSelect={setSelectedImage} />
                 </div>
               )}
 
@@ -133,7 +135,7 @@ export function PopupModal() {
             <div className="border-t border-rule px-6 py-3">
               <button
                 onClick={handleDismissToday}
-                className="text-xs text-muted hover:text-ink transition-colors"
+                className="text-caption text-muted hover:text-ink transition-colors"
               >
                 오늘 하루 안 보기
               </button>
@@ -142,5 +144,9 @@ export function PopupModal() {
         </motion.div>
       )}
     </AnimatePresence>
+    {selectedImage && (
+      <AttachmentModal url={selectedImage} onClose={() => setSelectedImage(null)} />
+    )}
+    </>
   );
 }

@@ -70,7 +70,7 @@ export default function AdminMembersPage() {
               placeholder="이름, 전화번호 검색"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-10 w-64 border border-rule bg-white pl-10 pr-4 text-sm focus:border-navy focus:outline-none"
+              className="h-10 w-64 border border-rule bg-white pl-10 pr-4 text-body focus:border-navy focus:outline-none"
             />
           </div>
 
@@ -78,7 +78,7 @@ export default function AdminMembersPage() {
           <select
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value as FilterRole)}
-            className="h-10 border border-rule bg-white px-3 text-sm focus:border-navy focus:outline-none"
+            className="h-10 border border-rule bg-white px-3 text-body focus:border-navy focus:outline-none"
           >
             <option value="all">모든 역할</option>
             <option value="student">재원생</option>
@@ -91,7 +91,7 @@ export default function AdminMembersPage() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as FilterStatus)}
-            className="h-10 border border-rule bg-white px-3 text-sm focus:border-navy focus:outline-none"
+            className="h-10 border border-rule bg-white px-3 text-body focus:border-navy focus:outline-none"
           >
             <option value="all">모든 상태</option>
             <option value="pending">승인 대기</option>
@@ -113,25 +113,25 @@ export default function AdminMembersPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-rule bg-stone">
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 이름
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 학교/학년
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 연락처
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 역할
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 상태
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 가입일
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-ink">
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 관리
               </th>
             </tr>
@@ -163,12 +163,12 @@ export default function AdminMembersPage() {
                   <td className="px-4 py-3">
                     <span className="font-medium text-ink">{member.name}</span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted">
+                  <td className="px-4 py-3 text-body text-muted">
                     {member.school
                       ? `${member.school} ${member.grade || ""}학년`
                       : "-"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted">
+                  <td className="px-4 py-3 text-body text-muted">
                     {member.phone || "-"}
                   </td>
                   <td className="px-4 py-3">
@@ -177,13 +177,13 @@ export default function AdminMembersPage() {
                   <td className="px-4 py-3">
                     {member.status && <StatusBadge status={member.status} size="sm" />}
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted">
+                  <td className="px-4 py-3 text-body text-muted">
                     {formatDate(member.created_at)}
                   </td>
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/members/${member.id}`}
-                      className="text-sm text-teal hover:underline"
+                      className="text-body text-teal hover:underline"
                     >
                       상세
                     </Link>

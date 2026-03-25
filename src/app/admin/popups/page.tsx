@@ -65,7 +65,7 @@ export default function AdminPopupsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted">총 {total}건</span>
+        <span className="text-body text-muted">총 {total}건</span>
         <Link href="/admin/popups/new">
           <Button variant="primary" size="sm">
             <Plus className="mr-1.5 h-4 w-4" />
@@ -75,7 +75,7 @@ export default function AdminPopupsPage() {
       </div>
 
       <div className="border border-rule bg-white overflow-x-auto">
-        <div className="grid grid-cols-[1fr_100px_140px_140px_80px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted bg-stone min-w-[640px]">
+        <div className="grid grid-cols-[1fr_100px_140px_140px_80px] gap-4 border-b border-rule px-4 py-3 text-caption font-medium text-muted bg-stone min-w-[640px]">
           <span>제목</span>
           <span>상태</span>
           <span>시작일</span>
@@ -95,18 +95,18 @@ export default function AdminPopupsPage() {
               onClick={() => router.push(`/admin/popups/${p.id}/edit`)}
             >
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-ink">{p.title}</p>
+                <p className="truncate text-body font-medium text-ink">{p.title}</p>
                 {p.notice_id && (
-                  <p className="text-xs text-teal">공지 연결됨</p>
+                  <p className="text-caption text-teal">공지 연결됨</p>
                 )}
               </div>
               <Badge variant={isActive(p) ? "success" : "neutral"}>
                 {isActive(p) ? "노출중" : "비활성"}
               </Badge>
-              <span className="text-xs text-muted">
+              <span className="text-caption text-muted">
                 {new Date(p.start_date).toLocaleDateString("ko-KR")}
               </span>
-              <span className="text-xs text-muted">
+              <span className="text-caption text-muted">
                 {new Date(p.end_date).toLocaleDateString("ko-KR")}
               </span>
               <button

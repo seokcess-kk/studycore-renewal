@@ -110,20 +110,20 @@ export default function AdminConsultationsPage() {
             setStatusFilter(e.target.value);
             setPage(1);
           }}
-          className="border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
+          className="border border-rule px-3 py-2 text-body focus:border-navy focus:outline-none"
         >
           <option value="">전체 상태</option>
           <option value="new">신규</option>
           <option value="contacted">연락함</option>
           <option value="done">완료</option>
         </select>
-        <span className="text-sm text-muted">총 {total}건</span>
+        <span className="text-body text-muted">총 {total}건</span>
       </div>
 
       {/* 목록 */}
       <div className="border border-rule bg-white overflow-x-auto">
         {/* 테이블 헤더 */}
-        <div className="grid grid-cols-[1fr_120px_120px_100px_120px_50px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted bg-stone min-w-[640px]">
+        <div className="grid grid-cols-[1fr_120px_120px_100px_120px_50px] gap-4 border-b border-rule px-4 py-3 text-caption font-medium text-muted bg-stone min-w-[640px]">
           <span>이름 / 연락처</span>
           <span>상담 유형</span>
           <span>상태</span>
@@ -151,10 +151,10 @@ export default function AdminConsultationsPage() {
                 >
                   <Phone className="h-4 w-4 text-muted" />
                   <div>
-                    <p className="text-sm font-medium text-ink">{c.name}</p>
-                    <p className="text-xs text-muted">{c.phone}</p>
+                    <p className="text-body font-medium text-ink">{c.name}</p>
+                    <p className="text-caption text-muted">{c.phone}</p>
                     {c.school && (
-                      <p className="text-xs text-muted">{c.school}</p>
+                      <p className="text-caption text-muted">{c.school}</p>
                     )}
                   </div>
                   {c.message && (
@@ -167,7 +167,7 @@ export default function AdminConsultationsPage() {
                 </button>
 
                 {/* 유형 */}
-                <span className="text-sm text-ink">
+                <span className="text-body text-ink">
                   {CONSULT_TYPE_LABELS[c.consult_type] || c.consult_type}
                 </span>
 
@@ -177,7 +177,7 @@ export default function AdminConsultationsPage() {
                 </Badge>
 
                 {/* 날짜 */}
-                <span className="text-xs text-muted">
+                <span className="text-caption text-muted">
                   {formatDistanceToNow(c.created_at)}
                 </span>
 
@@ -190,7 +190,7 @@ export default function AdminConsultationsPage() {
                       e.target.value as ConsultationStatusType
                     )
                   }
-                  className="border border-rule px-2 py-1 text-xs focus:border-navy focus:outline-none"
+                  className="border border-rule px-2 py-1 text-caption focus:border-navy focus:outline-none"
                 >
                   <option value="new">신규</option>
                   <option value="contacted">연락함</option>
@@ -209,8 +209,8 @@ export default function AdminConsultationsPage() {
               {/* 메시지 확장 */}
               {expandedId === c.id && c.message && (
                 <div className="border-t border-rule bg-stone px-6 py-4">
-                  <p className="text-xs font-medium text-muted mb-1">문의 내용</p>
-                  <p className="whitespace-pre-wrap text-sm text-ink">
+                  <p className="text-caption font-medium text-muted mb-1">문의 내용</p>
+                  <p className="whitespace-pre-wrap text-body text-ink">
                     {c.message}
                   </p>
                 </div>

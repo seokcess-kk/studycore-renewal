@@ -109,7 +109,7 @@ export default function AdminMemberNewPage() {
       {createdAccount ? (
         /* 생성 완료 화면 */
         <div className="border border-rule bg-white p-8">
-          <h2 className="mb-6 text-center font-serif text-xl font-bold text-ink">
+          <h2 className="mb-6 text-center font-serif text-fluid-h2 font-bold text-ink">
             계정 생성 완료
           </h2>
 
@@ -119,16 +119,16 @@ export default function AdminMemberNewPage() {
 
           <div className="space-y-4">
             <div className="border border-rule p-4">
-              <div className="mb-1 text-sm text-muted">아이디</div>
+              <div className="mb-1 text-body text-muted">아이디</div>
               <div className="flex items-center justify-between">
-                <span className="font-mono text-lg text-ink">
+                <span className="font-mono text-subhead text-ink">
                   {createdAccount.username}
                 </span>
                 <button
                   onClick={() =>
                     copyToClipboard(createdAccount.username, "username")
                   }
-                  className="flex items-center gap-1 text-sm text-teal hover:underline"
+                  className="flex items-center gap-1 text-body text-teal hover:underline"
                 >
                   {copiedField === "username" ? (
                     <>
@@ -146,9 +146,9 @@ export default function AdminMemberNewPage() {
             </div>
 
             <div className="border border-rule p-4">
-              <div className="mb-1 text-sm text-muted">임시 비밀번호</div>
+              <div className="mb-1 text-body text-muted">임시 비밀번호</div>
               <div className="flex items-center justify-between">
-                <span className="font-mono text-lg text-ink">
+                <span className="font-mono text-subhead text-ink">
                   {showPassword
                     ? createdAccount.password
                     : "••••••••••••"}
@@ -168,7 +168,7 @@ export default function AdminMemberNewPage() {
                     onClick={() =>
                       copyToClipboard(createdAccount.password, "password")
                     }
-                    className="flex items-center gap-1 text-sm text-teal hover:underline"
+                    className="flex items-center gap-1 text-body text-teal hover:underline"
                   >
                     {copiedField === "password" ? (
                       <>
@@ -207,13 +207,13 @@ export default function AdminMemberNewPage() {
       ) : (
         /* 계정 생성 폼 */
         <div className="border border-rule bg-white p-8">
-          <h2 className="mb-6 text-center font-serif text-xl font-bold text-ink">
+          <h2 className="mb-6 text-center font-serif text-fluid-h2 font-bold text-ink">
             스태프 계정 생성
           </h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 이름
               </label>
               <input
@@ -226,7 +226,7 @@ export default function AdminMemberNewPage() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 아이디
               </label>
               <input
@@ -236,13 +236,13 @@ export default function AdminMemberNewPage() {
                 className="input-admin font-mono"
               />
               <FormError message={errors.username?.message} />
-              <p className="mt-1 text-xs text-muted">
+              <p className="mt-1 text-caption text-muted">
                 영문 소문자, 숫자, 밑줄만 사용 가능
               </p>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 역할
               </label>
               <select

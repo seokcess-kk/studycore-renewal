@@ -90,7 +90,7 @@ export default function QuestionsPage() {
           <section className="bg-navy py-6 px-6 md:px-13">
             <div className="max-w-4xl mx-auto flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <h1 className="font-serif text-xl font-bold text-white">
+                <h1 className="font-serif text-fluid-h2 font-bold text-white">
                   질문 관리
                 </h1>
                 {pendingCount > 0 && (

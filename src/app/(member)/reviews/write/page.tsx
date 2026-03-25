@@ -94,11 +94,11 @@ export default function WriteReviewPage() {
           <div className="flex items-center gap-3 mb-6">
             <button
               onClick={() => router.back()}
-              className="p-2 hover:bg-white border border-transparent hover:border-rule transition-colors cursor-pointer"
+              className="p-2 hover:bg-white border border-transparent hover:border-rule transition-colors duration-200 cursor-pointer"
             >
               <ArrowLeft size={18} className="text-muted" />
             </button>
-            <h1 className="font-serif text-xl font-bold text-ink">후기 작성</h1>
+            <h1 className="font-serif text-fluid-h2 font-bold text-ink">후기 작성</h1>
           </div>
 
           {/* 폼 */}

@@ -64,7 +64,7 @@ export function ConfirmModal({
       )}
 
       {/* 타이틀 */}
-      <h2 className="mb-2 text-center font-serif text-xl font-bold text-ink">
+      <h2 className="mb-2 text-center font-serif text-fluid-h2 font-bold text-ink">
         {title}
       </h2>
 

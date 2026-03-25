@@ -41,7 +41,7 @@ export function Pagination({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="border border-rule px-3 py-1.5 text-sm cursor-pointer transition-colors duration-200 hover:border-navy disabled:opacity-40 disabled:cursor-not-allowed"
+          className="border border-rule px-3 py-1.5 text-body cursor-pointer transition-colors duration-200 hover:border-navy disabled:opacity-40 disabled:cursor-not-allowed"
         >
           이전
         </button>
@@ -51,7 +51,7 @@ export function Pagination({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="border border-rule px-3 py-1.5 text-sm cursor-pointer transition-colors duration-200 hover:border-navy disabled:opacity-40 disabled:cursor-not-allowed"
+          className="border border-rule px-3 py-1.5 text-body cursor-pointer transition-colors duration-200 hover:border-navy disabled:opacity-40 disabled:cursor-not-allowed"
         >
           다음
         </button>

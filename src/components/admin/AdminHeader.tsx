@@ -69,7 +69,7 @@ export function AdminHeader({ title, breadcrumb }: AdminHeaderProps = {}) {
     <header className="sticky top-0 z-30 border-b border-rule bg-white">
       <div className="flex h-16 items-center justify-between px-6 pl-14 lg:pl-6">
         {/* 브레드크럼 */}
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 text-body">
           <Link
             href="/admin"
             className="flex items-center text-muted hover:text-ink transition-colors duration-200"
@@ -95,12 +95,12 @@ export function AdminHeader({ title, breadcrumb }: AdminHeaderProps = {}) {
 
         {/* 페이지 타이틀 + 홈페이지 링크 */}
         <div className="flex items-center gap-4">
-          <h1 className="font-serif text-xl font-bold text-navy">
+          <h1 className="font-serif text-fluid-h2 font-bold text-navy">
             {currentTitle}
           </h1>
           <a
             href="/"
-            className="flex items-center gap-1.5 text-sm text-muted hover:text-teal transition-colors"
+            className="flex items-center gap-1.5 text-body text-muted hover:text-teal transition-colors duration-200 cursor-pointer"
           >
             <Globe className="h-4 w-4" />
             홈페이지

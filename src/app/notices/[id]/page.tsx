@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Nav, Footer, Skeleton, SkeletonText, MetaAttachmentList } from "@/components/common";
+import { Nav, Footer, Skeleton, SkeletonText, MetaAttachmentList, AttachmentModal } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getNoticeDetail, getNoticeAttachments } from "@/domains/notice/service";
 import type { NoticeAttachment } from "@/domains/notice/model";
@@ -25,6 +25,7 @@ export default function NoticeDetailPage({
   const [attachments, setAttachments] = useState<NoticeAttachment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -158,10 +159,10 @@ export default function NoticeDetailPage({
         {attachments.length > 0 && (
           <section className="px-6 md:px-13">
             <div className="max-w-3xl mx-auto border-t border-rule pt-6 pb-6">
-              <h3 className="text-sm font-medium text-muted mb-3">
+              <h3 className="text-body font-medium text-muted mb-3">
                 첨부파일 ({attachments.length})
               </h3>
-              <MetaAttachmentList attachments={attachments} />
+              <MetaAttachmentList attachments={attachments} onSelect={setSelectedImage} />
             </div>
           </section>
         )}
@@ -180,6 +181,9 @@ export default function NoticeDetailPage({
         </section>
       </main>
       <Footer />
+      {selectedImage && (
+        <AttachmentModal url={selectedImage} onClose={() => setSelectedImage(null)} />
+      )}
     </>
   );
 }

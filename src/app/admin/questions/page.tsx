@@ -52,7 +52,7 @@ export default function AdminQuestionsPage() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as FilterStatus)}
-            className="h-10 border border-rule bg-white px-3 text-sm focus:border-navy focus:outline-none"
+            className="h-10 border border-rule bg-white px-3 text-body focus:border-navy focus:outline-none"
           >
             <option value="all">모든 상태</option>
             <option value="pending">미답변</option>
@@ -89,16 +89,16 @@ export default function AdminQuestionsPage() {
                         고정
                       </span>
                     )}
-                    <span className="text-sm text-muted">
+                    <span className="text-body text-muted">
                       {question.author?.name || "알 수 없음"}
                     </span>
                   </div>
                   <h3 className="mb-2 font-medium text-ink">{question.title}</h3>
-                  <p className="line-clamp-2 text-sm text-muted">
+                  <p className="line-clamp-2 text-body text-muted">
                     {question.content}
                   </p>
                 </div>
-                <span className="ml-4 text-sm text-muted">
+                <span className="ml-4 text-body text-muted">
                   {formatDistanceToNow(question.created_at)}
                 </span>
               </div>

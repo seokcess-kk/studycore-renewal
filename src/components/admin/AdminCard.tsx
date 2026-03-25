@@ -32,17 +32,17 @@ export function AdminCard({
     >
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-muted">{title}</p>
+          <p className="text-body font-medium text-muted">{title}</p>
           <p className="mt-2 font-serif text-3xl font-bold text-ink">
             {value}
           </p>
           {description && (
-            <p className="mt-1 text-sm text-muted">{description}</p>
+            <p className="mt-1 text-body text-muted">{description}</p>
           )}
           {trend && (
             <p
               className={cn(
-                "mt-2 text-sm font-medium",
+                "mt-2 text-body font-medium",
                 trend.isPositive ? "text-teal" : "text-red-500"
               )}
             >

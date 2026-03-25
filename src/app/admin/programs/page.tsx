@@ -60,7 +60,7 @@ export default function AdminProgramsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted">총 {total}건</span>
+        <span className="text-body text-muted">총 {total}건</span>
         <Link href="/admin/programs/new">
           <Button variant="primary" size="sm">
             <Plus className="mr-1.5 h-4 w-4" />
@@ -70,7 +70,7 @@ export default function AdminProgramsPage() {
       </div>
 
       <div className="border border-rule bg-white overflow-x-auto">
-        <div className="grid grid-cols-[1fr_80px_140px_140px_80px] gap-4 border-b border-rule px-4 py-3 text-xs font-medium text-muted bg-stone min-w-[640px]">
+        <div className="grid grid-cols-[1fr_80px_140px_140px_80px] gap-4 border-b border-rule px-4 py-3 text-caption font-medium text-muted bg-stone min-w-[640px]">
           <span>제목</span>
           <span>상태</span>
           <span>시작일</span>
@@ -89,16 +89,16 @@ export default function AdminProgramsPage() {
               className="grid grid-cols-[1fr_80px_140px_140px_80px] items-center gap-4 border-b border-rule px-4 py-3 last:border-b-0 cursor-pointer hover:bg-stone/50 transition-colors min-w-[640px]"
               onClick={() => router.push(`/admin/programs/${p.id}/edit`)}
             >
-              <p className="truncate text-sm font-medium text-ink">{p.title}</p>
+              <p className="truncate text-body font-medium text-ink">{p.title}</p>
               <Badge variant={p.is_active ? "success" : "neutral"}>
                 {p.is_active ? "활성" : "비활성"}
               </Badge>
-              <span className="text-xs text-muted">
+              <span className="text-caption text-muted">
                 {p.start_date
                   ? new Date(p.start_date).toLocaleDateString("ko-KR")
                   : "-"}
               </span>
-              <span className="text-xs text-muted">
+              <span className="text-caption text-muted">
                 {p.end_date
                   ? new Date(p.end_date).toLocaleDateString("ko-KR")
                   : "-"}

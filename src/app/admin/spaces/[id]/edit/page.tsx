@@ -98,7 +98,7 @@ export default function AdminSpaceEditPage() {
       <form className="space-y-6">
         <div className="border border-rule bg-white p-6 space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               라벨 (영문) *
             </label>
             <input
@@ -108,13 +108,13 @@ export default function AdminSpaceEditPage() {
               className="input-admin"
             />
             <FormError message={errors.label?.message} />
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-caption text-muted">
               슬라이더 하단에 표시되는 영문 라벨
             </p>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               제목 *
             </label>
             <input
@@ -127,7 +127,7 @@ export default function AdminSpaceEditPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               설명
             </label>
             <textarea
@@ -139,7 +139,7 @@ export default function AdminSpaceEditPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-muted">
+            <label className="mb-2 block text-body font-medium text-muted">
               배경 이미지
             </label>
             <ImageUploader
@@ -150,7 +150,7 @@ export default function AdminSpaceEditPage() {
               value={imageUrls}
               onChange={setImageUrls}
             />
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-caption text-muted">
               이미지가 없으면 기본 그라디언트가 표시됩니다.
             </p>
           </div>
@@ -165,12 +165,12 @@ export default function AdminSpaceEditPage() {
               {...register("is_active")}
               className="h-4 w-4 border-rule"
             />
-            <label htmlFor="is_active" className="text-sm text-ink cursor-pointer">
+            <label htmlFor="is_active" className="text-body text-ink cursor-pointer">
               활성화 (홈페이지에 표시)
             </label>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               정렬 순서
             </label>
             <input
@@ -178,7 +178,7 @@ export default function AdminSpaceEditPage() {
               {...register("sort_order", { valueAsNumber: true })}
               className="input-admin w-32"
             />
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-caption text-muted">
               숫자가 작을수록 먼저 표시됩니다.
             </p>
           </div>

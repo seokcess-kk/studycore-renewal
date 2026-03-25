@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex min-h-[400px] flex-col items-center justify-center p-8">
           <div className="text-center">
-            <h2 className="mb-2 font-serif text-xl font-bold text-ink">
+            <h2 className="mb-2 font-serif text-fluid-h2 font-bold text-ink">
               문제가 발생했습니다
             </h2>
             <p className="mb-6 text-muted">
@@ -68,10 +68,10 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             {process.env.NODE_ENV === "development" && this.state.error && (
               <details className="mt-6 text-left">
-                <summary className="cursor-pointer text-sm text-muted">
+                <summary className="cursor-pointer text-body text-muted">
                   에러 상세 (개발 모드)
                 </summary>
-                <pre className="mt-2 overflow-auto border border-rule bg-stone p-4 text-xs text-red-600">
+                <pre className="mt-2 overflow-auto border border-rule bg-stone p-4 text-caption text-red-600">
                   {this.state.error.message}
                   {"\n\n"}
                   {this.state.error.stack}
@@ -96,7 +96,7 @@ export function AdminErrorBoundary({ children }: { children: ReactNode }) {
       fallback={
         <div className="flex min-h-[400px] flex-col items-center justify-center border border-rule bg-white p-8">
           <div className="text-center">
-            <h2 className="mb-2 font-serif text-xl font-bold text-ink">
+            <h2 className="mb-2 font-serif text-fluid-h2 font-bold text-ink">
               페이지 로드 중 오류 발생
             </h2>
             <p className="mb-6 text-muted">

@@ -149,7 +149,7 @@ export default function AdminNoticeEditPage() {
     return (
       <div className="py-12 text-center">
         <p className="text-muted">공지사항을 찾을 수 없습니다.</p>
-        <Link href="/admin/notices" className="mt-4 text-teal hover:underline">
+        <Link href="/admin/notices" className="mt-4 text-teal hover:underline transition-colors duration-200 cursor-pointer">
           목록으로 돌아가기
         </Link>
       </div>
@@ -162,7 +162,7 @@ export default function AdminNoticeEditPage() {
       <div className="flex items-center justify-between">
         <Link
           href="/admin/notices"
-          className="flex items-center gap-2 text-muted hover:text-ink transition-colors duration-200"
+          className="flex items-center gap-2 text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
           목록으로
@@ -205,7 +205,7 @@ export default function AdminNoticeEditPage() {
             {/* 카테고리 + 고정 */}
             <div className="flex items-center gap-4">
               <div className="flex-1">
-                <label className="mb-1 block text-sm font-medium text-muted">
+                <label className="mb-1 block text-body font-medium text-muted">
                   카테고리
                 </label>
                 <select
@@ -230,7 +230,7 @@ export default function AdminNoticeEditPage() {
                   onChange={(e) => setIsPinned(e.target.checked)}
                   className="h-4 w-4 border-rule"
                 />
-                <label htmlFor="isPinned" className="text-sm text-ink">
+                <label htmlFor="isPinned" className="text-body text-ink">
                   상단 고정
                 </label>
               </div>
@@ -238,7 +238,7 @@ export default function AdminNoticeEditPage() {
 
             {/* 제목 */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 제목
               </label>
               <input
@@ -252,7 +252,7 @@ export default function AdminNoticeEditPage() {
 
             {/* 내용 */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 내용
               </label>
               <RichTextEditor
@@ -269,7 +269,7 @@ export default function AdminNoticeEditPage() {
         <div className="border border-rule bg-white p-6">
           <h3 className="mb-4 font-medium text-ink">첨부파일</h3>
 
-          <label className="inline-flex cursor-pointer items-center gap-2 border border-rule px-4 py-2 text-sm text-muted hover:border-navy hover:text-ink transition-colors">
+          <label className="inline-flex cursor-pointer items-center gap-2 border border-rule px-4 py-2 text-body text-muted hover:border-navy hover:text-ink transition-colors duration-200">
             <Paperclip className="h-4 w-4" />
             {isUploading ? "업로드 중..." : "파일 첨부"}
             <input
@@ -318,10 +318,10 @@ export default function AdminNoticeEditPage() {
             <div className="mt-4 space-y-2">
               {existingAttachments.map((att) => (
                 <div key={att.id} className="flex items-center justify-between border border-rule px-3 py-2">
-                  <a href={att.file_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 min-w-0 hover:text-teal transition-colors duration-200">
+                  <a href={att.file_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 min-w-0 hover:text-teal transition-colors duration-200 cursor-pointer">
                     <FileText className="h-4 w-4 flex-shrink-0 text-muted" />
-                    <span className="truncate text-sm text-ink">{att.file_name}</span>
-                    {att.file_size && <span className="flex-shrink-0 text-xs text-muted">({(att.file_size / 1024).toFixed(0)}KB)</span>}
+                    <span className="truncate text-body text-ink">{att.file_name}</span>
+                    {att.file_size && <span className="flex-shrink-0 text-caption text-muted">({(att.file_size / 1024).toFixed(0)}KB)</span>}
                   </a>
                   <button
                     type="button"
@@ -331,7 +331,7 @@ export default function AdminNoticeEditPage() {
                       await deleteNoticeAttachment(supabase, att.id);
                       setExistingAttachments((prev) => prev.filter((a) => a.id !== att.id));
                     }}
-                    className="flex-shrink-0 p-1 text-muted hover:text-red-500 transition-colors duration-200"
+                    className="flex-shrink-0 p-1 text-muted hover:text-red-500 transition-colors duration-200 cursor-pointer"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -347,9 +347,9 @@ export default function AdminNoticeEditPage() {
                 <div key={idx} className="flex items-center justify-between border border-teal/30 bg-teal/5 px-3 py-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <FileText className="h-4 w-4 flex-shrink-0 text-teal" />
-                    <span className="truncate text-sm text-ink">{att.name}</span>
-                    <span className="flex-shrink-0 text-xs text-muted">({(att.size / 1024).toFixed(0)}KB)</span>
-                    <span className="flex-shrink-0 text-xs text-teal">NEW</span>
+                    <span className="truncate text-body text-ink">{att.name}</span>
+                    <span className="flex-shrink-0 text-caption text-muted">({(att.size / 1024).toFixed(0)}KB)</span>
+                    <span className="flex-shrink-0 text-caption text-teal">NEW</span>
                   </div>
                   <button
                     type="button"
@@ -358,7 +358,7 @@ export default function AdminNoticeEditPage() {
                       if (path) await supabase.storage.from("notice-attachments").remove([path]);
                       setNewAttachments((prev) => prev.filter((_, i) => i !== idx));
                     }}
-                    className="flex-shrink-0 p-1 text-muted hover:text-red-500 transition-colors duration-200"
+                    className="flex-shrink-0 p-1 text-muted hover:text-red-500 transition-colors duration-200 cursor-pointer"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -367,13 +367,13 @@ export default function AdminNoticeEditPage() {
             </div>
           )}
 
-          <p className="mt-3 text-xs text-muted">최대 10MB, 여러 파일 첨부 가능</p>
+          <p className="mt-3 text-caption text-muted">최대 10MB, 여러 파일 첨부 가능</p>
         </div>
 
         {/* 공지 정보 */}
         <div className="border border-rule bg-white p-6">
           <h3 className="mb-4 font-medium text-ink">공지 정보</h3>
-          <dl className="grid gap-4 text-sm sm:grid-cols-2">
+          <dl className="grid gap-4 text-body sm:grid-cols-2">
             <div>
               <dt className="text-muted">조회수</dt>
               <dd className="font-medium text-ink">{notice.view_count}</dd>

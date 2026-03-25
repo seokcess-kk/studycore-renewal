@@ -108,8 +108,8 @@ export function SessionWarning() {
           </svg>
         </div>
         <div className="flex-1">
-          <h4 className="text-sm font-medium text-ink">세션 만료 예정</h4>
-          <p className="text-xs text-muted mt-1">
+          <h4 className="text-body font-medium text-ink">세션 만료 예정</h4>
+          <p className="text-caption text-muted mt-1">
             {timeLeft !== null
               ? `약 ${timeLeft}분 후 자동 로그아웃됩니다.`
               : "곧 자동 로그아웃됩니다."}

@@ -1,129 +1,77 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Plus,
-  Edit,
   Trash2,
   GripVertical,
   FileText,
   Loader2,
   Eye,
   EyeOff,
+  Edit,
+  ChevronDown,
+  Paperclip,
+  BookOpen,
+  BookMarked,
+  GraduationCap,
   Clock,
   UtensilsCrossed,
   Rocket,
   Users,
   Settings,
   HelpCircle,
-  BookOpen,
-  BookMarked,
-  GraduationCap,
   Lightbulb,
   Shield,
   Bell,
   Calendar,
   MapPin,
   Phone,
-  Paperclip,
 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
-import { RichTextEditor } from "@/components/admin/RichTextEditor";
-import { FileAttachmentManager } from "@/components/admin/FileAttachmentManager";
 import { useToast } from "@/components/common/Toast";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/stores/useUserStore";
 import {
   getSectionList,
-  createSection,
   updateSection,
   deleteSection,
 } from "@/domains/guide/service";
-import {
-  type CreateGuideSectionInput,
-  type GuideSection,
-  type GuideAttachment,
-  type GuideSectionType,
-} from "@/domains/guide/model";
+import type { GuideSection, GuideSectionType } from "@/domains/guide/model";
+import { cn } from "@/lib/utils";
 
-// 카테고리 프리셋
-const CATEGORY_PRESETS = ["시작하기", "독서실 이용", "서비스", "기타", "일반"];
-
-// 아이콘 프리셋
-const ICON_OPTIONS = [
-  { name: "FileText", Icon: FileText },
-  { name: "BookOpen", Icon: BookOpen },
-  { name: "BookMarked", Icon: BookMarked },
-  { name: "GraduationCap", Icon: GraduationCap },
-  { name: "Clock", Icon: Clock },
-  { name: "UtensilsCrossed", Icon: UtensilsCrossed },
-  { name: "Rocket", Icon: Rocket },
-  { name: "Users", Icon: Users },
-  { name: "Settings", Icon: Settings },
-  { name: "HelpCircle", Icon: HelpCircle },
-  { name: "Lightbulb", Icon: Lightbulb },
-  { name: "Shield", Icon: Shield },
-  { name: "Bell", Icon: Bell },
-  { name: "Calendar", Icon: Calendar },
-  { name: "MapPin", Icon: MapPin },
-  { name: "Phone", Icon: Phone },
-] as const;
-
-function getIconComponent(name: string) {
-  const found = ICON_OPTIONS.find((o) => o.name === name);
-  return found?.Icon || FileText;
-}
-
-// RHF 폼 데이터 (카테고리 직접입력 지원)
-interface GuideSectionFormValues extends CreateGuideSectionInput {
-  customCategory: string;
-  attachments: GuideAttachment[];
-}
-
-const FORM_DEFAULTS: GuideSectionFormValues = {
-  title: "",
-  content: "",
-  content_html: null,
-  category: "일반",
-  customCategory: "",
-  icon: "FileText",
-  is_visible: true,
-  attachments: [],
+const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  FileText, BookOpen, BookMarked, GraduationCap, Clock,
+  UtensilsCrossed, Rocket, Users, Settings, HelpCircle,
+  Lightbulb, Shield, Bell, Calendar, MapPin, Phone,
 };
 
+function getIcon(name: string) {
+  return ICON_MAP[name] || FileText;
+}
+
 export default function AdminGuidePage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createBrowserClient();
   const { showToast } = useToast();
   const { canAccessAdmin } = useUserStore();
 
   const [sections, setSections] = useState<GuideSection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [activeType, setActiveType] = useState<GuideSectionType>("onboarding");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<GuideSectionFormValues>({
-    defaultValues: FORM_DEFAULTS,
-  });
+  const activeType = (searchParams.get("type") || "onboarding") as GuideSectionType;
 
-  const watchCategory = watch("category");
-  const watchIcon = watch("icon");
-  const watchIsVisible = watch("is_visible");
-  const watchContentHtml = watch("content_html");
-  const watchAttachments = watch("attachments");
+  const setActiveType = (type: GuideSectionType) => {
+    router.push(`/admin/guide?type=${type}`);
+  };
 
-  // 섹션 목록 조회
   const fetchSections = async () => {
     setIsLoading(true);
     const result = await getSectionList(supabase, activeType);
@@ -137,103 +85,10 @@ export default function AdminGuidePage() {
 
   useEffect(() => {
     fetchSections();
+    setExpandedId(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeType]);
 
-  // 유효 카테고리 resolve
-  const resolveCategory = (data: GuideSectionFormValues) =>
-    data.category === "__custom__"
-      ? data.customCategory?.trim() || "일반"
-      : data.category || "일반";
-
-  // 섹션 추가
-  const onAdd = async (data: GuideSectionFormValues) => {
-    // 커스텀 검증: 제목 + 내용
-    if (!data.title?.trim()) {
-      showToast("제목을 입력해주세요.", "error");
-      return;
-    }
-    if (!data.content?.trim() && !data.content_html) {
-      showToast("내용을 입력해주세요.", "error");
-      return;
-    }
-
-    const result = await createSection(supabase, {
-      title: data.title,
-      content: data.content || data.title,
-      type: activeType,
-      category: resolveCategory(data),
-      icon: data.icon,
-      content_html: data.content_html || null,
-      attachments: data.attachments || [],
-    });
-
-    if (result.success) {
-      showToast("섹션이 추가되었습니다.", "success");
-      reset(FORM_DEFAULTS);
-      setShowAddForm(false);
-      await fetchSections();
-    } else {
-      showToast(result.error || "섹션 추가에 실패했습니다.", "error");
-    }
-  };
-
-  // 수정 모드 진입
-  const handleEdit = (section: GuideSection) => {
-    const isCustom = !CATEGORY_PRESETS.includes(section.category || "일반");
-    setEditingId(section.id);
-    reset({
-      title: section.title,
-      content: section.content,
-      content_html: section.content_html || null,
-      category: isCustom ? "__custom__" : (section.category || "일반"),
-      customCategory: isCustom ? (section.category || "") : "",
-      icon: section.icon || "FileText",
-      is_visible: section.is_visible,
-      attachments: section.attachments || [],
-    });
-  };
-
-  // 섹션 수정
-  const onSaveEdit = async (data: GuideSectionFormValues) => {
-    if (!editingId) return;
-
-    const result = await updateSection(supabase, editingId, {
-      title: data.title,
-      content: data.content || data.title,
-      category: resolveCategory(data),
-      icon: data.icon,
-      content_html: data.content_html || null,
-      is_visible: data.is_visible,
-      attachments: data.attachments || [],
-    });
-
-    if (result.success) {
-      showToast("섹션이 수정되었습니다.", "success");
-      setEditingId(null);
-      reset(FORM_DEFAULTS);
-      await fetchSections();
-    } else {
-      showToast(result.error || "섹션 수정에 실패했습니다.", "error");
-    }
-  };
-
-  // 섹션 삭제
-  const handleDelete = async () => {
-    if (!deleteId) return;
-    setIsDeleting(true);
-    const result = await deleteSection(supabase, deleteId);
-    if (result.success) {
-      showToast("섹션이 삭제되었습니다.", "success");
-      setDeleteId(null);
-      await fetchSections();
-    } else {
-      showToast(result.error || "섹션 삭제에 실패했습니다.", "error");
-    }
-    setIsDeleting(false);
-  };
-
-  // 표시/숨김 토글
   const handleToggleVisibility = async (section: GuideSection) => {
     const result = await updateSection(supabase, section.id, {
       is_visible: !section.is_visible,
@@ -249,184 +104,44 @@ export default function AdminGuidePage() {
     }
   };
 
-  // 취소
-  const handleCancel = () => {
-    setShowAddForm(false);
-    setEditingId(null);
-    reset(FORM_DEFAULTS);
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setIsDeleting(true);
+    const result = await deleteSection(supabase, deleteId);
+    if (result.success) {
+      showToast("섹션이 삭제되었습니다.", "success");
+      setDeleteId(null);
+      if (expandedId === deleteId) setExpandedId(null);
+      await fetchSections();
+    } else {
+      showToast(result.error || "섹션 삭제에 실패했습니다.", "error");
+    }
+    setIsDeleting(false);
   };
-
-  // 폼 UI (추가/수정 공용)
-  const renderForm = (mode: "add" | "edit") => (
-    <form
-      onSubmit={handleSubmit(mode === "add" ? onAdd : onSaveEdit)}
-      className="border border-rule bg-white p-6 space-y-4"
-    >
-      <h3 className="font-serif text-lg font-bold text-ink">
-        {mode === "add" ? "새 섹션 추가" : "섹션 수정"}
-      </h3>
-
-      {/* 제목 */}
-      <div>
-        <label className="mb-1 block text-sm font-medium text-muted">제목</label>
-        <input
-          type="text"
-          {...register("title")}
-          className="w-full border border-rule px-3 py-2 text-sm focus:outline-none focus:border-navy"
-          placeholder="섹션 제목"
-          disabled={isSubmitting}
-        />
-      </div>
-
-      {/* 카테고리 + 아이콘 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="mb-1 block text-sm font-medium text-muted">카테고리</label>
-          <select
-            {...register("category")}
-            className="w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none bg-white"
-            disabled={isSubmitting}
-          >
-            {CATEGORY_PRESETS.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-            <option value="__custom__">직접 입력</option>
-          </select>
-          {watchCategory === "__custom__" && (
-            <input
-              type="text"
-              {...register("customCategory")}
-              className="mt-2 w-full border border-rule px-3 py-2 text-sm focus:border-navy focus:outline-none"
-              placeholder="카테고리명 입력"
-              disabled={isSubmitting}
-            />
-          )}
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-muted">아이콘</label>
-          <div className="flex flex-wrap gap-1.5">
-            {ICON_OPTIONS.map(({ name, Icon }) => (
-              <button
-                key={name}
-                type="button"
-                onClick={() => setValue("icon", name)}
-                className={`p-2 border transition-colors cursor-pointer ${
-                  watchIcon === name
-                    ? "border-teal bg-teal/10 text-teal"
-                    : "border-rule text-muted hover:text-ink hover:border-ink"
-                }`}
-                title={name}
-                disabled={isSubmitting}
-              >
-                <Icon size={16} />
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 표시/숨김 토글 */}
-      <div className="flex items-center gap-3">
-        <label className="text-sm font-medium text-muted">표시 상태</label>
-        <button
-          type="button"
-          onClick={() => setValue("is_visible", !watchIsVisible)}
-          className={`flex items-center gap-2 px-3 py-1.5 border text-sm transition-colors cursor-pointer ${
-            watchIsVisible
-              ? "border-teal text-teal bg-teal/5"
-              : "border-rule text-muted"
-          }`}
-          disabled={isSubmitting}
-        >
-          {watchIsVisible ? (
-            <>
-              <Eye size={14} /> 표시
-            </>
-          ) : (
-            <>
-              <EyeOff size={14} /> 숨김
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* 리치 텍스트 에디터 */}
-      <div>
-        <label className="mb-1 block text-sm font-medium text-muted">내용</label>
-        <RichTextEditor
-          content={watchContentHtml || ""}
-          onChange={(html) => {
-            const div = document.createElement("div");
-            div.innerHTML = html;
-            const plainText = div.textContent || div.innerText || "";
-            setValue("content_html", html);
-            setValue("content", plainText.trim() || watch("title"));
-          }}
-          placeholder="섹션 내용을 입력하세요..."
-        />
-      </div>
-
-      {/* 첨부파일 */}
-      <div>
-        <label className="mb-1 block text-sm font-medium text-muted">첨부파일</label>
-        <FileAttachmentManager
-          sectionId={editingId || undefined}
-          value={watchAttachments || []}
-          onChange={(attachments) => setValue("attachments", attachments)}
-          disabled={isSubmitting}
-        />
-      </div>
-
-      {/* 액션 버튼 */}
-      <div className="flex gap-3">
-        <Button type="button" variant="ghost" onClick={handleCancel} disabled={isSubmitting}>
-          취소
-        </Button>
-        <Button type="submit" variant="primary" disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {mode === "add" ? "추가 중..." : "저장 중..."}
-            </>
-          ) : mode === "add" ? (
-            "추가"
-          ) : (
-            "저장"
-          )}
-        </Button>
-      </div>
-    </form>
-  );
 
   return (
     <div className="max-w-4xl space-y-6">
       {/* 타입 탭 */}
       <div className="flex border-b border-rule">
         <button
-          onClick={() => {
-            setActiveType("onboarding");
-            handleCancel();
-          }}
-          className={`px-4 py-3 text-body font-medium border-b-2 transition-colors ${
+          onClick={() => setActiveType("onboarding")}
+          className={cn(
+            "px-4 py-3 text-body font-medium border-b-2 transition-colors duration-200 cursor-pointer",
             activeType === "onboarding"
               ? "border-navy text-navy"
               : "border-transparent text-muted hover:text-ink"
-          }`}
+          )}
         >
           조교 온보딩
         </button>
         <button
-          onClick={() => {
-            setActiveType("manual");
-            handleCancel();
-          }}
-          className={`px-4 py-3 text-body font-medium border-b-2 transition-colors ${
+          onClick={() => setActiveType("manual")}
+          className={cn(
+            "px-4 py-3 text-body font-medium border-b-2 transition-colors duration-200 cursor-pointer",
             activeType === "manual"
               ? "border-navy text-navy"
               : "border-transparent text-muted hover:text-ink"
-          }`}
+          )}
         >
           재원생 매뉴얼
         </button>
@@ -436,118 +151,128 @@ export default function AdminGuidePage() {
       <div className="flex items-center justify-between">
         <p className="text-muted text-body">
           {activeType === "onboarding"
-            ? "조교 온보딩 문서를 관리합니다. /guide에 표시됩니다."
-            : "재원생 이용 매뉴얼을 관리합니다. /manual에 표시됩니다."}
+            ? "조교 온보딩 문서를 관리합니다."
+            : "재원생 이용 매뉴얼을 관리합니다."}
         </p>
         {canAccessAdmin && (
-          <Button
-            variant="primary"
-            onClick={() => setShowAddForm(true)}
-            disabled={showAddForm || !!editingId}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            섹션 추가
-          </Button>
+          <Link href={`/admin/guide/new?type=${activeType}`}>
+            <Button variant="primary">
+              <Plus className="mr-2 h-4 w-4" />
+              섹션 추가
+            </Button>
+          </Link>
         )}
       </div>
 
-      {/* 새 섹션 추가 폼 */}
-      {showAddForm && renderForm("add")}
-
-      {/* 섹션 목록 */}
-      <div className="space-y-4">
+      {/* 섹션 아코디언 리스트 */}
+      <div className="border border-rule bg-white divide-y divide-rule">
         {isLoading ? (
-          <div className="border border-rule bg-white py-12 text-center">
+          <div className="py-12 text-center">
             <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted" />
             <p className="mt-4 text-muted">로딩 중...</p>
           </div>
         ) : sections.length === 0 ? (
-          <div className="border border-rule bg-white py-12 text-center">
+          <div className="py-12 text-center">
             <FileText className="mx-auto h-12 w-12 text-muted" />
             <p className="mt-4 text-muted">등록된 문서가 없습니다.</p>
           </div>
         ) : (
-          sections.map((section) => (
-            <div key={section.id} className="border border-rule bg-white p-6">
-              {editingId === section.id ? (
-                renderForm("edit")
-              ) : (
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <GripVertical className="h-4 w-4 cursor-move text-muted" />
-                      <span className="font-mono text-sm text-muted">
-                        #{section.order_index}
-                      </span>
-                      {(() => {
-                        const SIcon = getIconComponent(section.icon || "FileText");
-                        return <SIcon size={16} className="text-teal" />;
-                      })()}
-                      <h3 className="font-serif font-bold text-ink">
-                        {section.title}
-                      </h3>
-                      {section.category && section.category !== "일반" && (
-                        <span className="text-xs bg-teal/10 text-teal px-1.5 py-0.5">
-                          {section.category}
-                        </span>
-                      )}
-                      {!section.is_visible && (
-                        <span className="text-xs bg-stone text-muted px-1.5 py-0.5">
-                          숨김
-                        </span>
-                      )}
-                      {section.attachments && section.attachments.length > 0 && (
-                        <span className="flex items-center gap-1 text-xs bg-navy/5 text-navy px-1.5 py-0.5">
-                          <Paperclip size={10} />
-                          {section.attachments.length}
-                        </span>
-                      )}
+          sections.map((section) => {
+            const Icon = getIcon(section.icon || "FileText");
+            const isExpanded = expandedId === section.id;
+
+            return (
+              <div key={section.id}>
+                {/* 헤더 행 */}
+                <div
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-stone/50 transition-colors duration-200 cursor-pointer"
+                  onClick={() => setExpandedId(isExpanded ? null : section.id)}
+                >
+                  <GripVertical className="h-4 w-4 text-muted flex-shrink-0" />
+                  <span className="font-mono text-caption text-muted w-6 text-right flex-shrink-0">
+                    {section.order_index}
+                  </span>
+                  <Icon size={16} className="text-teal flex-shrink-0" />
+                  <span className="text-body font-medium text-ink truncate flex-1">
+                    {section.title}
+                  </span>
+
+                  {/* 뱃지들 */}
+                  {section.category && section.category !== "일반" && (
+                    <span className="text-caption bg-teal/10 text-teal px-1.5 py-0.5 flex-shrink-0">
+                      {section.category}
+                    </span>
+                  )}
+                  {!section.is_visible && (
+                    <span className="text-caption bg-stone text-muted px-1.5 py-0.5 flex-shrink-0">
+                      숨김
+                    </span>
+                  )}
+                  {section.attachments && section.attachments.length > 0 && (
+                    <span className="flex items-center gap-1 text-caption bg-navy/5 text-navy px-1.5 py-0.5 flex-shrink-0">
+                      <Paperclip size={10} />
+                      {section.attachments.length}
+                    </span>
+                  )}
+
+                  {/* 액션 버튼 (admin만) */}
+                  {canAccessAdmin && (
+                    <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleVisibility(section);
+                        }}
+                        className="p-1 text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
+                        title={section.is_visible ? "숨기기" : "표시하기"}
+                      >
+                        {section.is_visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      </button>
+                      <Link
+                        href={`/admin/guide/${section.id}/edit`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="p-1 text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Link>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteId(section.id);
+                        }}
+                        className="p-1 text-muted hover:text-red-500 transition-colors duration-200 cursor-pointer"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
-                    {canAccessAdmin && (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleToggleVisibility(section)}
-                          className="text-muted hover:text-ink cursor-pointer transition-colors duration-200"
-                          title={section.is_visible ? "숨기기" : "표시하기"}
-                          disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
-                        >
-                          {section.is_visible ? (
-                            <Eye className="h-4 w-4" />
-                          ) : (
-                            <EyeOff className="h-4 w-4" />
-                          )}
-                        </button>
-                        <button
-                          onClick={() => handleEdit(section)}
-                          className="text-muted hover:text-ink cursor-pointer transition-colors duration-200"
-                          disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => setDeleteId(section.id)}
-                          className="text-muted hover:text-red-500 cursor-pointer transition-colors duration-200"
-                          disabled={isSubmitting || isDeleting || showAddForm || !!editingId}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
+                  )}
+
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 text-muted transition-transform duration-200 flex-shrink-0",
+                      isExpanded && "rotate-180"
+                    )}
+                  />
+                </div>
+
+                {/* 펼침 영역 — 콘텐츠 미리보기 */}
+                {isExpanded && (
+                  <div className="px-4 pb-4 pt-1 border-t border-rule bg-stone/30">
+                    {section.content_html ? (
+                      <div
+                        className="prose prose-sm max-w-none text-muted prose-headings:font-serif prose-a:text-teal"
+                        dangerouslySetInnerHTML={{ __html: section.content_html }}
+                      />
+                    ) : (
+                      <p className="whitespace-pre-wrap text-muted text-body">
+                        {section.content}
+                      </p>
                     )}
                   </div>
-                  {section.content_html ? (
-                    <div
-                      className="prose prose-sm max-w-none text-muted prose-headings:font-serif prose-a:text-teal"
-                      dangerouslySetInnerHTML={{ __html: section.content_html }}
-                    />
-                  ) : (
-                    <p className="whitespace-pre-wrap text-muted line-clamp-3">
-                      {section.content}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          ))
+                )}
+              </div>
+            );
+          })
         )}
       </div>
 
@@ -560,6 +285,7 @@ export default function AdminGuidePage() {
         description="이 섹션을 삭제하시겠습니까?"
         confirmText="삭제"
         variant="danger"
+        isLoading={isDeleting}
       />
     </div>
   );

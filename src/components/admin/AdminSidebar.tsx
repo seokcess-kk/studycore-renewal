@@ -139,10 +139,10 @@ export function AdminSidebar() {
       {/* 로고 */}
       <div className="flex h-16 items-center justify-between border-b border-rule px-6">
         <Link href="/admin" className="flex items-center gap-2">
-          <span className="font-serif text-xl font-bold text-navy">
+          <span className="font-serif text-fluid-h2 font-bold text-navy">
             STUDYCORE
           </span>
-          <span className="text-xs text-muted">Admin</span>
+          <span className="text-caption text-muted">Admin</span>
         </Link>
         {/* 모바일 닫기 버튼 */}
         <button
@@ -177,7 +177,7 @@ export function AdminSidebar() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors duration-200 cursor-pointer",
+                      "flex items-center gap-3 px-3 py-2.5 text-body font-medium transition-colors duration-200 cursor-pointer",
                       active
                         ? "bg-navy text-white"
                         : "text-ink hover:bg-stone"
@@ -206,15 +206,15 @@ export function AdminSidebar() {
       {/* 사용자 정보 + 로그아웃 */}
       <div className="border-t border-rule p-4">
         <div className="mb-3 px-3">
-          <p className="text-sm font-medium text-ink">
+          <p className="text-body font-medium text-ink">
             {profile?.name || "관리자"}
           </p>
-          <p className="text-xs text-muted">{profile?.role || "admin"}</p>
+          <p className="text-caption text-muted">{profile?.role || "admin"}</p>
         </div>
         <button
           onClick={handleLogout}
           disabled={isLoggingOut}
-          className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted transition-colors duration-200 hover:bg-stone hover:text-ink disabled:opacity-50 cursor-pointer"
+          className="flex w-full items-center gap-3 px-3 py-2.5 text-body font-medium text-muted transition-colors duration-200 hover:bg-stone hover:text-ink disabled:opacity-50 cursor-pointer"
         >
           <LogOut className="h-5 w-5" />
           {isLoggingOut ? "로그아웃 중..." : "로그아웃"}

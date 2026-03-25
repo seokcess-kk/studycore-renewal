@@ -201,10 +201,10 @@ export default function AdminDashboardPage() {
             <span
               className={
                 status === "new"
-                  ? "text-xs text-orange-600"
+                  ? "text-caption text-orange-600"
                   : status === "contacted"
-                  ? "text-xs text-blue-600"
-                  : "text-xs text-green-600"
+                  ? "text-caption text-blue-600"
+                  : "text-caption text-green-600"
               }
             >
               {status === "new"
@@ -280,7 +280,7 @@ function RecentActivityCard({
         </div>
         <Link
           href={linkHref}
-          className="flex items-center gap-1 text-sm text-teal hover:underline"
+          className="flex items-center gap-1 text-body text-teal hover:underline"
         >
           {linkText}
           <ArrowRight className="h-4 w-4" />
@@ -293,14 +293,14 @@ function RecentActivityCard({
           items.map((item) => (
             <div key={item.id} className="flex items-center justify-between px-4 py-3">
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-ink">
+                <p className="truncate text-body font-medium text-ink">
                   {item.title}
                 </p>
-                <p className="text-xs text-muted">{item.subtitle}</p>
+                <p className="text-caption text-muted">{item.subtitle}</p>
               </div>
               <div className="flex flex-col items-end gap-1">
                 {item.status && renderStatus(item.status)}
-                <span className="text-xs text-muted">
+                <span className="text-caption text-muted">
                   {formatDistanceToNow(item.date)}
                 </span>
               </div>

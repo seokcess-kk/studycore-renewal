@@ -139,7 +139,7 @@ export default function AdminProgramNewPage() {
       <form className="space-y-6">
         <div className="border border-rule bg-white p-6 space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               프로그램명 *
             </label>
             <input
@@ -152,7 +152,7 @@ export default function AdminProgramNewPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               설명
             </label>
             <textarea
@@ -161,13 +161,13 @@ export default function AdminProgramNewPage() {
               placeholder={"- 대표원장 직접 운영·관리\n- 메디컬 재학 최상위권 조교 배치\n- 턴게이트 기반 출결 시스템\n\n위처럼 '- '로 시작하는 줄은 홈 카드에 불릿으로 표시됩니다.\n나머지 텍스트는 상세 보기 팝업에서만 표시됩니다."}
               className="input-admin resize-none"
             />
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-caption text-muted">
               &apos;- &apos;로 시작하는 줄 → 홈 카드 불릿 (최대 4개) · 나머지 → 상세 팝업에서만 표시
             </p>
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-muted">
+            <label className="mb-2 block text-body font-medium text-muted">
               대표 이미지
             </label>
             <ImageUploader
@@ -184,7 +184,7 @@ export default function AdminProgramNewPage() {
         {/* 첨부파일 */}
         <div className="border border-rule bg-white p-6">
           <h3 className="mb-4 font-medium text-ink">첨부파일</h3>
-          <label className="inline-flex cursor-pointer items-center gap-2 border border-rule px-4 py-2 text-sm text-muted hover:border-navy hover:text-ink transition-colors">
+          <label className="inline-flex cursor-pointer items-center gap-2 border border-rule px-4 py-2 text-body text-muted hover:border-navy hover:text-ink transition-colors">
             <Paperclip className="h-4 w-4" />
             {isUploading ? "업로드 중..." : "파일 첨부"}
             <input
@@ -195,7 +195,7 @@ export default function AdminProgramNewPage() {
               onChange={handleFileUpload}
             />
           </label>
-          <p className="mt-2 text-xs text-muted">10MB 이하, 이미지·PDF 등</p>
+          <p className="mt-2 text-caption text-muted">10MB 이하, 이미지·PDF 등</p>
 
           {attachments.length > 0 && (
             <div className="mt-4 space-y-2">
@@ -203,8 +203,8 @@ export default function AdminProgramNewPage() {
                 <div key={att.url} className="flex items-center justify-between border border-rule px-3 py-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <FileText className="h-4 w-4 flex-shrink-0 text-muted" />
-                    <span className="truncate text-sm text-ink">{att.name}</span>
-                    <span className="flex-shrink-0 text-xs text-muted">
+                    <span className="truncate text-body text-ink">{att.name}</span>
+                    <span className="flex-shrink-0 text-caption text-muted">
                       ({att.size > 1024 * 1024
                         ? `${(att.size / 1024 / 1024).toFixed(1)}MB`
                         : `${(att.size / 1024).toFixed(0)}KB`})
@@ -227,7 +227,7 @@ export default function AdminProgramNewPage() {
           <h3 className="font-medium text-ink">기간 및 설정</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 시작일
               </label>
               <input
@@ -237,7 +237,7 @@ export default function AdminProgramNewPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-muted">
+              <label className="mb-1 block text-body font-medium text-muted">
                 종료일
               </label>
               <input
@@ -254,12 +254,12 @@ export default function AdminProgramNewPage() {
               {...register("is_active")}
               className="h-4 w-4 border-rule"
             />
-            <label htmlFor="is_active" className="text-sm text-ink">
+            <label htmlFor="is_active" className="text-body text-ink">
               활성화 (홈페이지에 표시)
             </label>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
+            <label className="mb-1 block text-body font-medium text-muted">
               정렬 순서
             </label>
             <input
@@ -267,7 +267,7 @@ export default function AdminProgramNewPage() {
               {...register("sort_order", { valueAsNumber: true })}
               className="input-admin w-32"
             />
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-caption text-muted">
               숫자가 작을수록 먼저 표시됩니다.
             </p>
           </div>
