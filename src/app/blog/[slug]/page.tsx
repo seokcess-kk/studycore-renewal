@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Nav, Footer, Skeleton } from "@/components/common";
+import { Nav, Footer, Skeleton, ArticleJsonLd } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getBlogBySlug, getAdjacentPosts } from "@/domains/blog/service";
 import type { BlogPostWithAuthor, BlogPost } from "@/domains/blog/model";
@@ -83,6 +83,16 @@ export default function BlogPostPage() {
 
   return (
     <>
+      <ArticleJsonLd
+        title={post.title}
+        slug={post.slug}
+        excerpt={post.excerpt}
+        thumbnailUrl={post.thumbnail_url}
+        publishedAt={post.published_at}
+        updatedAt={post.updated_at}
+        authorName={post.author?.name}
+        tags={post.tags}
+      />
       <Nav />
       <main className="page-body">
         {/* 헤더 */}

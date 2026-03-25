@@ -14,7 +14,7 @@ export { ImageUploader } from "./ImageUploader";
 export { AttachmentModal, AttachmentList, MetaAttachmentList, isPdfUrl, isImageUrl } from "./AttachmentModal";
 export { AvatarUploader } from "./AvatarUploader";
 export { SessionWarning } from "./SessionWarning";
-export { OrganizationJsonLd, FAQJsonLd, WebSiteJsonLd } from "./JsonLd";
+export { OrganizationJsonLd, FAQJsonLd, WebSiteJsonLd, ArticleJsonLd } from "./JsonLd";
 export { PendingBanner } from "./PendingBanner";
 export { FormError } from "./FormError";
 export { SectionHeader } from "./SectionHeader";

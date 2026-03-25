@@ -120,6 +120,64 @@ export function FAQJsonLd() {
   );
 }
 
+interface ArticleJsonLdProps {
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  thumbnailUrl?: string | null;
+  publishedAt?: string | null;
+  updatedAt?: string | null;
+  authorName?: string | null;
+  tags?: string[];
+}
+
+export function ArticleJsonLd({
+  title,
+  slug,
+  excerpt,
+  thumbnailUrl,
+  publishedAt,
+  updatedAt,
+  authorName,
+  tags,
+}: ArticleJsonLdProps) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: title,
+    description: excerpt ?? undefined,
+    image: thumbnailUrl ?? undefined,
+    url: `https://studycore.kr/blog/${slug}`,
+    datePublished: publishedAt ?? undefined,
+    dateModified: updatedAt ?? publishedAt ?? undefined,
+    author: {
+      "@type": "Person",
+      name: authorName ?? "스터디코어 1.0",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "스터디코어 1.0",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://studycore.kr/logo/Artboard%204@2x_정사각.png",
+      },
+    },
+    keywords: tags?.join(", ") ?? undefined,
+    inLanguage: "ko",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://studycore.kr/blog/${slug}`,
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
 export function WebSiteJsonLd() {
   const jsonLd = {
     "@context": "https://schema.org",

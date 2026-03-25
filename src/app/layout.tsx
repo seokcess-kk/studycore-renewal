@@ -33,7 +33,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://studycore.kr"),
   title: {
-    default: "스터디코어 1.0 | 광주 광산구 관리형 독서실",
+    default: "스터디코어 1.0 | 구조가 성적을 만든다",
     template: "%s | 스터디코어 1.0",
   },
   description:
@@ -78,13 +78,13 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     url: "https://studycore.kr",
     siteName: "스터디코어 1.0",
-    title: "스터디코어 1.0 | 광주 광산구 관리형 독서실",
+    title: "스터디코어 1.0 | 구조가 성적을 만든다",
     description:
       "구조가 성적을 만든다. 광주 광산구 관리형 독서실 — 교시제 시스템, 수학 멘토 질문방, 원장 직접 관리",
   },
   twitter: {
     card: "summary_large_image",
-    title: "스터디코어 1.0 | 광주 광산구 관리형 독서실",
+    title: "스터디코어 1.0 | 구조가 성적을 만든다",
     description:
       "구조가 성적을 만든다. 교시제 시스템, 수학 멘토 질문방, 원장 직접 관리",
   },
@@ -102,7 +102,7 @@ export const metadata: Metadata = {
   verification: {
     google: "9ik0KxF9cQ1CoU2se5isPlTzkcbWb3KEVaLKHRs7byE",
     other: {
-      "naver-site-verification": "363cbd4edaf2e0c8b7b3ca3ab6272a55e9a16f76",
+      "naver-site-verification": "71796639eb31c6c6f6263517b605d763b76f230e",
     },
   },
 };
