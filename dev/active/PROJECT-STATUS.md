@@ -35,18 +35,7 @@
 ## 배포 전 필수 작업
 
 ### SQL 마이그레이션 (Supabase)
-- [x] `015_add_guide_sections.sql` ✅
-- [x] `017_add_question_visibility.sql` ✅
-- [x] `018_add_staff_credentials.sql` ✅
-- [x] `019_add_login_attempts.sql` ✅
-- [x] `020_add_audit_logs.sql` ✅
-- [ ] `021_add_change_password_rpc.sql` (비밀번호 변경 RPC)
-- [ ] `022_add_search_indexes.sql` (full-text 검색 인덱스)
-- [ ] `023_cleanup_test_accounts.sql` (테스트 계정 정리)
-- [ ] `024_add_question_pinned_and_fix_storage.sql` (질문 고정 + 이미지 RLS)
-- [ ] `025_fix_question_rls.sql` (질문/답변 DELETE 정책)
-- [ ] `026_add_guide_section_type.sql` (온보딩/매뉴얼 type 컬럼)
-- [ ] `038_enhance_guide_sections.sql` (category, icon, content_html 컬럼)
+- [x] `001` ~ `047` 전체 적용 완료 ✅
 
 ### 환경변수 설정
 - [x] `NEXT_PUBLIC_SUPABASE_URL` ✅
@@ -260,15 +249,6 @@ src/domains/
 ---
 
 ## 다음 단계
-
-### 미실행 마이그레이션
-- [ ] `021_add_change_password_rpc.sql`
-- [ ] `022_add_search_indexes.sql`
-- [ ] `023_cleanup_test_accounts.sql`
-- [ ] `024_add_question_pinned_and_fix_storage.sql`
-- [ ] `025_fix_question_rls.sql`
-- [ ] `026_add_guide_section_type.sql`
-- [ ] `038_enhance_guide_sections.sql`
 
 ### 즉시 가능
 1. Vercel 환경변수 설정 (`SUPABASE_SERVICE_ROLE_KEY`)
