@@ -96,7 +96,7 @@
 - `/admin/questions` 질문 관리 (뱃지, 고정)
 - `/admin/blog` 블로그 CRUD
 - `/admin/meal` 도시락 관리 (매트릭스 뷰, 식수 합계, 미신청 학생, 엑셀)
-- `/admin/guide` 온보딩/매뉴얼 CRUD (탭 전환)
+- `/admin/guide` 온보딩/매뉴얼 아코디언 목록 + 분리 추가/수정 페이지 (GuideSectionForm)
 - `/admin/kakao` 알림톡 발송/이력
 - `/admin/settings` 사이트 설정
 
@@ -135,6 +135,19 @@ src/domains/
 ---
 
 ## 최근 변경사항
+
+### 2026-03-25 (2차) — 어드민 UX 개선 + 디자인 토큰 일괄 교체
+- **가이드 관리 개편**: 아코디언 목록 + 분리된 추가(`/admin/guide/new`)/수정(`/admin/guide/[id]/edit`) 페이지, `GuideSectionForm` 공통 컴포넌트 추출
+- **질문 상세 UX**: 질문 본문 접기(120px) + 답변 아코디언(최신만 펼침, 80자 미리보기)
+- **공지 작성 UX**: 팝업·알림톡 섹션 ChevronDown 접기/펼치기 전환
+- **MetaAttachmentList onSelect**: 이미지 클릭 시 모달 오픈 일관성 확보 (6개 사용처)
+- **디자인 토큰 전체 교체**: text-sm/xs/xl/lg → text-body/caption/fluid-h2/subhead (46개 파일)
+- **Footer flex 체인**: layout.tsx div#main-content에 `flex flex-col flex-1` 추가
+
+### 2026-03-25 (1차) — AdminSidebar 그룹핑 + 공간 관리 + E2E 테스트
+- AdminSidebar 12개 flat list → 5개 그룹 구조화
+- spaces 테이블 + 어드민 CRUD + SpaceSlider 동적 데이터
+- Playwright E2E 38 테스트 케이스
 
 ### 2026-03-18 (4차) — 어드민 도시락 헤더 중복 수정
 - **어드민 도시락 관리 페이지**: AdminHeader 중복 렌더링 제거

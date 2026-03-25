@@ -235,6 +235,11 @@ e2e/
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-03-25: Footer 하단 여백 — layout.tsx의 div#main-content에 `flex flex-col flex-1` 추가하여 flex 체인 연결
+- 2026-03-25: 디자인 토큰 전체 일괄 교체 — text-sm/xs/xl/lg → text-body/caption/fluid-h2/subhead (46개 파일, shadcn·Tiptap prose 제외)
+- 2026-03-25: MetaAttachmentList에 onSelect prop 추가 — 이미지 클릭 시 모달 오픈 일관성 확보 (6개 사용처 적용)
+- 2026-03-25: 어드민 UX 개선 — /admin/guide 아코디언 목록+분리 편집 페이지, /admin/questions/[id] 질문 접기+답변 아코디언, /admin/notices/new 팝업·알림톡 접기/펼치기
+- 2026-03-25: GuideSectionForm 공통 컴포넌트 추출 — 가이드 추가/수정 폼 공유 (RichTextEditor+FileAttachmentManager 통합)
 - 2026-03-25: AdminSidebar 메뉴 그룹핑 — 12개 flat list → 5개 그룹(대시보드, 관리, 콘텐츠, 홈페이지, 운영) 구조화
 - 2026-03-25: 공간 소개 어드민 동적 관리 — spaces 테이블 + space-images Storage + DDD 3파일(space 도메인) + 어드민 CRUD(/admin/spaces) + SpaceSlider 동적 데이터 전환
 - 2026-03-25: E2E 테스트 인프라 구축 — Playwright 4개 프로젝트(public/auth/admin/member), globalSetup 계정 잠금 해제+storageState, 38개 테스트 케이스

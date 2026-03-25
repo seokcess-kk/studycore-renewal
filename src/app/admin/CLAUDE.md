@@ -30,6 +30,21 @@
 - 대신 `max-w-*` 직접 사용: `max-w-lg`(폼), `max-w-2xl`(설정/편집), `max-w-3xl`(공지), `max-w-4xl`(가이드/블로그)
 - 목록 페이지(테이블)는 max-w 없이 전체 너비 사용
 
+## 페이지별 구조
+
+### 가이드 관리 (/admin/guide)
+- **목록**: 아코디언 리스트 (클릭 → 콘텐츠 미리보기 펼침). URL `?type=onboarding|manual`로 탭 상태 관리
+- **추가**: `/admin/guide/new?type=...` — `GuideSectionForm` 공통 컴포넌트 사용
+- **수정**: `/admin/guide/[id]/edit` — `GuideSectionForm` + `getSectionDetail` 서비스
+- **폼 컴포넌트**: `src/components/admin/GuideSectionForm.tsx` (RichTextEditor + FileAttachmentManager + 카테고리/아이콘 선택)
+
+### 질문 상세 (/admin/questions/[id])
+- 질문 본문: 120px 이상 시 접기 + 그라데이션 "더 보기" 버튼
+- 답변: 아코디언 카드 (최신 답변만 기본 펼침, 나머지 축소 + 80자 미리보기)
+
+### 공지 작성 (/admin/notices/new)
+- 팝업 등록 / 알림톡 발송: ChevronDown 접기/펼치기 섹션 (활성 시 배지 표시)
+
 ## 데이터 조회 패턴
 - 목록 페이지: `createBrowserClient()` + TanStack Query (클라이언트 사이드)
 - 초기 로드가 중요한 페이지: `createServerClient()` (서버 사이드)
