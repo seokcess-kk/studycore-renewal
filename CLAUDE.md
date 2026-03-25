@@ -64,8 +64,6 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 6. 로그아웃 시 `router.push()` → `window.location.href = "/"` 사용 (전체 리로드)
 7. `SIGNED_OUT`에서 `setUser`/`setProfile` 개별 호출 → `logout()` 한 번 호출
 8. 도메인 repository→repository 직접 호출 → service→service만 허용
-9. `text-[Npx]` 직접 사용 → 디자인 토큰 (`text-label`~`text-subhead`, `text-fluid-*`) 사용 필수
-10. `leading-[N]` / `tracking-[Nem]` 직접 사용 → 토큰 (`leading-heading`/`leading-ui`/`leading-prose`, `tracking-heading`/`tracking-cta`/`tracking-label`) 사용 필수
 
 ### 필수 패턴
 - 모든 폼: react-hook-form + zod
