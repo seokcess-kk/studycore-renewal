@@ -20,7 +20,7 @@ export type ConsultationStatusType =
 
 // 상담 유형
 export const ConsultationType = {
-  ADMISSION: "admission", // 입소 상담
+  ADMISSION: "admission", // 등록 상담
   TOUR: "tour", // 시설 견학
   PROGRAM: "program", // 프로그램 문의
   ETC: "etc", // 기타

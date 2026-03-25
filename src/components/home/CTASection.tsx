@@ -68,7 +68,7 @@ export function CTASection() {
               신청
             </h2>
             <p className="text-reading text-white/60 leading-prose mb-10">
-              입소 상담, 시설 견학, 프로그램 문의 등
+              등록 상담, 시설 견학, 프로그램 문의 등
               <br />
               무엇이든 편하게 문의해 주세요.
             </p>

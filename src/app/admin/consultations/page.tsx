@@ -30,7 +30,7 @@ const STATUS_BADGE_VARIANT: Record<string, "warning" | "info" | "success"> = {
 };
 
 const CONSULT_TYPE_LABELS: Record<string, string> = {
-  admission: "입소 상담",
+  admission: "등록 상담",
   tour: "시설 견학",
   program: "프로그램 문의",
   etc: "기타",
