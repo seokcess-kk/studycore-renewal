@@ -22,7 +22,11 @@ npm run dev            # localhost:3000 (webpack)
 npm run build          # 프로덕션 빌드
 npm run lint           # ESLint
 npx tsc --noEmit       # 타입 체크
-npm run test:e2e       # Playwright E2E
+npx playwright test              # E2E 전체 실행 (dev 서버 실행 필수)
+npx playwright test --project=public   # 공개 페이지만
+npx playwright test --project=auth     # 인증/권한만
+npx playwright test --project=admin    # 어드민만
+npx playwright test --project=member   # 재원생만
 ```
 
 ## 디렉터리 구조
@@ -33,6 +37,7 @@ src/app/admin/         어드민 (admin/mentor 권한)
 src/app/api/           Route Handlers (staff-login, create-staff, consult)
 src/domains/           DDD 3파일 패턴 — 상세: src/domains/CLAUDE.md
 src/components/        UI 컴포넌트 — 브랜드/패턴: src/components/CLAUDE.md
+e2e/                   E2E 테스트 (Playwright) — helpers, fixtures, tests/{public,auth,admin,member}
 src/stores/            Zustand 스토어
 src/hooks/             커스텀 훅
 src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
@@ -169,8 +174,36 @@ phase{N}-{name}-tasks.md    ← 작업 목록, 완료 기록
 - **월 1회 정기 점검**: "CLAUDE.md 전체를 리뷰해줘. 코드베이스와 맞지 않는 규칙, 빠진 규칙, 중복 찾아줘"
 - **같은 실수 2회 반복 시**: 해당 실수를 방지하는 규칙을 즉시 추가
 
+## E2E 테스트
+
+### 구조
+```
+e2e/
+  fixtures/       auth.fixture.ts, test-data.fixture.ts
+  helpers/        login.helper.ts, navigation.helper.ts, supabase.helper.ts
+  global-setup.ts    계정 잠금 해제 → storageState 저장 (admin/mentor/assistant)
+  global-teardown.ts 테스트 데이터 정리
+  tests/
+    public/       홈, 네비게이션, 상담 신청 (인증 불필요)
+    auth/         스태프 로그인, 라우트 보호, 역할별 권한
+    admin/        대시보드, 공지 CRUD, 질문 관리 (admin storageState)
+    member/       공지, 질문, 마이페이지 (mentor storageState)
+```
+
+### 환경 설정
+- `.env.local`: Supabase URL/Key (dev 서버용)
+- `.env.test`: 테스트 계정 (TEST_ADMIN_*, TEST_MENTOR_*, TEST_ASSISTANT_*)
+- `#` 포함 비밀번호는 `.env.test`에서 반드시 따옴표로 감싸기
+- `e2e/.auth/`: storageState 파일 (gitignore됨, globalSetup에서 자동 생성)
+
+### 실행 주의
+- **dev 서버 먼저 실행** (`npm run dev`) → `npx playwright test`
+- globalSetup에서 `unlock_account` RPC로 잠금 해제 후 로그인 (5회 실패 잠금 방지)
+- CI에서는 webServer가 자동으로 빌드+서버 시작
+
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-03-25: E2E 테스트 인프라 구축 — Playwright 4개 프로젝트(public/auth/admin/member), globalSetup 계정 잠금 해제+storageState, 38개 테스트 케이스
 - 2026-03-24: 질문/답변 첨부파일 메타데이터 전환 — image_urls TEXT[] → attachments JSONB (원본 파일명 보존), ImageUploader에 onFileUploaded 콜백 추가, MetaAttachmentList로 표시 통일
 - 2026-03-24: 첨부파일 다운로드 시 원본 파일명 유지 — downloadWithName blob fetch 방식 도입
 - 2026-03-24: 답변 삭제 기능 UI 추가 — 재원생 상세(canAccessAdmin 조건부) + 어드민 상세/스태프 카드(항상 표시)
