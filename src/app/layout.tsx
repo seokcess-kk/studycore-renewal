@@ -123,7 +123,7 @@ export default function RootLayout({
         >
           본문으로 건너뛰기
         </a>
-        <Providers><div id="main-content">{children}</div></Providers>
+        <Providers><div id="main-content" className="flex flex-col flex-1">{children}</div></Providers>
       </body>
     </html>
   );
