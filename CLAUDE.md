@@ -13,7 +13,7 @@
 관리형 독서실 홈페이지. 공개 랜딩 + 재원생 서비스(공지·질문방·도시락) + 어드민 패널.
 
 ## 기술 스택
-Next.js 16 (App Router, TS strict) · Tailwind v4 + shadcn/ui · Supabase (PG + Auth + Storage + Edge Functions) · Zustand · TanStack Query v5 · react-hook-form + zod v4 · Tiptap · Framer Motion · Playwright E2E · Vercel 배포. Path alias: `@/*` → `./src/*`
+Next.js 16 (App Router, TS strict) · Tailwind v4 + @tailwindcss/typography + shadcn/ui · Supabase (PG + Auth + Storage + Edge Functions) · Zustand · TanStack Query v5 · react-hook-form + zod v4 · Tiptap · Framer Motion · Playwright E2E · Vercel 배포. Path alias: `@/*` → `./src/*`
 
 ## 빌드 & 실행
 ```bash
@@ -235,6 +235,7 @@ e2e/
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-03-27: @tailwindcss/typography 플러그인 추가 — prose 클래스 미작동으로 Tiptap HTML 콘텐츠(공지·가이드·블로그)에서 줄바꿈이 표시되지 않던 문제 수정
 - 2026-03-25: Footer 하단 여백 — layout.tsx의 div#main-content에 `flex flex-col flex-1` 추가하여 flex 체인 연결
 - 2026-03-25: 디자인 토큰 전체 일괄 교체 — text-sm/xs/xl/lg → text-body/caption/fluid-h2/subhead (46개 파일, shadcn·Tiptap prose 제외)
 - 2026-03-25: MetaAttachmentList에 onSelect prop 추가 — 이미지 클릭 시 모달 오픈 일관성 확보 (6개 사용처 적용)
