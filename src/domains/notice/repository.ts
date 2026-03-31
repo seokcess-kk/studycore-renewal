@@ -24,6 +24,7 @@ export async function getNotices(
     category?: string;
     search?: string;
     publishedOnly?: boolean;
+    publicOnly?: boolean;
     limit?: number;
     offset?: number;
   }
@@ -46,6 +47,10 @@ export async function getNotices(
 
   if (options?.publishedOnly) {
     query = query.eq("is_published", true);
+  }
+
+  if (options?.publicOnly) {
+    query = query.eq("visibility", "public");
   }
 
   if (options?.category) {

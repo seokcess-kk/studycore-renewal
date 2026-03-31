@@ -20,6 +20,19 @@ export const NoticeCategory = {
   EVENT: "event",
 } as const;
 
+export const NoticeVisibility = {
+  PUBLIC: "public",
+  MEMBERS_ONLY: "members_only",
+} as const;
+
+export type NoticeVisibilityType =
+  (typeof NoticeVisibility)[keyof typeof NoticeVisibility];
+
+export const NOTICE_VISIBILITY_LABELS: Record<NoticeVisibilityType, string> = {
+  public: "전체 공개",
+  members_only: "회원 공개",
+};
+
 export type NoticeCategoryType =
   (typeof NoticeCategory)[keyof typeof NoticeCategory];
 
@@ -44,6 +57,7 @@ export const noticeSchema = z.object({
   title: z.string(),
   content: z.string(),
   category: z.enum(["general", "urgent", "material", "schedule", "event"]),
+  visibility: z.enum(["public", "members_only"]),
   is_pinned: z.boolean(),
   is_published: z.boolean(),
   order_index: z.number(),
@@ -83,6 +97,7 @@ export const createNoticeSchema = z.object({
   title: z.string().min(2, "제목은 2자 이상 입력해주세요").max(100),
   content: z.string().min(10, "내용은 10자 이상 입력해주세요"),
   category: z.enum(["general", "urgent", "material", "schedule", "event"]),
+  visibility: z.enum(["public", "members_only"]).optional(),
   is_pinned: z.boolean().optional(),
   is_published: z.boolean().optional(),
 });
@@ -96,6 +111,7 @@ export const updateNoticeSchema = z.object({
   category: z
     .enum(["general", "urgent", "material", "schedule", "event"])
     .optional(),
+  visibility: z.enum(["public", "members_only"]).optional(),
   is_pinned: z.boolean().optional(),
   is_published: z.boolean().optional(),
 });

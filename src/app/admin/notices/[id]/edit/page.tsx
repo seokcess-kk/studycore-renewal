@@ -14,6 +14,7 @@ import { FormError } from "@/components/common";
 import {
   updateNoticeSchema,
   NOTICE_CATEGORY_LABELS,
+  NOTICE_VISIBILITY_LABELS,
 } from "@/domains/notice/model";
 import { z } from "zod";
 import type { Notice, NoticeAttachment } from "@/domains/notice/model";
@@ -70,6 +71,7 @@ export default function AdminNoticeEditPage() {
           title: data.title,
           content: data.content,
           category: data.category,
+          visibility: data.visibility || "members_only",
         });
 
         // 첨부파일 로드
@@ -234,6 +236,25 @@ export default function AdminNoticeEditPage() {
                   상단 고정
                 </label>
               </div>
+            </div>
+
+            {/* 공개 범위 */}
+            <div>
+              <label className="mb-1 block text-body font-medium text-muted">
+                공개 범위
+              </label>
+              <select
+                {...register("visibility")}
+                className="input-admin"
+              >
+                {Object.entries(NOTICE_VISIBILITY_LABELS).map(
+                  ([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  )
+                )}
+              </select>
             </div>
 
             {/* 제목 */}

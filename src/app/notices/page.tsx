@@ -11,11 +11,12 @@ import {
   type NoticeCategoryType,
 } from "@/domains/notice/model";
 import { ROUTES } from "@/lib/constants";
-import { Pin, ChevronRight, Eye } from "lucide-react";
+import { Pin, ChevronRight, Eye, Lock } from "lucide-react";
 
 export default function NoticesPage() {
   const [notices, setNotices] = useState<NoticeWithAuthor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [category, setCategory] = useState<string | undefined>();
@@ -25,10 +26,17 @@ export default function NoticesPage() {
     async function fetchNotices() {
       setIsLoading(true);
       const supabase = createClient();
+
+      // 로그인 여부 확인
+      const { data: { user } } = await supabase.auth.getUser();
+      const loggedIn = !!user;
+      setIsLoggedIn(loggedIn);
+
       const result = await getNoticeList(supabase, {
         category,
         page,
         pageSize,
+        publicOnly: !loggedIn,
       });
 
       if (result.success) {
@@ -106,7 +114,7 @@ export default function NoticesPage() {
             ) : (
               <div className="space-y-0">
                 {notices.map((notice) => (
-                  <NoticeItem key={notice.id} notice={notice} />
+                  <NoticeItem key={notice.id} notice={notice} isLoggedIn={!!isLoggedIn} />
                 ))}
               </div>
             )}
@@ -146,7 +154,7 @@ function FilterButton({
   );
 }
 
-function NoticeItem({ notice }: { notice: NoticeWithAuthor }) {
+function NoticeItem({ notice, isLoggedIn }: { notice: NoticeWithAuthor; isLoggedIn: boolean }) {
   const categoryLabel =
     NOTICE_CATEGORY_LABELS[notice.category as NoticeCategoryType];
 
@@ -174,6 +182,12 @@ function NoticeItem({ notice }: { notice: NoticeWithAuthor }) {
           >
             {categoryLabel}
           </span>
+          {isLoggedIn && notice.visibility === "members_only" && (
+            <span className="inline-flex items-center gap-1 text-caption font-medium px-2 py-0.5 bg-amber-50 text-amber-600">
+              <Lock size={10} />
+              회원
+            </span>
+          )}
         </div>
         <h3 className="text-reading font-medium text-ink truncate group-hover:text-navy transition-colors">
           {notice.title}

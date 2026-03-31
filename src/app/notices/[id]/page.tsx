@@ -13,7 +13,8 @@ import {
   type NoticeCategoryType,
 } from "@/domains/notice/model";
 import { ROUTES } from "@/lib/constants";
-import { ArrowLeft, Calendar, User, Eye } from "lucide-react";
+import { ArrowLeft, Calendar, User, Eye, Lock } from "lucide-react";
+import { Button } from "@/components/common/Button";
 
 export default function NoticeDetailPage({
   params,
@@ -25,6 +26,7 @@ export default function NoticeDetailPage({
   const [attachments, setAttachments] = useState<NoticeAttachment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [needsLogin, setNeedsLogin] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const router = useRouter();
 
@@ -32,6 +34,7 @@ export default function NoticeDetailPage({
     async function fetchNotice() {
       setIsLoading(true);
       const supabase = createClient();
+
       const result = await getNoticeDetail(supabase, id);
 
       if (result.success && result.notice) {
@@ -39,7 +42,13 @@ export default function NoticeDetailPage({
         const atts = await getNoticeAttachments(supabase, id);
         setAttachments(atts);
       } else {
-        setError(result.error || "공지사항을 불러올 수 없습니다.");
+        // RLS로 차단된 경우 (비로그인 + members_only) 로그인 유도
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setNeedsLogin(true);
+        } else {
+          setError(result.error || "공지사항을 불러올 수 없습니다.");
+        }
       }
       setIsLoading(false);
     }
@@ -70,6 +79,41 @@ export default function NoticeDetailPage({
     );
   }
 
+  if (needsLogin) {
+    return (
+      <>
+        <Nav />
+        <main className="page-body min-h-screen flex items-center justify-center">
+          <div className="text-center max-w-md mx-auto px-6">
+            <div className="w-16 h-16 bg-stone flex items-center justify-center mx-auto mb-6">
+              <Lock size={24} className="text-muted" />
+            </div>
+            <h2 className="text-subhead font-bold text-ink mb-2">회원 전용 공지사항</h2>
+            <p className="text-body text-muted mb-6">
+              이 공지사항은 회원만 확인할 수 있습니다.<br />
+              로그인 후 이용해 주세요.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Button
+                onClick={() => router.push(`${ROUTES.LOGIN}?redirect=/notices/${id}`)}
+                className="cursor-pointer"
+              >
+                로그인
+              </Button>
+              <button
+                onClick={() => router.push(ROUTES.NOTICES)}
+                className="text-body text-muted hover:text-ink transition-colors cursor-pointer"
+              >
+                목록으로 돌아가기
+              </button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
   if (error || !notice) {
     return (
       <>
@@ -79,7 +123,7 @@ export default function NoticeDetailPage({
             <p className="text-muted mb-4">{error || "공지사항을 찾을 수 없습니다."}</p>
             <button
               onClick={() => router.push(ROUTES.NOTICES)}
-              className="text-teal underline"
+              className="text-teal underline cursor-pointer"
             >
               목록으로 돌아가기
             </button>

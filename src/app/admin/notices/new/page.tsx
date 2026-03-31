@@ -16,6 +16,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import {
   createNoticeSchema,
   NOTICE_CATEGORY_LABELS,
+  NOTICE_VISIBILITY_LABELS,
 } from "@/domains/notice/model";
 import { createNotice, addNoticeAttachment } from "@/domains/notice/service";
 import { createPopup } from "@/domains/popup/service";
@@ -53,6 +54,7 @@ export default function AdminNoticeNewPage() {
     resolver: zodResolver(createNoticeSchema),
     defaultValues: {
       category: "general",
+      visibility: "members_only",
       content: "",
       is_published: true,
     },
@@ -234,6 +236,25 @@ export default function AdminNoticeNewPage() {
                   상단 고정
                 </label>
               </div>
+            </div>
+
+            {/* 공개 범위 */}
+            <div>
+              <label className="mb-1 block text-body font-medium text-muted">
+                공개 범위
+              </label>
+              <select
+                {...register("visibility")}
+                className="input-admin"
+              >
+                {Object.entries(NOTICE_VISIBILITY_LABELS).map(
+                  ([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  )
+                )}
+              </select>
             </div>
 
             {/* 제목 */}

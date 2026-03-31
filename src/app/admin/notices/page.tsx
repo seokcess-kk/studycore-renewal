@@ -10,8 +10,8 @@ import { createBrowserClient } from "@/lib/supabase/client";
 import { formatDate } from "@/lib/utils";
 import { useToast } from "@/components/common/Toast";
 import { Badge } from "@/components/common";
-import { NOTICE_CATEGORY_LABELS } from "@/domains/notice/model";
-import type { NoticeWithAuthor, NoticeCategory } from "@/domains/notice/model";
+import { NOTICE_CATEGORY_LABELS, NOTICE_VISIBILITY_LABELS } from "@/domains/notice/model";
+import type { NoticeWithAuthor, NoticeCategory, NoticeVisibilityType } from "@/domains/notice/model";
 import { updateNoticeOrders } from "@/domains/notice/service";
 
 export default function AdminNoticesPage() {
@@ -158,6 +158,9 @@ export default function AdminNoticesPage() {
                 조회수
               </th>
               <th className="px-4 py-3 text-left text-body font-medium text-ink">
+                공개
+              </th>
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">
                 상태
               </th>
               <th className="px-4 py-3 text-left text-body font-medium text-ink">
@@ -171,13 +174,13 @@ export default function AdminNoticesPage() {
           <tbody className="divide-y divide-rule">
             {isLoading ? (
               <tr>
-                <td colSpan={8} className="px-4 py-12 text-center text-muted">
+                <td colSpan={9} className="px-4 py-12 text-center text-muted">
                   로딩 중...
                 </td>
               </tr>
             ) : notices.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-12 text-center text-muted">
+                <td colSpan={9} className="px-4 py-12 text-center text-muted">
                   공지사항이 없습니다
                 </td>
               </tr>
@@ -228,6 +231,11 @@ export default function AdminNoticesPage() {
                   </td>
                   <td className="px-4 py-3 text-body text-muted">
                     {notice.view_count}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge variant={notice.visibility === "public" ? "info" : "neutral"}>
+                      {NOTICE_VISIBILITY_LABELS[(notice.visibility || "members_only") as NoticeVisibilityType]}
+                    </Badge>
                   </td>
                   <td className="px-4 py-3">
                     <Badge variant={notice.is_published ? "success" : "neutral"}>

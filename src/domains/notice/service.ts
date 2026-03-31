@@ -28,6 +28,7 @@ export async function getNoticeList(
     search?: string;
     page?: number;
     pageSize?: number;
+    publicOnly?: boolean;
   }
 ): Promise<NoticeListResult> {
   try {
@@ -39,6 +40,7 @@ export async function getNoticeList(
       category: options?.category,
       search: options?.search,
       publishedOnly: true,
+      publicOnly: options?.publicOnly,
       limit: pageSize,
       offset,
     });

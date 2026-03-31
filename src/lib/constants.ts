@@ -142,7 +142,6 @@ export const ROUTES = {
 export const PROTECTED_ROUTES = [
   "/guide",
   "/manual",
-  "/notices",
   "/questions",
   "/meal",
   "/my",
