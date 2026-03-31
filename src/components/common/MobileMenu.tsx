@@ -230,6 +230,14 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   </Link>
                 </motion.div>
                 <motion.div variants={itemVariants}>
+                  <Link
+                    href={ROUTES.NOTICES}
+                    className={linkClass(pathname.startsWith("/notices"))}
+                  >
+                    공지사항
+                  </Link>
+                </motion.div>
+                <motion.div variants={itemVariants}>
                   <Link href={getAnchorHref("#space")} className={linkClass()}>
                     시설
                   </Link>

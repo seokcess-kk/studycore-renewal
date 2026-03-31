@@ -171,6 +171,9 @@ export function Nav() {
               <Link href={ROUTES.SYSTEM} className={linkStyle(pathname === "/system")}>
                 시스템
               </Link>
+              <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>
+                공지사항
+              </Link>
               <Link href={getAnchorHref("#space")} className={linkStyle()}>
                 시설
               </Link>
