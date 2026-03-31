@@ -1,5 +1,4 @@
 import { forwardRef } from "react";
-import { cn } from "@/lib/utils";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -51,10 +50,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       lg: "px-8 py-4 text-body",
     };
 
+    // 내부 클래스는 문자열 결합 (twMerge의 text-* 충돌 방지)
+    // 외부 className만 cn으로 병합하여 오버라이드 허용
+    const internalStyles = `${baseStyles} ${variants[variant]} ${sizes[size]}`;
+
     return (
       <button
         ref={ref}
-        className={cn(baseStyles, variants[variant], sizes[size], className)}
+        className={className ? `${internalStyles} ${className}` : internalStyles}
         disabled={disabled || isLoading}
         {...props}
       >

@@ -23,7 +23,7 @@ service.ts    → 비즈니스 로직
 | 도메인 | 핵심 엔티티 | 비고 |
 |--------|------------|------|
 | user | UserProfile, UserRole, UserStatus | 인증/권한 중심 |
-| notice | Notice, NoticeCategory | is_pinned, is_published |
+| notice | Notice, NoticeCategory, NoticeVisibility | is_pinned, is_published, visibility(public/members_only) |
 | question | Question, Answer | pending→answered |
 | consultation | Consultation | 외부 상담 신청 (new→contacted→done) |
 | counseling | CounselingRecord | 내부 상담 기록 (**Consultation과 별개**) |

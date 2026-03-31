@@ -50,6 +50,7 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 | Counseling (상담 기록) | 스태프↔재원생 상담 내역 기록. types: admission/career/etc | Consultation과 혼동 금지 |
 | 재원생 (student) | 등록된 학생. 계정 상태: `pending→active→inactive` | User(시스템 사용자)와 구분 |
 | 스태프 | admin · mentor · assistant 통칭. `isStaffRole()`로 판별 | |
+| Notice | 공지사항. visibility: `public`(전체 공개) vs `members_only`(회원 공개) | 비로그인은 public만 조회 |
 | MealPeriod | 도시락 신청 기간. selection: `weekday`(요일) vs `date`(날짜) | |
 | Question | 재원생 Q&A. status: `pending→answered` | |
 
@@ -64,6 +65,7 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 6. 로그아웃 시 `router.push()` → `window.location.href = "/"` 사용 (전체 리로드)
 7. `SIGNED_OUT`에서 `setUser`/`setProfile` 개별 호출 → `logout()` 한 번 호출
 8. 도메인 repository→repository 직접 호출 → service→service만 허용
+9. `cn()`/`twMerge`에 커스텀 `text-*` 색상과 `text-*` 폰트 크기를 함께 전달 → twMerge가 동일 그룹으로 인식하여 하나를 삭제함. Button 컴포넌트처럼 내부 클래스는 문자열 결합 사용
 
 ### 필수 패턴
 - 모든 폼: react-hook-form + zod
@@ -96,7 +98,8 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 
 **권한 레이어 (3단계)**:
 1. **middleware.ts** — 서버 사이드 라우트 보호 (SSoT)
-   - `PROTECTED_ROUTES`: 로그인 필수 (`/guide`, `/manual`, `/notices`, `/questions`, `/meal`, `/my`, `/reviews/write`)
+   - `PROTECTED_ROUTES`: 로그인 필수 (`/guide`, `/manual`, `/questions`, `/meal`, `/my`, `/reviews/write`)
+   - `/notices`는 비로그인 접근 허용 (visibility='public' 게시글만 표시)
    - `ADMIN_ROUTES`: admin/mentor 필수 (`/admin`)
    - `ASSISTANT_ROUTES`: staff 필수 (`/admin/guide`)
    - 재원생 전용 라우트: `/meal`, `/reviews/write`, `/questions/new` — 스태프 접근 차단
@@ -235,6 +238,8 @@ e2e/
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-03-31: 공지사항 공개/회원 공개 구분 — notices.visibility 컬럼(public/members_only), /notices 비로그인 접근 허용, 어드민 다중 선택 일괄 공개 범위 변경, Nav/MobileMenu 비로그인 공지사항 링크 추가
+- 2026-03-31: Button 컴포넌트 텍스트 색상 수정 — cn()/twMerge의 text-* 색상·크기 충돌으로 ghost/primary/secondary variant 색상 누락. 내부 클래스 문자열 결합으로 전환 (16곳 자동 수정)
 - 2026-03-27: @tailwindcss/typography 플러그인 추가 — prose 클래스 미작동으로 Tiptap HTML 콘텐츠(공지·가이드·블로그)에서 줄바꿈이 표시되지 않던 문제 수정
 - 2026-03-25: Footer 하단 여백 — layout.tsx의 div#main-content에 `flex flex-col flex-1` 추가하여 flex 체인 연결
 - 2026-03-25: 디자인 토큰 전체 일괄 교체 — text-sm/xs/xl/lg → text-body/caption/fluid-h2/subhead (46개 파일, shadcn·Tiptap prose 제외)
