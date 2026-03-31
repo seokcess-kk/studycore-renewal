@@ -15,6 +15,7 @@ import {
   type NoticeServiceResult,
   type NoticeListResult,
   type NoticeAttachment,
+  type NoticeVisibilityType,
 } from "./model";
 import * as noticeRepo from "./repository";
 
@@ -310,6 +311,29 @@ export async function deleteNoticeAttachment(
     return {
       success: false,
       error: error instanceof Error ? error.message : "첨부파일 삭제 실패",
+    };
+  }
+}
+
+/**
+ * 공지사항 공개 범위 일괄 변경 (관리자용)
+ */
+export async function updateNoticesVisibility(
+  supabase: SupabaseClient,
+  ids: string[],
+  visibility: NoticeVisibilityType
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await noticeRepo.updateNoticesVisibility(supabase, ids, visibility);
+    return { success: true };
+  } catch (error) {
+    console.error("공개 범위 일괄 변경 실패:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "공개 범위 변경 중 오류가 발생했습니다.",
     };
   }
 }

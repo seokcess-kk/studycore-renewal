@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, Eye, Trash2, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, Eye, Trash2, ChevronUp, ChevronDown, Globe, Lock, X } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { ConfirmModal } from "@/components/admin/ConfirmModal";
 import { createBrowserClient } from "@/lib/supabase/client";
@@ -12,7 +12,7 @@ import { useToast } from "@/components/common/Toast";
 import { Badge } from "@/components/common";
 import { NOTICE_CATEGORY_LABELS, NOTICE_VISIBILITY_LABELS } from "@/domains/notice/model";
 import type { NoticeWithAuthor, NoticeCategory, NoticeVisibilityType } from "@/domains/notice/model";
-import { updateNoticeOrders } from "@/domains/notice/service";
+import { updateNoticeOrders, updateNoticesVisibility } from "@/domains/notice/service";
 
 export default function AdminNoticesPage() {
   const router = useRouter();
@@ -24,6 +24,8 @@ export default function AdminNoticesPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
 
   useEffect(() => {
     fetchNotices();
@@ -110,6 +112,56 @@ export default function AdminNoticesPage() {
     setIsReordering(false);
   };
 
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === notices.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(notices.map((n) => n.id)));
+    }
+  };
+
+  const handleBulkVisibility = async (visibility: "public" | "members_only") => {
+    if (selectedIds.size === 0) return;
+    setIsBulkUpdating(true);
+
+    const ids = [...selectedIds];
+
+    // 낙관적 업데이트
+    setNotices((prev) =>
+      prev.map((n) =>
+        selectedIds.has(n.id) ? { ...n, visibility } : n
+      )
+    );
+
+    const result = await updateNoticesVisibility(supabase, ids, visibility);
+
+    if (result.success) {
+      toast({
+        variant: "success",
+        description: `${ids.length}개 공지의 공개 범위를 변경했습니다.`,
+      });
+      setSelectedIds(new Set());
+    } else {
+      toast({
+        variant: "error",
+        title: "오류",
+        description: result.error || "공개 범위 변경에 실패했습니다.",
+      });
+      await fetchNotices();
+    }
+
+    setIsBulkUpdating(false);
+  };
+
   const getCategoryBadgeVariant = (category: NoticeCategory): "error" | "info" | "success" | "neutral" => {
     switch (category) {
       case "urgent":
@@ -142,6 +194,14 @@ export default function AdminNoticesPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-rule bg-stone">
+              <th className="px-3 py-3 text-center w-10">
+                <input
+                  type="checkbox"
+                  checked={notices.length > 0 && selectedIds.size === notices.length}
+                  onChange={toggleSelectAll}
+                  className="h-4 w-4 border-rule cursor-pointer"
+                />
+              </th>
               <th className="px-3 py-3 text-center text-body font-medium text-ink w-20">
                 순서
               </th>
@@ -174,13 +234,13 @@ export default function AdminNoticesPage() {
           <tbody className="divide-y divide-rule">
             {isLoading ? (
               <tr>
-                <td colSpan={9} className="px-4 py-12 text-center text-muted">
+                <td colSpan={10} className="px-4 py-12 text-center text-muted">
                   로딩 중...
                 </td>
               </tr>
             ) : notices.length === 0 ? (
               <tr>
-                <td colSpan={9} className="px-4 py-12 text-center text-muted">
+                <td colSpan={10} className="px-4 py-12 text-center text-muted">
                   공지사항이 없습니다
                 </td>
               </tr>
@@ -191,6 +251,14 @@ export default function AdminNoticesPage() {
                   className="hover:bg-stone/50 cursor-pointer transition-colors duration-200"
                   onClick={() => router.push(`/admin/notices/${notice.id}/edit`)}
                 >
+                  <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(notice.id)}
+                      onChange={() => toggleSelect(notice.id)}
+                      className="h-4 w-4 border-rule cursor-pointer"
+                    />
+                  </td>
                   <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center gap-0.5">
                       <button
@@ -282,6 +350,49 @@ export default function AdminNoticesPage() {
         variant="danger"
         isLoading={isDeleting}
       />
+
+      {/* 다중 선택 플로팅 액션 바 */}
+      {selectedIds.size > 0 && (
+        <div
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-navy border border-white/20 px-6 py-3 flex items-center gap-4 transition-all"
+          style={{ animation: "slideUp 200ms ease-out" }}
+        >
+          <span className="text-body font-medium text-white whitespace-nowrap">
+            {selectedIds.size}개 선택됨
+          </span>
+          <div className="w-px h-5 bg-white/20" />
+          <button
+            onClick={() => handleBulkVisibility("public")}
+            disabled={isBulkUpdating}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-body font-medium text-white bg-white/10 hover:bg-white/20 transition-colors duration-200 cursor-pointer disabled:opacity-50"
+          >
+            <Globe className="h-3.5 w-3.5" />
+            전체 공개
+          </button>
+          <button
+            onClick={() => handleBulkVisibility("members_only")}
+            disabled={isBulkUpdating}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-body font-medium text-white bg-white/10 hover:bg-white/20 transition-colors duration-200 cursor-pointer disabled:opacity-50"
+          >
+            <Lock className="h-3.5 w-3.5" />
+            회원 공개
+          </button>
+          <button
+            onClick={() => setSelectedIds(new Set())}
+            className="p-1.5 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer"
+            title="선택 해제"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes slideUp {
+          from { opacity: 0; transform: translate(-50%, 20px); }
+          to { opacity: 1; transform: translate(-50%, 0); }
+        }
+      `}</style>
     </div>
   );
 }

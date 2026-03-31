@@ -13,6 +13,7 @@ import type {
   NoticeAttachment,
   CreateNoticeInput,
   UpdateNoticeInput,
+  NoticeVisibilityType,
 } from "./model";
 
 /**
@@ -281,5 +282,23 @@ export async function deleteNoticeAttachment(
 
   if (error) {
     throw new Error(`첨부파일 삭제 실패: ${error.message}`);
+  }
+}
+
+/**
+ * 공지사항 공개 범위 일괄 변경
+ */
+export async function updateNoticesVisibility(
+  supabase: SupabaseClient,
+  ids: string[],
+  visibility: NoticeVisibilityType
+): Promise<void> {
+  const { error } = await supabase
+    .from("notices")
+    .update({ visibility })
+    .in("id", ids);
+
+  if (error) {
+    throw new Error(`공개 범위 일괄 변경 실패: ${error.message}`);
   }
 }
