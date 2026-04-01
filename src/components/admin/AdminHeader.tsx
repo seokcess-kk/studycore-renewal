@@ -98,13 +98,13 @@ export function AdminHeader({ title, breadcrumb }: AdminHeaderProps = {}) {
           <h1 className="font-serif text-fluid-h2 font-bold text-navy">
             {currentTitle}
           </h1>
-          <a
+          <Link
             href="/"
             className="flex items-center gap-1.5 text-body text-muted hover:text-teal transition-colors duration-200 cursor-pointer"
           >
             <Globe className="h-4 w-4" />
             홈페이지
-          </a>
+          </Link>
         </div>
       </div>
     </header>

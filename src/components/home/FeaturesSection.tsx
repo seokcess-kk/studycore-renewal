@@ -136,8 +136,8 @@ export function FeaturesSection() {
                 >
                   <span className="block w-10 h-[1.5px] bg-teal flex-shrink-0" />
                   <p className="font-serif text-fluid-h3 font-bold text-ink/60 leading-ui tracking-heading">
-                    "공부를 <em className="text-teal not-italic">구조</em>로
-                    뒷받침하면, 의지만으로 안 되던 것도 됩니다."
+                    &ldquo;공부를 <em className="text-teal not-italic">구조</em>로
+                    뒷받침하면, 의지만으로 안 되던 것도 됩니다.&rdquo;
                   </p>
                 </motion.div>
               )}

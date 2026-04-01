@@ -511,12 +511,12 @@ function WelcomeModal({ name, onClose }: { name: string; onClose: () => void }) 
           스터디코어 1.0의 재원생 서비스를<br />이용하실 수 있습니다.
         </p>
         <div className="flex gap-3">
-          <a href="/notices" className="flex-1 py-3 bg-stone text-ink text-secondary font-medium text-center hover:bg-rule transition-colors duration-200 cursor-pointer">
+          <Link href="/notices" className="flex-1 py-3 bg-stone text-ink text-secondary font-medium text-center hover:bg-rule transition-colors duration-200 cursor-pointer">
             공지사항 보기
-          </a>
-          <a href="/" className="flex-1 py-3 bg-navy text-white text-secondary font-medium text-center hover:bg-navy-dark transition-colors duration-200 cursor-pointer">
+          </Link>
+          <Link href="/" className="flex-1 py-3 bg-navy text-white text-secondary font-medium text-center hover:bg-navy-dark transition-colors duration-200 cursor-pointer">
             홈으로
-          </a>
+          </Link>
         </div>
       </div>
     </BaseModal>

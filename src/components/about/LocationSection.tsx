@@ -64,7 +64,7 @@ function KakaoMapView() {
 
     // 카카오맵 SDK 로드 확인
     if (window.kakao && window.kakao.maps) {
-      setIsLoaded(true);
+      setIsLoaded(true); // eslint-disable-line react-hooks/set-state-in-effect -- SDK 동기 감지 후 즉시 반영
       return;
     }
 

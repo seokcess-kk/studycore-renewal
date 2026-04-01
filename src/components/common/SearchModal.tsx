@@ -28,9 +28,9 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 100);
-      setQuery("");
-      setResults([]);
-      setFocusIndex(-1);
+      setQuery(""); // eslint-disable-line react-hooks/set-state-in-effect -- 모달 오픈 시 상태 리셋
+      setResults([]); // eslint-disable-line react-hooks/set-state-in-effect
+      setFocusIndex(-1); // eslint-disable-line react-hooks/set-state-in-effect
     }
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);

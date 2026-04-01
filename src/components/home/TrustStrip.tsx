@@ -31,11 +31,11 @@ function CountUpValue({ stat, inView }: { stat: Stat; inView: boolean }) {
 
     // 숫자가 아닌 경우 (1:1) — fade-in만
     if (stat.numericValue === null) {
-      setShowValue(true);
+      setShowValue(true); // eslint-disable-line react-hooks/set-state-in-effect -- 애니메이션 시작 트리거
       return;
     }
 
-    setShowValue(true);
+    setShowValue(true); // eslint-disable-line react-hooks/set-state-in-effect -- 애니메이션 시작 트리거
 
     const target = stat.numericValue;
     // 2025처럼 큰 수는 시작점을 높게 잡아서 자연스럽게
@@ -63,7 +63,7 @@ function CountUpValue({ stat, inView }: { stat: Stat; inView: boolean }) {
   // suffix가 없는 항목은 바로 표시
   useEffect(() => {
     if (hasAnimated.current && !stat.suffix && stat.numericValue !== null) {
-      setShowSuffix(true);
+      setShowSuffix(true); // eslint-disable-line react-hooks/set-state-in-effect -- 애니메이션 완료 후 표시
     }
   }, [displayValue, stat.suffix, stat.numericValue]);
 

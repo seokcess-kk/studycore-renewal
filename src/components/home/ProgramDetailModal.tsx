@@ -36,7 +36,7 @@ export function ProgramDetailModal({
   // 첨부파일 로드
   useEffect(() => {
     if (!program) {
-      setAttachments([]);
+      setAttachments([]); // eslint-disable-line react-hooks/set-state-in-effect -- program null 시 리셋
       return;
     }
     const supabase = createBrowserClient();

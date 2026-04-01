@@ -91,7 +91,7 @@ export function AdminSidebar() {
 
   // pathname 변경 시 모바일 메뉴 닫기
   useEffect(() => {
-    setIsMobileOpen(false);
+    setIsMobileOpen(false); // eslint-disable-line react-hooks/set-state-in-effect -- 라우트 변경 시 메뉴 닫기
   }, [pathname]);
 
   // 모바일 사이드바 열릴 때 body scroll lock

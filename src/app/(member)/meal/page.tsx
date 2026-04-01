@@ -31,7 +31,11 @@ export default function LunchPage() {
   const [period, setPeriod] = useState<MealPeriod | null>(null);
   const [application, setApplication] = useState<MealApplication | null>(null);
   const [selections, setSelections] = useState<Record<string, string[]>>({});
-  const [hasChanges, setHasChanges] = useState(false);
+  const hasChanges = useMemo(() => {
+    if (!application) return Object.keys(selections).length > 0;
+    const original = application.selections as Record<string, string[]>;
+    return JSON.stringify(original) !== JSON.stringify(selections);
+  }, [selections, application]);
 
   // 로그인 체크
   useEffect(() => {
@@ -65,18 +69,6 @@ export default function LunchPage() {
     loadData();
   }, [user?.id]);
 
-  // 변경 사항 감지
-  useEffect(() => {
-    if (!application) {
-      // 신규 신청: 선택이 있으면 변경됨
-      setHasChanges(Object.keys(selections).length > 0);
-    } else {
-      // 수정: 기존 선택과 비교
-      const original = application.selections as Record<string, string[]>;
-      const changed = JSON.stringify(original) !== JSON.stringify(selections);
-      setHasChanges(changed);
-    }
-  }, [selections, application]);
 
   // 신청 제출
   const handleSubmit = async () => {
@@ -96,7 +88,6 @@ export default function LunchPage() {
     if (result.success) {
       setApplication(result.application || null);
       success(application ? "신청이 수정되었습니다." : "도시락 신청이 완료되었습니다.");
-      setHasChanges(false);
     } else {
       showError(result.error || "신청에 실패했습니다.");
     }

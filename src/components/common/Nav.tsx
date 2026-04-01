@@ -25,6 +25,7 @@ export function Nav() {
   const isHome = pathname === "/";
 
   // hydration 완료 체크 (SSR/CSR 불일치 방지)
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration 패턴
   useEffect(() => { setIsMounted(true); }, []);
 
   // 인증 상태 (sessionStorage persist → hydrate 후 즉시 사용 가능)

@@ -132,12 +132,12 @@ export default function QuestionDetailPage() {
         <main className="page-body min-h-screen flex items-center justify-center">
           <div className="text-center">
             <p className="text-muted">질문을 찾을 수 없습니다.</p>
-            <a
+            <Link
               href="/questions"
               className="mt-4 inline-block text-teal hover:underline transition-colors duration-200"
             >
               질문방으로 돌아가기
-            </a>
+            </Link>
           </div>
         </main>
         <Footer />
