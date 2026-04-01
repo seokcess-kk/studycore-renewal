@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { Skeleton } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getBlogById, updateBlog, copyForNaver } from "@/domains/blog/service";
@@ -137,37 +136,17 @@ export default function AdminBlogEditPage() {
 
   if (isLoading) {
     return (
-      <>
-        <AdminHeader
-          title="포스트 수정"
-          breadcrumb={[
-            { label: "대시보드", href: "/admin" },
-            { label: "블로그 관리", href: "/admin/blog" },
-            { label: "수정" },
-          ]}
-        />
-        <div className="p-6 max-w-4xl space-y-6">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-96 w-full" />
-        </div>
-      </>
+      <div className="max-w-4xl space-y-6">
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-96 w-full" />
+      </div>
     );
   }
 
   return (
-    <>
-      <AdminHeader
-        title="포스트 수정"
-        breadcrumb={[
-          { label: "대시보드", href: "/admin" },
-          { label: "블로그 관리", href: "/admin/blog" },
-          { label: post?.title || "수정" },
-        ]}
-      />
-
-      <div className="p-4 md:p-6 max-w-4xl">
+    <div className="max-w-4xl">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* 상태 표시 */}
           {post && (
@@ -379,7 +358,6 @@ export default function AdminBlogEditPage() {
             </button>
           </div>
         </form>
-      </div>
-    </>
+    </div>
   );
 }

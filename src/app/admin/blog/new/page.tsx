@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { createClient } from "@/lib/supabase/client";
 import { createBlog } from "@/domains/blog/service";
 import {
@@ -103,17 +102,7 @@ export default function AdminBlogNewPage() {
   };
 
   return (
-    <>
-      <AdminHeader
-        title="새 포스트 작성"
-        breadcrumb={[
-          { label: "대시보드", href: "/admin" },
-          { label: "블로그 관리", href: "/admin/blog" },
-          { label: "새 포스트" },
-        ]}
-      />
-
-      <div className="p-6 max-w-4xl">
+    <div className="max-w-4xl">
         <form className="space-y-6">
           {/* 제목 */}
           <div>
@@ -274,7 +263,6 @@ export default function AdminBlogNewPage() {
             </button>
           </div>
         </form>
-      </div>
-    </>
+    </div>
   );
 }
