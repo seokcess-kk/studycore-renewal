@@ -36,7 +36,7 @@ export default function TermsPage() {
             <TermsSection title="제1조 (목적)">
               <p>
                 이 약관은 스터디코어 1.0(이하 &quot;회사&quot;)이 제공하는
-                관리형 독서실 서비스(이하 &quot;서비스&quot;)의 이용과 관련하여
+                관리형 학습공간 서비스(이하 &quot;서비스&quot;)의 이용과 관련하여
                 회사와 이용자 간의 권리, 의무 및 책임 사항을 규정함을 목적으로
                 합니다.
               </p>
@@ -45,7 +45,7 @@ export default function TermsPage() {
             <TermsSection title="제2조 (용어의 정의)">
               <ol>
                 <li>
-                  &quot;서비스&quot;란 회사가 제공하는 관리형 독서실 이용,
+                  &quot;서비스&quot;란 회사가 제공하는 관리형 학습공간 이용,
                   온라인 공지, 질문방 등 일체의 서비스를 의미합니다.
                 </li>
                 <li>
@@ -76,7 +76,7 @@ export default function TermsPage() {
             <TermsSection title="제4조 (서비스의 제공)">
               <p>회사는 다음과 같은 서비스를 제공합니다.</p>
               <ol>
-                <li>관리형 독서실 이용 서비스</li>
+                <li>관리형 학습공간 이용 서비스</li>
                 <li>온라인 공지사항 서비스</li>
                 <li>수학 질문방 서비스 (재원생 전용)</li>
                 <li>기타 회사가 정하는 서비스</li>

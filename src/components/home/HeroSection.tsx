@@ -151,7 +151,7 @@ export function HeroSection() {
             <strong className="text-white/65 font-medium">
               대표원장이 직접 설계·운영하는
             </strong>{" "}
-            관리형 독서실로 메디컬 재학 중인 최상위권 조교의 학습 관리와
+            관리형 학습공간으로 메디컬 재학 중인 최상위권 조교의 학습 관리와
             턴게이트 기반 출결 시스템, 몰입에 최적화된 공간을 통해 학습의 전
             과정을 체계적으로 관리합니다.
           </p>
@@ -179,7 +179,7 @@ export function HeroSection() {
               <strong className="text-white/75 font-medium">
                 대표원장이 직접 설계·운영하는
               </strong>{" "}
-              관리형 독서실로
+              관리형 학습공간으로
               <br />
               메디컬 재학 중인 최상위권 조교의 학습 관리와
               <br />
@@ -204,7 +204,7 @@ export function HeroSection() {
           >
             <MetaItem label="Location" value={CONTACT.address} />
             <MetaItem label="Contact" value="카카오톡 문의" href={CONTACT.kakaoChatChannel} />
-            <MetaItem label="Type" value="관리형 독서실" />
+            <MetaItem label="Type" value="관리형 학습공간" />
           </motion.div>
         </div>
 

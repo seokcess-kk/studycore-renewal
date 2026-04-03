@@ -44,7 +44,7 @@ export function IntroSection() {
           <h1 className="font-serif text-fluid-h1 font-bold text-ink mt-3">
             학생의 성장을 위한
             <br />
-            <span className="text-teal">관리형 독서실</span>
+            <span className="text-teal">관리형 학습공간</span>
           </h1>
           <p className="text-muted text-reading mt-6 max-w-2xl mx-auto leading-prose">
             스터디코어는 단순한 공부 공간이 아닙니다.
