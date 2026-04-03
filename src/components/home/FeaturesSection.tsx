@@ -10,68 +10,69 @@ const features = [
   {
     number: "01",
     keyword: "시스템",
-    title: "교시제 관리 시스템",
+    title: "교시제 운영 시스템",
     description:
-      "하루가 교시 단위로 운영됩니다.<br />시작 종이 울리면 자리에 앉고, 쉬는 시간에만 이동이 허용됩니다.<br />스스로 집중력을 만들려 애쓰지 않아도 되고<br /><strong>앉아있는 시간 자체가 실력으로 쌓입니다.</strong>",
+      "하루 일과는 교시 단위로 운영됩니다.<br />정해진 시간에 학습을 시작하고, 정해진 시간에만 이동이 허용됩니다.<br />집중이 유지되는 시간 구조로 설계되어<br /><strong>학습 몰입도를 안정적으로 유지합니다.</strong>",
     tags: [
       { label: "핵심 시스템", primary: true },
-      { label: "매일 운영", primary: false },
+      { label: "시간 구조 설계", primary: false },
     ],
   },
   {
     number: "02",
-    keyword: "멘토링",
-    title: "수학 전문 질문방",
+    keyword: "통제",
+    title: "출결·통제 시스템",
     description:
-      "재원생 전용 질문방에 모르는 문제를 사진이나 텍스트로 올리면<br />국희재 수학학원 멘토가 직접 풀이를 설명합니다.<br />그날 모른 것을 그날 해결하니<br /><strong>오개념이 쌓이지 않고 다음 날 더 단단하게 시작할 수 있습니다.</strong>",
+      "턴게이트 기반 입출입 시스템을 통해<br />입실·퇴실·외출이 실시간으로 기록되며 보호자에게 즉시 전달됩니다.<br />관리자 상주 하에 학습 시간 이탈을 방지하고<br /><strong>학습 상태가 투명하게 관리됩니다.</strong>",
     tags: [
-      { label: "재원생 전용", primary: true },
-      { label: "수학 멘토", primary: false },
+      { label: "턴게이트", primary: true },
+      { label: "실시간 기록", primary: false },
     ],
   },
   {
     number: "03",
-    keyword: "생활 관리",
-    title: "생활·출결 관리",
+    keyword: "관리",
+    title: "생활 관리 시스템",
     description:
-      "출결 관리, 교시 중 휴대폰 수거, 상시 순찰로<br />집중을 방해하는 모든 요소를 차단합니다.<br />규정이 일관되게 지켜지기 때문에<br /><strong>학생 스스로도 공부 외의 것에 신경 쓸 이유가 없어집니다.</strong>",
+      "교시 시작 전 휴대폰을 별도 보관하고<br />자습실 내 대화·통화·음식 섭취를 제한하며<br />지정된 좌석에서만 학습이 가능합니다.<br /><strong>학습 집중을 방해하는 행동 요소를 원천 차단합니다.</strong>",
     tags: [
-      { label: "출결 관리", primary: false },
       { label: "휴대폰 수거", primary: false },
-      { label: "상시 순찰", primary: false },
+      { label: "자습실 정숙", primary: false },
+      { label: "지정석", primary: false },
     ],
   },
   {
     number: "04",
-    keyword: "콘텐츠",
-    title: "검증된 학습 자료",
+    keyword: "집중",
+    title: "집중 유지 시스템",
     description:
-      "대치동 기반의 검증된 학습 자료를 제공합니다.<br />내신과 수능 대비 콘텐츠를 체계적으로 활용할 수 있어<br /><strong>무엇을 공부해야 할지 헤매는 시간 없이 바로 집중할 수 있습니다.</strong>",
+      "교시 중 관리자 상시 순찰을 통해 졸음·이탈 등을 즉시 관리하며<br />태블릿 방화벽으로 학습 방해 사이트 접근을 제한합니다.<br />백색소음 시스템으로 균일한 환경을 조성하여<br /><strong>집중이 흐트러질 틈을 차단합니다.</strong>",
     tags: [
-      { label: "내신·수능", primary: true },
-      { label: "대치동 자료", primary: false },
+      { label: "상시 순찰", primary: false },
+      { label: "방화벽", primary: false },
+      { label: "백색소음", primary: false },
     ],
   },
   {
     number: "05",
     keyword: "환경",
-    title: "쾌적한 학습 환경",
+    title: "학습 환경 설계 시스템",
     description:
-      "애플타워 10층 100평대 공간 활용<br />인체공학 칸막이 책상, 냉난방 완비,<br />자습실과 분리된 별도 휴게 공간을 갖추고 있어<br /><strong>공부 외의 불편함 없이 오직 학습에만 에너지를 쏟을 수 있습니다.</strong>",
+      "인체공학적 데스크와 조명 설계를 통해<br />장시간 학습에도 피로도를 최소화하며<br />냉난방 시스템과 공기질 관리로<br /><strong>항상 쾌적한 학습 환경을 유지합니다.</strong>",
     tags: [
-      { label: "전층 운영", primary: false },
-      { label: "공간 최적화", primary: false },
+      { label: "공간 설계", primary: false },
+      { label: "쾌적 환경", primary: false },
     ],
   },
   {
     number: "06",
-    keyword: "원장 직영",
-    title: "원장 직접 1:1 맞춤 관리",
+    keyword: "운영",
+    title: "운영 관리 시스템",
     description:
-      "원장님이 모든 학생의 이름과 상황을 직접 파악합니다.<br />대형 체인과 달리 관리의 책임이 한 사람에게 있어<br /><strong>학부모님도 누가 관리하는지 명확히 알고 안심할 수 있습니다.</strong>",
+      "대표원장을 포함한 운영진이 직접 관리 체계를 유지하며<br />관리자(메디컬 재학생, 최상위권 출신)와 함께<br />학습 환경을 상시 점검하고 개선합니다.<br /><strong>관리의 수준이 학습 환경을 결정합니다.</strong>",
     tags: [
-      { label: "원장 직영", primary: true },
-      { label: "직접 관리", primary: false },
+      { label: "대표원장", primary: true },
+      { label: "운영진 관리", primary: false },
     ],
   },
 ];
