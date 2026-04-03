@@ -135,8 +135,6 @@ export function SystemPageContent() {
       <FocusSection />
       <EnvironmentSection />
       <OperationSection />
-      <div className="h-[2px] bg-teal/50" />
-      <ClosingSection />
       <div className="h-[2px] bg-teal" />
       <CTASection />
     </>
@@ -809,9 +807,9 @@ function OperationSection() {
 }
 
 /* ══════════════════════════════════════════
-   SECTION 8 — 마무리 메시지
+   CTA (마무리 메시지 + CTA 통합)
    ══════════════════════════════════════════ */
-function ClosingSection() {
+function CTASection() {
   return (
     <section className="bg-navy-dark section-lg px-6 md:px-13 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none z-[1] bg-grid-teal" />
@@ -823,16 +821,17 @@ function ClosingSection() {
         variants={stagger}
         className="relative z-[2] max-w-3xl mx-auto text-center"
       >
+        {/* 마무리 메시지 */}
         <motion.h2
           variants={fadeUp}
-          className="font-serif text-fluid-h1 font-black text-on-dark leading-heading tracking-heading mb-10"
+          className="font-serif text-fluid-h1 font-black text-on-dark leading-heading tracking-heading mb-8"
         >
           스터디코어는 가르치지 않습니다
         </motion.h2>
 
         <motion.div
           variants={fadeUp}
-          className="space-y-6 text-reading text-on-dark-muted leading-prose"
+          className="space-y-5 text-reading text-on-dark-muted leading-prose mb-14"
         >
           <p>
             대신
@@ -849,55 +848,36 @@ function ClosingSection() {
             </strong>
           </p>
         </motion.div>
-      </motion.div>
-    </section>
-  );
-}
 
-/* ══════════════════════════════════════════
-   SECTION 9 — CTA
-   ══════════════════════════════════════════ */
-function CTASection() {
-  return (
-    <section className="bg-navy section-lg px-6 md:px-13 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none bg-grid-teal-lg" />
-
-      <motion.div
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-60px" }}
-        variants={stagger}
-        className="relative z-[2] max-w-3xl mx-auto text-center"
-      >
-        <motion.h2
-          variants={fadeUp}
-          className="font-serif text-fluid-h2 font-black text-white leading-heading tracking-heading mb-10"
-        >
-          지금, 공부 환경을 바꾸세요
-        </motion.h2>
-
+        {/* CTA */}
         <motion.div
           variants={fadeUp}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="border-t border-white/[0.08] pt-10"
         >
-          <Link
-            href={ROUTES.CONSULT}
-            className="cta-fill cta-fill-teal group inline-flex items-center justify-center gap-3 px-10 py-4 text-navy text-body font-bold tracking-cta border-[1.5px] border-teal hover:text-teal transition-colors duration-300 cursor-pointer"
-          >
-            상담 문의하기
-            <ArrowRight
-              size={15}
-              className="group-hover:translate-x-1 transition-transform duration-200"
-            />
-          </Link>
+          <p className="font-serif text-fluid-h3 font-bold text-white/80 leading-heading tracking-heading mb-8">
+            지금, 공부 환경을 바꾸세요
+          </p>
 
-          <a
-            href={`tel:${CONTACT.phone.replace(/-/g, "")}`}
-            className="group inline-flex items-center justify-center gap-2 px-8 py-4 text-white/60 text-body font-medium tracking-cta border-[1.5px] border-white/[0.12] hover:border-white/30 hover:text-white transition-all duration-300 cursor-pointer"
-          >
-            <Phone size={14} />
-            방문 예약하기
-          </a>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href={ROUTES.CONSULT}
+              className="cta-fill cta-fill-teal group inline-flex items-center justify-center gap-3 px-10 py-4 text-navy text-body font-bold tracking-cta border-[1.5px] border-teal hover:text-teal transition-colors duration-300 cursor-pointer"
+            >
+              상담 문의하기
+              <ArrowRight
+                size={15}
+                className="group-hover:translate-x-1 transition-transform duration-200"
+              />
+            </Link>
+
+            <a
+              href={`tel:${CONTACT.phone.replace(/-/g, "")}`}
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 text-white/60 text-body font-medium tracking-cta border-[1.5px] border-white/[0.12] hover:border-white/30 hover:text-white transition-all duration-300 cursor-pointer"
+            >
+              <Phone size={14} />
+              방문 예약하기
+            </a>
+          </div>
         </motion.div>
       </motion.div>
     </section>
