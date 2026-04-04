@@ -832,16 +832,10 @@ function CTASection() {
           className="space-y-5 text-reading text-on-dark-muted leading-prose mb-14"
         >
           <p>
-            대신
-            <strong className="text-white/75 font-medium">
-              공부가 지속될 수 있는 환경을 만듭니다
-            </strong>
+            대신<strong className="text-white/75 font-medium"> 공부가 지속될 수 있는 환경을 만듭니다</strong>
           </p>
           <p>
-            그리고
-            <strong className="text-white/75 font-medium">
-              그 환경을 끝까지 유지합니다
-            </strong>
+            그리고<strong className="text-white/75 font-medium"> 그 환경을 끝까지 유지합니다</strong>
           </p>
         </motion.div>
 
