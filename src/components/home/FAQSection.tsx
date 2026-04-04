@@ -70,10 +70,10 @@ export function FAQSection() {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2.5 bg-kakao text-secondary font-bold px-5 py-3 hover:opacity-85 transition-opacity"
-            style={{ color: "var(--kakao-dark)" }}
+            style={{ color: "var(--color-kakao-dark)" }}
           >
             {/* 원형 아이콘 예외: 글로벌 border-radius:0 override */}
-            <span className="w-[18px] h-[18px] bg-kakao-dark flex items-center justify-center text-label" style={{ borderRadius: '50%', color: "var(--kakao)" }}>
+            <span className="w-[18px] h-[18px] bg-kakao-dark flex items-center justify-center text-label" style={{ borderRadius: '50%', color: "var(--color-kakao)" }}>
               K
             </span>
             카카오 채널 문의하기
