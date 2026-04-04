@@ -175,9 +175,9 @@ function HeroSection() {
           variants={fadeUp}
           className="text-reading text-on-dark-muted leading-prose max-w-2xl"
         >
-          스터디코어는 교시제 기반 운영 시스템을 통해
+          스터디코어1.0은 교시제 기반 운영 시스템을 통해
           <br className="hidden md:block" />
-          학습 시간을 통제하고, 집중이 유지되는 환경을 만듭니다.
+          학습 시간을 통제하고 집중이 유지되는 환경을 만듭니다.
         </motion.p>
       </motion.div>
     </section>
@@ -249,7 +249,7 @@ function DiagramSection() {
             style={{ borderRadius: "50%" }}
           >
             <span className="font-mono text-label font-bold text-teal tracking-label">
-              STUDYCORE
+              STUDYCORE1.0
             </span>
             <span className="font-serif text-subhead font-black text-white leading-heading mt-1">
               관리형
@@ -289,18 +289,16 @@ function DiagramSection() {
                   className="cursor-pointer flex flex-col items-center text-center w-36"
                 >
                   <div
-                    className={`w-14 h-14 flex items-center justify-center border-[1.5px] transition-colors duration-200 ${
-                      isActive
-                        ? "border-teal bg-teal/10"
-                        : "border-rule bg-white"
-                    }`}
+                    className={`w-14 h-14 flex items-center justify-center border-[1.5px] transition-colors duration-200 ${isActive
+                      ? "border-teal bg-teal/10"
+                      : "border-rule bg-white"
+                      }`}
                     style={{ borderRadius: "50%" }}
                   >
                     <Icon
                       size={22}
-                      className={`transition-colors duration-200 ${
-                        isActive ? "text-teal" : "text-navy"
-                      }`}
+                      className={`transition-colors duration-200 ${isActive ? "text-teal" : "text-navy"
+                        }`}
                     />
                   </div>
                   <span className="font-bold text-body text-ink mt-2.5 leading-ui">
@@ -343,7 +341,7 @@ function DiagramSection() {
             className="col-span-2 bg-navy-dark p-6 flex flex-col items-center text-center"
           >
             <span className="font-mono text-label font-bold text-teal tracking-label">
-              STUDYCORE
+              STUDYCORE1.0
             </span>
             <span className="font-serif text-fluid-h3 font-black text-white leading-heading mt-1">
               관리형 학습공간
@@ -732,7 +730,7 @@ function EnvironmentSection() {
             <strong className="text-ink">인체공학적 데스크</strong>와{" "}
             <strong className="text-ink">조명 설계</strong>를 통해
             <br />
-            장시간 학습에도 피로도를 최소화하며,
+            장시간 학습에도 피로도를 최소화하며
           </p>
           <p>
             <strong className="text-ink">냉난방 시스템</strong>과{" "}
@@ -826,7 +824,7 @@ function CTASection() {
           variants={fadeUp}
           className="font-serif text-fluid-h1 font-black text-on-dark leading-heading tracking-heading mb-8"
         >
-          스터디코어는 가르치지 않습니다
+          스터디코어1.0은 가르치지 않습니다
         </motion.h2>
 
         <motion.div
