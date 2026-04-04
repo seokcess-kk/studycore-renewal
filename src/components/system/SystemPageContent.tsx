@@ -824,7 +824,7 @@ function CTASection() {
           variants={fadeUp}
           className="font-serif text-fluid-h1 font-black text-on-dark leading-heading tracking-heading mb-8"
         >
-          스터디코어1.0은 가르치지 않습니다
+          스터디코어1.0은<br /> 가르치지 않습니다
         </motion.h2>
 
         <motion.div
@@ -833,14 +833,12 @@ function CTASection() {
         >
           <p>
             대신
-            <br />
             <strong className="text-white/75 font-medium">
               공부가 지속될 수 있는 환경을 만듭니다
             </strong>
           </p>
           <p>
             그리고
-            <br />
             <strong className="text-white/75 font-medium">
               그 환경을 끝까지 유지합니다
             </strong>
