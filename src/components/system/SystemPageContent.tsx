@@ -824,7 +824,7 @@ function CTASection() {
           variants={fadeUp}
           className="font-serif text-fluid-h1 font-black text-on-dark leading-heading tracking-heading mb-8"
         >
-          스터디코어1.0은<br /> 가르치지 않습니다
+          스터디코어1.0은<br />가르치지 않습니다
         </motion.h2>
 
         <motion.div
@@ -876,6 +876,6 @@ function CTASection() {
           </div>
         </motion.div>
       </motion.div>
-    </section>
+    </section >
   );
 }
