@@ -84,7 +84,7 @@ export default function OGImage() {
         >
           <span>교시제 시스템</span>
           <span>·</span>
-          <span>수학 멘토 질문방</span>
+          <span>AI 수학 질문방</span>
           <span>·</span>
           <span>원장 직접 관리</span>
         </div>

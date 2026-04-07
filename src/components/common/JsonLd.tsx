@@ -5,7 +5,7 @@ export function OrganizationJsonLd() {
     name: "스터디코어 1.0",
     alternateName: "STUDYCORE 1.0",
     description:
-      "광주 광산구 관리형 학습공간. 교시제 시스템, 수학 멘토 질문방, 원장 직접 관리로 학생들의 자기주도학습을 체계적으로 지원합니다.",
+      "광주 광산구 관리형 학습공간. 교시제 시스템, AI 수학 질문방, 원장 직접 관리로 학생들의 자기주도학습을 체계적으로 지원합니다.",
     url: "https://studycore.kr",
     logo: "https://studycore.kr/logo/Artboard%204@2x_정사각.png",
     image: "https://studycore.kr/logo/Artboard%204@2x.png",
@@ -40,7 +40,7 @@ export function OrganizationJsonLd() {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "수학 멘토 질문방",
+            name: "AI 수학 질문방",
             description: "실시간 수학 질문 답변 서비스",
           },
         },
