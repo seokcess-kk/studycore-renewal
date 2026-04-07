@@ -10,7 +10,7 @@
 # StudyCore Web
 
 ## 개요
-관리형 독서실 홈페이지. 공개 랜딩 + 재원생 서비스(공지·질문방·도시락) + 어드민 패널.
+관리형 학습공간 홈페이지. 공개 랜딩 + 재원생 서비스(공지·질문방·도시락) + 어드민 패널.
 
 ## 기술 스택
 Next.js 16 (App Router, TS strict) · Tailwind v4 + @tailwindcss/typography + shadcn/ui · Supabase (PG + Auth + Storage + Edge Functions) · Zustand · TanStack Query v5 · react-hook-form + zod v4 · Tiptap · Framer Motion · Playwright E2E · Vercel 배포. Path alias: `@/*` → `./src/*`

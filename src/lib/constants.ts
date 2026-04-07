@@ -7,7 +7,7 @@ export const SITE = {
   name: "스터디코어 1.0",
   tagline: "구조가 성적을 만든다",
   description:
-    "광주 광산구 관리형 독서실 - 교시제, 수학 멘토 질문방, 원장 직접 관리",
+    "광주 광산구 관리형 학습공간 - 교시제, 수학 멘토 질문방, 원장 직접 관리",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://studycore.kr",
 } as const;
 

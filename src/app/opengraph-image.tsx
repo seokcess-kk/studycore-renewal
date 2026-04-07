@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "스터디코어 1.0 — 광주 광산구 관리형 독서실";
+export const alt = "스터디코어 1.0 — 광주 광산구 관리형 학습공간";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -68,7 +68,7 @@ export default function OGImage() {
             marginBottom: 8,
           }}
         >
-          광주 광산구 관리형 독서실
+          광주 광산구 관리형 학습공간
         </div>
 
         {/* 키워드 */}

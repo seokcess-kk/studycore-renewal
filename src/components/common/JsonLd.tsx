@@ -5,7 +5,7 @@ export function OrganizationJsonLd() {
     name: "스터디코어 1.0",
     alternateName: "STUDYCORE 1.0",
     description:
-      "광주 광산구 관리형 독서실. 교시제 시스템, 수학 멘토 질문방, 원장 직접 관리로 학생들의 자기주도학습을 체계적으로 지원합니다.",
+      "광주 광산구 관리형 학습공간. 교시제 시스템, 수학 멘토 질문방, 원장 직접 관리로 학생들의 자기주도학습을 체계적으로 지원합니다.",
     url: "https://studycore.kr",
     logo: "https://studycore.kr/logo/Artboard%204@2x_정사각.png",
     image: "https://studycore.kr/logo/Artboard%204@2x.png",
@@ -26,13 +26,13 @@ export function OrganizationJsonLd() {
     },
     hasOfferCatalog: {
       "@type": "OfferCatalog",
-      name: "관리형 독서실 프로그램",
+      name: "관리형 학습공간 프로그램",
       itemListElement: [
         {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "교시제 관리형 독서실",
+            name: "교시제 관리형 학습공간",
             description: "시간표 기반 체계적 학습 관리 시스템",
           },
         },
