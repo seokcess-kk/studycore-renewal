@@ -52,6 +52,10 @@ export default function ConsultPage() {
       const result: ConsultationApiResponse = await response.json();
 
       if (result.success) {
+        // Meta 픽셀 Lead — 서버 CAPI와 같은 event_id를 넘겨 중복 제거
+        if (typeof window !== "undefined" && window.fbq) {
+          window.fbq("track", "Lead", {}, { eventID: result.eventId });
+        }
         setIsSubmitted(true);
         success("상담 신청이 완료되었습니다!");
         reset();

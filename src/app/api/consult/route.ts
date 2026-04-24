@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { submitConsultation } from "@/domains/consultation/service";
@@ -5,6 +6,10 @@ import {
   consultationFormSchema,
   type ConsultationFormInput,
 } from "@/domains/consultation/model";
+import {
+  extractFbpFbcFromCookieHeader,
+  sendMetaLeadEvent,
+} from "@/lib/meta/capi";
 import { checkRateLimit, CONSULT_RATE_LIMIT } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
@@ -67,11 +72,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 5. 성공 응답
+    // 5. Meta CAPI Lead 이벤트 전송 (서버측). 같은 event_id를 클라이언트 픽셀과 공유해 중복 제거
+    const eventId = crypto.randomUUID();
+    const { fbp, fbc } = extractFbpFbcFromCookieHeader(
+      request.headers.get("cookie")
+    );
+    const referer = request.headers.get("referer");
+    const origin = request.headers.get("origin");
+    const fallbackBase =
+      process.env.NEXT_PUBLIC_SITE_URL ?? "https://studycore.kr";
+    const eventSourceUrl =
+      referer ?? `${origin ?? fallbackBase}/consult`;
+    await sendMetaLeadEvent({
+      eventId,
+      eventSourceUrl,
+      user: {
+        phone: formData.phone,
+        ip: ip !== "unknown" ? ip : undefined,
+        userAgent: request.headers.get("user-agent") ?? undefined,
+        fbp,
+        fbc,
+      },
+    });
+
+    // 6. 성공 응답
     return NextResponse.json({
       success: true,
       message: "상담 신청이 완료되었습니다.",
       consultationId: result.consultation?.id,
+      eventId,
     });
   } catch (error) {
     console.error("상담 신청 API 오류:", error);

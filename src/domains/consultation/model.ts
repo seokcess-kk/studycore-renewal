@@ -98,6 +98,8 @@ export interface ConsultationSuccessResponse {
   success: true;
   message: string;
   consultationId: string;
+  /** Meta CAPI Lead 이벤트 ID (브라우저 픽셀에 전달하여 서버-브라우저 이벤트 중복 제거) */
+  eventId: string;
 }
 
 /** 상담 신청 API 실패 응답 */
