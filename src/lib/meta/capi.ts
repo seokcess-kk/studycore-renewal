@@ -8,6 +8,9 @@ const GRAPH_API_VERSION = "v21.0";
 export type MetaUserData = {
   email?: string;
   phone?: string;
+  firstName?: string;
+  country?: string;
+  externalId?: string;
   ip?: string;
   userAgent?: string;
   fbp?: string;
@@ -44,6 +47,9 @@ function buildUserData(user: MetaUserData): Record<string, string> {
   const data: Record<string, string> = {};
   if (user.email) data.em = sha256(user.email);
   if (user.phone) data.ph = sha256(normalizePhone(user.phone));
+  if (user.firstName) data.fn = sha256(user.firstName);
+  if (user.country) data.country = sha256(user.country);
+  if (user.externalId) data.external_id = sha256(user.externalId);
   if (user.ip) data.client_ip_address = user.ip;
   if (user.userAgent) data.client_user_agent = user.userAgent;
   if (user.fbp) data.fbp = user.fbp;

@@ -87,7 +87,10 @@ export async function POST(request: NextRequest) {
       eventId,
       eventSourceUrl,
       user: {
+        firstName: formData.name,
         phone: formData.phone,
+        country: "kr",
+        externalId: formData.phone.replace(/\D/g, ""),
         ip: ip !== "unknown" ? ip : undefined,
         userAgent: request.headers.get("user-agent") ?? undefined,
         fbp,
