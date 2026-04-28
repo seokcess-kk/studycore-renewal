@@ -120,16 +120,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: msg }, { status: 500 });
     }
 
-    // 5. profiles 테이블에 프로필 생성 (Service Role — RLS 우회)
+    // 5. profiles 테이블 업데이트 (Service Role — RLS 우회)
+    //    auth.users INSERT 트리거(handle_new_user)가 기본 row를 이미 생성하므로 UPDATE.
     const { error: profileError } = await admin
       .from("profiles")
-      .insert({
-        id: authData.user.id,
+      .update({
         username,
         name,
         role,
         status: "active",
-      });
+      })
+      .eq("id", authData.user.id);
 
     if (profileError) {
       await admin.auth.admin.deleteUser(authData.user.id);
