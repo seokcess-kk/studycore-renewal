@@ -12,6 +12,7 @@ import type {
   NotificationLogDB,
   NotificationStats,
 } from "@/domains/notification/model";
+import { formatPhoneDisplay } from "@/hooks/usePhoneFormat";
 import {
   History,
   Filter,
@@ -355,7 +356,7 @@ export default function AdminKakaoHistoryPage() {
                               {log.recipient_name || "-"}
                             </div>
                             <div className="text-caption text-muted">
-                              {log.recipient_phone}
+                              {formatPhoneDisplay(log.recipient_phone)}
                             </div>
                           </td>
                           <td className="px-4 py-3">

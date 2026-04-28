@@ -23,7 +23,7 @@ import {
   adminUpdateMember,
   changeUserStatus,
 } from "@/domains/user/service";
-import { usePhoneFormat } from "@/hooks/usePhoneFormat";
+import { usePhoneFormat, formatPhoneDisplay } from "@/hooks/usePhoneFormat";
 
 type MemberFormValues = {
   name: string;
@@ -73,10 +73,10 @@ export default function AdminMemberDetailPage() {
         setMember(result.profile);
         reset({
           name: result.profile.name || "",
-          phone: result.profile.phone || "",
+          phone: formatPhoneDisplay(result.profile.phone),
           school: result.profile.school || "",
           grade: result.profile.grade?.toString() || "",
-          parent_phone: result.profile.parent_phone || "",
+          parent_phone: formatPhoneDisplay(result.profile.parent_phone),
         });
       } else {
         toast({

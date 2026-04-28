@@ -13,6 +13,7 @@ import { AdminCard, AdminCardGrid } from "@/components/admin/AdminCard";
 import { StatusBadge, QuestionStatusBadge } from "@/components/admin/StatusBadge";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { formatDistanceToNow } from "@/lib/utils";
+import { formatPhoneDisplay } from "@/hooks/usePhoneFormat";
 
 interface DashboardStats {
   newConsultations: number;
@@ -89,7 +90,7 @@ export default function AdminDashboardPage() {
           (consultations || []).map((c) => ({
             id: c.id,
             title: c.name,
-            subtitle: c.phone,
+            subtitle: formatPhoneDisplay(c.phone),
             date: c.created_at,
             status: c.status,
           }))

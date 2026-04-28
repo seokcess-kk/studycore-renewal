@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { RoleBadge } from "@/components/admin/RoleBadge";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { formatDate } from "@/lib/utils";
+import { formatPhoneDisplay } from "@/hooks/usePhoneFormat";
 import type { Profile, UserRoleType, UserStatusType } from "@/domains/user/model";
 
 type FilterRole = UserRoleType | "all";
@@ -168,7 +169,7 @@ export default function AdminMembersPage() {
                       : "-"}
                   </td>
                   <td className="px-4 py-3 text-body text-muted">
-                    {member.phone || "-"}
+                    {formatPhoneDisplay(member.phone) || "-"}
                   </td>
                   <td className="px-4 py-3">
                     <RoleBadge role={member.role} size="sm" />

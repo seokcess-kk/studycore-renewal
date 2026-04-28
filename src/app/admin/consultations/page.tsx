@@ -16,6 +16,7 @@ import type {
   ConsultationStatusType,
 } from "@/domains/consultation/model";
 import { formatDistanceToNow } from "@/lib/utils";
+import { formatPhoneDisplay } from "@/hooks/usePhoneFormat";
 
 const STATUS_LABELS: Record<string, string> = {
   new: "신규",
@@ -152,7 +153,7 @@ export default function AdminConsultationsPage() {
                   <Phone className="h-4 w-4 text-muted" />
                   <div>
                     <p className="text-body font-medium text-ink">{c.name}</p>
-                    <p className="text-caption text-muted">{c.phone}</p>
+                    <p className="text-caption text-muted">{formatPhoneDisplay(c.phone)}</p>
                     {c.school && (
                       <p className="text-caption text-muted">{c.school}</p>
                     )}

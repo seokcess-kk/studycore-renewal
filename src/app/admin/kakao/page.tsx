@@ -23,6 +23,7 @@ import {
   generatePreview,
 } from "@/domains/notification/service";
 import { type NotificationTarget } from "@/domains/notification/model";
+import { formatPhoneDisplay } from "@/hooks/usePhoneFormat";
 
 const kakaoMessageSchema = z.object({
   message: z.string().min(1, "메시지를 입력해주세요").max(1000, "1000자 이내로 작성해주세요"),
@@ -313,7 +314,7 @@ export default function AdminKakaoPage() {
                       />
                       <span className="text-body font-medium text-ink">{target.name}</span>
                       <span className="text-small text-muted ml-auto">
-                        {target.phone}
+                        {formatPhoneDisplay(target.phone)}
                       </span>
                     </label>
                   ))}
