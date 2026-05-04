@@ -24,7 +24,7 @@ export const guideAttachmentSchema = z.object({
 export type GuideAttachment = z.infer<typeof guideAttachmentSchema>;
 
 // 가이드 섹션 스키마
-export const guideSectionTypeEnum = z.enum(["onboarding", "manual"]);
+export const guideSectionTypeEnum = z.enum(["onboarding", "manual", "guidance_template"]);
 export type GuideSectionType = z.infer<typeof guideSectionTypeEnum>;
 
 export const guideSectionSchema = z.object({

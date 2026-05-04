@@ -21,6 +21,13 @@ const TAB_CONFIG = {
     label: "Onboarding Guide",
     emptyMessage: "아직 등록된 가이드가 없습니다.",
   },
+  guidance_template: {
+    type: "guidance_template" as const,
+    title: "안내 템플릿",
+    subtitle: "상황별 안내 문서를 관리합니다.",
+    label: "Guidance Template",
+    emptyMessage: "아직 등록된 안내 템플릿이 없습니다.",
+  },
 };
 
 function ManualContent() {
@@ -28,16 +35,21 @@ function ManualContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const tabParam = searchParams.get("tab");
   const activeTab: GuideSectionType =
-    isStaff && searchParams.get("tab") === "onboarding"
+    isStaff && tabParam === "onboarding"
       ? "onboarding"
-      : "manual";
+      : isStaff && tabParam === "guidance_template"
+        ? "guidance_template"
+        : "manual";
 
   const config = TAB_CONFIG[activeTab];
 
   const handleTabChange = (value: GuideSectionType) => {
     if (value === "onboarding") {
       router.replace("/manual?tab=onboarding", { scroll: false });
+    } else if (value === "guidance_template") {
+      router.replace("/manual?tab=guidance_template", { scroll: false });
     } else {
       router.replace("/manual", { scroll: false });
     }
@@ -53,6 +65,7 @@ function ManualContent() {
               items: [
                 { value: "manual", label: "이용 매뉴얼" },
                 { value: "onboarding", label: "온보딩 가이드" },
+                { value: "guidance_template", label: "안내 템플릿" },
               ],
               active: activeTab,
               onChange: handleTabChange,

@@ -63,7 +63,11 @@ export default function AdminGuideNewPage() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <h1 className="font-serif text-fluid-h2 font-bold text-ink">
-          {sectionType === "onboarding" ? "조교 온보딩" : "재원생 매뉴얼"} — 새 섹션
+          {sectionType === "onboarding"
+            ? "조교 온보딩"
+            : sectionType === "manual"
+              ? "재원생 매뉴얼"
+              : "안내 템플릿"} — 새 섹션
         </h1>
       </div>
 

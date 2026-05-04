@@ -145,6 +145,17 @@ export default function AdminGuidePage() {
         >
           재원생 매뉴얼
         </button>
+        <button
+          onClick={() => setActiveType("guidance_template")}
+          className={cn(
+            "px-4 py-3 text-body font-medium border-b-2 transition-colors duration-200 cursor-pointer",
+            activeType === "guidance_template"
+              ? "border-navy text-navy"
+              : "border-transparent text-muted hover:text-ink"
+          )}
+        >
+          안내 템플릿
+        </button>
       </div>
 
       {/* 상단 */}
@@ -152,7 +163,9 @@ export default function AdminGuidePage() {
         <p className="text-muted text-body">
           {activeType === "onboarding"
             ? "조교 온보딩 문서를 관리합니다."
-            : "재원생 이용 매뉴얼을 관리합니다."}
+            : activeType === "manual"
+              ? "재원생 이용 매뉴얼을 관리합니다."
+              : "상황별 안내 문서를 관리합니다."}
         </p>
         {canAccessAdmin && (
           <Link href={`/admin/guide/new?type=${activeType}`}>
