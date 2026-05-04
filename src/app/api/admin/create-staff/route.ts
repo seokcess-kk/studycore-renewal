@@ -13,8 +13,21 @@ function getAdminClient() {
   );
 }
 
-/** Staff 초기 비밀번호 (staff_credentials에 저장됨) */
-const INITIAL_PASSWORD = "1234";
+/**
+ * 일회성 초기 비밀번호 생성 (12자, Web Crypto 난수)
+ * 0/O/1/l 등 혼동 문자는 제거. Edge/Node 런타임 모두 호환.
+ */
+function generateInitialPassword(): string {
+  const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+  const length = 12;
+  const buf = new Uint8Array(length);
+  crypto.getRandomValues(buf);
+  let out = "";
+  for (let i = 0; i < length; i++) {
+    out += alphabet[buf[i] % alphabet.length];
+  }
+  return out;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -140,11 +153,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 6. staff_credentials에 bcrypt 비밀번호 설정
+    // 6. staff_credentials에 bcrypt 비밀번호 설정 (일회성 랜덤)
+    const initialPassword = generateInitialPassword();
     const { error: credError } = await admin.rpc("set_staff_password", {
       p_user_id: authData.user.id,
       p_username: username,
-      p_password: INITIAL_PASSWORD,
+      p_password: initialPassword,
     });
 
     if (credError) {
@@ -154,7 +168,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       username,
-      password: INITIAL_PASSWORD,
+      password: initialPassword,
     });
   } catch (error) {
     console.error("스태프 계정 생성 오류:", error);
