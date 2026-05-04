@@ -7,15 +7,17 @@ const withPWA = require("next-pwa")({
 });
 
 /**
- * Content-Security-Policy (Report-Only 단계)
- * - Phase 1: Report-Only로 위반 모니터링만 수행. 실제 차단은 하지 않음.
- * - Phase 2: report-uri/연결한 모니터링 도구로 위반 검토 후 'Content-Security-Policy'로 전환.
+ * Content-Security-Policy (Phase 2 — 정식 차단)
+ * - Phase 1: Report-Only로 위반 모니터링만 수행 (모니터링 완료)
+ * - Phase 2: 정식 'Content-Security-Policy' 헤더로 실제 차단 적용 ✓ 현재 단계
  *
  * 외부 도메인 화이트리스트
  * - Supabase Storage·Realtime: *.supabase.co / *.supabase.in
  * - Meta Pixel: connect.facebook.net (script), www.facebook.com (img/frame)
  * - Kakao Maps: dapi.kakao.com (script), t1.daumcdn.net (asset)
  * - Unsplash 데모 이미지: images.unsplash.com
+ *
+ * 위반 발견 시 buildContentSecurityPolicy()의 해당 directive에 도메인 추가.
  */
 function buildContentSecurityPolicy() {
   const isDev = process.env.NODE_ENV !== "production";
@@ -76,7 +78,7 @@ const securityHeaders = [
     value: "camera=(), microphone=(), geolocation=(self), payment=(), browsing-topics=()",
   },
   {
-    key: "Content-Security-Policy-Report-Only",
+    key: "Content-Security-Policy",
     value: buildContentSecurityPolicy(),
   },
 ];
