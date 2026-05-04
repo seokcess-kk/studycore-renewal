@@ -1,10 +1,12 @@
 /**
- * 간단한 In-Memory Rate Limiter
+ * Rate Limiter
  *
- * Vercel Edge/Serverless 환경에서는 인스턴스별로 메모리가 분리되므로
- * 완벽한 방어는 아니지만, 기본적인 스팸 방지에 효과적입니다.
- * 프로덕션에서는 Redis 기반 rate limiting 권장.
+ * - `checkRateLimitDB(supabase, ...)` — Supabase 테이블(rate_limits) 기반 중앙 카운터.
+ *   serverless 다중 인스턴스에서도 일관된 한도. 민감한 API에서 사용.
+ * - `checkRateLimit(...)` — 인메모리 폴백. 인스턴스별로 분리되므로 정확하지 않음.
+ *   가벼운 스팸 방지나 비민감 라우트에서만 사용.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 interface RateLimitEntry {
   count: number;
@@ -101,3 +103,45 @@ export const STAFF_CREATE_RATE_LIMIT: RateLimitConfig = {
   maxRequests: 5,
   windowMs: 5 * 60 * 1000, // 5분
 };
+
+/**
+ * Supabase 테이블 기반 중앙 Rate Limit 체크
+ *
+ * - serverless 다중 인스턴스에서도 일관된 카운터.
+ * - RPC `check_rate_limit`(SECURITY DEFINER) 호출.
+ * - RPC 실패 시 fail-open(요청 허용) — 가용성 우선.
+ *
+ * @param supabase - server/anon client 모두 가능 (RPC가 SECURITY DEFINER)
+ * @param identifier - 고유 식별자 (e.g. "create-staff:1.2.3.4")
+ * @param config - 한도/윈도우
+ */
+export async function checkRateLimitDB(
+  supabase: SupabaseClient,
+  identifier: string,
+  config: RateLimitConfig
+): Promise<RateLimitResult> {
+  const windowSeconds = Math.max(1, Math.ceil(config.windowMs / 1000));
+
+  const { data, error } = await supabase.rpc("check_rate_limit", {
+    p_identifier: identifier,
+    p_max_requests: config.maxRequests,
+    p_window_seconds: windowSeconds,
+  });
+
+  if (error || !data) {
+    // RPC 실패 시 fail-open (가용성 우선)
+    console.warn("[rate-limit] check_rate_limit RPC 실패 → 통과:", error?.message);
+    return {
+      success: true,
+      remaining: config.maxRequests,
+      resetTime: Date.now() + config.windowMs,
+    };
+  }
+
+  const result = data as { success: boolean; remaining: number; reset_at: string };
+  return {
+    success: result.success,
+    remaining: result.remaining,
+    resetTime: new Date(result.reset_at).getTime(),
+  };
+}

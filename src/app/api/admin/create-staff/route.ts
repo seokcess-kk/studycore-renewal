@@ -3,7 +3,7 @@ import { createClient as createServerClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { hasAdminAccess } from "@/lib/constants";
 import { STAFF_AUTH_FIXED_PASSWORD } from "@/lib/staff-auth-config";
-import { checkRateLimit, STAFF_CREATE_RATE_LIMIT } from "@/lib/rate-limit";
+import { checkRateLimitDB, STAFF_CREATE_RATE_LIMIT } from "@/lib/rate-limit";
 
 /** RLS를 우회하는 Service Role 클라이언트 (이 라우트 전용) */
 function getAdminClient() {
@@ -31,10 +31,14 @@ function generateInitialPassword(): string {
 
 export async function POST(request: NextRequest) {
   try {
-    // 0. Rate Limiting
+    // 1. 요청자 권한 확인
+    const supabase = await createServerClient();
+
+    // 0. Rate Limiting (Supabase 테이블 기반 — 분산 환경에서도 일관)
     const forwarded = request.headers.get("x-forwarded-for");
     const ip = forwarded?.split(",")[0]?.trim() || "unknown";
-    const rateLimitResult = checkRateLimit(
+    const rateLimitResult = await checkRateLimitDB(
+      supabase,
       `create-staff:${ip}`,
       STAFF_CREATE_RATE_LIMIT
     );
@@ -46,8 +50,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. 요청자 권한 확인
-    const supabase = await createServerClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

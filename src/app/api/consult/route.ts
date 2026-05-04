@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { submitConsultation } from "@/domains/consultation/service";
 import {
   consultationFormSchema,
@@ -10,14 +10,19 @@ import {
   extractFbpFbcFromCookieHeader,
   sendMetaLeadEvent,
 } from "@/lib/meta/capi";
-import { checkRateLimit, CONSULT_RATE_LIMIT } from "@/lib/rate-limit";
+import { checkRateLimitDB, CONSULT_RATE_LIMIT } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
-    // 0. Rate Limiting 체크
+    // 0. Rate Limiting (Supabase 테이블 기반)
     const forwarded = request.headers.get("x-forwarded-for");
     const ip = forwarded?.split(",")[0]?.trim() || "unknown";
-    const rateLimitResult = checkRateLimit(`consult:${ip}`, CONSULT_RATE_LIMIT);
+    const rateClient = await createClient();
+    const rateLimitResult = await checkRateLimitDB(
+      rateClient,
+      `consult:${ip}`,
+      CONSULT_RATE_LIMIT
+    );
 
     if (!rateLimitResult.success) {
       const retryAfter = Math.ceil(
