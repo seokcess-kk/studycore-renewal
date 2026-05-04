@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, UserPlus } from "lucide-react";
 import { Skeleton } from "@/components/common";
 import { Button } from "@/components/common/Button";
+import { Pagination } from "@/components/common/Pagination";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { RoleBadge } from "@/components/admin/RoleBadge";
 import { createBrowserClient } from "@/lib/supabase/client";
@@ -15,88 +17,164 @@ import type { Profile, UserRoleType, UserStatusType } from "@/domains/user/model
 type FilterRole = UserRoleType | "all";
 type FilterStatus = UserStatusType | "all";
 
-export default function AdminMembersPage() {
-  const supabase = createBrowserClient();
+const PAGE_SIZE = 20;
+
+const ROLE_OPTIONS: { value: FilterRole; label: string }[] = [
+  { value: "all", label: "모든 역할" },
+  { value: "student", label: "재원생" },
+  { value: "assistant", label: "조교" },
+  { value: "mentor", label: "멘토" },
+  { value: "admin", label: "관리자" },
+];
+
+const STATUS_OPTIONS: { value: FilterStatus; label: string }[] = [
+  { value: "all", label: "모든 상태" },
+  { value: "pending", label: "승인 대기" },
+  { value: "active", label: "활성" },
+  { value: "inactive", label: "비활성" },
+];
+
+function isFilterRole(v: string | null): v is FilterRole {
+  return v === "all" || v === "student" || v === "assistant" || v === "mentor" || v === "admin";
+}
+
+function isFilterStatus(v: string | null): v is FilterStatus {
+  return v === "all" || v === "pending" || v === "active" || v === "inactive";
+}
+
+function AdminMembersContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [supabase] = useState(() => createBrowserClient());
+
+  const roleParam = searchParams.get("role");
+  const statusParam = searchParams.get("status");
+  const role: FilterRole = isFilterRole(roleParam) ? roleParam : "all";
+  const status: FilterStatus = isFilterStatus(statusParam) ? statusParam : "all";
+  const q = searchParams.get("q") || "";
+  const page = Math.max(1, Number(searchParams.get("page")) || 1);
+
+  const [searchInput, setSearchInput] = useState(q);
   const [members, setMembers] = useState<Profile[]>([]);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [filterRole, setFilterRole] = useState<FilterRole>("all");
-  const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
+
+  const updateQuery = (params: Record<string, string | undefined>) => {
+    const sp = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(params)) {
+      if (value === undefined || value === "") sp.delete(key);
+      else sp.set(key, value);
+    }
+    const qs = sp.toString();
+    router.push(qs ? `/admin/members?${qs}` : "/admin/members");
+  };
+
+  // 검색 debounce 300ms
+  useEffect(() => {
+    if (searchInput === q) return;
+    const t = setTimeout(() => {
+      updateQuery({ q: searchInput || undefined, page: undefined });
+    }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput]);
+
+  // 외부 query 변화 시 input 동기화 (뒤로가기 등)
+  useEffect(() => {
+    setSearchInput(q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q]);
 
   useEffect(() => {
     async function fetchMembers() {
       setIsLoading(true);
       try {
+        const from = (page - 1) * PAGE_SIZE;
+        const to = from + PAGE_SIZE - 1;
+
         let query = supabase
           .from("profiles")
-          .select("*")
-          .order("created_at", { ascending: false });
+          .select("*", { count: "exact" })
+          .order("created_at", { ascending: false })
+          .range(from, to);
 
-        if (filterRole !== "all") {
-          query = query.eq("role", filterRole);
-        }
+        if (role !== "all") query = query.eq("role", role);
+        if (status !== "all") query = query.eq("status", status);
+        if (q) query = query.or(`name.ilike.%${q}%,phone.ilike.%${q}%`);
 
-        if (filterStatus !== "all") {
-          query = query.eq("status", filterStatus);
-        }
-
-        if (search) {
-          query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`);
-        }
-
-        const { data, error } = await query;
-
+        const { data, count, error } = await query;
         if (error) throw error;
-        setMembers(data || []);
+        setMembers((data as Profile[]) || []);
+        const fetchedTotal = count ?? 0;
+        setTotal(fetchedTotal);
+        setTotalPages(Math.max(1, Math.ceil(fetchedTotal / PAGE_SIZE)));
       } catch (error) {
         console.error("회원 목록 조회 실패:", error);
       } finally {
         setIsLoading(false);
       }
     }
-
     fetchMembers();
-  }, [supabase, search, filterRole, filterStatus]);
+  }, [supabase, role, status, q, page]);
+
+  const handlePageChange = (p: number) => {
+    updateQuery({ page: p === 1 ? undefined : String(p) });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="space-y-6">
       {/* 상단 액션 */}
       <div className="flex flex-wrap items-center gap-3 md:gap-4">
+        <span className="text-muted text-body">총 {total}명</span>
+
         {/* 검색 */}
         <div className="relative w-full sm:w-auto">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
           <input
             type="text"
             placeholder="이름, 전화번호 검색"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             className="h-9 md:h-10 w-full sm:w-56 md:w-64 border border-rule bg-white pl-10 pr-4 text-body focus:border-navy focus:outline-none"
           />
         </div>
 
         {/* 역할 필터 */}
         <select
-          value={filterRole}
-          onChange={(e) => setFilterRole(e.target.value as FilterRole)}
+          value={role}
+          onChange={(e) =>
+            updateQuery({
+              role: e.target.value === "all" ? undefined : e.target.value,
+              page: undefined,
+            })
+          }
           className="h-9 md:h-10 border border-rule bg-white px-3 text-body focus:border-navy focus:outline-none cursor-pointer"
         >
-          <option value="all">모든 역할</option>
-          <option value="student">재원생</option>
-          <option value="assistant">조교</option>
-          <option value="mentor">멘토</option>
-          <option value="admin">관리자</option>
+          {ROLE_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
         </select>
 
         {/* 상태 필터 */}
         <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value as FilterStatus)}
+          value={status}
+          onChange={(e) =>
+            updateQuery({
+              status: e.target.value === "all" ? undefined : e.target.value,
+              page: undefined,
+            })
+          }
           className="h-9 md:h-10 border border-rule bg-white px-3 text-body focus:border-navy focus:outline-none cursor-pointer"
         >
-          <option value="all">모든 상태</option>
-          <option value="pending">승인 대기</option>
-          <option value="active">활성</option>
-          <option value="inactive">비활성</option>
+          {STATUS_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
         </select>
 
         <Link href="/admin/members/new" className="ml-auto">
@@ -113,27 +191,13 @@ export default function AdminMembersPage() {
         <table className="w-full min-w-[700px]">
           <thead>
             <tr className="border-b border-rule bg-stone">
-              <th className="px-4 py-3 text-left text-body font-medium text-ink">
-                이름
-              </th>
-              <th className="px-4 py-3 text-left text-body font-medium text-ink">
-                학교/학년
-              </th>
-              <th className="px-4 py-3 text-left text-body font-medium text-ink">
-                연락처
-              </th>
-              <th className="px-4 py-3 text-left text-body font-medium text-ink">
-                역할
-              </th>
-              <th className="px-4 py-3 text-left text-body font-medium text-ink">
-                상태
-              </th>
-              <th className="px-4 py-3 text-left text-body font-medium text-ink">
-                가입일
-              </th>
-              <th className="px-4 py-3 text-left text-body font-medium text-ink">
-                관리
-              </th>
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">이름</th>
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">학교/학년</th>
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">연락처</th>
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">역할</th>
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">상태</th>
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">가입일</th>
+              <th className="px-4 py-3 text-left text-body font-medium text-ink">관리</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-rule">
@@ -194,6 +258,21 @@ export default function AdminMembersPage() {
           </tbody>
         </table>
       </div>
+
+      {/* 페이지네이션 */}
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
+  );
+}
+
+export default function AdminMembersPage() {
+  return (
+    <Suspense>
+      <AdminMembersContent />
+    </Suspense>
   );
 }
