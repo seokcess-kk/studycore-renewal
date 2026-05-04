@@ -68,16 +68,32 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // 유저 프로필 조회 (역할, 상태, 연락처)
+    // 유저 프로필 조회 (역할, 상태, 연락처, 강제 변경 플래그)
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role, status, phone")
+      .select("role, status, phone, must_change_password")
       .eq("id", user.id)
       .maybeSingle();
 
     if (!profile) {
       // 프로필 조회 실패 — 클라이언트에서 처리하도록 통과
       return supabaseResponse;
+    }
+
+    // 스태프 비밀번호 강제 변경: /my?force_password_change=1 외 보호 라우트 차단
+    if (
+      isStaffRole(profile.role) &&
+      profile.must_change_password === true
+    ) {
+      const isAllowedForcedPath =
+        pathname === "/my" &&
+        request.nextUrl.searchParams.get("force_password_change") === "1";
+      if (!isAllowedForcedPath) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/my";
+        url.search = "?force_password_change=1";
+        return NextResponse.redirect(url);
+      }
     }
 
     // 어드민 라우트 접근 시 admin 또는 mentor 역할 확인

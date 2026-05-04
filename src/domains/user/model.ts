@@ -45,6 +45,7 @@ export const profileSchema = z.object({
   grade: z.number().min(1).max(3).nullable(),
   parent_phone: z.string().nullable(),
   avatar_url: z.string().nullable(),
+  must_change_password: z.boolean().optional().default(false),
   created_at: z.string(),
   updated_at: z.string(),
 });
