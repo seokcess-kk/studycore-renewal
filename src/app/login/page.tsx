@@ -78,8 +78,13 @@ function LoginContent() {
 
       if (res.ok && result.success && result.user && result.profile) {
         login(result.user, result.profile);
-        success("로그인되었습니다.");
-        window.location.href = redirectTo;
+        if (result.must_change_password) {
+          success("초기 비밀번호 사용 중입니다. 즉시 변경해주세요.");
+          window.location.href = "/my?force_password_change=1";
+        } else {
+          success("로그인되었습니다.");
+          window.location.href = redirectTo;
+        }
         return;
       } else {
         showError(result.error || "로그인에 실패했습니다.");

@@ -153,12 +153,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 6. staff_credentials에 bcrypt 비밀번호 설정 (일회성 랜덤)
+    // 6. staff_credentials에 bcrypt 비밀번호 설정 (일회성 랜덤 + 첫 로그인 시 변경 강제)
     const initialPassword = generateInitialPassword();
     const { error: credError } = await admin.rpc("set_staff_password", {
       p_user_id: authData.user.id,
       p_username: username,
       p_password: initialPassword,
+      p_must_change: true,
     });
 
     if (credError) {

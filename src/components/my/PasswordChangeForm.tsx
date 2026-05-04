@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
@@ -10,7 +11,9 @@ import { changePassword } from "@/domains/user/service";
 import { changePasswordSchema, type ChangePasswordInput } from "@/domains/user/model";
 
 export function PasswordChangeForm() {
-  const [isOpen, setIsOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const forceOpen = searchParams.get("force_password_change") === "1";
+  const [isOpen, setIsOpen] = useState<boolean>(forceOpen);
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,7 +44,18 @@ export function PasswordChangeForm() {
   };
 
   return (
-    <div className="bg-white border border-rule mb-6">
+    <div
+      className={`bg-white border mb-6 ${
+        forceOpen ? "border-amber-500" : "border-rule"
+      }`}
+    >
+      {forceOpen && (
+        <div className="bg-amber-50 px-4 py-3 border-b border-amber-200">
+          <p className="text-body font-medium text-amber-900">
+            ⚠ 초기 비밀번호 사용 중입니다. 보안을 위해 즉시 변경해주세요.
+          </p>
+        </div>
+      )}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}

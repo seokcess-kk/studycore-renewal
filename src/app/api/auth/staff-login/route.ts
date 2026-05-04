@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
       error?: string;
       unlock_at?: string;
       profile?: Record<string, unknown>;
+      must_change_password?: boolean;
     };
 
     if (!result.success) {
@@ -108,6 +109,7 @@ export async function POST(request: NextRequest) {
         email: signInData.user.email || "",
       },
       profile: result.profile,
+      must_change_password: result.must_change_password === true,
     });
   } catch (error) {
     logger.exception(error, "staff-login");
