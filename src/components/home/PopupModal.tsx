@@ -10,6 +10,7 @@ import type { Popup } from "@/domains/popup/model";
 import { MetaAttachmentList, AttachmentModal } from "@/components/common";
 import type { NoticeAttachment } from "@/domains/notice/model";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 function isDismissedToday(popupId: string): boolean {
   const key = `popup_dismissed_${popupId}`;
@@ -144,7 +145,7 @@ export function PopupModal() {
               {noticeHtml ? (
                 <div
                   className="prose prose-sm max-w-none text-body leading-prose text-ink/80 max-h-[40vh] overflow-y-auto"
-                  dangerouslySetInnerHTML={{ __html: noticeHtml }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(noticeHtml) }}
                 />
               ) : popup.content ? (
                 <p className="whitespace-pre-wrap text-body text-ink/80 leading-prose">

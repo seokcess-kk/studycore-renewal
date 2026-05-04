@@ -42,6 +42,7 @@ import {
 } from "@/domains/guide/service";
 import type { GuideSection, GuideSectionType } from "@/domains/guide/model";
 import { cn } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   FileText, BookOpen, BookMarked, GraduationCap, Clock,
@@ -274,7 +275,7 @@ export default function AdminGuidePage() {
                     {section.content_html ? (
                       <div
                         className="prose prose-sm max-w-none text-muted prose-headings:font-serif prose-a:text-teal"
-                        dangerouslySetInnerHTML={{ __html: section.content_html }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(section.content_html) }}
                       />
                     ) : (
                       <p className="whitespace-pre-wrap text-muted text-body">

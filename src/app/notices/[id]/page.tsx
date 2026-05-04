@@ -15,6 +15,7 @@ import {
 import { ROUTES } from "@/lib/constants";
 import { ArrowLeft, Calendar, User, Eye, Lock } from "lucide-react";
 import { Button } from "@/components/common/Button";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 export default function NoticeDetailPage({
   params,
@@ -194,7 +195,7 @@ export default function NoticeDetailPage({
           <div className="max-w-3xl mx-auto">
             <div
               className="prose prose-sm max-w-none text-reading leading-prose text-ink/80"
-              dangerouslySetInnerHTML={{ __html: notice.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(notice.content) }}
             />
           </div>
         </section>

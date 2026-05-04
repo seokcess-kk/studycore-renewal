@@ -5,6 +5,7 @@ import { Nav, Footer, Skeleton } from "@/components/common";
 import { createClient } from "@/lib/supabase/client";
 import { getVisibleSectionList } from "@/domains/guide/service";
 import type { GuideSection, GuideSectionType } from "@/domains/guide/model";
+import { sanitizeHtml } from "@/lib/sanitize";
 import {
   Search,
   BookOpen,
@@ -310,7 +311,7 @@ export function GuidePageLayout({
                             <div
                               className="prose prose-sm max-w-none prose-headings:font-serif prose-h2:text-xl prose-h2:font-bold prose-h3:text-lg prose-h3:font-bold prose-blockquote:border-l-2 prose-blockquote:border-teal prose-blockquote:pl-4 prose-blockquote:text-muted prose-a:text-teal prose-a:underline"
                               dangerouslySetInnerHTML={{
-                                __html: activeSection.content_html,
+                                __html: sanitizeHtml(activeSection.content_html),
                               }}
                             />
                           ) : (
