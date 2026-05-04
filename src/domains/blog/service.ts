@@ -15,6 +15,7 @@ import {
   type UpdateBlogPostInput,
   generateUniqueSlug,
 } from "./model";
+import { logBlogCreate, logBlogUpdate, logBlogDelete } from "@/lib/audit";
 
 /**
  * 발행된 블로그 목록 조회 (공개용)
@@ -187,6 +188,8 @@ export async function createBlog(
       author_id: authorId,
     });
 
+    void logBlogCreate(supabase, authorId, post.id, post.title);
+
     return {
       success: true,
       post,
@@ -225,6 +228,11 @@ export async function updateBlog(
 
     const post = await repository.updatePost(supabase, postId, input);
 
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      void logBlogUpdate(supabase, user.id, post.id, post.title);
+    }
+
     return {
       success: true,
       post,
@@ -245,7 +253,17 @@ export async function deleteBlog(
   postId: string
 ): Promise<BlogServiceResult> {
   try {
+    // 삭제 전 제목 + actor 조회 (audit용)
+    const [{ data: existing }, { data: { user } }] = await Promise.all([
+      supabase.from("blog_posts").select("title").eq("id", postId).single(),
+      supabase.auth.getUser(),
+    ]);
+
     await repository.deletePost(supabase, postId);
+
+    if (user && existing?.title) {
+      void logBlogDelete(supabase, user.id, postId, existing.title);
+    }
 
     return {
       success: true,

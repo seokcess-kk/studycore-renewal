@@ -18,6 +18,7 @@ import {
   type QuestionAttachment,
 } from "./model";
 import * as questionRepo from "./repository";
+import { logQuestionAnswer } from "@/lib/audit";
 
 /**
  * 미답변 질문 수 조회 (알림 뱃지용)
@@ -491,6 +492,9 @@ export async function createAnswer(
       .single();
 
     if (questionData) {
+      // audit 로그 (실패해도 무시)
+      void logQuestionAnswer(supabase, user.id, input.question_id, questionData.title);
+
       // 비동기로 알림 발송 (실패해도 답변 등록은 성공)
       fetch("/api/notify", {
         method: "POST",

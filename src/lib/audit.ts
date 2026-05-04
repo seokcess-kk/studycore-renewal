@@ -165,3 +165,93 @@ export async function logNoticeDelete(
     metadata: { title: noticeTitle },
   });
 }
+
+/**
+ * 질문 답변 로그
+ */
+export async function logQuestionAnswer(
+  supabase: SupabaseClient,
+  actorId: string,
+  questionId: string,
+  questionTitle: string
+): Promise<void> {
+  await createAuditLog(supabase, {
+    actorId,
+    action: AUDIT_ACTIONS.QUESTION_ANSWER,
+    resourceType: AUDIT_RESOURCES.QUESTION,
+    resourceId: questionId,
+    metadata: { title: questionTitle },
+  });
+}
+
+/**
+ * 블로그 생성 로그
+ */
+export async function logBlogCreate(
+  supabase: SupabaseClient,
+  actorId: string,
+  blogId: string,
+  title: string
+): Promise<void> {
+  await createAuditLog(supabase, {
+    actorId,
+    action: AUDIT_ACTIONS.BLOG_CREATE,
+    resourceType: AUDIT_RESOURCES.BLOG,
+    resourceId: blogId,
+    metadata: { title },
+  });
+}
+
+/**
+ * 블로그 수정 로그
+ */
+export async function logBlogUpdate(
+  supabase: SupabaseClient,
+  actorId: string,
+  blogId: string,
+  title: string
+): Promise<void> {
+  await createAuditLog(supabase, {
+    actorId,
+    action: AUDIT_ACTIONS.BLOG_UPDATE,
+    resourceType: AUDIT_RESOURCES.BLOG,
+    resourceId: blogId,
+    metadata: { title },
+  });
+}
+
+/**
+ * 블로그 삭제 로그
+ */
+export async function logBlogDelete(
+  supabase: SupabaseClient,
+  actorId: string,
+  blogId: string,
+  title: string
+): Promise<void> {
+  await createAuditLog(supabase, {
+    actorId,
+    action: AUDIT_ACTIONS.BLOG_DELETE,
+    resourceType: AUDIT_RESOURCES.BLOG,
+    resourceId: blogId,
+    metadata: { title },
+  });
+}
+
+/**
+ * 설정 변경 로그
+ */
+export async function logSettingsUpdate(
+  supabase: SupabaseClient,
+  actorId: string,
+  settingKey: string,
+  changes?: Record<string, unknown>
+): Promise<void> {
+  await createAuditLog(supabase, {
+    actorId,
+    action: AUDIT_ACTIONS.SETTINGS_UPDATE,
+    resourceType: AUDIT_RESOURCES.SETTINGS,
+    metadata: { key: settingKey },
+    changes,
+  });
+}

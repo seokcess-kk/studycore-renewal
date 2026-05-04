@@ -12,6 +12,7 @@ import type {
   UpdateSettingInput,
 } from "./model";
 import { settingToBoolean, booleanToSetting } from "./model";
+import { logSettingsUpdate } from "@/lib/audit";
 
 /**
  * 모든 설정 조회
@@ -81,6 +82,10 @@ export async function updateMenuVisibility(
 
   if (updates.length > 0) {
     await repository.updateSettings(supabase, updates);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      void logSettingsUpdate(supabase, user.id, "menu_visibility", { changes: updates });
+    }
   }
 }
 
@@ -108,6 +113,10 @@ export async function updateSmsTemplate(
     key: "sms_consult_template",
     value: template,
   });
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    void logSettingsUpdate(supabase, user.id, "sms_consult_template");
+  }
 }
 
 /**
@@ -119,4 +128,8 @@ export async function updateSingleSetting(
   value: string
 ): Promise<void> {
   await repository.updateSetting(supabase, { key, value });
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    void logSettingsUpdate(supabase, user.id, key);
+  }
 }
