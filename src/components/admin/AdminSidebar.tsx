@@ -73,7 +73,7 @@ const navGroups: NavGroup[] = [
   {
     title: "운영",
     items: [
-      { label: "안내 템플릿", href: "/admin/guide", icon: BookOpen, assistantVisible: true },
+      { label: "매뉴얼", href: "/admin/guide", icon: BookOpen, assistantVisible: true },
       { label: "설정", href: "/admin/settings", icon: Settings },
     ],
   },
