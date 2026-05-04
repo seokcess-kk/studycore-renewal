@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
@@ -11,6 +11,7 @@ import { changePassword } from "@/domains/user/service";
 import { changePasswordSchema, type ChangePasswordInput } from "@/domains/user/model";
 
 export function PasswordChangeForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const forceOpen = searchParams.get("force_password_change") === "1";
   const [isOpen, setIsOpen] = useState<boolean>(forceOpen);
@@ -38,6 +39,10 @@ export function PasswordChangeForm() {
       success("비밀번호가 변경되었습니다.");
       reset();
       setIsOpen(false);
+      // 강제 변경 모드였다면 query 제거 → 다음 render에서 forceOpen=false → 배너·미들웨어 강제 해제
+      if (forceOpen) {
+        router.replace("/my", { scroll: false });
+      }
     } else {
       showError(result.error || "비밀번호 변경에 실패했습니다.");
     }
