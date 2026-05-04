@@ -18,6 +18,7 @@ import {
   type NoticeVisibilityType,
 } from "./model";
 import * as noticeRepo from "./repository";
+import { logNoticeCreate, logNoticeDelete } from "@/lib/audit";
 
 /**
  * 공지사항 목록 조회
@@ -129,6 +130,9 @@ export async function createNotice(
       author_id: authorId,
     });
 
+    // 3. audit 로그 (실패해도 무시)
+    void logNoticeCreate(supabase, authorId, notice.id, notice.title);
+
     return { success: true, notice };
   } catch (error) {
     console.error("공지사항 생성 실패:", error);
@@ -188,7 +192,18 @@ export async function deleteNotice(
   noticeId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    // 삭제 전 제목 + actor 조회 (audit 로그용)
+    const [{ data: existing }, { data: { user } }] = await Promise.all([
+      supabase.from("notices").select("title").eq("id", noticeId).single(),
+      supabase.auth.getUser(),
+    ]);
+
     await noticeRepo.deleteNotice(supabase, noticeId);
+
+    if (user && existing?.title) {
+      void logNoticeDelete(supabase, user.id, noticeId, existing.title);
+    }
+
     return { success: true };
   } catch (error) {
     console.error("공지사항 삭제 실패:", error);

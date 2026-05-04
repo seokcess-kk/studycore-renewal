@@ -18,6 +18,7 @@ import {
 } from "./model";
 import * as userRepo from "./repository";
 import { logger } from "@/lib/logger";
+import { logUserStatusChange } from "@/lib/audit";
 
 /**
  * 카카오 로그인 후 프로필 생성/조회
@@ -206,7 +207,24 @@ export async function changeUserStatus(
   newStatus: "pending" | "active" | "inactive"
 ): Promise<UserServiceResult> {
   try {
+    // 이전 상태 + actor 조회 (audit 로그용)
+    const [{ data: existing }, { data: { user } }] = await Promise.all([
+      supabase.from("profiles").select("status").eq("id", userId).single(),
+      supabase.auth.getUser(),
+    ]);
+
     const profile = await userRepo.updateUserStatus(supabase, userId, newStatus);
+
+    if (user) {
+      void logUserStatusChange(
+        supabase,
+        user.id,
+        userId,
+        existing?.status || "unknown",
+        newStatus
+      );
+    }
+
     return { success: true, profile };
   } catch (error) {
     logger.exception(error, "changeUserStatus");
