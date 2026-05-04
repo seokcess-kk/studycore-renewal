@@ -58,6 +58,9 @@ export default function AdminLunchPage() {
   const [editingPeriod, setEditingPeriod] = useState<MealPeriod | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<MealPeriod | null>(null);
   const [showMobilePeriods, setShowMobilePeriods] = useState(false);
+  const [unappliedExpanded, setUnappliedExpanded] = useState(false);
+  const [unappliedSearch, setUnappliedSearch] = useState("");
+  const [unappliedLimit, setUnappliedLimit] = useState(50);
   const { showToast } = useToast();
 
   const fetchPeriods = async () => {
@@ -101,11 +104,28 @@ export default function AdminLunchPage() {
     }
   }, [selectedPeriod]);
 
+  // 기간 전환 시 미신청자 검색·limit 초기화
+  useEffect(() => {
+    setUnappliedSearch("");
+    setUnappliedLimit(50);
+  }, [selectedPeriod]);
+
   // 미신청 학생 계산
   const unappliedStudents = useMemo(() => {
     const appliedIds = new Set(applications.map((a) => a.student_id));
     return activeStudents.filter((s) => !appliedIds.has(s.id));
   }, [applications, activeStudents]);
+
+  // 미신청 학생 검색 필터링
+  const filteredUnapplied = useMemo(() => {
+    const q = unappliedSearch.trim().toLowerCase();
+    if (!q) return unappliedStudents;
+    return unappliedStudents.filter(
+      (s) =>
+        s.name?.toLowerCase().includes(q) ||
+        (s.school || "").toLowerCase().includes(q)
+    );
+  }, [unappliedStudents, unappliedSearch]);
 
   const handleExportExcel = () => {
     if (!selectedPeriod) return;
@@ -604,33 +624,79 @@ export default function AdminLunchPage() {
                   )}
                 </div>
 
-                {/* 미신청 학생 */}
+                {/* 미신청 학생 — 기본 접힘, 펼침 시 검색 + 50명씩 페이지네이션 */}
                 {unappliedStudents.length > 0 && (
                   <div className="bg-white border border-rule">
-                    <div className="px-4 py-3 border-b border-rule bg-stone flex items-center gap-2">
-                      <UserX size={14} className="text-muted" />
-                      <h3 className="text-body font-bold text-ink">
-                        미신청 학생 ({unappliedStudents.length}명)
-                      </h3>
-                    </div>
-                    <div className="p-4">
-                      <div className="flex flex-wrap gap-2">
-                        {unappliedStudents.map((student) => (
-                          <span
-                            key={student.id}
-                            className="text-small px-2.5 py-1 bg-stone text-ink"
-                          >
-                            {student.name}
-                            {student.school && (
-                              <span className="text-muted ml-1">
-                                {student.school}
-                                {student.grade ? ` ${student.grade}` : ""}
-                              </span>
-                            )}
-                          </span>
-                        ))}
+                    <button
+                      type="button"
+                      onClick={() => setUnappliedExpanded(!unappliedExpanded)}
+                      className="w-full px-4 py-3 border-b border-rule bg-stone flex items-center justify-between cursor-pointer hover:bg-stone/70 transition-colors duration-200"
+                    >
+                      <div className="flex items-center gap-2">
+                        <UserX size={14} className="text-muted" />
+                        <h3 className="text-body font-bold text-ink">
+                          미신청 학생 ({unappliedStudents.length}명)
+                        </h3>
                       </div>
-                    </div>
+                      <ChevronDown
+                        size={16}
+                        className={`text-muted transition-transform duration-200 ${
+                          unappliedExpanded ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+
+                    {unappliedExpanded && (
+                      <div className="p-4 space-y-3">
+                        <input
+                          type="text"
+                          value={unappliedSearch}
+                          onChange={(e) => {
+                            setUnappliedSearch(e.target.value);
+                            setUnappliedLimit(50);
+                          }}
+                          placeholder="이름·학교 검색"
+                          className="input-admin w-full"
+                        />
+
+                        {filteredUnapplied.length === 0 ? (
+                          <p className="text-small text-muted">
+                            검색 결과가 없습니다.
+                          </p>
+                        ) : (
+                          <>
+                            <div className="flex flex-wrap gap-2">
+                              {filteredUnapplied
+                                .slice(0, unappliedLimit)
+                                .map((student) => (
+                                  <span
+                                    key={student.id}
+                                    className="text-small px-2.5 py-1 bg-stone text-ink"
+                                  >
+                                    {student.name}
+                                    {student.school && (
+                                      <span className="text-muted ml-1">
+                                        {student.school}
+                                        {student.grade ? ` ${student.grade}` : ""}
+                                      </span>
+                                    )}
+                                  </span>
+                                ))}
+                            </div>
+                            {filteredUnapplied.length > unappliedLimit && (
+                              <button
+                                type="button"
+                                onClick={() => setUnappliedLimit((n) => n + 50)}
+                                className="text-small text-teal hover:underline cursor-pointer"
+                              >
+                                {filteredUnapplied.length - unappliedLimit}명 더
+                                보기
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
