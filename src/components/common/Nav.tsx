@@ -175,6 +175,9 @@ export function Nav() {
               <Link href={ROUTES.NOTICES} className={linkStyle(pathname.startsWith("/notices"))}>
                 공지사항
               </Link>
+              <Link href={ROUTES.MANUAL} className={linkStyle(pathname === "/manual")}>
+                매뉴얼
+              </Link>
               <Link href={getAnchorHref("#space")} className={linkStyle()}>
                 시설
               </Link>

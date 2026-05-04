@@ -238,6 +238,14 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   </Link>
                 </motion.div>
                 <motion.div variants={itemVariants}>
+                  <Link
+                    href={ROUTES.MANUAL}
+                    className={linkClass(pathname === "/manual")}
+                  >
+                    매뉴얼
+                  </Link>
+                </motion.div>
+                <motion.div variants={itemVariants}>
                   <Link href={getAnchorHref("#space")} className={linkClass()}>
                     시설
                   </Link>

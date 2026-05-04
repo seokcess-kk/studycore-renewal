@@ -98,8 +98,9 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 
 **권한 레이어 (3단계)**:
 1. **middleware.ts** — 서버 사이드 라우트 보호 (SSoT)
-   - `PROTECTED_ROUTES`: 로그인 필수 (`/guide`, `/manual`, `/questions`, `/meal`, `/my`, `/reviews/write`)
+   - `PROTECTED_ROUTES`: 로그인 필수 (`/guide`, `/questions`, `/meal`, `/my`, `/reviews/write`)
    - `/notices`는 비로그인 접근 허용 (visibility='public' 게시글만 표시)
+   - `/manual`은 비로그인 접근 허용 (type='manual' + is_visible=true 섹션만 표시, 스태프는 ?tab=onboarding 추가 노출)
    - `ADMIN_ROUTES`: admin/mentor 필수 (`/admin`)
    - `ASSISTANT_ROUTES`: staff 필수 (`/admin/guide`)
    - 재원생 전용 라우트: `/meal`, `/reviews/write`, `/questions/new` — 스태프 접근 차단
@@ -238,6 +239,7 @@ e2e/
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-05-04: 재원생 매뉴얼(/manual) 비로그인 공개 — PROTECTED_ROUTES에서 /manual 제거, RLS public_read_manual 정책 추가(type='manual' + is_visible=true), Nav/MobileMenu 비로그인 메뉴에 매뉴얼 링크 추가
 - 2026-03-31: 공지사항 공개/회원 공개 구분 — notices.visibility 컬럼(public/members_only), /notices 비로그인 접근 허용, 어드민 다중 선택 일괄 공개 범위 변경, Nav/MobileMenu 비로그인 공지사항 링크 추가
 - 2026-03-31: Button 컴포넌트 텍스트 색상 수정 — cn()/twMerge의 text-* 색상·크기 충돌으로 ghost/primary/secondary variant 색상 누락. 내부 클래스 문자열 결합으로 전환 (16곳 자동 수정)
 - 2026-03-27: @tailwindcss/typography 플러그인 추가 — prose 클래스 미작동으로 Tiptap HTML 콘텐츠(공지·가이드·블로그)에서 줄바꿈이 표시되지 않던 문제 수정
