@@ -60,3 +60,16 @@ export function formatDateShort(date: string | Date): string {
   }).replace(/\. /g, ".").replace(".", "");
 }
 
+/**
+ * 날짜와 시간을 포맷팅 (예: "25.03.15 14:30")
+ */
+export function formatDateTime(date: string | Date): string {
+  const target = new Date(date);
+  const yy = String(target.getFullYear()).slice(-2);
+  const mm = String(target.getMonth() + 1).padStart(2, "0");
+  const dd = String(target.getDate()).padStart(2, "0");
+  const hh = String(target.getHours()).padStart(2, "0");
+  const min = String(target.getMinutes()).padStart(2, "0");
+  return `${yy}.${mm}.${dd} ${hh}:${min}`;
+}
+

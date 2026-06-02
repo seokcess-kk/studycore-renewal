@@ -9,7 +9,7 @@ import { Pagination } from "@/components/common/Pagination";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { getQuestionList } from "@/domains/question/service";
 import type { QuestionWithAuthor } from "@/domains/question/model";
-import { formatDistanceToNow } from "@/lib/utils";
+import { formatDateTime } from "@/lib/utils";
 
 type FilterStatus = "all" | "pending" | "answered";
 const PAGE_SIZE = 10;
@@ -122,7 +122,7 @@ function AdminQuestionsContent() {
                   {question.author?.name || "알 수 없음"}
                 </span>
                 <span className="text-body text-muted ml-auto">
-                  {formatDistanceToNow(question.created_at)}
+                  {formatDateTime(question.created_at)}
                 </span>
               </div>
               <h3 className="mb-1 font-medium text-ink line-clamp-1">{question.title}</h3>
