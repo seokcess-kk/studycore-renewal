@@ -240,6 +240,8 @@ e2e/
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-06-24: 광고 랜딩페이지 동적 관리 — landing_pages 테이블 + landing 도메인(Space 패턴) + 어드민 CRUD(/admin/landings, HTML 파일 업로드) + `/landing/[slug]` Route Handler 서빙(`__LP_DATA__` 주입으로 slug→consultations.source 연결)
+- 2026-06-24: 광고 랜딩 리드 수집 — consultations에 source/utm/marketing_consent 컬럼(마이그레이션 056), /api/webhook/lead 신규(랜딩 payload→submitConsultation 재사용), 어드민 상담관리 유입 컬럼/필터/utm 상세
 - 2026-05-04: 재원생 매뉴얼(/manual) 비로그인 공개 — PROTECTED_ROUTES에서 /manual 제거, RLS public_read_manual 정책 추가(type='manual' + is_visible=true), Nav/MobileMenu 비로그인 메뉴에 매뉴얼 링크 추가
 - 2026-03-31: 공지사항 공개/회원 공개 구분 — notices.visibility 컬럼(public/members_only), /notices 비로그인 접근 허용, 어드민 다중 선택 일괄 공개 범위 변경, Nav/MobileMenu 비로그인 공지사항 링크 추가
 - 2026-03-31: Button 컴포넌트 텍스트 색상 수정 — cn()/twMerge의 text-* 색상·크기 충돌으로 ghost/primary/secondary variant 색상 누락. 내부 클래스 문자열 결합으로 전환 (16곳 자동 수정)

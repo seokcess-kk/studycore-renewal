@@ -19,6 +19,7 @@ import {
   Menu,
   X,
   Image as ImageIcon,
+  Megaphone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
@@ -68,6 +69,7 @@ const navGroups: NavGroup[] = [
       { label: "프로그램 관리", href: "/admin/programs", icon: GraduationCap },
       { label: "공간 관리", href: "/admin/spaces", icon: ImageIcon },
       { label: "팝업 관리", href: "/admin/popups", icon: Layers },
+      { label: "랜딩페이지 관리", href: "/admin/landings", icon: Megaphone },
     ],
   },
   {
