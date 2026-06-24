@@ -13,7 +13,7 @@
 관리형 학습공간 홈페이지. 공개 랜딩 + 재원생 서비스(공지·질문방·도시락) + 어드민 패널.
 
 ## 기술 스택
-Next.js 16 (App Router, TS strict) · Tailwind v4 + @tailwindcss/typography + shadcn/ui · Supabase (PG + Auth + Storage + Edge Functions) · Zustand · TanStack Query v5 · react-hook-form + zod v4 · Tiptap · Framer Motion · Playwright E2E · Vercel 배포. Path alias: `@/*` → `./src/*`
+Next.js 16 (App Router, TS strict, webpack 빌드) · Tailwind v4 + @tailwindcss/typography + shadcn/ui · Supabase (PG + Auth + Storage + Edge Functions) · Zustand (sessionStorage persist) · react-hook-form + zod v4 · Tiptap · Framer Motion · @dnd-kit(정렬) · xlsx(엑셀) · isomorphic-dompurify(sanitize) · next-pwa · Playwright E2E · Vercel 배포. Path alias: `@/*` → `./src/*`
 
 ## 빌드 & 실행
 ```bash
@@ -34,7 +34,7 @@ npx playwright test --project=member   # 재원생만
 src/app/(public)/      공개 페이지 (홈, 블로그, 상담, 소개, 후기)
 src/app/(member)/      재원생 전용 (공지, 질문방, 도시락) + src/app/my/
 src/app/admin/         어드민 (admin/mentor 권한)
-src/app/api/           Route Handlers (staff-login, create-staff, consult)
+src/app/api/           Route Handlers (auth/staff-login, admin/create-staff, consult, notify)
 src/domains/           DDD 3파일 패턴 — 상세: src/domains/CLAUDE.md
 src/components/        UI 컴포넌트 — 브랜드/패턴: src/components/CLAUDE.md
 e2e/                   E2E 테스트 (Playwright) — helpers, fixtures, tests/{public,auth,admin,member}
@@ -69,8 +69,8 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 
 ### 필수 패턴
 - 모든 폼: react-hook-form + zod
-- Server Component / Route Handler → `createServerClient()` (lib/supabase/server.ts)
-- Client Component → `createBrowserClient()` (lib/supabase/client.ts)
+- Server Component / Route Handler → `createClient()` (lib/supabase/server.ts)
+- Client Component → `createClient()` 또는 별칭 `createBrowserClient()` (lib/supabase/client.ts)
 - RLS 우회 → `createAdminClient()` (lib/supabase/server.ts)
 - 권한 검사 → middleware.ts
 - 클릭 가능 요소 → `cursor-pointer` 필수
@@ -121,11 +121,12 @@ src/lib/supabase/      Supabase 클라이언트 (server.ts, client.ts)
 - `AuthInitializer`: 검증만 수행. persist↔Supabase 불일치 시만 DB 재조회
 
 ### 알림 흐름 (모두 Edge Function 경유)
+클라이언트는 식별자(questionId/noticeId)만 `/api/notify`에 전송 → 서버가 권한 검사·수신자·본문을 DB로 재계산 후 Edge Function 호출 (상담 신청만 `/api/consult` 경유). 클라이언트에서 메시지 본문·수신자 직접 전송 금지.
 ```
-상담 신청 → notify-consult     → 관리자 알림톡 + 신청자 SMS
-재원생 질문 → notify-question  → 멘토 알림톡
-멘토 답변 → notify-answer      → 재원생 알림톡 (active만)
-공지 발행 → send-kakao-alimtalk → 재원생/학부모
+상담 신청 → /api/consult → notify-consult     → 관리자 알림톡 + 신청자 SMS
+재원생 질문 → /api/notify → notify-question   → 멘토 알림톡
+멘토 답변 → /api/notify → notify-answer       → 재원생 알림톡 (active만)
+공지 발행 → /api/notify → send-kakao-alimtalk → 재원생/학부모
 ```
 
 ## 코드 리뷰 (구현 직후 자동 수행 — 최우선 규칙)
