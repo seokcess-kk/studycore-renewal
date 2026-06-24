@@ -15,9 +15,9 @@ service.ts    → 비즈니스 로직
 - repository는 Supabase 쿼리만 담당. 비즈니스 로직 금지
 
 ## Supabase 클라이언트
-- Server 측: `createServerClient()` (lib/supabase/server.ts)
-- Client 측: `createBrowserClient()` (lib/supabase/client.ts)
-- RLS 우회: `createAdminClient()` (lib/supabase/server.ts)
+- Server 측: `createClient()` — async (lib/supabase/server.ts)
+- Client 측: `createClient()` 또는 별칭 `createBrowserClient()` (lib/supabase/client.ts)
+- RLS 우회: `createAdminClient()` — async (lib/supabase/server.ts)
 
 ## 도메인 목록 (16개)
 | 도메인 | 핵심 엔티티 | 비고 |

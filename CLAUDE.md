@@ -23,6 +23,7 @@ npm run build          # 프로덕션 빌드
 npm run lint           # ESLint
 npx tsc --noEmit       # 타입 체크
 npx playwright test              # E2E 전체 실행 (dev 서버 실행 필수)
+npx playwright test --ui         # UI 디버깅 모드 (= npm run test:e2e:ui)
 npx playwright test --project=public   # 공개 페이지만
 npx playwright test --project=auth     # 인증/권한만
 npx playwright test --project=admin    # 어드민만
