@@ -36,6 +36,8 @@ export async function getConsultations(
   supabase: SupabaseClient,
   options?: {
     status?: string;
+    /** 유입 필터: "homepage"(홈페이지) | "ad"(광고=homepage 외 전체) */
+    source?: "homepage" | "ad";
     limit?: number;
     offset?: number;
   }
@@ -47,6 +49,12 @@ export async function getConsultations(
 
   if (options?.status) {
     query = query.eq("status", options.status);
+  }
+
+  if (options?.source === "homepage") {
+    query = query.eq("source", "homepage");
+  } else if (options?.source === "ad") {
+    query = query.neq("source", "homepage");
   }
 
   if (options?.limit) {

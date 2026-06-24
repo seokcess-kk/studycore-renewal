@@ -63,7 +63,11 @@ export async function submitConsultation(
             body: JSON.stringify({
               name: consultation.name,
               phone: consultation.phone,
-              school: consultation.school,
+              // 알림톡 "학교학년" 변수에 학교+학년을 함께 노출
+              school:
+                [consultation.school, consultation.grade]
+                  .filter(Boolean)
+                  .join(" ") || null,
               consultType: consultation.consult_type,
               message: consultation.message,
             }),
@@ -100,6 +104,7 @@ export async function getConsultationList(
   supabase: SupabaseClient,
   options?: {
     status?: string;
+    source?: "homepage" | "ad";
     page?: number;
     pageSize?: number;
   }
@@ -115,6 +120,7 @@ export async function getConsultationList(
 
   const { data, count } = await consultationRepo.getConsultations(supabase, {
     status: options?.status,
+    source: options?.source,
     limit: pageSize,
     offset,
   });

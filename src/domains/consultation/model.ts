@@ -34,6 +34,10 @@ export type ConsultationTypeValue =
 // ─────────────────────────────────────────────
 
 // 상담 신청 폼 스키마 (클라이언트 유효성 검사용)
+//
+// 기본 홈페이지 상담폼(/consult)은 name/phone/school/consultType/message만 전송한다.
+// grade/source/utm/marketingConsent는 광고 랜딩페이지 리드(/api/webhook/lead)에서만
+// 채워지는 optional 필드이며, 홈페이지 폼 동작에는 영향을 주지 않는다.
 export const consultationFormSchema = z.object({
   name: z
     .string()
@@ -56,6 +60,11 @@ export const consultationFormSchema = z.object({
     .string()
     .max(1000, "문의 내용은 1000자 이하로 입력해주세요")
     .optional(),
+  // ── 광고/캠페인 리드 유입 추적 (랜딩페이지 전용, optional) ──
+  grade: z.string().max(20, "학년은 20자 이하로 입력해주세요").optional(),
+  source: z.string().max(80).optional(),
+  utm: z.record(z.string(), z.unknown()).nullable().optional(),
+  marketingConsent: z.boolean().optional(),
 });
 
 export type ConsultationFormInput = z.infer<typeof consultationFormSchema>;
@@ -71,6 +80,10 @@ export const consultationSchema = z.object({
   message: z.string().nullable(),
   status: z.enum(["new", "contacted", "done"]),
   created_at: z.string(),
+  // 유입 추적 컬럼 (마이그레이션 056). source/marketing_consent는 NOT NULL DEFAULT.
+  source: z.string(),
+  utm: z.record(z.string(), z.unknown()).nullable(),
+  marketing_consent: z.boolean(),
 });
 
 export type Consultation = z.infer<typeof consultationSchema>;
@@ -81,9 +94,13 @@ export const createConsultationSchema = consultationFormSchema.transform(
     name: data.name,
     phone: data.phone.replace(/-/g, ""), // 하이픈 제거
     school: data.school || null,
+    grade: data.grade || null,
     consult_type: data.consultType,
     message: data.message || null,
     status: ConsultationStatus.NEW,
+    source: data.source || "homepage",
+    utm: data.utm ?? null,
+    marketing_consent: data.marketingConsent ?? false,
   })
 );
 
