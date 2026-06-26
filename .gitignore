@@ -44,3 +44,13 @@ next-env.d.ts
 e2e/.auth/
 /playwright-report/
 /test-results/
+
+# claude code — installed skill artifacts (재생성: skills-lock.json 기준)
+/.agents/
+
+# supabase local temp
+/supabase/.temp/
+
+# scratch & screenshots
+/screenshot_*.png
+nul

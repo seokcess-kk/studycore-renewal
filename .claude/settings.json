@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [{
+          "type": "command",
+          "command": "echo '[STUDYCORE] 파일 수정됨. 확인: 브랜드 규칙(radius/shadow 없음), DDD 레이어(src/domains/ 경유), Supabase 클라이언트(브라우저 vs 서버).'"
+        }]
+      }
+    ]
+  }
+}
