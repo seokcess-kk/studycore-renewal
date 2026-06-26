@@ -241,6 +241,7 @@ e2e/
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-06-26: 광고 랜딩 메타 전환 추적 — `/landing/[slug]` 게이트웨이에 Meta Pixel(init+PageView, 리드 성공 시 `fbq('track','Lead')`) 주입 + URL `utm_*`·`fbclid` 캡처, `/api/webhook/lead`에 CAPI Lead 전송(`crypto.randomUUID()` eventId를 응답으로 내려 브라우저 픽셀과 공유→중복 제거). 홈페이지 `/consult`(MetaPixel 컴포넌트 + `/api/consult`)와 동일 패턴. `NEXT_PUBLIC_META_PIXEL_ID`·`META_CAPI_ACCESS_TOKEN` 환경변수 필요(미설정 시 graceful skip), CSP·`src/lib/meta/capi.ts`는 기존 자산 재사용
 - 2026-06-24: 광고 랜딩페이지 동적 관리 — landing_pages 테이블 + landing 도메인(Space 패턴) + 어드민 CRUD(/admin/landings, HTML 파일 업로드) + `/landing/[slug]` Route Handler 서빙(`__LP_DATA__` 주입으로 slug→consultations.source 연결)
 - 2026-06-24: 광고 랜딩 리드 수집 — consultations에 source/utm/marketing_consent 컬럼(마이그레이션 056), /api/webhook/lead 신규(랜딩 payload→submitConsultation 재사용), 어드민 상담관리 유입 컬럼/필터/utm 상세
 - 2026-05-04: 재원생 매뉴얼(/manual) 비로그인 공개 — PROTECTED_ROUTES에서 /manual 제거, RLS public_read_manual 정책 추가(type='manual' + is_visible=true), Nav/MobileMenu 비로그인 메뉴에 매뉴얼 링크 추가

@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { submitConsultation } from "@/domains/consultation/service";
@@ -5,6 +6,10 @@ import {
   consultationFormSchema,
   type ConsultationFormInput,
 } from "@/domains/consultation/model";
+import {
+  extractFbpFbcFromCookieHeader,
+  sendMetaLeadEvent,
+} from "@/lib/meta/capi";
 import { checkRateLimitDB, CONSULT_RATE_LIMIT } from "@/lib/rate-limit";
 
 /**
@@ -125,11 +130,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 5. 성공 응답 (랜딩 폼은 response.ok만 확인)
+    // 5. Meta CAPI Lead 이벤트 전송 (서버측, 홈페이지 상담 /api/consult와 동일 패턴)
+    //    같은 event_id를 응답으로 내려 랜딩의 브라우저 픽셀(fbq Lead)과 공유 → 중복 제거.
+    //    _fbp/_fbc 쿠키는 랜딩 픽셀이 생성 → 같은 오리진이라 이 요청 cookie에 자동 포함됨.
+    const eventId = crypto.randomUUID();
+    const { fbp, fbc } = extractFbpFbcFromCookieHeader(
+      request.headers.get("cookie")
+    );
+    const fallbackBase =
+      process.env.NEXT_PUBLIC_SITE_URL ?? "https://studycore.kr";
+    const eventSourceUrl =
+      body.inflowUrl ||
+      request.headers.get("referer") ||
+      `${request.headers.get("origin") ?? fallbackBase}/landing/${
+        body.landing_page_id ?? ""
+      }`;
+    await sendMetaLeadEvent({
+      eventId,
+      eventSourceUrl,
+      user: {
+        firstName: validation.data.name,
+        phone: validation.data.phone,
+        country: "kr",
+        externalId: validation.data.phone.replace(/\D/g, ""),
+        ip: ip !== "unknown" ? ip : undefined,
+        userAgent: request.headers.get("user-agent") ?? undefined,
+        fbp,
+        fbc,
+      },
+    });
+
+    // 6. 성공 응답 (랜딩 게이트웨이는 eventId로 fbq Lead 발사 + response.ok 확인)
     return NextResponse.json({
       success: true,
       message: "신청이 접수되었습니다.",
       consultationId: result.consultation?.id,
+      eventId,
     });
   } catch (error) {
     console.error("리드 수집 API 오류:", error);
