@@ -72,10 +72,10 @@ function buildGatewayScript(slug: string, pixelId?: string): string {
   const PIXEL = pixelId ? JSON.stringify(pixelId) : "null";
   // 주의: 이 문자열은 브라우저에서 실행되는 바닐라 JS다. 백틱/한글 따옴표 사용 금지.
   return `<script>(function(){
-var SLUG=${SLUG},PIXEL=${PIXEL},EP="/api/webhook/lead",QK="lead_queue_v1";
+var SLUG=${SLUG},PIXEL=${PIXEL},EP="/api/webhook/lead",PV="/api/meta/pageview",QK="lead_queue_v1";
 window.__LP_DATA__={clinicId:"studycore_1_0",landingPageId:SLUG};
-// Meta Pixel 초기화 (PIXEL 설정 시에만). 표준 init 스니펫 + PageView.
-if(PIXEL){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");window.fbq("init",PIXEL);window.fbq("track","PageView");}
+// Meta Pixel 초기화 (PIXEL 설정 시에만). PageView는 아래에서 event_id와 함께 발사한다.
+if(PIXEL){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");window.fbq("init",PIXEL);}
 // URL 추적 파라미터 캡처(도착 시 1회). 픽셀이 fbclid로 _fbc 쿠키를 생성하지만, 어드민 utm 기록을 위해 직접도 보관.
 var UP=new URLSearchParams(location.search);function up(k){return UP.get(k)||null}
 var TRACK={utm_source:up("utm_source"),utm_medium:up("utm_medium"),utm_campaign:up("utm_campaign"),utm_content:up("utm_content"),utm_term:up("utm_term"),fbclid:up("fbclid")};
@@ -86,6 +86,17 @@ function deq(k){sq(lq().filter(function(x){return x.k!==k}))}
 function fireLead(eid){if(window.fbq){try{window.fbq("track","Lead",{},eid?{eventID:eid}:undefined)}catch(e){}}}
 function fireLeadFromResponse(r){try{r.clone().json().then(function(d){fireLead(d&&d.eventId)}).catch(function(){fireLead()})}catch(e){fireLead()}}
 var _f=window.fetch?window.fetch.bind(window):null;
+// CAPI PageView 커버리지: 픽셀 PageView를 클라이언트 생성 event_id로 발사하고,
+// 같은 id를 서버(/api/meta/pageview)로 보내 중복 제거한다. _fbp 쿠키가 픽셀에 의해
+// 설정될 시간을 잠시 기다렸다가 전송(매칭 품질↑), 이탈 시 pagehide로 보장.
+if(PIXEL){
+  var PVID=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+"."+Math.random().toString(36).slice(2));
+  window.fbq("track","PageView",{},{eventID:PVID});
+  var pvSent=false;
+  function pvSend(){if(pvSent)return;pvSent=true;var b=JSON.stringify({eventId:PVID,eventSourceUrl:location.href});try{if(_f){_f(PV,{method:"POST",headers:{"Content-Type":"application/json"},body:b,keepalive:true}).catch(function(){})}else if(navigator.sendBeacon){navigator.sendBeacon(PV,new Blob([b],{type:"application/json"}))}}catch(e){}}
+  var pvTry=0;(function pvWait(){if(document.cookie.indexOf("_fbp=")>=0||pvTry>=10){pvSend();return}pvTry++;setTimeout(pvWait,200)})();
+  window.addEventListener("pagehide",pvSend);
+}
 function isLead(u){return String(u).indexOf(EP)>=0}
 // 리드 요청에 landing_page_id/utm/fbclid를 서버 권위로 보강하고, 성공 시 Lead 이벤트를 발사한다.
 if(_f){window.fetch=function(u,o){

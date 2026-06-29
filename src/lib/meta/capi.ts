@@ -22,12 +22,18 @@ export type MetaCustomData = {
   currency?: string;
 };
 
-export type MetaLeadEventInput = {
+/** 표준 이벤트명 (현재 사용: Lead, PageView) */
+export type MetaEventName = "Lead" | "PageView";
+
+export type MetaEventInput = {
+  eventName: MetaEventName;
   eventId: string;
   eventSourceUrl: string;
   user: MetaUserData;
   custom?: MetaCustomData;
 };
+
+export type MetaLeadEventInput = Omit<MetaEventInput, "eventName">;
 
 function sha256(value: string): string {
   return crypto
@@ -57,9 +63,13 @@ function buildUserData(user: MetaUserData): Record<string, string> {
   return data;
 }
 
-export async function sendMetaLeadEvent(
-  input: MetaLeadEventInput
-): Promise<void> {
+/**
+ * Meta Conversions API 이벤트 전송 (서버측)
+ *
+ * 브라우저 픽셀이 같은 `event_name`+`event_id`로 발사한 이벤트와 중복 제거된다.
+ * 환경변수(PIXEL_ID·ACCESS_TOKEN) 미설정 시 graceful skip. 모든 오류 내부 처리.
+ */
+export async function sendMetaEvent(input: MetaEventInput): Promise<void> {
   const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
   const accessToken = process.env.META_CAPI_ACCESS_TOKEN;
   const testEventCode = process.env.META_CAPI_TEST_EVENT_CODE;
@@ -75,7 +85,7 @@ export async function sendMetaLeadEvent(
   const payload = {
     data: [
       {
-        event_name: "Lead",
+        event_name: input.eventName,
         event_time: Math.floor(Date.now() / 1000),
         event_id: input.eventId,
         event_source_url: input.eventSourceUrl,
@@ -100,12 +110,26 @@ export async function sendMetaLeadEvent(
       const errorText = await response.text();
       logger.error("Meta CAPI 요청 실패", {
         context: "meta-capi",
-        data: { status: response.status, body: errorText },
+        data: { status: response.status, event: input.eventName, body: errorText },
       });
     }
   } catch (error) {
     logger.exception(error, "meta-capi");
   }
+}
+
+/** Lead 이벤트 전송 (상담/리드 제출) */
+export async function sendMetaLeadEvent(
+  input: MetaLeadEventInput
+): Promise<void> {
+  return sendMetaEvent({ ...input, eventName: "Lead" });
+}
+
+/** PageView 이벤트 전송 (CAPI 커버리지 향상 — 브라우저 픽셀 PageView와 중복 제거) */
+export async function sendMetaPageViewEvent(
+  input: MetaLeadEventInput
+): Promise<void> {
+  return sendMetaEvent({ ...input, eventName: "PageView" });
 }
 
 export function extractFbpFbcFromCookieHeader(
