@@ -241,6 +241,7 @@ e2e/
 
 ## 변경 이력
 <!-- 형식: YYYY-MM-DD: 변경 내용 (사유) -->
+- 2026-06-29: 랜딩/상담 속도 개선 — (1) 리드 제출 지연(~10초) 해소: 알림톡/SMS(notify-consult Edge Function)+Meta CAPI를 `after()`(next/server)로 응답 후 백그라운드 실행. `submitConsultation(.., { deferNotify: true })` 옵션 + `notifyConsultationCreated()` 분리, `/api/webhook/lead`·`/api/consult` 적용(응답은 rate-limit+DB저장만 대기). eventId는 응답 전 생성·반환되어 픽셀↔CAPI dedup 영향 없음. (2) `/landing/[slug]` 초기 진입(2~3초) 개선: `Cache-Control`을 `s-maxage=60, stale-while-revalidate=86400`로 CDN 엣지 캐싱 + 쿠키 비의존 anon 클라이언트(`@supabase/supabase-js` createClient)로 전환(set-cookie의 캐싱 무력화 제거, RLS landing_public_read로 익명 읽기). 어드민 HTML 수정은 최대 ~60초 내 전파
 - 2026-06-26: 광고 랜딩 메타 전환 추적 — `/landing/[slug]` 게이트웨이에 Meta Pixel(init+PageView, 리드 성공 시 `fbq('track','Lead')`) 주입 + URL `utm_*`·`fbclid` 캡처, `/api/webhook/lead`에 CAPI Lead 전송(`crypto.randomUUID()` eventId를 응답으로 내려 브라우저 픽셀과 공유→중복 제거). 홈페이지 `/consult`(MetaPixel 컴포넌트 + `/api/consult`)와 동일 패턴. `NEXT_PUBLIC_META_PIXEL_ID`·`META_CAPI_ACCESS_TOKEN` 환경변수 필요(미설정 시 graceful skip), CSP·`src/lib/meta/capi.ts`는 기존 자산 재사용
 - 2026-06-24: 광고 랜딩페이지 동적 관리 — landing_pages 테이블 + landing 도메인(Space 패턴) + 어드민 CRUD(/admin/landings, HTML 파일 업로드) + `/landing/[slug]` Route Handler 서빙(`__LP_DATA__` 주입으로 slug→consultations.source 연결)
 - 2026-06-24: 광고 랜딩 리드 수집 — consultations에 source/utm/marketing_consent 컬럼(마이그레이션 056), /api/webhook/lead 신규(랜딩 payload→submitConsultation 재사용), 어드민 상담관리 유입 컬럼/필터/utm 상세

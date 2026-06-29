@@ -21,11 +21,16 @@ import * as consultationRepo from "./repository";
  *
  * 1. 폼 데이터 유효성 검사
  * 2. DB에 상담 신청 저장
- * 3. Edge Function(notify-consult)으로 알림 발송
+ * 3. (deferNotify=false일 때) Edge Function(notify-consult)으로 알림 발송
+ *
+ * @param options.deferNotify true면 알림 발송을 건너뛴다. 알림톡/SMS Edge Function은
+ *   콜드스타트+외부 API로 수 초가 걸려 사용자 응답을 지연시키므로, Route Handler에서
+ *   `after()`로 응답 후 `notifyConsultationCreated()`를 직접 호출하기 위한 옵션이다.
  */
 export async function submitConsultation(
   supabase: SupabaseClient,
-  formData: ConsultationFormInput
+  formData: ConsultationFormInput,
+  options?: { deferNotify?: boolean }
 ): Promise<ConsultationServiceResult> {
   try {
     // 1. 유효성 검사
@@ -46,42 +51,9 @@ export async function submitConsultation(
       createData
     );
 
-    // 4. Edge Function 호출 (notify-consult) — 직접 HTTP 호출
-    try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-      if (supabaseUrl && serviceRoleKey) {
-        const response = await fetch(
-          `${supabaseUrl}/functions/v1/notify-consult`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${serviceRoleKey}`,
-            },
-            body: JSON.stringify({
-              name: consultation.name,
-              phone: consultation.phone,
-              // 알림톡 "학교학년" 변수에 학교+학년을 함께 노출
-              school:
-                [consultation.school, consultation.grade]
-                  .filter(Boolean)
-                  .join(" ") || null,
-              consultType: consultation.consult_type,
-              message: consultation.message,
-            }),
-          }
-        );
-
-        if (!response.ok) {
-          const errorData = await response.text();
-          console.error("상담 알림 발송 실패:", response.status, errorData);
-        }
-      }
-    } catch (notifyError) {
-      // 네트워크 에러 등 — 상담 신청 자체를 실패 처리하지 않음
-      console.error("상담 알림 발송 실패:", notifyError);
+    // 4. 알림 발송 (deferNotify면 호출측이 백그라운드로 처리)
+    if (!options?.deferNotify) {
+      await notifyConsultationCreated(consultation);
     }
 
     return { success: true, consultation };
@@ -94,6 +66,50 @@ export async function submitConsultation(
           ? error.message
           : "상담 신청 처리 중 오류가 발생했습니다",
     };
+  }
+}
+
+/**
+ * 상담 신청 알림 발송 (notify-consult Edge Function — 관리자 알림톡 + 신청자 SMS)
+ *
+ * DB 저장과 분리해 별도 호출 가능. 알림은 사용자 응답을 막을 필요가 없으므로
+ * Route Handler에서 `after()`로 응답 후 백그라운드 실행하는 것을 권장한다.
+ * 모든 오류를 내부에서 잡아 throw하지 않는다(베스트-에포트 — 신청 자체는 이미 성공).
+ */
+export async function notifyConsultationCreated(
+  consultation: Consultation
+): Promise<void> {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !serviceRoleKey) return;
+
+    const response = await fetch(`${supabaseUrl}/functions/v1/notify-consult`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${serviceRoleKey}`,
+      },
+      body: JSON.stringify({
+        name: consultation.name,
+        phone: consultation.phone,
+        // 알림톡 "학교학년" 변수에 학교+학년을 함께 노출
+        school:
+          [consultation.school, consultation.grade]
+            .filter(Boolean)
+            .join(" ") || null,
+        consultType: consultation.consult_type,
+        message: consultation.message,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error("상담 알림 발송 실패:", response.status, errorData);
+    }
+  } catch (notifyError) {
+    // 네트워크 에러 등 — 상담 신청 자체를 실패 처리하지 않음
+    console.error("상담 알림 발송 실패:", notifyError);
   }
 }
 

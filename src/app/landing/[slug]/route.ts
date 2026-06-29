@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { getLandingForServe } from "@/domains/landing/service";
 
 /**
@@ -24,6 +24,11 @@ import { getLandingForServe } from "@/domains/landing/service";
  * 활성(is_active=true) slug만 서빙, 없으면 404.
  * CSP(script-src/style-src 'unsafe-inline')가 인라인 스크립트를 허용하며,
  * connect.facebook.net(script)·www.facebook.com(img)은 next.config.js에 화이트리스트됨.
+ *
+ * 성능: 같은 slug의 HTML은 방문자와 무관하게 동일하므로(utm/fbclid는 게이트웨이가
+ * 클라이언트에서 location.search로 캡처) CDN 엣지 캐싱이 안전하다. 쿠키 의존
+ * SSR 클라이언트는 set-cookie를 유발해 CDN 캐싱을 무력화하므로, 공개 읽기 전용
+ * anon 클라이언트(쿠키 비의존, RLS landing_public_read)로 조회한다.
  */
 export async function GET(
   _request: NextRequest,
@@ -31,7 +36,11 @@ export async function GET(
 ) {
   const { slug } = await params;
 
-  const supabase = await createClient();
+  const supabase = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { persistSession: false } }
+  );
   const landing = await getLandingForServe(supabase, slug);
 
   if (!landing) {
@@ -49,7 +58,10 @@ export async function GET(
   return new Response(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "public, max-age=0, must-revalidate",
+      // CDN 엣지 캐싱: s-maxage 동안 캐시, 만료 후엔 stale-while-revalidate로
+      // 캐시를 즉시 응답(방문자 대기 0)하면서 백그라운드로 갱신. 어드민이 HTML을
+      // 수정하면 최대 약 60초 내 전파된다.
+      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=86400",
     },
   });
 }

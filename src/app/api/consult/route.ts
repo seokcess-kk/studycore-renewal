@@ -1,7 +1,10 @@
 import crypto from "node:crypto";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import { submitConsultation } from "@/domains/consultation/service";
+import {
+  submitConsultation,
+  notifyConsultationCreated,
+} from "@/domains/consultation/service";
 import {
   consultationFormSchema,
   type ConsultationFormInput,
@@ -64,10 +67,12 @@ export async function POST(request: NextRequest) {
     // 3. Supabase Admin 클라이언트 (RLS 우회 — 비로그인 상담 신청 허용)
     const supabase = await createAdminClient();
 
-    // 4. 상담 신청 처리
-    const result = await submitConsultation(supabase, formData);
+    // 4. 상담 신청 처리 (DB 저장). 알림은 응답 후 처리(deferNotify).
+    const result = await submitConsultation(supabase, formData, {
+      deferNotify: true,
+    });
 
-    if (!result.success) {
+    if (!result.success || !result.consultation) {
       return NextResponse.json(
         {
           success: false,
@@ -77,37 +82,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 5. Meta CAPI Lead 이벤트 전송 (서버측). 같은 event_id를 클라이언트 픽셀과 공유해 중복 제거
+    // 5. 알림톡/SMS(Edge Function) + Meta CAPI는 사용자 응답을 막지 않도록 백그라운드(after)로 처리.
+    //    같은 event_id를 클라이언트 픽셀과 공유해 중복 제거.
+    //    (헤더 파생값은 응답 반환 전에 미리 추출해 클로저로 캡처한다.)
+    const consultation = result.consultation;
     const eventId = crypto.randomUUID();
     const { fbp, fbc } = extractFbpFbcFromCookieHeader(
       request.headers.get("cookie")
     );
+    const userAgent = request.headers.get("user-agent") ?? undefined;
     const referer = request.headers.get("referer");
     const origin = request.headers.get("origin");
     const fallbackBase =
       process.env.NEXT_PUBLIC_SITE_URL ?? "https://studycore.kr";
-    const eventSourceUrl =
-      referer ?? `${origin ?? fallbackBase}/consult`;
-    await sendMetaLeadEvent({
-      eventId,
-      eventSourceUrl,
-      user: {
-        firstName: formData.name,
-        phone: formData.phone,
-        country: "kr",
-        externalId: formData.phone.replace(/\D/g, ""),
-        ip: ip !== "unknown" ? ip : undefined,
-        userAgent: request.headers.get("user-agent") ?? undefined,
-        fbp,
-        fbc,
-      },
+    const eventSourceUrl = referer ?? `${origin ?? fallbackBase}/consult`;
+
+    after(async () => {
+      await notifyConsultationCreated(consultation);
+      await sendMetaLeadEvent({
+        eventId,
+        eventSourceUrl,
+        user: {
+          firstName: formData.name,
+          phone: formData.phone,
+          country: "kr",
+          externalId: formData.phone.replace(/\D/g, ""),
+          ip: ip !== "unknown" ? ip : undefined,
+          userAgent,
+          fbp,
+          fbc,
+        },
+      });
     });
 
     // 6. 성공 응답
     return NextResponse.json({
       success: true,
       message: "상담 신청이 완료되었습니다.",
-      consultationId: result.consultation?.id,
+      consultationId: consultation.id,
       eventId,
     });
   } catch (error) {

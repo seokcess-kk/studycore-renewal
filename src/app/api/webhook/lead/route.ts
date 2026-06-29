@@ -1,7 +1,10 @@
 import crypto from "node:crypto";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import { submitConsultation } from "@/domains/consultation/service";
+import {
+  submitConsultation,
+  notifyConsultationCreated,
+} from "@/domains/consultation/service";
 import {
   consultationFormSchema,
   type ConsultationFormInput,
@@ -119,24 +122,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. RLS 우회 클라이언트로 저장 + 알림 발송 (비로그인 인입 허용)
+    // 4. RLS 우회 클라이언트로 저장 (비로그인 인입 허용). 알림은 응답 후 처리(deferNotify).
     const supabase = await createAdminClient();
-    const result = await submitConsultation(supabase, validation.data);
+    const result = await submitConsultation(supabase, validation.data, {
+      deferNotify: true,
+    });
 
-    if (!result.success) {
+    if (!result.success || !result.consultation) {
       return NextResponse.json(
         { success: false, error: result.error },
         { status: 500 }
       );
     }
 
-    // 5. Meta CAPI Lead 이벤트 전송 (서버측, 홈페이지 상담 /api/consult와 동일 패턴)
+    // 5. 알림톡/SMS(Edge Function) + Meta CAPI는 사용자 응답을 막지 않도록 백그라운드(after)로 처리.
     //    같은 event_id를 응답으로 내려 랜딩의 브라우저 픽셀(fbq Lead)과 공유 → 중복 제거.
     //    _fbp/_fbc 쿠키는 랜딩 픽셀이 생성 → 같은 오리진이라 이 요청 cookie에 자동 포함됨.
+    //    (헤더 파생값은 응답 반환 전에 미리 추출해 클로저로 캡처한다.)
+    const consultation = result.consultation;
     const eventId = crypto.randomUUID();
     const { fbp, fbc } = extractFbpFbcFromCookieHeader(
       request.headers.get("cookie")
     );
+    const userAgent = request.headers.get("user-agent") ?? undefined;
     const fallbackBase =
       process.env.NEXT_PUBLIC_SITE_URL ?? "https://studycore.kr";
     const eventSourceUrl =
@@ -145,26 +153,30 @@ export async function POST(request: NextRequest) {
       `${request.headers.get("origin") ?? fallbackBase}/landing/${
         body.landing_page_id ?? ""
       }`;
-    await sendMetaLeadEvent({
-      eventId,
-      eventSourceUrl,
-      user: {
-        firstName: validation.data.name,
-        phone: validation.data.phone,
-        country: "kr",
-        externalId: validation.data.phone.replace(/\D/g, ""),
-        ip: ip !== "unknown" ? ip : undefined,
-        userAgent: request.headers.get("user-agent") ?? undefined,
-        fbp,
-        fbc,
-      },
+
+    after(async () => {
+      await notifyConsultationCreated(consultation);
+      await sendMetaLeadEvent({
+        eventId,
+        eventSourceUrl,
+        user: {
+          firstName: validation.data.name,
+          phone: validation.data.phone,
+          country: "kr",
+          externalId: validation.data.phone.replace(/\D/g, ""),
+          ip: ip !== "unknown" ? ip : undefined,
+          userAgent,
+          fbp,
+          fbc,
+        },
+      });
     });
 
     // 6. 성공 응답 (랜딩 게이트웨이는 eventId로 fbq Lead 발사 + response.ok 확인)
     return NextResponse.json({
       success: true,
       message: "신청이 접수되었습니다.",
-      consultationId: result.consultation?.id,
+      consultationId: consultation.id,
       eventId,
     });
   } catch (error) {
