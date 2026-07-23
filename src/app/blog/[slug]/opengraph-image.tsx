@@ -18,7 +18,7 @@ export default async function OGImage({
     .from("blog_posts")
     .select("title, tags")
     .eq("slug", slug)
-    .eq("status", "published")
+    .eq("is_published", true)
     .single();
 
   const rawTitle = post?.title || "STUDYCORE 블로그";
