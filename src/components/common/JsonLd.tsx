@@ -1,7 +1,9 @@
+import { CONTACT } from "@/lib/constants";
+
 export function OrganizationJsonLd() {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
+    "@type": ["EducationalOrganization", "LocalBusiness"],
     name: "스터디코어 1.0",
     alternateName: "STUDYCORE 1.0",
     description:
@@ -9,10 +11,15 @@ export function OrganizationJsonLd() {
     url: "https://studycore.kr",
     logo: "https://studycore.kr/logo/Artboard%204@2x_정사각.png",
     image: "https://studycore.kr/logo/Artboard%204@2x.png",
+    telephone: CONTACT.phone,
+    email: CONTACT.email,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "광주광역시",
-      addressRegion: "광산구",
+      // CONTACT.address("광주광역시 광산구 임방울대로 330 애플타워 10층")를 구조화
+      // (addressRegion=광역시, addressLocality=구 — 기존 코드는 둘이 뒤바뀌어 있었음)
+      streetAddress: "임방울대로 330 애플타워 10층",
+      addressLocality: "광산구",
+      addressRegion: "광주광역시",
       addressCountry: "KR",
     },
     geo: {
@@ -24,6 +31,7 @@ export function OrganizationJsonLd() {
       "@type": "City",
       name: "광주광역시",
     },
+    sameAs: [CONTACT.kakaoChannel],
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "관리형 학습공간 프로그램",
