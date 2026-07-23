@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Nav, Footer, PendingBanner } from "@/components/common";
 import { OrganizationJsonLd, FAQJsonLd, WebSiteJsonLd } from "@/components/common/JsonLd";
 import {
@@ -9,6 +10,14 @@ import {
   PopupModal,
   ProgramsSection,
 } from "@/components/home";
+
+// 홈 라우트 전용 self-referencing canonical.
+// ⚠️ 루트 layout.tsx가 아닌 이 리프에 두어야 하위 페이지로 canonical="/"가 상속되지 않음.
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function Home() {
   return (

@@ -1,56 +1,38 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Nav, Footer, Skeleton, SectionHeader, Pagination } from "@/components/common";
-import { createClient } from "@/lib/supabase/client";
+import { Nav, Footer, SectionHeader } from "@/components/common";
+import { createClient } from "@/lib/supabase/server";
 import { getPublishedBlogList } from "@/domains/blog/service";
 import type { BlogPostWithAuthor } from "@/domains/blog/model";
-import { Calendar, Tag, PenLine } from "lucide-react";
-import { useUserStore } from "@/stores/useUserStore";
-import { ROUTES } from "@/lib/constants";
+import { BlogWriteButton } from "@/components/blog/BlogWriteButton";
+import { Calendar, Tag, ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function BlogPage() {
-  const [posts, setPosts] = useState<BlogPostWithAuthor[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [selectedTag, setSelectedTag] = useState<string | undefined>();
-  const [allTags, setAllTags] = useState<string[]>([]);
-  const canAccessAdmin = useUserStore((state) => state.canAccessAdmin);
-  const pageSize = 10;
+const PAGE_SIZE = 10;
 
-  useEffect(() => {
-    async function fetchPosts() {
-      setIsLoading(true);
-      const supabase = createClient();
-      const result = await getPublishedBlogList(supabase, {
-        tag: selectedTag,
-        page,
-        pageSize,
-      });
+interface Props {
+  searchParams: Promise<{ tag?: string; page?: string }>;
+}
 
-      if (result.success) {
-        setPosts(result.posts);
-        setTotal(result.total);
+export default async function BlogPage({ searchParams }: Props) {
+  const { tag, page: pageParam } = await searchParams;
+  const selectedTag = tag?.trim() || undefined;
+  const page = Math.max(1, Number(pageParam) || 1);
 
-        // 태그 목록 추출 (첫 로드 시에만)
-        if (allTags.length === 0) {
-          const tags = new Set<string>();
-          result.posts.forEach((post) => {
-            post.tags.forEach((tag) => tags.add(tag));
-          });
-          setAllTags(Array.from(tags));
-        }
-      }
-      setIsLoading(false);
-    }
+  const supabase = await createClient();
+  const result = await getPublishedBlogList(supabase, {
+    tag: selectedTag,
+    page,
+    pageSize: PAGE_SIZE,
+  });
 
-    fetchPosts();
-  }, [page, selectedTag, allTags.length]);
+  const posts = result.posts;
+  const total = result.total;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
-  const totalPages = Math.ceil(total / pageSize);
+  // 현재 결과에서 태그 목록 추출
+  const allTags = Array.from(
+    new Set(posts.flatMap((post) => post.tags))
+  );
 
   // Featured: 첫 번째 글, Side: 2~3번째, Rest: 4번째 이후
   const featured = posts[0];
@@ -70,17 +52,7 @@ export default function BlogPage() {
               description="입시 정보, 학습 팁, 스터디코어 소식을 전해드립니다."
               theme="dark"
               as="h1"
-              actions={
-                canAccessAdmin ? (
-                  <Link
-                    href={`${ROUTES.ADMIN_BLOG}/new`}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 border-[1.5px] border-teal text-teal text-secondary font-bold tracking-cta hover:bg-teal hover:text-navy-dark transition-colors duration-200 cursor-pointer"
-                  >
-                    <PenLine size={14} />
-                    글쓰기
-                  </Link>
-                ) : undefined
-              }
+              actions={<BlogWriteButton />}
             />
           </div>
         </section>
@@ -89,11 +61,8 @@ export default function BlogPage() {
         {allTags.length > 0 && (
           <section className="border-b border-rule">
             <div className="max-w-6xl mx-auto px-6 md:px-13 py-4 flex gap-2 overflow-x-auto">
-              <button
-                onClick={() => {
-                  setSelectedTag(undefined);
-                  setPage(1);
-                }}
+              <Link
+                href="/blog"
                 className={`px-4 py-2 text-secondary font-medium border whitespace-nowrap transition-colors cursor-pointer ${
                   !selectedTag
                     ? "bg-navy border-navy text-white"
@@ -101,22 +70,19 @@ export default function BlogPage() {
                 }`}
               >
                 전체
-              </button>
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => {
-                    setSelectedTag(tag);
-                    setPage(1);
-                  }}
+              </Link>
+              {allTags.map((t) => (
+                <Link
+                  key={t}
+                  href={`/blog?tag=${encodeURIComponent(t)}`}
                   className={`px-4 py-2 text-secondary font-medium border whitespace-nowrap transition-colors cursor-pointer ${
-                    selectedTag === tag
+                    selectedTag === t
                       ? "bg-navy border-navy text-white"
                       : "bg-white border-rule text-ink hover:border-navy"
                   }`}
                 >
-                  {tag}
-                </button>
+                  {t}
+                </Link>
               ))}
             </div>
           </section>
@@ -125,9 +91,7 @@ export default function BlogPage() {
         {/* 블로그 목록 */}
         <section className="px-6 md:px-13 section-md">
           <div className="max-w-6xl mx-auto">
-            {isLoading ? (
-              <BlogSkeleton />
-            ) : posts.length === 0 ? (
+            {posts.length === 0 ? (
               <div className="text-center py-20">
                 <p className="text-muted text-reading">
                   {selectedTag
@@ -164,13 +128,13 @@ export default function BlogPage() {
                         <div className="p-6 md:p-8 flex-1 flex flex-col">
                           {featured.tags.length > 0 && (
                             <div className="flex gap-2 mb-3 flex-wrap">
-                              {featured.tags.slice(0, 3).map((tag) => (
+                              {featured.tags.slice(0, 3).map((t) => (
                                 <span
-                                  key={tag}
+                                  key={t}
                                   className="inline-flex items-center gap-1 text-caption font-medium text-teal"
                                 >
                                   <Tag size={10} />
-                                  {tag}
+                                  {t}
                                 </span>
                               ))}
                             </div>
@@ -260,7 +224,12 @@ export default function BlogPage() {
 
             {/* 페이지네이션 */}
             {totalPages > 1 && (
-              <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} className="mt-12" />
+              <BlogPagination
+                currentPage={page}
+                totalPages={totalPages}
+                tag={selectedTag}
+                className="mt-12"
+              />
             )}
           </div>
         </section>
@@ -311,32 +280,108 @@ function CompactCard({ post }: { post: BlogPostWithAuthor }) {
   );
 }
 
-/* ── 스켈레톤 ── */
-function BlogSkeleton() {
+/* ── 링크 기반 페이지네이션 (SSR) ── */
+function BlogPagination({
+  currentPage,
+  totalPages,
+  tag,
+  className,
+}: {
+  currentPage: number;
+  totalPages: number;
+  tag?: string;
+  className?: string;
+}) {
+  const pageHref = (target: number) => {
+    const params = new URLSearchParams();
+    if (tag) params.set("tag", tag);
+    if (target > 1) params.set("page", String(target));
+    const qs = params.toString();
+    return qs ? `/blog?${qs}` : "/blog";
+  };
+
+  const pages = getPageNumbers(currentPage, totalPages);
+  const arrowBase =
+    "w-10 h-10 flex items-center justify-center border transition-colors duration-200";
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-      <div className="lg:col-span-3 border border-rule bg-white">
-        <Skeleton className="aspect-[16/9] w-full" />
-        <div className="p-8">
-          <Skeleton className="h-4 w-20 mb-4" />
-          <Skeleton className="h-7 w-3/4 mb-3" />
-          <Skeleton className="h-4 w-full mb-2" />
-          <Skeleton className="h-4 w-2/3" />
-        </div>
-      </div>
-      <div className="lg:col-span-2 flex flex-col gap-6">
-        {[0, 1].map((i) => (
-          <div key={i} className="flex-1 border border-rule bg-white">
-            <Skeleton className="aspect-[2/1] w-full" />
-            <div className="p-5">
-              <Skeleton className="h-3 w-16 mb-3" />
-              <Skeleton className="h-5 w-3/4" />
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className={`flex items-center justify-center gap-2 ${className ?? ""}`}>
+      {currentPage > 1 ? (
+        <Link
+          href={pageHref(currentPage - 1)}
+          aria-label="이전 페이지"
+          className={`${arrowBase} border-rule cursor-pointer hover:border-navy`}
+        >
+          <ChevronLeft size={16} />
+        </Link>
+      ) : (
+        <span className={`${arrowBase} border-rule opacity-40`}>
+          <ChevronLeft size={16} />
+        </span>
+      )}
+
+      {pages.map((p, i) =>
+        p === "..." ? (
+          <span
+            key={`ellipsis-${i}`}
+            className="w-10 h-10 flex items-center justify-center text-muted"
+          >
+            ...
+          </span>
+        ) : (
+          <Link
+            key={p}
+            href={pageHref(p as number)}
+            aria-current={p === currentPage ? "page" : undefined}
+            className={`w-10 h-10 flex items-center justify-center text-body font-medium border cursor-pointer transition-colors duration-200 ${
+              p === currentPage
+                ? "bg-navy border-navy text-white"
+                : "border-rule text-ink hover:border-navy"
+            }`}
+          >
+            {p}
+          </Link>
+        )
+      )}
+
+      {currentPage < totalPages ? (
+        <Link
+          href={pageHref(currentPage + 1)}
+          aria-label="다음 페이지"
+          className={`${arrowBase} border-rule cursor-pointer hover:border-navy`}
+        >
+          <ChevronRight size={16} />
+        </Link>
+      ) : (
+        <span className={`${arrowBase} border-rule opacity-40`}>
+          <ChevronRight size={16} />
+        </span>
+      )}
     </div>
   );
+}
+
+/** 페이지 번호 배열 생성 (1, 2, ..., 5, 6, 7, ..., 10) */
+function getPageNumbers(current: number, total: number): (number | "...")[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  const pages: (number | "...")[] = [];
+
+  if (current <= 4) {
+    for (let i = 1; i <= 5; i++) pages.push(i);
+    pages.push("...", total);
+  } else if (current >= total - 3) {
+    pages.push(1, "...");
+    for (let i = total - 4; i <= total; i++) pages.push(i);
+  } else {
+    pages.push(1, "...");
+    for (let i = current - 1; i <= current + 1; i++) pages.push(i);
+    pages.push("...", total);
+  }
+
+  return pages;
 }
 
 /* ── 날짜 포맷 ── */

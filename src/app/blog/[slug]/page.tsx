@@ -1,77 +1,34 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useParams, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Nav, Footer, Skeleton, ArticleJsonLd } from "@/components/common";
-import { createClient } from "@/lib/supabase/client";
+import { Nav, Footer, ArticleJsonLd } from "@/components/common";
+import { createClient } from "@/lib/supabase/server";
 import { getBlogBySlug, getAdjacentPosts } from "@/domains/blog/service";
-import type { BlogPostWithAuthor, BlogPost } from "@/domains/blog/model";
+import type { BlogPostWithAuthor } from "@/domains/blog/model";
 import { Calendar, Tag, ChevronLeft, ChevronRight, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-export default function BlogPostPage() {
-  const params = useParams();
-  const slug = params.slug as string;
+interface Props {
+  params: Promise<{ slug: string }>;
+}
 
-  const [post, setPost] = useState<BlogPostWithAuthor | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [adjacentPosts, setAdjacentPosts] = useState<{
-    prev: BlogPost | null;
-    next: BlogPost | null;
-  }>({ prev: null, next: null });
+export default async function BlogPostPage({ params }: Props) {
+  const { slug } = await params;
+  const supabase = await createClient();
 
-  useEffect(() => {
-    async function fetchPost() {
-      setIsLoading(true);
-      const supabase = createClient();
-      const result = await getBlogBySlug(supabase, slug);
+  const result = await getBlogBySlug(supabase, slug);
 
-      if (result.success && result.post) {
-        setPost(result.post as BlogPostWithAuthor);
-
-        // 인접 포스트 조회
-        if (result.post.published_at) {
-          const adjacent = await getAdjacentPosts(
-            supabase,
-            result.post.id,
-            result.post.published_at
-          );
-          setAdjacentPosts(adjacent);
-        }
-      }
-      setIsLoading(false);
-    }
-
-    fetchPost();
-  }, [slug]);
-
-  if (isLoading) {
-    return (
-      <>
-        <Nav />
-        <main className="page-body">
-          <article className="max-w-3xl mx-auto px-6 md:px-13">
-            <Skeleton className="h-8 w-3/4 mb-4" />
-            <Skeleton className="h-4 w-1/4 mb-8" />
-            <Skeleton className="aspect-[16/9] w-full mb-8" />
-            <div className="space-y-4">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-            </div>
-          </article>
-        </main>
-        <Footer />
-      </>
-    );
-  }
-
-  if (!post) {
+  if (!result.success || !result.post) {
     notFound();
   }
+
+  const post = result.post as BlogPostWithAuthor;
+
+  // 인접 포스트 조회
+  const adjacentPosts = post.published_at
+    ? await getAdjacentPosts(supabase, post.id, post.published_at)
+    : { prev: null, next: null };
 
   const formattedDate = post.published_at
     ? new Date(post.published_at).toLocaleDateString("ko-KR", {
