@@ -18,6 +18,8 @@ export const CONTACT = {
   address: "광주광역시 광산구 임방울대로 330 애플타워 10층",
   kakaoChannel: "http://pf.kakao.com/_execQn",
   kakaoChatChannel: "http://pf.kakao.com/_execQn/chat",
+  naverPlace: "https://map.naver.com/p/entry/place/2074558670",
+  instagram: "https://www.instagram.com/studycore1.0_official",
 } as const;
 
 // 계정 역할

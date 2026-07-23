@@ -20,6 +20,7 @@ export function OrganizationJsonLd() {
       streetAddress: "임방울대로 330 애플타워 10층",
       addressLocality: "광산구",
       addressRegion: "광주광역시",
+      postalCode: "62306",
       addressCountry: "KR",
     },
     geo: {
@@ -27,11 +28,27 @@ export function OrganizationJsonLd() {
       latitude: 35.1595,
       longitude: 126.7942,
     },
+    // 운영시간: 월~금 16:00–24:00, 토·일 08:00–24:00 (연중무휴)
+    // 자정 마감은 스키마 호환을 위해 23:59로 표기
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "16:00",
+        closes: "23:59",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Saturday", "Sunday"],
+        opens: "08:00",
+        closes: "23:59",
+      },
+    ],
     areaServed: {
       "@type": "City",
       name: "광주광역시",
     },
-    sameAs: [CONTACT.kakaoChannel],
+    sameAs: [CONTACT.kakaoChannel, CONTACT.naverPlace, CONTACT.instagram],
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "관리형 학습공간 프로그램",
